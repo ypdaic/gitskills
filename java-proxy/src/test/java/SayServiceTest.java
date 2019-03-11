@@ -42,11 +42,8 @@ public class SayServiceTest {
 	public void test2() {
 		ISayService zhangShanService = new ZhangShanServiceImpl();
 
-		/*
-			第一个参数，第二个参数，必须是接口实现类调用getClassLoader与getInterfaces
-		 */
-		ISayService sayService = (ISayService) Proxy.newProxyInstance(ZhangShanServiceImpl.class.getClassLoader(),
-				ZhangShanServiceImpl.class.getInterfaces(),
+		ISayService sayService = (ISayService) Proxy.newProxyInstance(ISayService.class.getClassLoader(),
+				new Class[] {ISayService.class},
 				new InvocationHandler() {
 					@Override
 					public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -75,5 +72,34 @@ public class SayServiceTest {
 		LiShi liShi = (LiShi) enhancer.create();
 		liShi.sayHello();
 
+		String s = LiShi.class.toString();
+		System.out.println(s);
+
 	}
+
+	/**
+	 * 代理工具方法，可以为任意接口生成任意实例代理，该方式使用在了mybatis的Mapper接口映射Mapper.xml中，具体在MapperProxyFactory
+	 * @param tClass
+	 * @param invocationHandler
+	 * @param <T>
+	 * @return
+	 */
+	public <T> T test4(Class<T> tClass, InvocationHandler invocationHandler) {
+		T t = (T) Proxy.newProxyInstance(tClass.getClassLoader(), new Class[] {tClass},invocationHandler);
+		return t;
+	}
+
+	@Test
+	public void test5() {
+		ISayService sayService = test4(ISayService.class, new InvocationHandler() {
+			@Override
+			public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+				System.out.println("你好");
+
+				return null;
+			}
+		});
+		sayService.sayHello();
+	}
+
 }
