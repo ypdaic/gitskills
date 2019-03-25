@@ -5,8 +5,18 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.junit.Test;
+import org.mybatis.spring.SqlSessionFactoryBean;
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.jdbc.datasource.SimpleDriverDataSource;
+import org.springframework.jdbc.datasource.embedded.DataSourceFactory;
 
 import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.Properties;
 
 /**
@@ -60,13 +70,84 @@ public class UserTest {
             // 映射接口和映射文件的关联由映射文件的namespace属性进行关联
             // 如果namespace写的不对，使用接口将会失败
             UserMapper mapper = session.getMapper(UserMapper.class);
+
             User user = mapper.getAll(1);
 
             System.out.println(user.getName());
+            mapper.update(user);
         } finally {
+            session.commit();
             session.close();
         }
 
+    }
+
+    /**
+     * 使用mybatis-spring
+     */
+    @Test
+    public void test3() throws Exception {
+        SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
+        ClassPathResource classPathResource = new ClassPathResource("mybatis-config.xml");
+        sqlSessionFactoryBean.setConfigLocation(classPathResource);
+        SimpleDriverDataSource simpleDriverDataSource = new SimpleDriverDataSource();
+        simpleDriverDataSource.setDriverClass(com.mysql.jdbc.Driver.class);
+        simpleDriverDataSource.setPassword("test1234");
+        simpleDriverDataSource.setUsername("root");
+        simpleDriverDataSource.setUrl("jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=UTF8");
+        sqlSessionFactoryBean.setDataSource(simpleDriverDataSource);
+        sqlSessionFactoryBean.afterPropertiesSet();
+        SqlSessionFactory sqlSessionFactory = sqlSessionFactoryBean.getObject();
+        SqlSessionTemplate sqlSessionTemplate = new SqlSessionTemplate(sqlSessionFactory);
+
+
+        /**
+         *
+         * @Override
+         * public <T > T getMapper(Class < T > type) {
+         *     return getConfiguration().getMapper(type, this);
+         * }
+         * 这里将sqlSessionTemplate注入到了Mapper接口的代理中，最终执行sql的是
+         * sqlSessionTemplate中的sqlSessionProxy代理类，该类中
+         *
+         */
+        UserMapper mapper = sqlSessionTemplate.getMapper(UserMapper.class);
+        mapper.getAll(1);
+    }
+
+    /**
+     * jdbc原生事物处理
+     */
+    @Test
+    public void test4() {
+        Connection connection = null;
+        try {
+
+            SimpleDriverDataSource simpleDriverDataSource = new SimpleDriverDataSource();
+            simpleDriverDataSource.setDriverClass(com.mysql.jdbc.Driver.class);
+            simpleDriverDataSource.setPassword("test1234");
+            simpleDriverDataSource.setUsername("root");
+            simpleDriverDataSource.setUrl("jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=UTF8");
+            connection = simpleDriverDataSource.getConnection();
+            connection.setAutoCommit(false);
+            PreparedStatement preparedStatement = connection.prepareStatement("update user set name = ? where id = ?");
+            preparedStatement.setString(1, "daiyanping1");
+            preparedStatement.setInt(2, 2);
+            preparedStatement.executeUpdate();
+        } catch (Exception e) {
+            try {
+                connection.rollback();
+            } catch (Exception e1) {
+
+            }
+        } finally {
+            try {
+                connection.commit();
+                connection.close();
+            } catch (Exception e2) {
+
+            }
+        }
     }
 
 }
