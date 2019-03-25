@@ -6,3 +6,5 @@
 #    password: root
 ##    type: com.alibaba.druid.pool.DruidDataSource
 #    driver-class-name: com.mysql.jdbc.Driver
+configuration-properties-test:
+  name: 这是我的自定配置
