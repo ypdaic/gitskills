@@ -4,7 +4,9 @@
     <list default="true" id="f23d9108-6baf-451b-ae4f-1418f8d22860" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/SayServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/SayServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/test-classes/SayServiceTest$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/test-classes/SayServiceTest$1.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/test-classes/SayServiceTest$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/test-classes/SayServiceTest$2.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/test-classes/SayServiceTest$3.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/test-classes/SayServiceTest$3.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/test-classes/SayServiceTest.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/test-classes/SayServiceTest.class" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -23,15 +25,6 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pom.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="345">
-              <caret line="23" selection-start-line="23" selection-end-line="23" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/service/impl/ZhangShanServiceImpl.java">
           <provider selected="true" editor-type-id="text-editor">
@@ -57,11 +50,20 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/test/java/SayServiceTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="348">
-              <caret line="89" column="5" lean-forward="true" selection-start-line="89" selection-start-column="5" selection-end-line="89" selection-end-column="5" />
+            <state relative-caret-position="669">
+              <caret line="118" column="22" selection-start-line="118" selection-start-column="22" selection-end-line="118" selection-end-column="22" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/service/UserMapper.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="60">
+              <caret line="4" column="18" selection-start-line="4" selection-start-column="18" selection-end-line="4" selection-end-column="18" />
             </state>
           </provider>
         </entry>
@@ -126,6 +128,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Class" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
@@ -141,6 +144,7 @@
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/src/main/java/LIShi.java" />
         <option value="$PROJECT_DIR$/src/main/java/LiShi.java" />
+        <option value="$PROJECT_DIR$/src/main/java/service/UserMapper.java" />
         <option value="$PROJECT_DIR$/src/test/java/SayServiceTest.java" />
       </list>
     </option>
@@ -201,6 +205,23 @@
               <item name="java-proxy" type="b2602c69:ProjectViewProjectNode" />
               <item name="java-proxy" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="service" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="java-proxy" type="b2602c69:ProjectViewProjectNode" />
+              <item name="java-proxy" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="service" type="462c0819:PsiDirectoryNode" />
+              <item name="impl" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="java-proxy" type="b2602c69:ProjectViewProjectNode" />
+              <item name="java-proxy" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="test" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -253,7 +274,7 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1552294644151" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1552381476773" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="settings.editor.selected.configurable" value="fileTemplates" />
@@ -270,27 +291,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="JUnit.SayServiceTest.test5">
-    <configuration name="SayServiceTest.test3 (1)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="java-proxy" />
-      <option name="PACKAGE_NAME" value="" />
-      <option name="MAIN_CLASS_NAME" value="SayServiceTest" />
-      <option name="METHOD_NAME" value="test3" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="SayServiceTest.test3" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="java-proxy" />
-      <option name="PACKAGE_NAME" value="" />
-      <option name="MAIN_CLASS_NAME" value="SayServiceTest" />
-      <option name="METHOD_NAME" value="test3" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
+  <component name="RunManager" selected="JUnit.SayServiceTest.test7">
     <configuration name="SayServiceTest.test4 (1)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="java-proxy" />
       <option name="PACKAGE_NAME" value="" />
@@ -321,13 +322,33 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="SayServiceTest.test6" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="java-proxy" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="SayServiceTest" />
+      <option name="METHOD_NAME" value="test6" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="SayServiceTest.test7" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="java-proxy" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="SayServiceTest" />
+      <option name="METHOD_NAME" value="test7" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.SayServiceTest.test7" />
+        <item itemvalue="JUnit.SayServiceTest.test6" />
         <item itemvalue="JUnit.SayServiceTest.test5" />
         <item itemvalue="JUnit.SayServiceTest.test4 (1)" />
         <item itemvalue="JUnit.SayServiceTest.test4" />
-        <item itemvalue="JUnit.SayServiceTest.test3" />
-        <item itemvalue="JUnit.SayServiceTest.test3 (1)" />
       </list>
     </recent_temporary>
   </component>
@@ -342,20 +363,11 @@
       <option name="presentableId" value="Default" />
       <updated>1552273234136</updated>
       <workItem from="1552273238083" duration="7174000" />
-      <workItem from="1552290827499" duration="2934000" />
+      <workItem from="1552290827499" duration="7750000" />
     </task>
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="SayServiceTest_test2 - 2019.03.11 at 14h 05m 42s.xml">
-      <configuration name="SayServiceTest.test2" configurationId="JUnit" />
-    </history-entry>
-    <history-entry file="SayServiceTest_test2_(3) - 2019.03.11 at 14h 06m 21s.xml">
-      <configuration name="SayServiceTest.test2 (3)" configurationId="JUnit" />
-    </history-entry>
-    <history-entry file="SayServiceTest_test2 - 2019.03.11 at 14h 18m 10s.xml">
-      <configuration name="SayServiceTest.test2" configurationId="JUnit" />
-    </history-entry>
     <history-entry file="SayServiceTest_test3 - 2019.03.11 at 14h 19m 37s.xml">
       <configuration name="SayServiceTest.test3" configurationId="JUnit" />
     </history-entry>
@@ -377,13 +389,21 @@
     <history-entry file="SayServiceTest_test5 - 2019.03.11 at 16h 49m 16s.xml">
       <configuration name="SayServiceTest.test5" configurationId="JUnit" />
     </history-entry>
+    <history-entry file="SayServiceTest_test6 - 2019.03.11 at 18h 22m 50s.xml">
+      <configuration name="SayServiceTest.test6" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="SayServiceTest_test7 - 2019.03.11 at 19h 15m 56s.xml">
+      <configuration name="SayServiceTest.test7" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="SayServiceTest_test7 - 2019.03.11 at 19h 29m 19s.xml">
+      <configuration name="SayServiceTest.test7" configurationId="JUnit" />
+    </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="10108000" />
+    <option name="totallyTimeSpent" value="14924000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="15" y="33" width="2033" height="1066" extended-state="0" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.21998996" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -395,7 +415,7 @@
       <window_info id="Favorites" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32921812" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.25256673" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.25154004" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.15843621" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -498,10 +518,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/service/UserMapper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="4" column="18" selection-start-line="4" selection-start-column="18" selection-end-line="4" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/test/java/SayServiceTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="348">
-          <caret line="89" column="5" lean-forward="true" selection-start-line="89" selection-start-column="5" selection-end-line="89" selection-end-column="5" />
+        <state relative-caret-position="669">
+          <caret line="118" column="22" selection-start-line="118" selection-start-column="22" selection-end-line="118" selection-end-column="22" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
