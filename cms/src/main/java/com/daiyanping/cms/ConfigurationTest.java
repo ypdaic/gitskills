@@ -2,10 +2,8 @@ package com.daiyanping.cms;
 
 import com.daiyanping.cms.dao.UserDao;
 import com.daiyanping.cms.entity.User;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.*;
+import org.springframework.core.annotation.Order;
 
 import java.util.List;
 
@@ -15,10 +13,10 @@ import java.util.List;
 @Import(com.daiyanping.cms.entity.User.class)
 public class ConfigurationTest {
 
-	@Bean(initMethod = "init",destroyMethod = "destroy")
+	@Bean
 	//根据不同的配置环境，获取不同的bean
 	@Profile({"pro"})
-	public UserDao getUserDao() {
+	public UserDao devUserDao() {
 		System.out.println("生产环境");
 		return new UserDao() {
 			@Override
@@ -37,10 +35,11 @@ public class ConfigurationTest {
 		};
 	}
 
-	@Bean(initMethod = "init",destroyMethod = "destroy")
+	@Bean
 	//根据不同的配置环境，获取不同的bean
 	@Profile({"dev"})
-	public UserDao getUserDao2() {
+	@Conditional(WindowCondition.class)
+	public UserDao proUserDao() {
 		System.out.println("开发环境");
 		return new UserDao() {
 			@Override

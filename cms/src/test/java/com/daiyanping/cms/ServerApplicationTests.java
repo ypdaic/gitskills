@@ -2,18 +2,24 @@ package com.daiyanping.cms;
 
 import com.daiyanping.cms.dao.UserDao;
 import com.daiyanping.cms.entity.User;
+import com.mysql.jdbc.Driver;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.EnvironmentAware;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.sql.SQLException;
 
 //@RunWith(SpringRunner.class)
 //@SpringBootTest
@@ -21,6 +27,12 @@ public class ServerApplicationTests {
 
 	@Test
 	public void contextLoads() {
+//		AnnotationConfigApplicationContext ctx=new AnnotationConfigApplicationContext();
+//		ctx.getEnvironment().setActiveProfiles("dev");
+//		ctx.register(ConfigurationTest.class);
+//		ctx.refresh();
+
+//		UserDao bean = ctx.getBean(UserDao.class);
 		ClassPathXmlApplicationContext classPathXmlApplicationContext = new ClassPathXmlApplicationContext();
 
 		//设置配置环境
@@ -72,4 +84,17 @@ public class ServerApplicationTests {
 		classPathXmlApplicationContext.close();
 	}
 
+	@Test
+	public void Test() {
+		try {
+
+			SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
+			SimpleDriverDataSource simpleDriverDataSource = new SimpleDriverDataSource();
+			simpleDriverDataSource.setDriver(new Driver());
+
+			sqlSessionFactoryBean.setDataSource(simpleDriverDataSource);
+		} catch (Exception e) {
+
+		}
+	}
 }
