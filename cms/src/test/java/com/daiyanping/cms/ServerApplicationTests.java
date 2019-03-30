@@ -84,17 +84,23 @@ public class ServerApplicationTests {
 		classPathXmlApplicationContext.close();
 	}
 
+
+	/**
+	 * 初略的验证了ImportSelector接口的使用，可以这样理解，就是可以导入外部jar中的Configuration配置类，使其生效
+	 */
 	@Test
-	public void Test() {
-		try {
-
-			SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
-			SimpleDriverDataSource simpleDriverDataSource = new SimpleDriverDataSource();
-			simpleDriverDataSource.setDriver(new Driver());
-
-			sqlSessionFactoryBean.setDataSource(simpleDriverDataSource);
-		} catch (Exception e) {
-
-		}
+	public void test() {
+		AnnotationConfigApplicationContext annotationConfigApplicationContext = new AnnotationConfigApplicationContext();
+		ConfigurableEnvironment environment = annotationConfigApplicationContext.getEnvironment();
+		environment.setActiveProfiles("dev");
+		//这里以AppConfig为spring上下文，该配置类中并没有配置任何bean，我们为其导入了ImportSelector的实现类，就会去加载实现类中，具体要
+		//加载的配置类，这里我们加载了ConfigurationTest这个配置类，该配置类中配置了UseDao这个bean
+		annotationConfigApplicationContext.register(AppConfig.class);
+		annotationConfigApplicationContext.refresh();
+		//我们可以在spring上下文中访问到这个bean
+		UserDao bean = annotationConfigApplicationContext.getBean(UserDao.class);
+		System.out.println(bean);
 	}
+
+
 }

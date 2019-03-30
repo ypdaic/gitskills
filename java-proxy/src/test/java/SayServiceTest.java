@@ -4,6 +4,7 @@ import net.sf.cglib.proxy.MethodProxy;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 import service.ISayService;
+import service.UserMapper;
 import service.impl.ZhangShanServiceImpl;
 import service.impl.ZhangShanServiceImplProxy;
 
@@ -90,16 +91,39 @@ public class SayServiceTest {
 	}
 
 	@Test
+	public void test6() {
+		UserMapper userMapper = test4(UserMapper.class, new InvocationHandler() {
+			@Override
+			public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+				System.out.println("查询所有");
+				return null;
+			}
+		});
+		userMapper.getAll();
+	}
+
+	@Test
 	public void test5() {
 		ISayService sayService = test4(ISayService.class, new InvocationHandler() {
 			@Override
 			public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 				System.out.println("你好");
-
 				return null;
 			}
 		});
 		sayService.sayHello();
+	}
+
+	@Test
+	public void test7() throws NoSuchMethodException {
+		Class<UserMapper> userMapperClass = UserMapper.class;
+		Method getAll = userMapperClass.getMethod("getAll", null);
+		Class<?> declaringClass = getAll.getDeclaringClass();
+		if (declaringClass.equals(userMapperClass)) {
+			System.out.println("相等");
+		}
+		String name = UserMapper.class.getName();
+		System.out.println(name);
 	}
 
 }
