@@ -14,11 +14,11 @@ import org.springframework.context.annotation.*;
 @EnableImportSelectorTest(testValue = 1)
 public class AppConfig {
 
-    @Bean
-    @Profile("dev")
-    public User getUser() {
-        User user = new User();
-        return user;
-    }
+//    @Bean
+//    @Profile("dev")
+//    public User getUser() {
+//        User user = new User();
+//        return user;
+//    }
 
 }

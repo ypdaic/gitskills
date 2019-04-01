@@ -2,22 +2,26 @@ package com.daiyanping.cms;
 
 import com.daiyanping.cms.dao.UserDao;
 import com.daiyanping.cms.entity.User;
+
 import com.mysql.jdbc.Driver;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mybatis.spring.SqlSessionFactoryBean;
+
+import com.daiyanping.cms.mapper.UserMapper;
+import org.junit.Test;
+
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.test.context.junit4.SpringRunner;
+
 
 import java.sql.SQLException;
 
@@ -99,6 +103,65 @@ public class ServerApplicationTests {
 		annotationConfigApplicationContext.refresh();
 		//我们可以在spring上下文中访问到这个bean
 		UserDao bean = annotationConfigApplicationContext.getBean(UserDao.class);
+		System.out.println(bean);
+	}
+
+
+	/**
+	 * 初略的验证了ImportBeanDefinitionRegistrar接口的使用结合ImportSelector，可以这样理解，在导入外部jar中的Configuration配置类的同时，加载ImportBeanDefinitionRegistrar实现
+	 * 类中指定的类，并将其加载到spring容器中（加载指定的类可以是我们手动指定的BeanDefinition,手动指定的包路径，然后去扫描加载）
+	 *
+	 */
+	@Test
+	public void test1() {
+		AnnotationConfigApplicationContext annotationConfigApplicationContext = new AnnotationConfigApplicationContext();
+		ConfigurableEnvironment environment = annotationConfigApplicationContext.getEnvironment();
+		environment.setActiveProfiles("dev");
+		//这里以AppConfig为spring上下文，该配置类中并没有配置任何bean，我们为其导入了ImportSelector的实现类，就会去加载实现类中，具体要
+		//加载的配置类，这里我们加载了ConfigurationTest这个配置类，该配置类中配置了UseDao这个bean
+		annotationConfigApplicationContext.register(AppConfig.class);
+		annotationConfigApplicationContext.refresh();
+		//我们可以在spring上下文中访问到这个bean
+		UserMapper bean = annotationConfigApplicationContext.getBean(UserMapper.class);
+		System.out.println(bean);
+		System.out.println(bean.getUser());
+	}
+
+	/**
+	 * ImportBeanDefinitionRegistrar不结合ImportSelector，可以直接使用import导入
+	 * 初略的验证使用BeanDefinitionBuilder结合ImportBeanDefinitionRegistrar进行bean的注入
+	 */
+	@Test
+	public void test2() {
+		AnnotationConfigApplicationContext annotationConfigApplicationContext = new AnnotationConfigApplicationContext();
+		annotationConfigApplicationContext.register(BeanDefinitionBuilderTest.class);
+		annotationConfigApplicationContext.refresh();
+		UserMapper bean = (UserMapper) annotationConfigApplicationContext.getBean("test");
+		System.out.println(bean);
+	}
+
+	/**
+	 * ImportBeanDefinitionRegistrar不结合ImportSelector，可以直接使用import导入
+	 * 初略的验证使用ClassPathBeanDefinitionScanner结合ImportBeanDefinitionRegistrar进行bean的注入
+	 */
+	@Test
+	public void test3() {
+		AnnotationConfigApplicationContext annotationConfigApplicationContext = new AnnotationConfigApplicationContext();
+		annotationConfigApplicationContext.register(ClassPathBeanDefinitionScannerTest.class);
+		annotationConfigApplicationContext.refresh();
+		UserMapper bean = (UserMapper) annotationConfigApplicationContext.getBean(UserMapper.class);
+		System.out.println(bean);
+	}
+
+	/**
+	 * 验证FactoryBean的用法，继承了FactoryBean后，实现getObject方法，该方法返回的对象会被注入到spring容器中
+	 */
+	@Test
+	public void test4() {
+		AnnotationConfigApplicationContext annotationConfigApplicationContext = new AnnotationConfigApplicationContext();
+		annotationConfigApplicationContext.register(FactoryBeanConfig.class);
+		annotationConfigApplicationContext.refresh();
+		User bean = annotationConfigApplicationContext.getBean(User.class);
 		System.out.println(bean);
 	}
 

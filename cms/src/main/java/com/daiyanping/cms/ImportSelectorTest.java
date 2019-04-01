@@ -11,6 +11,7 @@ import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.core.type.MethodMetadata;
 import org.springframework.util.MultiValueMap;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -41,8 +42,11 @@ public class ImportSelectorTest implements ImportSelector, BeanFactoryAware {
         //获取配置类上指定注解所拥有的属性及值
         MultiValueMap<String, Object> allAnnotationAttributes = annotationMetadata.getAllAnnotationAttributes(EnableImportSelectorTest.class.getName());
 
+        //获取配置类上指定注解所拥有的属性及值
+        Map<String, Object> annotationAttributes = annotationMetadata.getAnnotationAttributes(EnableImportSelectorTest.class.getName());
+
         System.out.println(beanFactory);
-        return new String[]{ConfigurationTest.class.getName()};
+        return new String[]{ImportBeanDefinitionRegistrarTest.class.getName(), ConfigurationTest.class.getName()};
     }
 
     @Override
