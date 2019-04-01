@@ -37,8 +37,8 @@ public class ConfigurationTest {
 
 	@Bean
 	//根据不同的配置环境，获取不同的bean
-	@Profile({"dev"})
-	@Conditional(WindowCondition.class)
+//	@Profile({"dev"})
+//	@Conditional(WindowCondition.class)
 	public UserDao proUserDao() {
 		System.out.println("开发环境");
 		return new UserDao() {

@@ -52,7 +52,7 @@ public class CodeGenerator {
          * 全局配置
          */
         gen.setGlobalConfig(new GlobalConfig()
-                .setOutputDir("/src/main/java")//输出目录
+                .setOutputDir("D:\\git-repository\\gitskills\\mybatis1\\src\\main\\java")//输出目录
                 .setFileOverride(true)// 是否覆盖文件
                 .setActiveRecord(true)// 开启 activeRecord 模式
                 .setEnableCache(false)// XML 二级缓存
@@ -79,7 +79,7 @@ public class CodeGenerator {
                 .setMapper("mapper")
                 .setService("service")
                 .setServiceImpl("service.impl")
-//                .setXml("mapper")
+                .setXml("mapper")
         );
 
         /**
@@ -88,7 +88,7 @@ public class CodeGenerator {
         gen.setDataSource(new DataSourceConfig()
                 .setDbType(DbType.MYSQL)
                 .setDriverName("com.mysql.jdbc.Driver")
-                .setUrl("jdbc:mysql://localhost:3306/test?useUnicode=true&useSSL=false&characterEncoding=utf8")
+                .setUrl("jdbc:mysql://localhost:3306/test?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC")
                 .setUsername("root")
                 .setPassword("test1234")
 //                .setTypeConvert(new MySqlTypeConvert() {
@@ -112,15 +112,15 @@ public class CodeGenerator {
             }
         };
 
-//        //自定义文件输出位置（非必须）
-//        List<FileOutConfig> fileOutList = new ArrayList<>();
+        //自定义文件输出位置（非必须）
+//        List<FileOutConfig> fileOutList = new ArrayList<FileOutConfig>();
 //        fileOutList.add(new FileOutConfig("/templates/mapper.xml.ftl") {
 //            @Override
 //            public String outputFile(TableInfo tableInfo) {
 //                return "/src/main/resources/mappers/" + tableInfo.getEntityName() + ".xml";
 //            }
 //        });
-//
+
 //        cfg.setFileOutConfigList(fileOutList);
 //        gen.setCfg(cfg);
 
@@ -129,7 +129,7 @@ public class CodeGenerator {
         // 如果模板引擎是 velocity
         String templatePath = "/templates/mapper.xml.vm";
 
-        // 自定义输出配置
+//         自定义输出配置
 //        List<FileOutConfig> focList = new ArrayList<>();
 //        // 自定义配置会被优先输出
 //        focList.add(new FileOutConfig(templatePath) {
@@ -193,9 +193,9 @@ public class CodeGenerator {
                         // .setCapitalMode(true)// 全局大写命名
                         //.setDbColumnUnderline(true)//全局下划线命名
 //                        .setTablePrefix(new String[]{prefix})// 此处可以修改为您的表前缀
-                        .setNaming(NamingStrategy.underline_to_camel)// 表名生成策略
+//                        .setNaming(NamingStrategy.underline_to_camel)// 表名生成策略
                         .setInclude(new String[]{"user"}) // 需要生成的表
-                        .setRestControllerStyle(true)
+//                        .setRestControllerStyle(true)
                         //.setExclude(new String[]{"test"}) // 排除生成的表
                         // 自定义实体父类
                         // .setSuperEntityClass("com.baomidou.demo.TestEntity")
