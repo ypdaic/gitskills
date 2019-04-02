@@ -1,8 +1,6 @@
 ##############################
 ## Folders                  ##
 ##############################
-target/
-classes/
-test-classes/
-
+target
 .idea
+.DS_Store
