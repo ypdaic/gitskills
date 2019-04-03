@@ -27,6 +27,9 @@ public class ImportBeanDefinitionRegistrarTest2 implements ImportBeanDefinitionR
         //直接使用BeanDefinitionBuilder构建beanDefinition
         BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(UserMapper.class);
         AbstractBeanDefinition beanDefinition = beanDefinitionBuilder.getBeanDefinition();
+
+        //设置该属性后，就可以自动注入属性了,如果被注入的属性没有先被注入到spring容器中，那么该属性就不会注入了
+        beanDefinition.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_TYPE);
         //往spring容器中注入该bean，指定bean的名称
         registry.registerBeanDefinition("test", beanDefinition);
     }

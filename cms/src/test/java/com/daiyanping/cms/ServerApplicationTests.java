@@ -12,10 +12,16 @@ import com.daiyanping.cms.mapper.UserMapper;
 import org.junit.Test;
 
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.PropertiesPropertySource;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
@@ -24,6 +30,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 
 import java.sql.SQLException;
+import java.util.List;
 
 //@RunWith(SpringRunner.class)
 //@SpringBootTest
@@ -138,6 +145,8 @@ public class ServerApplicationTests {
 		annotationConfigApplicationContext.refresh();
 		UserMapper bean = (UserMapper) annotationConfigApplicationContext.getBean("test");
 		System.out.println(bean);
+		User user = bean.getUser();
+		System.out.println(user);
 	}
 
 	/**
@@ -163,6 +172,41 @@ public class ServerApplicationTests {
 		annotationConfigApplicationContext.refresh();
 		User bean = annotationConfigApplicationContext.getBean(User.class);
 		System.out.println(bean);
+	}
+
+	/**
+	 * 验证EnableConfigurationProperties注解加载properties,并注入到spring容器中
+	 */
+	@Test
+	public void test5() {
+		AnnotationConfigApplicationContext annotationConfigApplicationContext = new AnnotationConfigApplicationContext();
+		annotationConfigApplicationContext.register(AppConfig.class);
+		annotationConfigApplicationContext.refresh();
+		ConfigurationPropertiesTest2 bean = annotationConfigApplicationContext.getBean(ConfigurationPropertiesTest2.class);
+		System.out.println(bean.getName());
+
+		UserDao bean1 = annotationConfigApplicationContext.getBean(UserDao.class);
+		System.out.println(bean1);
+
+		AppConfig bean3 = annotationConfigApplicationContext.getBean(AppConfig.class);
+		System.out.println(bean3);
+		DataSourceAutoConfiguration bean2 = annotationConfigApplicationContext.getBean(DataSourceAutoConfiguration.class);
+		System.out.println(bean2);
+	}
+
+	/**
+	 * 验证mybatis-spring的javaConfig使用方式
+	 */
+	@Test
+	public void test6() {
+		AnnotationConfigApplicationContext annotationConfigApplicationContext = new AnnotationConfigApplicationContext();
+		annotationConfigApplicationContext.register(MybatisMapperScanTest.class);
+		annotationConfigApplicationContext.refresh();
+		UserDao bean = annotationConfigApplicationContext.getBean(UserDao.class);
+		List<User> allUser = bean.getAllUser();
+		allUser.forEach(user -> {
+			System.out.println(user.toString());
+		});
 	}
 
 

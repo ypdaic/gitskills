@@ -12,6 +12,7 @@ import org.springframework.context.annotation.*;
  */
 @Configuration //表明此类是配置类
 @EnableImportSelectorTest(testValue = 1)
+@PropertySource("classpath:application.yml")
 public class AppConfig {
 
 //    @Bean
