@@ -3,6 +3,9 @@ package com.daiyanping.cms;
 import com.daiyanping.cms.dao.UserDao;
 import com.daiyanping.cms.entity.User;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.mysql.jdbc.Driver;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -195,7 +198,7 @@ public class ServerApplicationTests {
 	}
 
 	/**
-	 * 验证mybatis-spring的javaConfig使用方式
+	 * 验证mybatis分页插件的使用
 	 */
 	@Test
 	public void test6() {
@@ -203,10 +206,10 @@ public class ServerApplicationTests {
 		annotationConfigApplicationContext.register(MybatisMapperScanTest.class);
 		annotationConfigApplicationContext.refresh();
 		UserDao bean = annotationConfigApplicationContext.getBean(UserDao.class);
+		PageHelper.startPage(1, 2);
 		List<User> allUser = bean.getAllUser();
-		allUser.forEach(user -> {
-			System.out.println(user.toString());
-		});
+		PageInfo<User> userPageInfo = new PageInfo<>(allUser);
+		System.out.println(userPageInfo);
 	}
 
 
