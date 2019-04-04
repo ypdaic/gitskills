@@ -250,7 +250,26 @@ public class ServerApplicationTests {
 		IUserService userService = (IUserService) annotationConfigApplicationContext.getBean("service1");
 		User user = new User();
 		user.setId(1);
-		user.setName("daiyanping1");
+		user.setName("daiyanping2");
+		userService.updateById(user);
+	}
+
+	/**
+	 * 验证spring事物级别Propagation.MANDATORY的作用
+	 * 其作用就是,必须在一个事务中运行。也就是说，他只能被一个父事务调用。否则，他就要抛出异常
+	 * 如果上层调用没有事物，这里抛异常是没法回滚的
+	 */
+	@Test
+	public void test9() {
+		AnnotationConfigApplicationContext annotationConfigApplicationContext = new AnnotationConfigApplicationContext();
+		annotationConfigApplicationContext.register(MybatisMapperScanTest.class);
+		annotationConfigApplicationContext.refresh();
+		DBAspect bean = annotationConfigApplicationContext.getBean(DBAspect.class);
+		System.out.println(bean);
+		IUserService userService = (IUserService) annotationConfigApplicationContext.getBean("service1");
+		User user = new User();
+		user.setId(1);
+		user.setName("daiyanping5");
 		userService.updateById(user);
 	}
 

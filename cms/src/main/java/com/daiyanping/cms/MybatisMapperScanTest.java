@@ -10,7 +10,9 @@ import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.*;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
@@ -33,6 +35,8 @@ import java.util.HashMap;
 @ComponentScan({"com.daiyanping.cms.DB","com.daiyanping.cms.service"})
 // 开启注解支持,要想使用注解的拦截器，就必须开启
 @EnableAspectJAutoProxy
+// 开启事物支持
+@EnableTransactionManagement
 public class MybatisMapperScanTest {
 
     @Bean(name = "test1")
@@ -94,5 +98,17 @@ public class MybatisMapperScanTest {
         PageInterceptor pageInterceptor = new PageInterceptor();
         return pageInterceptor;
     }
+
+    /**
+     * 开启spring事物管理
+     * @return
+     */
+    @Bean
+    public DataSourceTransactionManager getDataSourceTransactionManager() {
+        DataSourceTransactionManager dataSourceTransactionManager = new DataSourceTransactionManager();
+        dataSourceTransactionManager.setDataSource(getDataSource());
+        return dataSourceTransactionManager;
+    }
+
 
 }

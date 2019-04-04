@@ -21,4 +21,6 @@ public interface IUserService{
     void updateById(User user);
 
     void updateByName(User user);
+
+    void updateByAge(User user);
 }

@@ -24,6 +24,8 @@ import java.lang.reflect.Modifier;
  * @Version 0.1
  */
 @Aspect
+// @Order注解用于控制bean的加载顺序，数字越小，级别越高，这里给这个注解，用于保证在spring事物管理获取连接时已经切换数据源了
+@Order(0)
 @Component
 public class DBAspect {
 

@@ -40,4 +40,8 @@ public class UserServiceImpl2 implements IUserService {
     public void updateByName(User user) {
         userDao.updateByName(user);
     }
+
+    public void updateByAge(User user) {
+        userDao.updateByAge(user);
+    }
 }
