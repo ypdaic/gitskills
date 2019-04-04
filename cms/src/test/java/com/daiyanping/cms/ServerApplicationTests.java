@@ -1,8 +1,10 @@
 package com.daiyanping.cms;
 
+import com.daiyanping.cms.DB.DBAspect;
 import com.daiyanping.cms.dao.UserDao;
 import com.daiyanping.cms.entity.User;
 
+import com.daiyanping.cms.service.IUserService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -71,7 +73,7 @@ public class ServerApplicationTests {
 		BeanFactoryAwareTest bean1 = classPathXmlApplicationContext.getBean(BeanFactoryAwareTest.class);
 		BeanFactory beanFactory = bean1.getBeanFactory();
 		User bean2 = beanFactory.getBean(User.class);
-		System.out.println(bean2.getUsername());
+		System.out.println(bean2.getName());
 
 		//获取已经注入spring容器的bean在spring容器中的名称
 		//名称默认是类名首字母小写
@@ -210,6 +212,29 @@ public class ServerApplicationTests {
 		List<User> allUser = bean.getAllUser();
 		PageInfo<User> userPageInfo = new PageInfo<>(allUser);
 		System.out.println(userPageInfo);
+	}
+
+	/**
+	 * 验证动态数据源的使用
+	 */
+	@Test
+	public void test7() {
+		AnnotationConfigApplicationContext annotationConfigApplicationContext = new AnnotationConfigApplicationContext();
+		annotationConfigApplicationContext.register(MybatisMapperScanTest.class);
+		annotationConfigApplicationContext.refresh();
+		DBAspect bean = annotationConfigApplicationContext.getBean(DBAspect.class);
+		System.out.println(bean);
+		IUserService userService = (IUserService) annotationConfigApplicationContext.getBean("service1");
+		PageHelper.startPage(1, 2);
+		List<User> allUser = userService.getAll();
+		PageInfo<User> userPageInfo = new PageInfo<>(allUser);
+		System.out.println(userPageInfo.getList().get(0));
+
+		IUserService userService2 = (IUserService) annotationConfigApplicationContext.getBean("service2");
+		PageHelper.startPage(1, 2);
+		List<User> allUser2 = userService2.getAll();
+		PageInfo<User> userPageInfo2 = new PageInfo<>(allUser2);
+		System.out.println(userPageInfo2.getList().get(0));
 	}
 
 

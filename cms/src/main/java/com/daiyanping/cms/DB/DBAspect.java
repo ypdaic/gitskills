@@ -6,8 +6,13 @@ import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 /**
@@ -17,41 +22,71 @@ import java.lang.reflect.Modifier;
  * @Date 2019-04-03
  * @Version 0.1
  */
-@Component
 @Aspect
+@Component
 public class DBAspect {
 
-    @Pointcut("@annotation(com.wangzhi.springboot.aop.test.Action)")
+    @Autowired
+    private DBThreadLocal dbThreadLocal;
+
+    // @Pointcut  定义切入点
+    //@annotation  只支持在方法上使用了指定注解，才能被拦截
+    @Pointcut("@annotation(com.daiyanping.cms.DB.DB)")
     public void daoAspect() {
+
     }
 
-    @After("daoAspect()")
+    //引用切入点
+//    @After("daoAspect()")
+    //匿名切入点 表示拦截com.daiyanping.cms.service.impl包及其子包任何方法
+    @After("execution(* com.daiyanping.cms.service.impl..*.*(..))")
     public void after(JoinPoint joinPoint) {
-        System.out.println("方法执行后拦截处理");
-        System.out.println("目标方法名为:" + joinPoint.getSignature().getName());
-        System.out.println("目标方法所属类的简单类名:" +        joinPoint.getSignature().getDeclaringType().getSimpleName());
-        System.out.println("目标方法所属类的类名:" + joinPoint.getSignature().getDeclaringTypeName());
-        System.out.println("目标方法声明类型:" + Modifier.toString(joinPoint.getSignature().getModifiers()));
-//		//获取传入目标方法的参数
-//		Object[] args = joinPoint.getArgs();
-//		for (int i = 0; i < args.length; i++) {
-//			System.out.println("第" + (i+1) + "个参数为:" + args[i]);
-//		}
-//		joinPoint.getTarget()与joinPoint.getThis()
-//		System.out.println("被代理的对象:" + joinPoint.getTarget());
-//		System.out.println("代理对象自己:" + joinPoint.getThis());
-        Signature signature = joinPoint.getSignature();
-        String name = signature.getName();
-        System.out.println(name);
-
+        dbThreadLocal.cleanDBType();
     }
 
-    @Before("daoAspect()")
+    //    @Before("daoAspect()")
+    @Before("execution(* com.daiyanping.cms.service.impl..*.*(..))")
     public void before(JoinPoint joinPoint) {
-        System.out.println("方法执行前拦截处理");
-        Signature signature = joinPoint.getSignature();
-        String name = signature.getName();
-        System.out.println(name);
+        //获取被代理对象 这里是ServiceImpl的实例
+        Object target = joinPoint.getTarget();
+        //获取被对象的class
+        Class<?> aClass = target.getClass();
+        //获取类上的指定注解
+        DB db = (DB) aClass.getAnnotation(DB.class);
+        if (db != null) {
 
+            if (db.DB().getDbName().equals(DBTypeEnum.TEST.getDbName())) {
+                System.out.println("开始切换数据源：" + DBTypeEnum.TEST.getDbName());
+                dbThreadLocal.setDBType(DBTypeEnum.TEST);
+            }
+            if (db.DB().getDbName().equals(DBTypeEnum.TEST2.getDbName())) {
+                System.out.println("开始切换数据源：" + DBTypeEnum.TEST2.getDbName());
+                dbThreadLocal.setDBType(DBTypeEnum.TEST2);
+            }
+        }
+
+        String name = joinPoint.getSignature().getName();
+        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+        Class[] parameterTypes = signature.getParameterTypes();
+        try {
+            // 获取被调用的方法
+            Method method = aClass.getMethod(name, parameterTypes);
+            // 获取方法上的指定注解
+            DB annotation = method.getAnnotation(DB.class);
+            if (annotation != null) {
+
+                if (annotation.DB().getDbName().equals(DBTypeEnum.TEST.getDbName())) {
+                    System.out.println("开始切换数据源：" + DBTypeEnum.TEST.getDbName());
+                    dbThreadLocal.setDBType(DBTypeEnum.TEST);
+                }
+                if (annotation.DB().getDbName().equals(DBTypeEnum.TEST2.getDbName())) {
+                    System.out.println("开始切换数据源：" + DBTypeEnum.TEST.getDbName());
+                    dbThreadLocal.setDBType(DBTypeEnum.TEST2);
+                }
+            }
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
     }
+
 }

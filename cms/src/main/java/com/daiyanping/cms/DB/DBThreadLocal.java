@@ -34,6 +34,7 @@ public class DBThreadLocal {
      * 操作完成后，清除数据源类型
      */
     public void cleanDBType() {
+        System.out.println("清除数据源");
         dbTypeEnumThreadLocal.remove();
     }
 

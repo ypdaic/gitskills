@@ -7,10 +7,9 @@ import com.github.pagehelper.PageInterceptor;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.plugin.Invocation;
 import org.mybatis.spring.SqlSessionFactoryBean;
+import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.*;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
@@ -31,6 +30,9 @@ import java.util.HashMap;
  *
  */
 @MapperScan("com.daiyanping.cms.dao")
+@ComponentScan({"com.daiyanping.cms.DB","com.daiyanping.cms.service"})
+// 开启注解支持,要想使用注解的拦截器，就必须开启
+@EnableAspectJAutoProxy
 public class MybatisMapperScanTest {
 
     @Bean(name = "test1")
@@ -75,6 +77,12 @@ public class MybatisMapperScanTest {
         sqlSessionFactoryBean.setPlugins(new Interceptor[]{getInvocation()});
         sqlSessionFactoryBean.afterPropertiesSet();
         return sqlSessionFactoryBean;
+    }
+
+    @Bean
+    public SqlSessionTemplate getSqlSessionTemplate() throws Exception {
+        SqlSessionTemplate sqlSessionTemplate = new SqlSessionTemplate(getSqlSessionFactoryBean().getObject());
+        return sqlSessionTemplate;
     }
 
     /**

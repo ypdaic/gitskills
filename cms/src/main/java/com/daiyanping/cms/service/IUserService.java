@@ -1,8 +1,11 @@
 package com.daiyanping.cms.service;
 
 import com.daiyanping.cms.dao.UserDao;
+import com.daiyanping.cms.entity.User;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 /**
  * @ClassName IUserService
@@ -13,4 +16,5 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public interface IUserService{
 
+    List<User> getAll();
 }
