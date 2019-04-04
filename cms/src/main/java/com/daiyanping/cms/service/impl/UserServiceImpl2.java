@@ -31,4 +31,13 @@ public class UserServiceImpl2 implements IUserService {
     public List<User> getAll() {
         return userDao.getAllUser();
     }
+
+    public void updateById(User user) {
+        userDao.updateById(user);
+        updateByName(user);
+    }
+
+    public void updateByName(User user) {
+        userDao.updateByName(user);
+    }
 }

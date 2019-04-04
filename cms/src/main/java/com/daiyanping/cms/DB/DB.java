@@ -6,7 +6,7 @@ import java.lang.annotation.*;
 @Documented
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
+@Target({ElementType.TYPE, ElementType.METHOD})
 public @interface DB {
 
     DBTypeEnum DB() default DBTypeEnum.TEST;

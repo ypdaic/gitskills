@@ -17,4 +17,8 @@ import java.util.List;
 public interface IUserService{
 
     List<User> getAll();
+
+    void updateById(User user);
+
+    void updateByName(User user);
 }

@@ -237,5 +237,22 @@ public class ServerApplicationTests {
 		System.out.println(userPageInfo2.getList().get(0));
 	}
 
+	/**
+	 * 验证service方法自己内部相互调用是否可以切换数据源
+	 */
+	@Test
+	public void test8() {
+		AnnotationConfigApplicationContext annotationConfigApplicationContext = new AnnotationConfigApplicationContext();
+		annotationConfigApplicationContext.register(MybatisMapperScanTest.class);
+		annotationConfigApplicationContext.refresh();
+		DBAspect bean = annotationConfigApplicationContext.getBean(DBAspect.class);
+		System.out.println(bean);
+		IUserService userService = (IUserService) annotationConfigApplicationContext.getBean("service1");
+		User user = new User();
+		user.setId(1);
+		user.setName("daiyanping1");
+		userService.updateById(user);
+	}
+
 
 }

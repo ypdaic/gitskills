@@ -7,6 +7,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -42,11 +43,13 @@ public class DBAspect {
     @After("execution(* com.daiyanping.cms.service.impl..*.*(..))")
     public void after(JoinPoint joinPoint) {
         dbThreadLocal.cleanDBType();
+        AopProxyContext.clean();
     }
 
     //    @Before("daoAspect()")
     @Before("execution(* com.daiyanping.cms.service.impl..*.*(..))")
     public void before(JoinPoint joinPoint) {
+        AopProxyContext.setAopProxy(joinPoint.getThis());
         //获取被代理对象 这里是ServiceImpl的实例
         Object target = joinPoint.getTarget();
         //获取被对象的class
@@ -80,7 +83,7 @@ public class DBAspect {
                     dbThreadLocal.setDBType(DBTypeEnum.TEST);
                 }
                 if (annotation.DB().getDbName().equals(DBTypeEnum.TEST2.getDbName())) {
-                    System.out.println("开始切换数据源：" + DBTypeEnum.TEST.getDbName());
+                    System.out.println("开始切换数据源：" + DBTypeEnum.TEST2.getDbName());
                     dbThreadLocal.setDBType(DBTypeEnum.TEST2);
                 }
             }

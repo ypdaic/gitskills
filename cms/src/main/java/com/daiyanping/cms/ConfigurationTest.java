@@ -35,6 +35,16 @@ public class ConfigurationTest {
 				return null;
 			}
 
+			@Override
+			public void updateById(User user) {
+
+			}
+
+			@Override
+			public void updateByName(User user) {
+
+			}
+
 			public void init() {
 				System.out.println("bean初始化之前调用");
 			}
@@ -56,6 +66,16 @@ public class ConfigurationTest {
 			@Override
 			public List<User> getAllUser() {
 				return null;
+			}
+
+			@Override
+			public void updateById(User user) {
+
+			}
+
+			@Override
+			public void updateByName(User user) {
+
 			}
 
 			public void init() {
