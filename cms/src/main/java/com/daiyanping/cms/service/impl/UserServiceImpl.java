@@ -55,11 +55,13 @@ public class UserServiceImpl extends SqlSessionDaoSupport implements IUserServic
 //    @Transactional(rollbackFor = Exception.class)
     public void updateById(User user) {
         userDao.updateById(user);
+
         Object aopProxy = AopProxyContext.getAopProxy();
 //        IUserService aopProxy1 = (IUserService) aopProxy;
 //        aopProxy1.updateByName(user);
 //        aopProxy1.updateByAge(user);
 //        int a = 1/0;
+
     }
 
     /**
