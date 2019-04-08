@@ -21,6 +21,6 @@ public interface UserDao {
 	@Update("update user set age = #{dto.age} where name = #{dto.name}")
 	void updateByName(@Param("dto") User user);
 
-	@Update("update user set name = #{dto.name} where age = #{dto.age}")
+	@Update("update user set name = #{dto.name} where  id= 2")
     void updateByAge(@Param("dto") User user);
 }

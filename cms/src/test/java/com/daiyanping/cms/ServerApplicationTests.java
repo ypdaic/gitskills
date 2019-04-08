@@ -270,6 +270,7 @@ public class ServerApplicationTests {
 		User user = new User();
 		user.setId(1);
 		user.setName("daiyanping5");
+		user.setAge(28);
 		userService.updateById(user);
 	}
 
