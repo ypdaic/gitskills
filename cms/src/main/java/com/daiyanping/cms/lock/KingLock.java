@@ -49,6 +49,7 @@ public class KingLock implements Lock {
 		//使用cas检查当前值与内存值是否相等，如果相等就更新为预期值，这里预期值就是当前线程
 		//这里与null相比，如果不为null说明已经有线程占用该锁了,直接返回false
 		if (!atomicReference.compareAndSet(null, Thread.currentThread())) {
+			System.out.println("没有获取到锁");
 			return false;
 		} else {
 			return true;
@@ -56,19 +57,30 @@ public class KingLock implements Lock {
 
 	}
 
-	@Override
-	public boolean tryLock(long time, TimeUnit unit) throws InterruptedException {
-
-		
+	private boolean doCheckLock(long time, TimeUnit unit) {
+		long startTime = System.nanoTime() + unit.toNanos(time);
 		//使用cas检查当前值与内存值是否相等，如果相等就更新为预期值，这里预期值就是当前线程
-		//这里与null相比，如果不为null说明已经有线程占用该锁了，必须排队了
+		//这里与null相比，如果不为null说明已经有线程占用该锁了，就一直循环检测，直到计时结束
 		while (!atomicReference.compareAndSet(null, Thread.currentThread())) {
-			//不相等就说明有有线程占用该锁，必须等待了
-			linkedBlockingQueue.add(Thread.currentThread());
-			//使用LockSupport.park();阻塞当前线程
-			LockSupport.parkUntil(unit.toNanos(time));
+			if (System.nanoTime() > startTime) {
+				return false;
+			}
 
 		}
+
+		return true;
+	}
+
+	@Override
+	public boolean tryLock(long time, TimeUnit unit) throws InterruptedException {
+		if (tryLock() || doCheckLock(time, unit)) {
+			return true;
+		} else {
+			System.out.println("没有获取到锁");
+			return false;
+		}
+		
+
 	}
 
 	/**
@@ -81,7 +93,7 @@ public class KingLock implements Lock {
 			Iterator<Thread> iterator = linkedBlockingQueue.iterator();
 			while (iterator.hasNext()) {
 				Thread next = iterator.next();
-				//释放排队线程的阻塞状态，进入执行状态，这里会发生多个线程抢占同一个锁的情况，
+				//释放排队线程的阻塞状态，进入执行状态，这里会发生多个线程抢占同一个锁的情况，这里是非公平的
 				LockSupport.unpark(next);
 			}
 		}
@@ -91,4 +103,17 @@ public class KingLock implements Lock {
 	public Condition newCondition() {
 		return null;
 	}
+
+	/**
+	 * 检查当前线程是否获取锁
+	 * @return
+	 */
+	public boolean hasLock() {
+		if (atomicReference.get() == Thread.currentThread()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 }
