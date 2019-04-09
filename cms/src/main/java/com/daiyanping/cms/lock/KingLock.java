@@ -57,8 +57,10 @@ public class KingLock implements Lock {
 
 	}
 
+
 	private boolean doCheckLock(long time, TimeUnit unit) {
 		long startTime = System.nanoTime() + unit.toNanos(time);
+
 		//使用cas检查当前值与内存值是否相等，如果相等就更新为预期值，这里预期值就是当前线程
 		//这里与null相比，如果不为null说明已经有线程占用该锁了，就一直循环检测，直到计时结束
 		while (!atomicReference.compareAndSet(null, Thread.currentThread())) {
