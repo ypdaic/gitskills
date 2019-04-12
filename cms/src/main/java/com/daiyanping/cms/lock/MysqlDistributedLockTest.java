@@ -37,14 +37,14 @@ public class MysqlDistributedLockTest {
 	}
 
 	public static void countInAdd(long i) {
-		lock.getLock("test1");
+		lock.getLock("test2");
 		try {
 			count ++;
-			System.out.println(Thread.currentThread().getName() + "=" + i);
+			System.out.println(Thread.currentThread().getName() + "=" + count);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			lock.unLock("test1");
+			lock.unLock();
 		}
 	}
 }

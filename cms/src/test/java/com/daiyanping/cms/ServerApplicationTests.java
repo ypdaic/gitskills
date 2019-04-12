@@ -269,7 +269,7 @@ public class ServerApplicationTests {
 		IUserService userService = (IUserService) annotationConfigApplicationContext.getBean("service1");
 		User user = new User();
 		user.setId(1);
-		user.setName("daiyanping5");
+		user.setName("daiyanping87");
 		user.setAge(28);
 		userService.updateById(user);
 	}

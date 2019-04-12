@@ -5,16 +5,19 @@ import org.apache.ibatis.session.SqlSession;
 
 public class MysqlDistributedLock extends AbstractDistributedLock implements Lock {
 
-	public static SqlSession sqlSession = JDBCUtil.getSqlsession();;
-	public static  MsqlLockDao mapper = sqlSession.getMapper(MsqlLockDao.class);
 	@Override
 	protected boolean getTryLock(String lock) {
+		SqlSession sqlSession = MysqlLockThreadLocal.getSqlSession();
+		if (sqlSession == null) {
+			sqlSession = JDBCUtil.getSqlSession();
+			MysqlLockThreadLocal.setSqlSession(sqlSession);
+		}
+		MsqlLockDao mapper = sqlSession.getMapper(MsqlLockDao.class);
 		try {
 			mapper.update(lock);
 		} catch (Exception e) {
 			return false;
 		}
-
 		return true;
 	}
 
@@ -28,8 +31,9 @@ public class MysqlDistributedLock extends AbstractDistributedLock implements Loc
 	}
 
 	@Override
-	public void unLock(String lock) {
-		sqlSession.commit();
-		sqlSession.close();
+	public void unLock() {
+		SqlSession sqlSession = MysqlLockThreadLocal.getSqlSession();
+		JDBCUtil.colseSqlSessin(sqlSession);
+		MysqlLockThreadLocal.clean();
 	}
 }

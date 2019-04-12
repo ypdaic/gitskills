@@ -26,12 +26,16 @@ public class JDBCUtil {
 		return simpleDriverDataSource;
 	}
 
-	public static SqlSession getSqlsession() {
+	/**
+	 * 基于mybatis获取SqlSession
+	 * @return
+	 */
+	public static SqlSession getSqlSession() {
 		JdbcTransactionFactory jdbcTransactionFactory = new JdbcTransactionFactory();
 		Environment environment = new Environment("dev", jdbcTransactionFactory, getDataSource());
 		Configuration configuration = new Configuration();
 		configuration.setEnvironment(environment);
-//		configuration.setLogImpl(NoLoggingImpl.class);
+		configuration.setLogImpl(NoLoggingImpl.class);
 		configuration.addMapper(MsqlLockDao.class);
 		SqlSessionFactoryBuilder sqlSessionFactoryBuilder = new SqlSessionFactoryBuilder();
 		SqlSessionFactory sqlSessionFactory = sqlSessionFactoryBuilder.build(configuration);
@@ -40,10 +44,7 @@ public class JDBCUtil {
 	}
 
 	public static void colseSqlSessin(SqlSession sqlSession) {
-		sqlSession.close();
-	}
-
-	public static void commitSqlSession(SqlSession sqlSession) {
 		sqlSession.commit();
+		sqlSession.close();
 	}
 }

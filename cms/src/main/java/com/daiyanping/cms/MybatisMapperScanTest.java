@@ -34,7 +34,7 @@ import java.util.HashMap;
 @MapperScan("com.daiyanping.cms.dao")
 @ComponentScan({"com.daiyanping.cms.DB","com.daiyanping.cms.service"})
 // 开启注解支持,要想使用注解的拦截器，就必须开启
-@EnableAspectJAutoProxy
+//@EnableAspectJAutoProxy
 // 开启事物支持
 @EnableTransactionManagement
 public class MybatisMapperScanTest {

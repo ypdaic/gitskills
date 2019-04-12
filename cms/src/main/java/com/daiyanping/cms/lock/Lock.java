@@ -4,5 +4,5 @@ public interface Lock {
 
 	void  getLock(String lock);
 
-	void unLock(String lock);
+	void unLock();
 }

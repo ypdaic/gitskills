@@ -57,9 +57,9 @@ public class UserServiceImpl extends SqlSessionDaoSupport implements IUserServic
         userDao.updateById(user);
 
         Object aopProxy = AopProxyContext.getAopProxy();
-//        IUserService aopProxy1 = (IUserService) aopProxy;
+        IUserService aopProxy1 = (IUserService) aopProxy;
 //        aopProxy1.updateByName(user);
-//        aopProxy1.updateByAge(user);
+        aopProxy1.updateByAge(user);
 //        int a = 1/0;
 
     }
@@ -84,12 +84,12 @@ public class UserServiceImpl extends SqlSessionDaoSupport implements IUserServic
      * 没有使用索引，则这个更新操作将升级为表锁，而由于之前的事物已经有锁存在，则会导致该操作锁超时，之前的事物会进行回滚操作
      * Propagation.REQUIRES_NEW，新建事务，如果当前存在事务，把当前事务挂起。如果是两次操作是更新同一个表，且某一个操作
      * 没有使用索引，则这个更新操作将升级为表锁，而由于之前的事物已经有锁存在，则会导致本次操作锁超时，两个事物会进行回滚操作
-     * Propagation.SUPPORTS，当前如果有事物则加入到该事物，如果当前没有事务，就以非事务方式执行。mybatis-spring 如何没有使用事物则不会进行commit，而是
-     * 直接关闭连接
+     * Propagation.SUPPORTS，当前如果有事物则加入到该事物，如果当前没有事务，就以非事务方式执行。也就是自动提交。
+     *
      *      * @param user
      */
-//    @Transactional(rollbackFor = Exception.class,
-//            propagation = Propagation.MANDATORY)
+    @Transactional(rollbackFor = Exception.class,
+            propagation = Propagation.MANDATORY)
 //    @Transactional(rollbackFor = Exception.class,
 //        propagation = Propagation.NESTED)
 //    @Transactional(rollbackFor = Exception.class,
@@ -98,8 +98,8 @@ public class UserServiceImpl extends SqlSessionDaoSupport implements IUserServic
 //            propagation = Propagation.NOT_SUPPORTED)
 //    @Transactional(rollbackFor = Exception.class,
 //            propagation = Propagation.REQUIRES_NEW)
-    @Transactional(rollbackFor = Exception.class,
-            propagation = Propagation.SUPPORTS)
+//    @Transactional(rollbackFor = Exception.class,
+//            propagation = Propagation.SUPPORTS)
     public void updateByAge(User user) {
         userDao.updateByAge(user);
 
