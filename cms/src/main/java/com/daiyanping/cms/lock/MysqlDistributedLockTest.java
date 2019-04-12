@@ -6,7 +6,9 @@ public class MysqlDistributedLockTest {
 
 	private static int count = 0;
 
-	private static Lock lock = new MysqlDistributedLock();
+//	private static Lock lock = new MysqlDistributedLockWithUptate();
+
+	private static Lock lock = new MysqlDistributedLockWithInster();
 
 	//发令枪，让多个线程一起等待，线程数满后，一起释放.这里等待一百线程，然后一起执行
 	private static CountDownLatch countDownLatch = new CountDownLatch(50);
@@ -44,7 +46,7 @@ public class MysqlDistributedLockTest {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			lock.unLock();
+			lock.unLock("test2");
 		}
 	}
 }

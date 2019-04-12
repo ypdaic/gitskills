@@ -3,13 +3,16 @@ package com.daiyanping.cms.lock;
 import com.daiyanping.cms.dao.MsqlLockDao;
 import org.apache.ibatis.session.SqlSession;
 
-public class MysqlDistributedLock extends AbstractDistributedLock implements Lock {
+/**
+ * 基于update方式实现mysql分布式锁
+ */
+public class MysqlDistributedLockWithUptate extends AbstractDistributedLock implements Lock {
 
 	@Override
 	protected boolean getTryLock(String lock) {
 		SqlSession sqlSession = MysqlLockThreadLocal.getSqlSession();
 		if (sqlSession == null) {
-			sqlSession = JDBCUtil.getSqlSession();
+			sqlSession = JDBCUtil.getSqlSessionWithMybatis();
 			MysqlLockThreadLocal.setSqlSession(sqlSession);
 		}
 		MsqlLockDao mapper = sqlSession.getMapper(MsqlLockDao.class);
@@ -31,7 +34,7 @@ public class MysqlDistributedLock extends AbstractDistributedLock implements Loc
 	}
 
 	@Override
-	public void unLock() {
+	public void unLock(String lock) {
 		SqlSession sqlSession = MysqlLockThreadLocal.getSqlSession();
 		JDBCUtil.colseSqlSessin(sqlSession);
 		MysqlLockThreadLocal.clean();
