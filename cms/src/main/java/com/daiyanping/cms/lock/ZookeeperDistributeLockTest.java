@@ -31,8 +31,6 @@ public class ZookeeperDistributeLockTest {
 			});
 
 			thread.start();
-
-
 		}
 	}
 
