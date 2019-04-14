@@ -1,5 +1,6 @@
 package com.daiyanping.cms.lock;
 
+import com.alibaba.druid.pool.DruidDataSource;
 import com.daiyanping.cms.dao.MsqlLockDao;
 import org.apache.ibatis.logging.nologging.NoLoggingImpl;
 import org.apache.ibatis.mapping.Environment;
@@ -15,16 +16,24 @@ import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
+import javax.xml.crypto.Data;
 
 public class JDBCUtil {
 
 	public static DataSource getDataSource() {
-		SimpleDriverDataSource simpleDriverDataSource = new SimpleDriverDataSource();
-		simpleDriverDataSource.setDriverClass(com.mysql.jdbc.Driver.class);
-		simpleDriverDataSource.setPassword("test1234");
-		simpleDriverDataSource.setUsername("root");
-		simpleDriverDataSource.setUrl("jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=UTF8&serverTimezone=UTC");
-		return simpleDriverDataSource;
+//		SimpleDriverDataSource simpleDriverDataSource = new SimpleDriverDataSource();
+//		simpleDriverDataSource.setDriverClass(com.mysql.jdbc.Driver.class);
+//		simpleDriverDataSource.setPassword("test1234");
+//		simpleDriverDataSource.setUsername("root");
+//		simpleDriverDataSource.setUrl("jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=UTF8&serverTimezone=UTC");
+//		return simpleDriverDataSource;
+		DruidDataSource druidDataSource = new DruidDataSource();
+		druidDataSource.setDriverClassName(com.mysql.jdbc.Driver.class.getName());
+		druidDataSource.setUsername("root");
+		druidDataSource.setPassword("test1234");
+		druidDataSource.setUrl("jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=UTF8&serverTimezone=UTC");
+		druidDataSource.setMaxActive(10);
+		return druidDataSource;
 	}
 
 	/**

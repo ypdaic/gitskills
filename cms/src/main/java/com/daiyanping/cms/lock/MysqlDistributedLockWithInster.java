@@ -9,20 +9,17 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 /**
  * @ClassName MysqlDistributedLockWithInster
- * @Description TODO
+ * @Description TODO 基于insert方式实现分布式锁
  * @Author daiyanping
  * @Date 2019-04-12
  * @Version 0.1
  */
 public class MysqlDistributedLockWithInster extends AbstractDistributedLock implements Lock {
 
+    private final SqlSession sqlSession = JDBCUtil.getSqlSessionWithMybatisSpring();
+
     @Override
     protected boolean getTryLock(String lock) {
-        SqlSession sqlSession = MysqlLockThreadLocal.getSqlSession();
-        if (sqlSession == null) {
-            sqlSession = JDBCUtil.getSqlSessionWithMybatis();
-            MysqlLockThreadLocal.setSqlSession(sqlSession);
-        }
         MsqlLockDao mapper = sqlSession.getMapper(MsqlLockDao.class);
         try {
             mapper.insertLock(lock);
@@ -44,15 +41,13 @@ public class MysqlDistributedLockWithInster extends AbstractDistributedLock impl
 
     @Override
     public void unLock(String lock) {
-        SqlSession sqlSession = MysqlLockThreadLocal.getSqlSession();
         MsqlLockDao mapper = sqlSession.getMapper(MsqlLockDao.class);
         try {
             mapper.deleteLock(lock);
         } catch (Exception e) {
 
         } finally {
-            JDBCUtil.colseSqlSessin(sqlSession);
-            MysqlLockThreadLocal.clean();
+
         }
     }
 }
