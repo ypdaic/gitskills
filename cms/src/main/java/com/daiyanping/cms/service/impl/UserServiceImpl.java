@@ -13,6 +13,9 @@ import org.mybatis.spring.support.SqlSessionDaoSupport;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +41,20 @@ public class UserServiceImpl extends SqlSessionDaoSupport implements IUserServic
         List<User> objects = sqlSession.selectList("com.daiyanping.cms.dao.UserDao.getAllUser");
         return objects;
     }
+
+    /**
+     * Spring Cache简介
+     * Spring3.1开始引入了的基于注释(annotation)的缓存(cache)技术，它本质上不是一个具体的缓存实现方案，而是一个对缓存使用的抽象，通过在既有代码中添加注解，即能够达到缓存方法的返回对象的效果。
+     *
+     * Spring 的缓存技术还具备相当的灵活性，不仅能够使用 SpEL 来定义缓存的 key 和各种 condition，还提供开箱即用的缓存临时存储方案，也支持和主流的专业缓存例如 Redis 集成。
+     * @param id
+     * @return
+     */
+    @Cacheable(cacheNames = "users", key = "#id")
+    public User getUserById(String id) {
+        return userDao.getUserById(id);
+    }
+
 
     /**
      * 父类属性注入

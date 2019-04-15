@@ -8,3 +8,8 @@
 #    driver-class-name: com.mysql.jdbc.Driver
 configuration-properties-test:
   name: 这是我的自定配置
+
+spring:
+  redis:
+    host: 127.0.0.1
+    port: 6379

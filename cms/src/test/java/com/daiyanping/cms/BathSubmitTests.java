@@ -33,7 +33,7 @@ public class BathSubmitTests {
 					try {
 						countDownLatch.countDown();
 						countDownLatch.await();
-						System.out.println("线程开始执行：" + count);
+//						System.out.println("线程开始执行：" + count);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}

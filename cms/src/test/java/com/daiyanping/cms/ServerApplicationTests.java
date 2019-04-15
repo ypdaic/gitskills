@@ -4,6 +4,7 @@ import com.daiyanping.cms.DB.DBAspect;
 import com.daiyanping.cms.dao.UserDao;
 import com.daiyanping.cms.entity.User;
 
+import com.daiyanping.cms.redis.RedisConfig;
 import com.daiyanping.cms.service.IUserService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -272,6 +273,17 @@ public class ServerApplicationTests {
 		user.setName("daiyanping87");
 		user.setAge(28);
 		userService.updateById(user);
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void test10() {
+		AnnotationConfigApplicationContext annotationConfigApplicationContext = new AnnotationConfigApplicationContext();
+		annotationConfigApplicationContext.register(RedisConfig.class);
+		annotationConfigApplicationContext.refresh();
+		annotationConfigApplicationContext.close();
 	}
 
 

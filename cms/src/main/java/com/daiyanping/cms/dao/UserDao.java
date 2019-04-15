@@ -23,4 +23,7 @@ public interface UserDao {
 
 	@Update("update user set name = #{dto.name} where  id= 2")
     void updateByAge(@Param("dto") User user);
+
+	@Select("select * from user where id=#{id}")
+    User getUserById(@Param("id") String id);
 }
