@@ -11,5 +11,5 @@ configuration-properties-test:
 
 spring:
   redis:
-    host: 127.0.0.1
+    host: 192.168.184.128
     port: 6379

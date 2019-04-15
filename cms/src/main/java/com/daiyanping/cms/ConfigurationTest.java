@@ -50,6 +50,11 @@ public class ConfigurationTest {
 
 			}
 
+			@Override
+			public User getUserById(String id) {
+				return null;
+			}
+
 			public void init() {
 				System.out.println("bean初始化之前调用");
 			}
@@ -86,6 +91,11 @@ public class ConfigurationTest {
 			@Override
 			public void updateByAge(User user) {
 
+			}
+
+			@Override
+			public User getUserById(String id) {
+				return null;
 			}
 
 			public void init() {

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.ContextConfiguration;
@@ -29,7 +30,10 @@ import java.util.concurrent.TimeUnit;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ContextConfiguration(classes = {RedisConfig.class, MybatisMapperScanTest.class})
+//开启自动配置，排除springjdbc自动配置
 @EnableAutoConfiguration(exclude = DataSourceAutoConfiguration.class)
+//开启缓存
+@EnableCaching
 public class RedisTests {
 
     @Autowired
@@ -56,24 +60,35 @@ public class RedisTests {
 
     }
 
-    public void test2() {
-        for (int i = 0; i < 1000; i++) {
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    countDownLatch.countDown();
-                    try {
-                        countDownLatch.await();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    User userById = userService.getUserById("1");
-                }
-            });
-
-            thread.start();
-
-        }
-    }
+//    /**
+//     * 使用缓存解决数据库压力，比如突发大量请求，如果都去请求数据库，就会将
+//     * 数据库搞挂掉，需要使用缓存解决该问题
+//     */
+//    @Test
+//    public void test2() {
+//        for (int i = 0; i < 1000; i++) {
+//            Thread thread = new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    countDownLatch.countDown();
+//                    try {
+//                        countDownLatch.await();
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                    User userById = userService.getUserById("1");
+//                }
+//            });
+//
+//            thread.start();
+//
+//        }
+//
+//        try {
+//            Thread.sleep(1000 * 60 * 5);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
 }
