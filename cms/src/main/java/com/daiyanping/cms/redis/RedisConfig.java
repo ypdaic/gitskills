@@ -1,5 +1,8 @@
 package com.daiyanping.cms.redis;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.cache.CacheProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -8,10 +11,7 @@ import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.cache.RedisCacheWriter;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.data.redis.serializer.*;
 
 import java.time.Duration;
 
@@ -23,6 +23,7 @@ import java.time.Duration;
  * @Version 0.1
  */
 @Configuration
+@EnableConfigurationProperties(CacheProperties.class)
 public class RedisConfig {
 
 
@@ -42,33 +43,51 @@ public class RedisConfig {
         // GenericJackson2JsonRedisSerializer可以自己定义ObjectMapper,并且序列化的对象中会带上类信息
 //        GenericJackson2JsonRedisSerializer jackson2JsonRedisSerializer = new GenericJackson2JsonRedisSerializer();
 
-        Jackson2JsonRedisSerializer jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(Object.class);
+
         // 设置值（value）的序列化采用JdkSerializationRedisSerializer
-        redisTemplate.setValueSerializer(jackson2JsonRedisSerializer);
+        redisTemplate.setValueSerializer(valueSerializer());
 //        redisTemplate.setHashValueSerializer(fastJsonRedisSerializer);
         // 设置键（key）的序列化采用StringRedisSerializer。
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setKeySerializer(keySerializer());
 
         // 设置Hash数据类型的key的序列化采用StringRedisSerializer。
-        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+        redisTemplate.setHashKeySerializer(keySerializer());
         redisTemplate.afterPropertiesSet();
 
         return redisTemplate;
     }
 
+    @Autowired
+    private CacheProperties cacheProperties;
+
     /**
-     * springboot 自动配置默认会配置RedisCacheManager，这里我们自定义一个
+     * springboot 自动配置默认会配置RedisCacheManager，但是默认使用JdkSerializationRedisSerializer进行序列化
+     * 不符合JSON场景，这就需要我们自定义配置
      * @param redisConnectionFactory
      * @return
      */
     @Bean
-    @Primary
     public RedisCacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
-        RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofSeconds(5)); // 设置缓存有效期
-        return RedisCacheManager
-                .builder(RedisCacheWriter.nonLockingRedisCacheWriter(redisConnectionFactory))
-                .cacheDefaults(redisCacheConfiguration).build();
+        RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
+                .entryTtl(cacheProperties.getRedis().getTimeToLive())
+                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(keySerializer()))
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(valueSerializer()))
+                .disableCachingNullValues();
+
+        RedisCacheManager redisCacheManager = RedisCacheManager.builder(redisConnectionFactory)
+                .cacheDefaults(config)
+                .transactionAware()
+                .build();
+
+        return redisCacheManager;
+    }
+
+    private RedisSerializer keySerializer() {
+        return new StringRedisSerializer();
+    }
+
+    private RedisSerializer valueSerializer() {
+        return new Jackson2JsonRedisSerializer(Object.class);
     }
 
 }

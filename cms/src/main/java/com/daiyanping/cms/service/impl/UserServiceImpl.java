@@ -50,9 +50,19 @@ public class UserServiceImpl extends SqlSessionDaoSupport implements IUserServic
      * @param id
      * @return
      */
-    @Cacheable(cacheNames = "users", key = "#id")
+    @Transactional
     public User getUserById(String id) {
-        return userDao.getUserById(id);
+        User userById = userDao.getUserById(id);
+        Object o = AopContext.currentProxy();
+        int a = 1/0;
+        return userById;
+    }
+
+    @Transactional
+    @Cacheable(cacheNames = "users", key = "#id")
+    public User getUser(String id) {
+        User userById = userDao.getUserById(id);
+        return userById;
     }
 
 

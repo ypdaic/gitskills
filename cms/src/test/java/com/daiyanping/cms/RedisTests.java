@@ -44,7 +44,8 @@ public class RedisTests {
     @Qualifier("service1")
     private UserServiceImpl userService;
 
-    private CountDownLatch countDownLatch = new CountDownLatch(1000);
+    private final int threadCount = 1;
+    private CountDownLatch countDownLatch = new CountDownLatch(threadCount);
 
     @Test
     public void test() {
@@ -60,13 +61,13 @@ public class RedisTests {
 
     }
 
-//    /**
-//     * 使用缓存解决数据库压力，比如突发大量请求，如果都去请求数据库，就会将
-//     * 数据库搞挂掉，需要使用缓存解决该问题
-//     */
-//    @Test
-//    public void test2() {
-//        for (int i = 0; i < 1000; i++) {
+    /**
+     * 使用缓存解决数据库压力，比如突发大量请求，如果都去请求数据库，就会将
+     * 数据库搞挂掉，需要使用缓存解决该问题
+     */
+    @Test
+    public void test2() {
+//        for (int i = 0; i < threadCount; i++) {
 //            Thread thread = new Thread(new Runnable() {
 //                @Override
 //                public void run() {
@@ -89,6 +90,6 @@ public class RedisTests {
 //        } catch (InterruptedException e) {
 //            e.printStackTrace();
 //        }
-//    }
-
+        User userById = userService.getUserById("1");
+    }
 }
