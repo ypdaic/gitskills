@@ -1,5 +1,8 @@
 package com.daiyanping.cms.redis;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.cache.CacheProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -87,7 +90,18 @@ public class RedisConfig {
     }
 
     private RedisSerializer valueSerializer() {
-        return new Jackson2JsonRedisSerializer(Object.class);
+        Jackson2JsonRedisSerializer jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(Object.class);
+        ObjectMapper objectMapper = new ObjectMapper();
+        //所有的属性都可以访问到（从private 到public)
+        objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+        //通过 objectMapper.enableDefaultTyping() 方法设置
+        //
+        //即使使用 Object.class 作为 jcom.fasterxml.jackson.databind.JavaType 也可以实现相应类型的序列化和反序列化
+        //
+        //好处：只定义一个序列化器就可以了（通用）
+        objectMapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+        jackson2JsonRedisSerializer.setObjectMapper(objectMapper);
+        return jackson2JsonRedisSerializer;
     }
 
 }
