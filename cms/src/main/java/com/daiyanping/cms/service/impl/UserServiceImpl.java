@@ -53,7 +53,7 @@ public class UserServiceImpl extends SqlSessionDaoSupport implements IUserServic
     @Transactional
     public User getUserById(String id) {
         User userById = userDao.getUserById(id);
-        Object o = AopContext.currentProxy();
+//        Object o = AopContext.currentProxy();
         int a = 1/0;
         return userById;
     }
@@ -80,6 +80,7 @@ public class UserServiceImpl extends SqlSessionDaoSupport implements IUserServic
      * @param user
      */
 //    @Transactional(rollbackFor = Exception.class)
+    @Transactional()
     public void updateById(User user) {
         userDao.updateById(user);
 

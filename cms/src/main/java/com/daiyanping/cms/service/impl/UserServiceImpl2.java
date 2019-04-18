@@ -44,4 +44,9 @@ public class UserServiceImpl2 implements IUserService {
     public void updateByAge(User user) {
         userDao.updateByAge(user);
     }
+
+    @Override
+    public User getUserById(String id) {
+        return null;
+    }
 }
