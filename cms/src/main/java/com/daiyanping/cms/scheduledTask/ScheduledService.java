@@ -34,9 +34,11 @@ public class ScheduledService {
     /**
      * 每天凌晨执行
      */
-    @Scheduled(cron = "1 0 0 * * ?")
+    @Scheduled(cron = "0 54 16 * * ?")
     public void initSessionOverview() {
+        System.out.println(Thread.currentThread().getName());
         Set keys = redisTemplate.keys(ScheduledService.SESSION_OVERVIEW.replace("%s", "*"));
+
         if (CollectionUtils.isNotEmpty(keys)) {
 
             redisTemplate.delete(keys);

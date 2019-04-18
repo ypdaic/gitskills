@@ -45,6 +45,7 @@ import java.util.concurrent.Executors;
 //开启自动配置，排除springjdbc自动配置
 @EnableAutoConfiguration(exclude = DataSourceAutoConfiguration.class)
 @EnableCaching
+@EnableScheduling
 public class ScheduledTaskTests {
 
     @Autowired

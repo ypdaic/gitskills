@@ -56,7 +56,6 @@ public class RedisConfig {
         // 设置Hash数据类型的key的序列化采用StringRedisSerializer。
         redisTemplate.setHashKeySerializer(keySerializer());
         redisTemplate.afterPropertiesSet();
-
         return redisTemplate;
     }
 

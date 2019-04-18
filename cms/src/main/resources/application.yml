@@ -17,3 +17,9 @@ spring:
     redis:
       #redis 缓存过期时间，1天
       time-to-live: 1d
+  task:
+    scheduling:
+      pool:
+        size: 5
+      thread-name-prefix: myscheduling-
+
