@@ -2,9 +2,11 @@ package com.daiyanping.cms.scheduledTask;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.daiyanping.cms.service.IUserService;
 import jdk.nashorn.internal.runtime.arrays.ArrayLikeIterator;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.redis.core.BoundValueOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -12,6 +14,7 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -29,6 +32,10 @@ public class ScheduledService {
     private RedisTemplate redisTemplate;
 
     public static  final String SESSION_OVERVIEW = "session_overview:%s";
+
+    @Autowired
+    @Qualifier("service1")
+    IUserService userService;
 
     /**
      * 每天凌晨执行
@@ -123,6 +130,15 @@ public class ScheduledService {
         overView.put("skillGroupsStatisticsToday", sessionOverviews);
 
         return overView;
+    }
+
+    /**
+     * 每天凌晨执行
+     */
+    @Scheduled(cron = "18 22 00 * * ?")
+    @Transactional(rollbackFor = Exception.class)
+    public void transactionManagementTest() {
+        userService.getAll();
     }
 
 }

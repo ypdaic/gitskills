@@ -175,4 +175,14 @@ public class ScheduledTaskTests {
 
         return calendar.getTimeInMillis();
     }
+
+    @Test
+    public void test6() {
+        scheduledService.transactionManagementTest();
+        try {
+            Thread.sleep(1000 * 60 * 5);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 }
