@@ -24,6 +24,7 @@ import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.context.event.SimpleApplicationEventMulticaster;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.test.context.ContextConfiguration;
@@ -53,6 +54,7 @@ import java.util.concurrent.Executors;
 @EnableCaching
 @EnableTransactionManagement
 @EnableScheduling
+@EnableAsync
 public class ScheduledTaskTests {
 
     @Autowired
@@ -81,7 +83,7 @@ public class ScheduledTaskTests {
         sessionOverview.setAllocatedSeatsCount(1);
         SessionOverviewEvent sessionOverviewEvent = new SessionOverviewEvent(this, sessionOverview);
         applicationContext.publishEvent(sessionOverviewEvent);
-        Thread.sleep(1000 * 60 * 5);
+//        Thread.sleep(1000 * 60 * 5);
     }
 
     @Test
@@ -178,7 +180,7 @@ public class ScheduledTaskTests {
 
     @Test
     public void test6() {
-        scheduledService.transactionManagementTest();
+//        scheduledService.transactionManagementTest();
         try {
             Thread.sleep(1000 * 60 * 5);
         } catch (InterruptedException e) {

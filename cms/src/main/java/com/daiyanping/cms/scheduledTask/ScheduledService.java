@@ -34,13 +34,12 @@ public class ScheduledService {
     public static  final String SESSION_OVERVIEW = "session_overview:%s";
 
     @Autowired
-    @Qualifier("service1")
     IUserService userService;
 
     /**
      * 每天凌晨执行
      */
-    @Scheduled(cron = "0 54 16 * * ?")
+//    @Scheduled(cron = "0 54 16 * * ?")
     public void initSessionOverview() {
         System.out.println(Thread.currentThread().getName());
         Set keys = redisTemplate.keys(ScheduledService.SESSION_OVERVIEW.replace("%s", "*"));
@@ -133,12 +132,16 @@ public class ScheduledService {
     }
 
     /**
-     * 每天凌晨执行
+     * 定时任务注解是支持其他注解的，比如使用了事务注解
+     * 定时任务在执行时，实际上使用的代理去执行的该方法，使用代理时就会去
+     * 检查方法上有没有拦截链，有的话就一个个去执行，这里有事务的拦截链，
+     * 所以一样支持事务
      */
-    @Scheduled(cron = "18 22 00 * * ?")
+    @Scheduled(cron = "00 02 22 * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void transactionManagementTest() {
         userService.getAll();
+        int a = 1/0;
     }
 
 }
