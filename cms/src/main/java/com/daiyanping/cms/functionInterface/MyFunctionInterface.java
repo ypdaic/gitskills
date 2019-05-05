@@ -20,4 +20,6 @@ public interface MyFunctionInterface<T> {
     class MyException extends RuntimeException {
 
     }
+
+    boolean equals(Object obj);
 }

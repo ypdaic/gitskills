@@ -9,6 +9,7 @@ import org.springframework.context.annotation.*;
 import org.springframework.core.annotation.Order;
 
 import java.util.List;
+import java.util.Map;
 
 @Configuration
 //在4.2之前只支持导入配置类
@@ -55,6 +56,16 @@ public class ConfigurationTest {
 				return null;
 			}
 
+			@Override
+			public List<Map<String, Object>> queryPage() {
+				return null;
+			}
+
+			@Override
+			public List<Map<String, Object>> queryPage(String id) {
+				return null;
+			}
+
 			public void init() {
 				System.out.println("bean初始化之前调用");
 			}
@@ -95,6 +106,16 @@ public class ConfigurationTest {
 
 			@Override
 			public User getUserById(String id) {
+				return null;
+			}
+
+			@Override
+			public List<Map<String, Object>> queryPage() {
+				return null;
+			}
+
+			@Override
+			public List<Map<String, Object>> queryPage(String id) {
 				return null;
 			}
 

@@ -52,7 +52,7 @@ import java.util.concurrent.Executors;
 @EnableAutoConfiguration(exclude = DataSourceAutoConfiguration.class)
 @EnableCaching
 @EnableTransactionManagement
-//@EnableScheduling
+@EnableScheduling
 public class ScheduledTaskTests {
 
     @Autowired

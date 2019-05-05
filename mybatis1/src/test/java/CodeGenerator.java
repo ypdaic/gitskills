@@ -12,6 +12,7 @@ import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 import com.baomidou.mybatisplus.generator.engine.VelocityTemplateEngine;
+import org.omg.CORBA.PRIVATE_MEMBER;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +27,23 @@ import java.util.Scanner;
  */
 public class CodeGenerator {
 
-    private final static String PROJECT_PATH = "/Users/daiyanping/git-clone-repository/gitskills/mybatis1";
+//    private final static String PROJECT_PATH = "/Users/daiyanping/git-clone-repository/gitskills/mybatis1";
+//
+//    private final static String MODULE_NAME = "test";
 
-    private final static String MODULE_NAME = "test";
+    private final static String PROJECT_PATH = "/Users/daiyanping/code/yyc-css";
+
+    private final static String MODULE_NAME = "report";
+
+    private final static String PARTENT_PATH = "com.sungo.server";
+
+    private final static String DATABASE_URL = "jdbc:mysql://192.168.0.12:3306/yyc_ccs_dev";
+
+    private final static String USERNAME = "root";
+
+    private final static String PASSWORD = "123456";
+
+    private final static String MAPPERXML_PATH = "/src/main/resources/sqlMapperXml/report";
 
     /**
      * <p>
@@ -85,7 +100,7 @@ public class CodeGenerator {
         // 模块名
         packageConfig.setModuleName(MODULE_NAME);
         // 自定义包路径
-        packageConfig.setParent("com.daiyanping.codegenerator");
+        packageConfig.setParent(PARTENT_PATH);
         // 这里是控制器包名，默认 web
         packageConfig.setController("controller");
         // 实体类 包名
@@ -108,9 +123,9 @@ public class CodeGenerator {
         dataSourceConfig.setDbType(DbType.MYSQL);
         dataSourceConfig.setDriverName("com.mysql.jdbc.Driver");
         //如果是MySQL新版本得加上时区，否则报错
-        dataSourceConfig.setUrl("jdbc:mysql://localhost:3306/test?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC");
-        dataSourceConfig.setUsername("root");
-        dataSourceConfig.setPassword("test1234");
+        dataSourceConfig.setUrl(DATABASE_URL + "?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC");
+        dataSourceConfig.setUsername(USERNAME);
+        dataSourceConfig.setPassword(PASSWORD);
         dataSourceConfig.setTypeConvert(new MySqlTypeConvert() {
             // 自定义数据库表字段类型转换【可选】
             @Override
@@ -149,7 +164,7 @@ public class CodeGenerator {
             @Override
             public String outputFile(TableInfo tableInfo) {
                 // 自定义输出文件名 ， 如果你 Entity 设置了前后缀、此处注意 xml 的名称会跟着发生变化！！
-                return PROJECT_PATH + "/src/main/resources/mappers/" + tableInfo.getEntityName() + "Mapper" + StringPool.DOT_XML;
+                return PROJECT_PATH + MAPPERXML_PATH + tableInfo.getEntityName() + "Mapper" + StringPool.DOT_XML;
             }
         });
 
@@ -199,11 +214,11 @@ public class CodeGenerator {
         // 需要生成的表的字段名的策略  此处为下滑线分隔 （具体给什么参数以数据库为准）
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
         // 需要生成的表的表名
-        strategy.setInclude(new String[]{"account"});
+        strategy.setInclude(new String[]{"account_status_log"});
         // 需要排除生成的表的表名
 //        strategy.setExclude(new String[]{"test"});
         // 设置实体类的父类 默认Model
-        strategy.setSuperEntityClass("com.baomidou.mybatisplus.extension.activerecord.Model");
+        strategy.setSuperEntityClass("com.sungo.server.common.base.SuperEntity");
         // 自定义 mapper 父类 默认BaseMapper
         strategy.setSuperMapperClass("com.baomidou.mybatisplus.core.mapper.BaseMapper");
         // 自定义 service 父类 默认IService
@@ -211,20 +226,20 @@ public class CodeGenerator {
         // 自定义 service 实现类父类 默认ServiceImpl
         strategy.setSuperServiceImplClass("com.baomidou.mybatisplus.extension.service.impl.ServiceImpl");
         // 自定义 controller 父类
-//        strategy.setSuperControllerClass("com.kichun."+packageName+".controller.AbstractController");
+        strategy.setSuperControllerClass("com.sungo.server.common.base.BaseController");
         // 【实体】是否生成字段常量（默认 false）
         // public static final String ID = "test_id";
         strategy.setEntityColumnConstant(false);
         // 【实体】是否为lombok模型（默认 false）<a href="https://projectlombok.org/">document</a>
-        strategy.setEntityLombokModel(false);
+        strategy.setEntityLombokModel(true);
         // 【实体】是否为构建者模型（默认 false）
         // public User setName(String name) {this.name = name; return this;}
-        strategy.setEntityBuilderModel(true);
+//        strategy.setEntityBuilderModel(true);
         // 添加restController 注解
         strategy.setRestControllerStyle(true);
 //        strategy.setSuperControllerClass("com.baomidou.ant.common.BaseController");
         // 自定义实体类的公共字段
-        strategy.setSuperEntityColumns("id");
+//        strategy.setSuperEntityColumns("id");
         // 驼峰转连字符
         strategy.setControllerMappingHyphenStyle(true);
         gen.setStrategy(strategy);

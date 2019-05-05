@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface UserDao {
@@ -26,4 +27,8 @@ public interface UserDao {
 
 	@Select("select * from user where id=#{id}")
     User getUserById(@Param("id") String id);
+
+	List<Map<String, Object>> queryPage();
+
+	List<Map<String, Object>> queryPage(String id);
 }

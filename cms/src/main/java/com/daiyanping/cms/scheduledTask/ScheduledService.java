@@ -23,7 +23,6 @@ import java.util.*;
  * @Version 0.1
  */
 @Service
-@EnableScheduling
 public class ScheduledService {
 
     @Autowired

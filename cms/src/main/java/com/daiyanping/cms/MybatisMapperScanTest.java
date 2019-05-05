@@ -10,6 +10,8 @@ import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.*;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -77,6 +79,7 @@ public class MybatisMapperScanTest {
     public SqlSessionFactoryBean getSqlSessionFactoryBean() throws Exception {
         SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
         sqlSessionFactoryBean.setDataSource(getDataSource());
+        sqlSessionFactoryBean.setMapperLocations(new Resource[] {new ClassPathResource("UserMapper.xml")});
         // 注入分页插件
         sqlSessionFactoryBean.setPlugins(new Interceptor[]{getInvocation()});
         sqlSessionFactoryBean.afterPropertiesSet();
