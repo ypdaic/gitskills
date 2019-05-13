@@ -2,6 +2,7 @@ package com.daiyanping.cms;
 
 import com.daiyanping.cms.entity.User;
 import com.daiyanping.cms.redis.RedisConfig;
+import com.daiyanping.cms.service.IUserService;
 import com.daiyanping.cms.service.impl.UserServiceImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,7 +43,7 @@ public class RedisTests {
     //@Qualifier注解用于存在多个相同类型的bean时，注入指定名称的bean
     @Autowired
     @Qualifier("service1")
-    private UserServiceImpl userService;
+    private IUserService userService;
 
     private final int threadCount = 1;
     private CountDownLatch countDownLatch = new CountDownLatch(threadCount);
@@ -90,6 +91,6 @@ public class RedisTests {
 //        } catch (InterruptedException e) {
 //            e.printStackTrace();
 //        }
-        User userById = userService.getUserById("1");
+        User userById = userService.getUser("1");
     }
 }

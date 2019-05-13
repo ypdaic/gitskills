@@ -49,4 +49,9 @@ public class UserServiceImpl2 implements IUserService {
     public User getUserById(String id) {
         return null;
     }
+
+    @Override
+    public User getUser(String id) {
+        return null;
+    }
 }

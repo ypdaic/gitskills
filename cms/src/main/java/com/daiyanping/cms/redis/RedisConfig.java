@@ -17,6 +17,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.*;
 
 import java.time.Duration;
+import java.util.LinkedHashSet;
+import java.util.List;
 
 /**
  * @ClassName RedisConfig
@@ -76,10 +78,19 @@ public class RedisConfig {
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(valueSerializer()))
                 .disableCachingNullValues();
 
-        RedisCacheManager redisCacheManager = RedisCacheManager.builder(redisConnectionFactory)
-                .cacheDefaults(config)
+        RedisCacheManager.RedisCacheManagerBuilder builder = RedisCacheManager.builder(redisConnectionFactory);
+        builder = builder.cacheDefaults(config);
+        //获取初始化缓存库名称
+        List<String> cacheNames = this.cacheProperties.getCacheNames();
+        if (!cacheNames.isEmpty()) {
+            builder.initialCacheNames(new LinkedHashSet<>(cacheNames));
+        }
+
+        RedisCacheManager redisCacheManager = builder
                 .transactionAware()
                 .build();
+        //初始化缓存库
+        redisCacheManager.afterPropertiesSet();
 
         return redisCacheManager;
     }

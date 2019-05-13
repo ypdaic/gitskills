@@ -25,4 +25,6 @@ public interface IUserService{
     void updateByAge(User user);
 
     User getUserById(String id);
+
+    User getUser(String id);
 }
