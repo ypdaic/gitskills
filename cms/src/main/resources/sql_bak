@@ -1,0 +1,140 @@
+<mapper>
+    <select id="queryPageForSeatsStatistics" resultType="java.util.HashMap">
+        select
+            account_id,
+            name,
+            seats_total,
+            effective_total,
+            seats_close_total,
+            user_close_total,
+            seats_timeout_total,
+            user_timeout_total,
+            session_out_total,
+            session_in_total,
+            leave_total,
+            sum_online_total + duration as online_total
+        from
+        (
+            select
+                ss.account_id,
+                min(a.name) as name,
+                count(distinct case when ss.status = 50 then ss.id end) as seats_total,
+                count(distinct case when ss.status = 50 and ss.finish_type != 4 and type = 30 then ss.id end) as effective_total,
+                count(distinct case when ss.status = 50 and ss.finish_type = 5 then ss.id end)  as seats_close_total,
+                count(distinct case when ss.status = 50 and ss.finish_type = 6 then ss.id end) as user_close_total,
+                count(distinct case when ss.status = 50 and ss.finish_type = 2 then ss.id end) as seats_timeout_total,
+                count(distinct case when ss.status = 50 and ss.finish_type = 3 then ss.id end) as user_timeout_total,
+                count(distinct case when ss.status = 50 and ss.finish_type = 7 then ss.id end) as session_out_total,
+                count(distinct case when ss.status = 50 and ss.finish_type != 4 and type = 30 and ss.last_session_id is not null then ss.id end) as session_in_total,
+                count(distinct case when ss.status = 40 and ss.finish_type = 13 then ss.id end) as leave_total,
+                ifnull (sum(asl.duration), 0) as sum_online_total,
+                if (max((case when asl.end_time is null then asl.beg_time end)) IS NOT NULL, TIMESTAMPDIFF(SECOND, max((case when asl.end_time is null then asl.beg_time end)), now()), 0) as duration
+            from
+            (
+                seats_session ss inner join account a on ss.account_id = a.id and a.enable != -1
+            )
+            left join account_status_log asl on asl.account_id = a.id and asl.work_status = 20
+            <if test="dto.begTime != null and dto.endTime != null">
+                and asl.beg_time <![CDATA[ >= ]]> #{dto.begTime} and asl.beg_time <![CDATA[ <= ]]> #{dto.endTime}
+            </if>
+            where ss.finished = 1
+            <if test="dto.accountIds != null and dto.accountIds.length > 0">
+                and a.id in
+                <foreach collection="dto.accountIds" open="(" separator="," close=")" index="index" item="item">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="dto.begTime != null and dto.endTime != null">
+                and ss.create_time <![CDATA[ >= ]]> #{dto.begTime} and ss.create_time <![CDATA[ <= ]]> #{dto.endTime}
+            </if>
+            group by ss.account_id
+            having seats_total > 0 or leave_total > 0
+        ) as sss
+    </select>
+
+    <select id="querySeatsMonitorForToday" resultType="java.util.HashMap">
+        select
+            id,
+            name,
+            work_status,
+            case work_status
+            when 0 then '离线'
+            when 1 then '会议'
+            when 10 then '小休'
+            when 20 then '在线'
+            else '其它'
+            end as real_work_status,
+            sum_active_total + duration as active_total,
+            seats_total,
+            effective_total,
+            leave_total,
+            account_status_total
+        from
+        (
+            select
+                a.id,
+                a.name,
+                a.`work_status`,
+                IFNULL ((select sum(duration) from account_status_log asg where a.id = asg.account_id and asg.beg_time <![CDATA[ >= ]]> #{dto.begTime} and asg.beg_time <![CDATA[ <= ]]> #{dto.endTime} and (asg.work_status = 1 or asg.work_status = 20)), 0) as sum_active_total,
+                IFNULL ((select TIMESTAMPDIFF(SECOND, asg.beg_time, now()) as duration from account_status_log asg where a.id = asg.account_id and asg.beg_time <![CDATA[ >= ]]> #{dto.begTime} and asg.beg_time <![CDATA[ <= ]]> #{dto.endTime} and (asg.work_status = 1 or asg.work_status = 20) and asg.end_time is null ORDER BY id desc limit 1), 0) as duration,
+                (select count(*) from seats_session ss where a.id = ss.account_id and ss.create_time <![CDATA[ >= ]]> #{dto.begTime} and ss.create_time <![CDATA[ <= ]]> #{dto.endTime} and ss.status = 50 and ss.finished = 1) as seats_total,
+                (select count(*) from seats_session ss where a.id = ss.account_id and ss.create_time <![CDATA[ >= ]]> #{dto.begTime} and ss.create_time <![CDATA[ <= ]]> #{dto.endTime} and ss.status = 50 and ss.finished = 1 and type = 30 and finish_type != 4) as effective_total,
+                (select count(*) from seats_session ss where a.id = ss.account_id and ss.create_time <![CDATA[ >= ]]> #{dto.begTime} and ss.create_time <![CDATA[ <= ]]> #{dto.endTime} and ss.status = 40) as leave_total,
+                (select count(*) from account_status_log asg where a.id = asg.account_id and asg.beg_time <![CDATA[ >= ]]> #{dto.begTime} and asg.beg_time <![CDATA[ <= ]]> #{dto.endTime} and (asg.work_status = 1 or asg.work_status = 20)) as account_status_total
+            from
+                account a
+            where a.enable != -1
+            <if test="dto.accountIds != null and dto.accountIds.length > 0">
+                and a.id in
+                <foreach collection="dto.accountIds" open="(" separator="," close=")" index="index" item="item">
+                    #{item}
+                </foreach>
+            </if>
+            having seats_total > 0 or leave_total > 0 or account_status_total > 0
+        )
+        as asm
+    </select>
+
+    <select id="queryPageForSatisfactionStatistics" resultType="java.util.HashMap">
+        select
+            account_id,
+            name,
+            effective_total,
+            invitation_total,
+            invitation_success_total,
+            join_invitation_total,
+            satisfied_total,
+            concat(convert(if ((satisfied_total/join_invitation_total*100) is null, 0, (satisfied_total/join_invitation_total*100)),decimal(4,2)),'%') as satisfied_rate,
+            normal_total,
+            not_satisfied_total,
+            concat(convert(if ((not_satisfied_total/join_invitation_total*100) is null, 0, (not_satisfied_total/join_invitation_total*100)),decimal(4,2)),'%') as not_satisfied_rate
+        from
+        (
+            select
+                ss.account_id,
+                min(a.name) as name,
+                count(*) as effective_total,
+                count(case when ss.evaluate_type = 1 or ss.evaluate_type = 2 then ss.id end ) as invitation_total,
+                count(case when ss.evaluate_type = 2 then ss.id end ) as invitation_success_total,
+                count(case when ss.satisfaction is not null then ss.id end ) as join_invitation_total,
+                count(case when ss.satisfaction_type = 'very_satisfied' then ss.id end ) as satisfied_total,
+                count(case when ss.satisfaction_type = 'normal' then ss.id end ) as normal_total,
+                count(case when ss.satisfaction_type = 'not_satisfied' then ss.id end ) as not_satisfied_total
+            from
+                seats_session ss inner join account a on ss.account_id = a.id and a.enable != -1
+            where ss.finished = 1 and ss.status = 50 and ss.finish_type != 4 and type = 30
+            <if test="dto.accountIds != null and dto.accountIds.length > 0">
+                and a.id in
+                <foreach collection="dto.accountIds" open="(" separator="," close=")" index="index" item="item">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="dto.begTime != null and dto.endTime != null">
+                and ss.create_time <![CDATA[ >= ]]> #{dto.begTime} and ss.create_time <![CDATA[ <= ]]> #{dto.endTime}
+            </if>
+            group by ss.account_id
+            having effective_total > 0
+        )
+        as st
+    </select>
+</mapper>

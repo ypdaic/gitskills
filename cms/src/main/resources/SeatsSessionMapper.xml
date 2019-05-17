@@ -1,0 +1,810 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sungo.server.css.mapper.SeatsSessionMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.sungo.server.css.entity.SeatsSession">
+    <result column="id" property="id" />
+        <result column="skill_groups_id" property="skillGroupsId" />
+        <result column="group_name" property="groupName" />
+        <result column="user_id" property="userId" />
+        <result column="user_name" property="userName" />
+        <result column="user_avatar" property="userAvatar" />
+        <result column="account_id" property="accountId" />
+        <result column="type" property="type" />
+        <result column="tags" property="tags" />
+        <result column="status" property="status" />
+        <result column="finished" property="finished" />
+        <result column="finish_reason" property="finishReason" />
+        <result column="message_num" property="messageNum" />
+        <result column="duration" property="duration" />
+        <result column="satisfaction" property="satisfaction" />
+        <result column="enable" property="enable" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="end_time" property="endTime" />
+        <result column="evaluate_time" property="evaluateTime" />
+        <result column="account_name" property="accountName" />
+        <result column="last_session_id" property="lastSessionId" />
+        <result column="finish_type" property="finishType" />
+        <result column="evaluate_type" property="evaluateType" />
+        <result column="satisfaction_type" property="satisfactionType" />
+    </resultMap>
+
+    <select id="queryCurrent" resultType="java.util.HashMap">
+        SELECT
+            s.id,
+            s.user_id AS userId,
+            s.group_name as groupName,
+            s.account_name as accountName,
+            s.user_avatar as userAvatar,
+            s.user_name AS userName,
+            s.client as client,
+            s.remark as remark,
+            s.skill_groups_id AS skillGroupsId,
+            s.tags,
+            s.create_time AS createTime,
+            s.update_time AS updateTime,
+            s.account_id AS accountId,
+            s.`type`,
+            s.`status`,
+            s.finished,
+            s.finish_reason as finishReason,
+            s.satisfaction,
+            (select sd.message from seats_session_detail sd where s.id = sd.seats_session_id and sd.create_time = (select max(ss.create_time) from seats_session_detail ss where ss.seats_session_id = s.id and ss.message is not null and sender != 'SYSTEM')) as lastNews,
+	        (select max(ss.create_time) from seats_session_detail ss where ss.seats_session_id = s.id and ss.sender = 'USER' and ss.message is not null) as lastUserCreateTime,
+	        (select max(ss.create_time) from seats_session_detail ss where ss.seats_session_id = s.id and ss.sender = 'SEATS' and ss.message is not null) as lastSeatsCreateTime
+        FROM
+            seats_session s
+        WHERE
+            s.account_id = #{accountId}
+            AND s.finished = 0
+            AND s.`status` = 50
+    </select>
+    
+    <select id="queryOffline" resultType="java.util.HashMap">
+        SELECT
+            s.id,
+            s.user_id AS userId,
+            s.group_name as groupName,
+            s.user_name AS userName,
+            s.user_avatar as userAvatar,
+            s.account_name as accountName,
+            s.client as client,
+            s.remark as remark,
+            s.skill_groups_id AS skillGroupsId,
+            s.tags,
+            s.create_time AS createTime,
+            s.update_time AS updateTime,
+            s.account_id AS accountId,
+            s.`type`,
+            s.`status`,
+            s.finished,
+            s.finish_reason as finishReason,
+            s.satisfaction,
+            sd.message as lastNews,
+            sd.create_time as messageCreateTime
+        FROM
+            seats_session s
+                left join
+            seats_session_detail sd
+                on s.id = sd.seats_session_id
+                and sd.create_time = (select max(ss.create_time) from seats_session_detail ss where ss.seats_session_id = s.id and message is not null)
+        WHERE
+            s.account_id = #{accountId}
+            AND s.finished = 0
+            AND s.`status` = 40
+            and exists (select sd.seats_session_id from seats_session_detail sd where sd.sender = 'user' and s.id = sd.seats_session_id  and sd.message is not null)
+    </select>
+
+    <select id="queryHistoryPage" resultType="java.util.HashMap">
+        SELECT
+            s.id,
+            s.user_id AS userId,
+            s.group_name as groupName,
+            s.user_name AS userName,
+            user_avatar as userAvatar,
+            s.account_name as accountName,
+            case s.client
+                when 1 then 'web'
+                when 2 then 'android'
+                when 3 then 'ios'
+                when 4 then '公众号'
+                else '其它'
+            end as client,
+            s.remark as remark,
+            s.skill_groups_id AS skillGroupsId,
+            s.tags,
+            DATE_FORMAT(s.create_time,   '%Y-%m-%d %H:%i:%S') AS createTime,
+            DATE_FORMAT(s.update_time,   '%Y-%m-%d %H:%i:%S') AS updateTime,
+            DATE_FORMAT(s.end_time,   '%Y-%m-%d %H:%i:%S') AS endTime,
+            s.account_id AS accountId,
+            s.type,
+            case s.`status`
+                when 0 then '初始'
+                when 10 then '机器人服务'
+                when 20 then '导航菜单'
+                when 30 then '排队放弃'
+                when 40 then '访客留言'
+                when 50 then '已分配坐席'
+                else '其它'
+            end as status,
+            s.finished,
+            s.finish_reason as finishReason,
+            s.satisfaction as satisfaction,
+            q.total_rating as totalRating
+        FROM
+            seats_session s left join seats_session_quality q ON s.id = q.seats_session_id
+        WHERE
+            s.finished = 1
+            <if test="accountId != null">
+                And s.account_id = #{accountId}
+            </if>
+            <if test="dto.status != null">
+                And s.`status` = #{dto.status}
+            </if>
+            <if test="dto.begDate != null">
+                And s.`create_time` <![CDATA[ >= ]]>  #{dto.begDate}
+            </if>
+            <if test="dto.endDate != null">
+                And s.`create_time` <![CDATA[ <= ]]>  #{dto.endDate}
+            </if>
+            <if test=" dto.userName != null and dto.userName != '' ">
+                And s.`user_name` like concat('%' , #{dto.userName}, '%')
+            </if>
+            <if test="dto.client != null and dto.client != ''">
+                And s.`client` = #{dto.client}
+            </if>
+            <if test="dto.skillGroupsId != null">
+                And s.`skill_groups_id` = #{dto.skillGroupsId}
+            </if>
+            <if test="dto.tags != null and dto.tags != ''">
+                And s.`tags` like concat('%' , #{dto.tags}, '%')
+            </if>
+            <if test="dto.remark != null and dto.remark != ''">
+                And s.`remark` like concat('%' , #{dto.remark}, '%')
+            </if>
+            <if test="dto.type != null">
+                And s.`type` = #{dto.type}
+            </if>
+            <if test="dto.satisfaction != null">
+                And s.`satisfaction` = #{dto.satisfaction}
+            </if>
+            <if test="dto.accounts != null">
+                and s.account_id IN
+                <foreach collection="dto.accounts" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="dto.sortTotalScore != null and dto.sortTotalScore == 'asc'">
+                order by q.total_rating asc, CONVERT( s.user_name USING gbk ) COLLATE gbk_chinese_ci ASC
+            </if>
+            <if test="dto.sortTotalScore != null and dto.sortTotalScore == 'desc'">
+                order by q.total_rating desc, CONVERT( s.user_name USING gbk ) COLLATE gbk_chinese_ci ASC
+            </if>
+            <if test="dto.sortTotalScore == null">
+                ORDER BY s.create_time desc, CONVERT( s.user_name USING gbk ) COLLATE gbk_chinese_ci ASC
+            </if>
+
+    </select>
+    <update id="allocateSeats">
+        update seats_session set account_id = #{accountId}, account_name = #{name} , type = 30, status = 50 where id = #{id} and finished = 0
+    </update>
+
+    <select id="queryPageForOverallStatistics" resultType="java.util.HashMap">
+        select
+            <if test="dto.queryDateType == 1">
+                DATE_FORMAT(ss.create_time,'%Y%m%d') day_time,
+            </if>
+            <if test="dto.queryDateType == 2">
+                DATE_FORMAT(ss.create_time,'%Y%m') day_time,
+            </if>
+            <if test="dto.queryDateType == 3">
+                DATE_FORMAT(ss.create_time,'%Y') day_time,
+            </if>
+            count(case when ((ss.status = 50 or ss.status = 30) and ss.finished = 1) or (ss.status = 40) then ss.id end) as session_total,
+            count(case when ss.status = 50 and ss.finished = 1 then ss.id end) as seats_total,
+            count(case when ss.status = 30 and ss.finished = 1 then ss.id end) as quit_total,
+            count(case when ss.status = 40 then ss.id end) as leave_total
+        from
+            seats_session ss
+        where 1=1
+            <if test="dto.begTime != null and dto.endTime != null">
+                and ss.create_time <![CDATA[ >= ]]> #{dto.begTime} and ss.create_time <![CDATA[ <= ]]> #{dto.endTime}
+            </if>
+            <if test="dto.queryDateType == 1 or dto.queryDateType == 2 or dto.queryDateType == 3">
+                group by day_time
+            </if>
+        <if test="dto.sortType != null">
+            <if test="dto.sortType == 1 and dto.sortRule != null">
+                <if test=" dto.sortRule == 'asc'">
+                    order by day_time asc
+                </if>
+                <if test=" dto.sortRule == 'desc'">
+                    order by day_time desc
+                </if>
+            </if>
+            <if test="dto.sortType == 2 and dto.sortRule != null">
+                <if test=" dto.sortRule == 'asc'">
+                    order by session_total asc
+                </if>
+                <if test=" dto.sortRule == 'desc'">
+                    order by session_total desc
+                </if>
+            </if>
+            <if test="dto.sortType == 5 and dto.sortRule != null">
+                <if test=" dto.sortRule == 'asc'">
+                    order by seats_total asc
+                </if>
+                <if test=" dto.sortRule == 'desc'">
+                    order by seats_total desc
+                </if>
+            </if>
+            <if test="dto.sortType == 6 and dto.sortRule != null">
+                <if test=" dto.sortRule == 'asc'">
+                    order by quit_total asc
+                </if>
+                <if test=" dto.sortRule == 'desc'">
+                    order by quit_total desc
+                </if>
+            </if>
+            <if test="dto.sortType == 7 and dto.sortRule != null">
+                <if test=" dto.sortRule == 'asc'">
+                    order by leave_total asc
+                </if>
+                <if test=" dto.sortRule == 'desc'">
+                    order by leave_total desc
+                </if>
+            </if>
+        </if>
+    </select>
+
+    <select id="queryPageForChannelStatistics" resultType="java.util.HashMap">
+        select
+            <if test="dto.queryDateType == 1">
+                DATE_FORMAT(ss.create_time,'%Y%m%d') day_time,
+            </if>
+            <if test="dto.queryDateType == 2">
+                DATE_FORMAT(ss.create_time,'%Y%m') day_time,
+            </if>
+            <if test="dto.queryDateType == 3">
+                DATE_FORMAT(ss.create_time,'%Y') day_time,
+            </if>
+            min(ss.client) as client,
+            count(case when ((ss.status = 50 or ss.status = 30) and ss.finished = 1) or (ss.status = 40) then ss.id end) as session_total,
+            count(case when ss.status = 50 and ss.finished = 1 then ss.id end) as seats_total,
+            count(case when ss.status = 30 and ss.finished = 1 then ss.id end) as quit_total,
+            count(case when ss.status = 40 then ss.id end) as leave_total
+        from
+            seats_session ss
+        where 1 = 1
+            <if test="dto.begTime != null and dto.endTime != null">
+                and ss.create_time <![CDATA[ >= ]]> #{dto.begTime} and ss.create_time <![CDATA[ <= ]]> #{dto.endTime}
+            </if>
+            group by ss.client
+            <if test="dto.queryDateType == 1 or dto.queryDateType == 2 or dto.queryDateType == 3">
+                 ,day_time
+                order by day_time asc
+            </if>
+    </select>
+
+    <select id="queryPageForChannelStatisticsChartData" resultType="java.util.HashMap">
+        select
+            <if test="dto.queryDateType == 1">
+                DATE_FORMAT(ss.create_time,'%Y%m%d') day_time,
+            </if>
+            <if test="dto.queryDateType == 2">
+                DATE_FORMAT(ss.create_time,'%Y%m') day_time,
+            </if>
+            <if test="dto.queryDateType == 3">
+                DATE_FORMAT(ss.create_time,'%Y') day_time,
+            </if>
+        count(case when client = 4 then id end) '公众号',
+        count(case when client = 2 then id end) Android,
+        count(case when client = 3 then id end) IOS
+        from
+            seats_session ss
+        where (((ss.status = 30 or ss.status = 50) and ss.finished = 1) or ss.status = 40)
+            <if test="dto.begTime != null and dto.endTime != null">
+                and ss.create_time <![CDATA[ >= ]]> #{dto.begTime} and ss.create_time <![CDATA[ <= ]]> #{dto.endTime}
+            </if>
+            <if test="dto.queryDateType == 1 or dto.queryDateType == 2 or dto.queryDateType == 3">
+                group by day_time
+                order by day_time asc
+            </if>
+    </select>
+
+    <select id="queryPageForChannelStatisticsList" resultType="java.util.HashMap">
+        select
+            min(ss.client) as client,
+            count(case when ((ss.status = 50 or ss.status = 30) and ss.finished = 1) or (ss.status = 40) then ss.id end) as session_total,
+            count(case when ss.status = 50 and ss.finished = 1 then ss.id end) as seats_total,
+            count(case when ss.status = 30 and ss.finished = 1 then ss.id end) as quit_total,
+            count(case when ss.status = 40 then ss.id end) as leave_total
+        from
+            seats_session ss
+        where 1 = 1
+        <if test="dto.begTime != null and dto.endTime != null">
+            and ss.create_time <![CDATA[ >= ]]> #{dto.begTime} and ss.create_time <![CDATA[ <= ]]> #{dto.endTime}
+        </if>
+        group by ss.client
+        <if test="dto.sortType != null">
+            <if test="dto.sortType == 2 and dto.sortRule != null">
+                <if test=" dto.sortRule == 'asc'">
+                    order by session_total asc
+                </if>
+                <if test=" dto.sortRule == 'desc'">
+                    order by session_total desc
+                </if>
+            </if>
+            <if test="dto.sortType == 5 and dto.sortRule != null">
+                <if test=" dto.sortRule == 'asc'">
+                    order by seats_total asc
+                </if>
+                <if test=" dto.sortRule == 'desc'">
+                    order by seats_total desc
+                </if>
+            </if>
+            <if test="dto.sortType == 6 and dto.sortRule != null">
+                <if test=" dto.sortRule == 'asc'">
+                    order by quit_total asc
+                </if>
+                <if test=" dto.sortRule == 'desc'">
+                    order by quit_total desc
+                </if>
+            </if>
+            <if test="dto.sortType == 7 and dto.sortRule != null">
+                <if test=" dto.sortRule == 'asc'">
+                    order by leave_total asc
+                </if>
+                <if test=" dto.sortRule == 'desc'">
+                    order by leave_total desc
+                </if>
+            </if>
+        </if>
+    </select>
+
+    <select id="queryPageForSeatsStatistics" resultType="java.util.HashMap">
+        select
+            account_id,
+            name,
+            seats_total,
+            effective_total,
+            seats_close_total,
+            user_close_total,
+            seats_timeout_total,
+            user_timeout_total,
+            session_out_total,
+            session_in_total,
+            leave_total,
+            sum_online_total + duration as online_total
+        from
+            (
+                select
+                    ss.account_id,
+                    min(a.name) as name,
+                    count(distinct case when ss.status = 50 then ss.id end) as seats_total,
+                    count(distinct case when ss.status = 50 and ss.finish_type != 4 and type = 30 then ss.id end) as effective_total,
+                    count(distinct case when ss.status = 50 and ss.finish_type = 5 then ss.id end)  as seats_close_total,
+                    count(distinct case when ss.status = 50 and ss.finish_type = 6 then ss.id end) as user_close_total,
+                    count(distinct case when ss.status = 50 and ss.finish_type = 2 then ss.id end) as seats_timeout_total,
+                    count(distinct case when ss.status = 50 and ss.finish_type = 3 then ss.id end) as user_timeout_total,
+                    count(distinct case when ss.status = 50 and ss.finish_type = 7 then ss.id end) as session_out_total,
+                    count(distinct case when ss.status = 50 and ss.finish_type != 4 and type = 30 and ss.last_session_id is not null then ss.id end) as session_in_total,
+                    count(distinct case when ss.status = 40 and ss.finish_type = 13 then ss.id end) as leave_total,
+                    ifnull (sum(asl.duration), 0) as sum_online_total,
+                    if (max((case when asl.end_time is null then asl.beg_time end)) IS NOT NULL, TIMESTAMPDIFF(SECOND, max((case when asl.end_time is null then asl.beg_time end)), now()), 0) as duration
+                from
+                    (
+                        seats_session ss inner join account a on ss.account_id = a.id and a.enable != -1
+                    )
+                    left join account_status_log asl on asl.account_id = a.id and asl.work_status = 20
+                <if test="dto.begTime != null and dto.endTime != null">
+                    and asl.beg_time <![CDATA[ >= ]]> #{dto.begTime} and asl.beg_time <![CDATA[ <= ]]> #{dto.endTime}
+                </if>
+                where ss.finished = 1
+                <if test="dto.accountIds != null and dto.accountIds.length > 0">
+                    and a.id in
+                    <foreach collection="dto.accountIds" open="(" separator="," close=")" index="index" item="item">
+                        #{item}
+                    </foreach>
+                </if>
+                <if test="dto.begTime != null and dto.endTime != null">
+                    and ss.create_time <![CDATA[ >= ]]> #{dto.begTime} and ss.create_time <![CDATA[ <= ]]> #{dto.endTime}
+                </if>
+                group by ss.account_id
+                having seats_total > 0 or leave_total > 0
+            ) as sss
+        <if test="dto.sortType != null">
+            <if test="dto.sortType == 5 and dto.sortRule != null">
+                <if test=" dto.sortRule == 'asc'">
+                    order by seats_total asc
+                </if>
+                <if test=" dto.sortRule == 'desc'">
+                    order by seats_total desc
+                </if>
+            </if>
+            <if test="dto.sortType == 17 and dto.sortRule != null">
+                <if test=" dto.sortRule == 'asc'">
+                    order by leave_total asc
+                </if>
+                <if test=" dto.sortRule == 'desc'">
+                    order by leave_total desc
+                </if>
+            </if>
+            <if test="dto.sortType == 8 and dto.sortRule != null">
+                <if test=" dto.sortRule == 'asc'">
+                    order by effective_total asc
+                </if>
+                <if test=" dto.sortRule == 'desc'">
+                    order by effective_total desc
+                </if>
+            </if>
+            <if test="dto.sortType == 11 and dto.sortRule != null">
+                <if test=" dto.sortRule == 'asc'">
+                    order by seats_close_total asc
+                </if>
+                <if test=" dto.sortRule == 'desc'">
+                    order by seats_close_total desc
+                </if>
+            </if>
+            <if test="dto.sortType == 12 and dto.sortRule != null">
+                <if test=" dto.sortRule == 'asc'">
+                    order by user_close_total asc
+                </if>
+                <if test=" dto.sortRule == 'desc'">
+                    order by user_close_total desc
+                </if>
+            </if>
+            <if test="dto.sortType == 13 and dto.sortRule != null">
+                <if test=" dto.sortRule == 'asc'">
+                    order by seats_timeout_total asc
+                </if>
+                <if test=" dto.sortRule == 'desc'">
+                    order by seats_timeout_total desc
+                </if>
+            </if>
+            <if test="dto.sortType == 14 and dto.sortRule != null">
+                <if test=" dto.sortRule == 'asc'">
+                    order by user_timeout_total asc
+                </if>
+                <if test=" dto.sortRule == 'desc'">
+                    order by user_timeout_total desc
+                </if>
+            </if>
+            <if test="dto.sortType == 15 and dto.sortRule != null">
+                <if test=" dto.sortRule == 'asc'">
+                    order by session_out_total asc
+                </if>
+                <if test=" dto.sortRule == 'desc'">
+                    order by session_out_total desc
+                </if>
+            </if>
+            <if test="dto.sortType == 16 and dto.sortRule != null">
+                <if test=" dto.sortRule == 'asc'">
+                    order by session_in_total asc
+                </if>
+                <if test=" dto.sortRule == 'desc'">
+                    order by session_in_total desc
+                </if>
+            </if>
+            <if test="dto.sortType == 18 and dto.sortRule != null">
+                <if test=" dto.sortRule == 'asc'">
+                    order by online_total asc
+                </if>
+                <if test=" dto.sortRule == 'desc'">
+                    order by online_total desc
+                </if>
+            </if>
+        </if>
+        <if test="dto.sortType == null">
+            order by seats_total desc
+        </if>
+
+    </select>
+
+    <select id="queryPageForSkillGroupsStatistics" resultType="java.util.HashMap">
+        select
+            group_name,
+            enable,
+            session_total,
+            concat(convert(seats_total/session_total*100,decimal(4,2)),'%') as pickup,
+            quit_total,
+            seats_total,
+            seats_close_total,
+            user_close_total,
+            seats_timeout_total,
+            user_timeout_total
+        from
+            (
+                select
+                    sg.group_name,
+                    sg.enable,
+                    count(case when ((ss.status = 50 or ss.status = 30) and ss.finished = 1) or (ss.status = 40) then ss.id end) as session_total,
+                    count(case when ss.status = 30 and ss.finished = 1 then ss.id end) as quit_total,
+                    count(case when ss.status = 50 and ss.finished = 1 then ss.id end) as seats_total,
+                    count(case when ss.status = 50 and ss.finished = 1 and ss.finish_type = 5 then ss.id end)  as seats_close_total,
+                    count(case when ss.status = 50 and ss.finished = 1 and ss.finish_type = 6 then ss.id end) as user_close_total,
+                    count(case when ss.status = 50 and ss.finished = 1 and ss.finish_type = 2 then ss.id end) as seats_timeout_total,
+                    count(case when ss.status = 50 and ss.finished = 1 and ss.finish_type = 3 then ss.id end) as user_timeout_total
+                from
+                    seats_session ss inner join skill_groups sg on ss.skill_groups_id = sg.id and sg.enable != -1
+                where 1 = 1
+                    <if test="dto.skillGroupsIds != null and dto.skillGroupsIds.length > 0">
+                        and sg.id in
+                        <foreach collection="dto.skillGroupsIds" open="(" separator="," close=")" index="index" item="item">
+                            #{item}
+                        </foreach>
+                    </if>
+                    <if test="dto.begTime != null and dto.endTime != null">
+                        and ss.create_time <![CDATA[ >= ]]> #{dto.begTime} and ss.create_time <![CDATA[ <= ]]> #{dto.endTime}
+                    </if>
+                group by ss.skill_groups_id
+                having session_total > 0
+            )
+        as st
+            <if test="dto.sortType != null">
+                <if test="dto.sortType == 2 and dto.sortRule != null">
+                    <if test=" dto.sortRule == 'asc'">
+                        order by session_total asc
+                    </if>
+                    <if test=" dto.sortRule == 'desc'">
+                        order by session_total desc
+                    </if>
+                </if>
+                <if test="dto.sortType == 10 and dto.sortRule != null">
+                    <if test=" dto.sortRule == 'asc'">
+                        order by pickup asc
+                    </if>
+                    <if test=" dto.sortRule == 'desc'">
+                        order by pickup desc
+                    </if>
+                </if>
+                <if test="dto.sortType == 6 and dto.sortRule != null">
+                    <if test=" dto.sortRule == 'asc'">
+                        order by quit_total asc
+                    </if>
+                    <if test=" dto.sortRule == 'desc'">
+                        order by quit_total desc
+                    </if>
+                </if>
+                <if test="dto.sortType == 5 and dto.sortRule != null">
+                    <if test=" dto.sortRule == 'asc'">
+                        order by seats_total asc
+                    </if>
+                    <if test=" dto.sortRule == 'desc'">
+                        order by seats_total desc
+                    </if>
+                </if>
+                <if test="dto.sortType == 11 and dto.sortRule != null">
+                    <if test=" dto.sortRule == 'asc'">
+                        order by seats_close_total asc
+                    </if>
+                    <if test=" dto.sortRule == 'desc'">
+                        order by seats_close_total desc
+                    </if>
+                </if>
+                <if test="dto.sortType == 12 and dto.sortRule != null">
+                    <if test=" dto.sortRule == 'asc'">
+                        order by user_close_total asc
+                    </if>
+                    <if test=" dto.sortRule == 'desc'">
+                        order by user_close_total desc
+                    </if>
+                </if>
+                <if test="dto.sortType == 13 and dto.sortRule != null">
+                    <if test=" dto.sortRule == 'asc'">
+                        order by seats_timeout_total asc
+                    </if>
+                    <if test=" dto.sortRule == 'desc'">
+                        order by seats_timeout_total desc
+                    </if>
+                </if>
+                <if test="dto.sortType == 14 and dto.sortRule != null">
+                    <if test=" dto.sortRule == 'asc'">
+                        order by user_timeout_total asc
+                    </if>
+                    <if test=" dto.sortRule == 'desc'">
+                        order by user_timeout_total desc
+                    </if>
+                </if>
+            </if>
+            <if test="dto.sortType == null">
+                order by enable desc, session_total desc, convert(group_name USING gbk ) collate gbk_chinese_ci asc
+            </if>
+
+    </select>
+
+    <select id="queryPageForSatisfactionStatistics" resultType="java.util.HashMap">
+        select
+            account_id,
+            name,
+            effective_total,
+            invitation_total,
+            invitation_success_total,
+            join_invitation_total,
+            satisfied_total,
+            concat(convert(if ((satisfied_total/join_invitation_total*100) is null, 0, (satisfied_total/join_invitation_total*100)),decimal(4,2)),'%') as satisfied_rate,
+            normal_total,
+            not_satisfied_total,
+            concat(convert(if ((not_satisfied_total/join_invitation_total*100) is null, 0, (not_satisfied_total/join_invitation_total*100)),decimal(4,2)),'%') as not_satisfied_rate
+            from
+            (
+                select
+                    ss.account_id,
+                    min(a.name) as name,
+                    count(*) as effective_total,
+                    count(case when ss.evaluate_type = 1 or ss.evaluate_type = 2 then ss.id end ) as invitation_total,
+                    count(case when ss.evaluate_type = 2 then ss.id end ) as invitation_success_total,
+                    count(case when ss.satisfaction is not null then ss.id end ) as join_invitation_total,
+                    count(case when ss.satisfaction_type = 'very_satisfied' then ss.id end ) as satisfied_total,
+                    count(case when ss.satisfaction_type = 'normal' then ss.id end ) as normal_total,
+                    count(case when ss.satisfaction_type = 'not_satisfied' then ss.id end ) as not_satisfied_total
+                from
+                    seats_session ss inner join account a on ss.account_id = a.id and a.enable != -1
+                where ss.finished = 1 and ss.status = 50 and ss.finish_type != 4 and type = 30
+                <if test="dto.accountIds != null and dto.accountIds.length > 0">
+                    and a.id in
+                    <foreach collection="dto.accountIds" open="(" separator="," close=")" index="index" item="item">
+                        #{item}
+                    </foreach>
+                </if>
+                <if test="dto.begTime != null and dto.endTime != null">
+                    and ss.create_time <![CDATA[ >= ]]> #{dto.begTime} and ss.create_time <![CDATA[ <= ]]> #{dto.endTime}
+                </if>
+                group by ss.account_id
+                having effective_total > 0
+            )
+        as st
+        <if test="dto.sortType != null">
+            <if test="dto.sortType == 8 and dto.sortRule != null">
+                <if test=" dto.sortRule == 'asc'">
+                    order by effective_total asc
+                </if>
+                <if test=" dto.sortRule == 'desc'">
+                    order by effective_total desc
+                </if>
+            </if>
+            <if test="dto.sortType == 19 and dto.sortRule != null">
+                <if test=" dto.sortRule == 'asc'">
+                    order by invitation_total asc
+                </if>
+                <if test=" dto.sortRule == 'desc'">
+                    order by invitation_total desc
+                </if>
+            </if>
+            <if test="dto.sortType == 20 and dto.sortRule != null">
+                <if test=" dto.sortRule == 'asc'">
+                    order by invitation_success_total asc
+                </if>
+                <if test=" dto.sortRule == 'desc'">
+                    order by invitation_success_total desc
+                </if>
+            </if>
+            <if test="dto.sortType == 21 and dto.sortRule != null">
+                <if test=" dto.sortRule == 'asc'">
+                    order by join_invitation_total asc
+                </if>
+                <if test=" dto.sortRule == 'desc'">
+                    order by join_invitation_total desc
+                </if>
+            </if>
+            <if test="dto.sortType == 22 and dto.sortRule != null">
+                <if test=" dto.sortRule == 'asc'">
+                    order by satisfied_total asc
+                </if>
+                <if test=" dto.sortRule == 'desc'">
+                    order by satisfied_total desc
+                </if>
+            </if>
+            <if test="dto.sortType == 23 and dto.sortRule != null">
+                <if test=" dto.sortRule == 'asc'">
+                    order by satisfied_rate asc
+                </if>
+                <if test=" dto.sortRule == 'desc'">
+                    order by satisfied_rate desc
+                </if>
+            </if>
+            <if test="dto.sortType == 24 and dto.sortRule != null">
+                <if test=" dto.sortRule == 'asc'">
+                    order by normal_total asc
+                </if>
+                <if test=" dto.sortRule == 'desc'">
+                    order by normal_total desc
+                </if>
+            </if>
+            <if test="dto.sortType == 25 and dto.sortRule != null">
+                <if test=" dto.sortRule == 'asc'">
+                    order by not_satisfied_total asc
+                </if>
+                <if test=" dto.sortRule == 'desc'">
+                    order by not_satisfied_total desc
+                </if>
+            </if>
+            <if test="dto.sortType == 26 and dto.sortRule != null">
+                <if test=" dto.sortRule == 'asc'">
+                    order by not_satisfied_rate asc
+                </if>
+                <if test=" dto.sortRule == 'desc'">
+                    order by not_satisfied_rate desc
+                </if>
+            </if>
+        </if>
+    </select>
+
+    <update id="finishSession">
+        update seats_session set
+        status = #{session.status},
+        finish_reason = #{session.finishReason} ,
+        finished = 1,
+        end_time = #{session.endTime},
+        update_time = #{session.updateTime},
+        duration = #{session.duration},
+        message_num = #{session.messageNum},
+        type = #{session.type},
+        finish_type = #{session.finishType}
+        where id = #{session.id} and finished = 0
+    </update>
+
+    <select id="queryTodayForSkillGroupsMonitor" resultType="java.util.HashMap">
+        select
+            min(sg.group_name) as group_name,
+            count(case when ((ss.status = 50 or ss.status = 30) and ss.finished = 1) or (ss.status = 40) then ss.id end) as session_total,
+            count(case when ss.status = 50 and ss.finished = 1 then ss.id end) as seats_total,
+            count(case when ss.status = 30 and ss.finished = 1 then ss.id end) as quit_total,
+            count(case when ss.status = 40 then ss.id end) as leave_total
+        from
+            seats_session ss inner join skill_groups sg on ss.skill_groups_id = sg.id and sg.enable != -1
+        where 1 = 1
+        <if test="dto.begTime != null and dto.endTime != null">
+            and ss.create_time <![CDATA[ >= ]]> #{dto.begTime} and ss.create_time <![CDATA[ <= ]]> #{dto.endTime}
+        </if>
+        group by ss.skill_groups_id
+        order by session_total desc
+    </select>
+
+    <select id="queryForSatisfactionStatistics" resultType="java.util.HashMap">
+        select
+            <if test="dto.queryDateType == 5">
+                DATE_FORMAT(ss.create_time,'%W') day_time,
+            </if>
+            <if test="dto.queryDateType == 6">
+                DATE_FORMAT(ss.create_time,'%Y%m%d') day_time,
+            </if>
+            <if test="dto.queryDateType == 7">
+                DATE_FORMAT(ss.create_time,'%Y%m') day_time,
+            </if>
+            count(*) as effective_total,
+            count(case when (ss.evaluate_type = 1 or ss.evaluate_type = 2) then ss.id end ) as invitation_total,
+            count(case when ss.satisfaction is not null then ss.id end ) as join_invitation_total,
+            count(case when ss.satisfaction_type = 'very_satisfied' then ss.id end ) as satisfied_total,
+            count(case when ss.satisfaction_type = 'normal' then ss.id end ) as normal_total,
+            count(case when ss.satisfaction_type = 'not_satisfied' then ss.id end ) as not_satisfied_total
+        from
+            seats_session ss
+        where ss.finished = 1 and ss.status = 50 and ss.finish_type != 4 and type = 30
+        <if test="dto.begTime != null and dto.endTime != null">
+            and ss.create_time <![CDATA[ >= ]]> #{dto.begTime} and ss.create_time <![CDATA[ <= ]]> #{dto.endTime}
+        </if>
+        group by day_time
+        order by day_time asc
+    </select>
+
+    <select id="queryForSessionTagsStatistics" resultType="java.util.HashMap">
+        select
+            count(case when ((ss.status = 50 or ss.status = 30) and ss.finished = 1) or (ss.status = 40) then ss.id end) as session_total,
+            count(case when ss.tags != '' then ss.id end ) as tags_total
+        from
+            seats_session ss
+        where 1 = 1
+        <if test="dto.begTime != null">
+            and ss.create_time <![CDATA[ >= ]]> #{dto.begTime}
+        </if>
+        <if test="dto.endTime != null">
+            and ss.create_time <![CDATA[ <= ]]> #{dto.endTime}
+        </if>
+
+    </select>
+
+
+</mapper>
