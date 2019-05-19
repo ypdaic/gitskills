@@ -29,6 +29,11 @@ import java.lang.reflect.Modifier;
 @Component
 public class DBAspect {
 
+    /**
+     * 如果类中的某个属性使用了ajc$开头，则在这个类上使用@Aspect注解时无效的
+     */
+//    private String ajc$Test = "";
+
     @Autowired
     private DBThreadLocal dbThreadLocal;
 
@@ -50,7 +55,7 @@ public class DBAspect {
 
     //    @Before("daoAspect()")
     @Before("execution(* com.daiyanping.cms.service.impl..*.*(..))")
-    public void before(JoinPoint joinPoint) {
+        public void before(JoinPoint joinPoint) {
         AopProxyContext.setAopProxy(joinPoint.getThis());
         //获取被代理对象 这里是ServiceImpl的实例
         Object target = joinPoint.getTarget();

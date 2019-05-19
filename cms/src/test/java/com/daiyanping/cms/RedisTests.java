@@ -18,6 +18,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -30,7 +31,8 @@ import java.util.concurrent.TimeUnit;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@ContextConfiguration(classes = {RedisConfig.class, MybatisMapperScanTest.class})
+//@ContextConfiguration(classes = {RedisConfig.class, MybatisMapperScanTest.class})
+@ContextConfiguration(classes = {MybatisMapperScanTest.class, RedisConfig.class})
 //开启自动配置，排除springjdbc自动配置
 @EnableAutoConfiguration(exclude = DataSourceAutoConfiguration.class)
 //开启缓存
@@ -38,7 +40,7 @@ import java.util.concurrent.TimeUnit;
 public class RedisTests {
 
     @Autowired
-    private RedisTemplate<String, List<User>> redisTemplate;
+    private RedisTemplate redisTemplate;
 
     //@Qualifier注解用于存在多个相同类型的bean时，注入指定名称的bean
     @Autowired
@@ -52,13 +54,23 @@ public class RedisTests {
     public void test() {
         List<User> users = userService.getAll();
         redisTemplate.boundValueOps("user").set(users, 10, TimeUnit.MINUTES);
-        List<User> list = redisTemplate.boundValueOps("user").get();
+        List<User> list = (List<User>) redisTemplate.boundValueOps("user").get();
         System.out.println(list);
 
         redisTemplate.boundListOps("user2").leftPush(users);
-        List<User> user2 = redisTemplate.boundListOps("user2").leftPop();
+        List<User> user2 = (List<User>) redisTemplate.boundListOps("user2").leftPop();
         redisTemplate.boundListOps("user2").leftPush(user2, users);
 //        System.out.println(user2);
+
+    }
+
+    @Test
+    public void test3() {
+//        Set<String> test = redisTemplate.keys("test");
+//        System.out.println(test);
+        Boolean delete = redisTemplate.delete("test");
+        System.out.println(delete);
+//        redisTemplate.boundValueOps("test:2").set("sssss");
 
     }
 

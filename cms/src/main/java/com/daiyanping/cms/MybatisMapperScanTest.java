@@ -36,9 +36,10 @@ import java.util.HashMap;
 @MapperScan("com.daiyanping.cms.dao")
 @ComponentScan({"com.daiyanping.cms.DB","com.daiyanping.cms.service"})
 // 开启注解支持,要想使用注解的拦截器，就必须开启
-@EnableAspectJAutoProxy
+
 // 开启事物支持
 @EnableTransactionManagement
+@EnableAspectJAutoProxy
 public class MybatisMapperScanTest {
 
     @Bean(name = "test1")
@@ -57,7 +58,7 @@ public class MybatisMapperScanTest {
         simpleDriverDataSource.setDriverClass(com.mysql.jdbc.Driver.class);
         simpleDriverDataSource.setPassword("test1234");
         simpleDriverDataSource.setUsername("root");
-        simpleDriverDataSource.setUrl("jdbc:mysql://localhost:3306/test2?useUnicode=true&characterEncoding=UTF8");
+        simpleDriverDataSource.setUrl("jdbc:mysql://localhost:3306/test2?useUnicode=true&characterEncoding=UTF8&serverTimezone=UTC");
         return simpleDriverDataSource;
     }
 

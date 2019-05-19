@@ -27,4 +27,8 @@ public interface IUserService{
     User getUserById(String id);
 
     User getUser(String id);
+
+    default void test(){};
+
+    static void test2(){};
 }
