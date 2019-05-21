@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.cache.CacheProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
@@ -29,6 +30,7 @@ import java.util.List;
  */
 @Configuration
 @EnableConfigurationProperties(CacheProperties.class)
+@ComponentScan("com.daiyanping.cms.redis")
 public class RedisConfig {
 
 
@@ -57,6 +59,11 @@ public class RedisConfig {
 
         // 设置Hash数据类型的key的序列化采用StringRedisSerializer。
         redisTemplate.setHashKeySerializer(keySerializer());
+        // 设置Hash数据类型的value的序列化采用jsonRedisSerializer。
+        redisTemplate.setHashValueSerializer(valueSerializer());
+        // RedisTemplate开启事物支持，将会以Redis的事物方式提交数据，并结合spring的事物管理，这个和CacheManager的事物是不一样的，CacheManager只依赖Spring的事物，数据的提交并不支持事物，
+        // 但基于Redis的缓存框架，基本上提交数据是单个命令，并不需要Redis事物的支持，RedisCacheManager使用DefaultRedisCacheWriter去操作Redis并不是使用RedisTemplate去操作Redis
+        redisTemplate.setEnableTransactionSupport(true);
         redisTemplate.afterPropertiesSet();
         return redisTemplate;
     }

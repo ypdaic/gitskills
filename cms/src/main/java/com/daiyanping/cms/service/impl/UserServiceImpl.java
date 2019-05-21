@@ -59,12 +59,12 @@ public class UserServiceImpl extends SqlSessionDaoSupport implements IUserServic
     }
 
     @Transactional
-    @Cacheable(cacheNames = "users", key = "#id")
+    @Cacheable(cacheNames = "users", key = "#id", sync = true)
     public User getUser(String id) {
         User userById = userDao.getUserById(id);
+//        int a = 1/0;
         return userById;
     }
-
 
     /**
      * 父类属性注入

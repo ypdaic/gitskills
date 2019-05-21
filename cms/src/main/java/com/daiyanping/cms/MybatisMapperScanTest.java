@@ -38,7 +38,7 @@ import java.util.HashMap;
 // 开启注解支持,要想使用注解的拦截器，就必须开启
 
 // 开启事物支持
-@EnableTransactionManagement
+@EnableTransactionManagement(order = 1)
 @EnableAspectJAutoProxy
 public class MybatisMapperScanTest {
 

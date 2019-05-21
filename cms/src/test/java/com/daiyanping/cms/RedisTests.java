@@ -2,6 +2,7 @@ package com.daiyanping.cms;
 
 import com.daiyanping.cms.entity.User;
 import com.daiyanping.cms.redis.RedisConfig;
+import com.daiyanping.cms.redis.RedisTemplateForTransactional;
 import com.daiyanping.cms.service.IUserService;
 import com.daiyanping.cms.service.impl.UserServiceImpl;
 import org.junit.Test;
@@ -12,10 +13,13 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.core.Ordered;
 import org.springframework.data.redis.core.BoundListOperations;
+import org.springframework.data.redis.core.BoundValueOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.List;
 import java.util.Set;
@@ -35,8 +39,10 @@ import java.util.concurrent.TimeUnit;
 @ContextConfiguration(classes = {MybatisMapperScanTest.class, RedisConfig.class})
 //开启自动配置，排除springjdbc自动配置
 @EnableAutoConfiguration(exclude = DataSourceAutoConfiguration.class)
-//开启缓存
-@EnableCaching
+//开启缓存 如果想要支持事物，缓存必须比事物后加载，这就是设置order，缓存的大于事物的order，这个order会用于后续advisors的排序，所以要想支持事物，缓存的调用链必须在事物的调用链中
+//否则事物都结束了，即使缓存开启了事物支持，也是无效的
+@EnableCaching(order = 2)
+@EnableTransactionManagement
 public class RedisTests {
 
     @Autowired
@@ -49,6 +55,9 @@ public class RedisTests {
 
     private final int threadCount = 1;
     private CountDownLatch countDownLatch = new CountDownLatch(threadCount);
+
+    @Autowired
+    RedisTemplateForTransactional redisTemplateForTransactional;
 
     @Test
     public void test() {
@@ -104,5 +113,15 @@ public class RedisTests {
 //            e.printStackTrace();
 //        }
         User userById = userService.getUser("1");
+    }
+
+    /**
+     * 测试RedisTemplate的事物功能
+     *
+     */
+    @Test
+    public void test4() {
+//        redisTemplateForTransactional.test();
+        redisTemplateForTransactional.test2();
     }
 }
