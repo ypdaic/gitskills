@@ -9,15 +9,15 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
-import org.springframework.data.redis.cache.RedisCacheWriter;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.*;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializationContext;
+import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import java.time.Duration;
 import java.util.LinkedHashSet;
 import java.util.List;
 
@@ -63,7 +63,7 @@ public class RedisConfig {
         redisTemplate.setHashValueSerializer(valueSerializer());
         // RedisTemplate开启事物支持，将会以Redis的事物方式提交数据，并结合spring的事物管理，这个和CacheManager的事物是不一样的，CacheManager只依赖Spring的事物，数据的提交并不支持事物，
         // 但基于Redis的缓存框架，基本上提交数据是单个命令，并不需要Redis事物的支持，RedisCacheManager使用DefaultRedisCacheWriter去操作Redis并不是使用RedisTemplate去操作Redis
-        redisTemplate.setEnableTransactionSupport(true);
+//        redisTemplate.setEnableTransactionSupport(true);
         redisTemplate.afterPropertiesSet();
         return redisTemplate;
     }
@@ -85,6 +85,9 @@ public class RedisConfig {
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(valueSerializer()))
                 .disableCachingNullValues();
 
+        // 查看使用builder(redisConnectionFactory)创建的DefaultRedisCacheWriter的代码发现DefaultRedisCacheWriter可以支持锁操作
+        // ，也就是同一个key是在多线程下同时只有一个线程能对该key进行操作，但该功能默认是关闭的，理由就是Redis本身是单线程的，不需要而外的
+        // 多线程保护
         RedisCacheManager.RedisCacheManagerBuilder builder = RedisCacheManager.builder(redisConnectionFactory);
         builder = builder.cacheDefaults(config);
         //获取初始化缓存库名称
@@ -102,11 +105,13 @@ public class RedisConfig {
         return redisCacheManager;
     }
 
-    private RedisSerializer keySerializer() {
+    @Bean
+    public RedisSerializer keySerializer() {
         return new StringRedisSerializer();
     }
 
-    private RedisSerializer valueSerializer() {
+    @Bean
+    public RedisSerializer valueSerializer() {
         Jackson2JsonRedisSerializer jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(Object.class);
         ObjectMapper objectMapper = new ObjectMapper();
         //所有的属性都可以访问到（从private 到public)

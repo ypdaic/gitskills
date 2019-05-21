@@ -14,9 +14,10 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.core.Ordered;
-import org.springframework.data.redis.core.BoundListOperations;
-import org.springframework.data.redis.core.BoundValueOperations;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.core.*;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -58,6 +59,9 @@ public class RedisTests {
 
     @Autowired
     RedisTemplateForTransactional redisTemplateForTransactional;
+
+    @Autowired
+    RedisSerializer keySerializer;
 
     @Test
     public void test() {
@@ -123,5 +127,65 @@ public class RedisTests {
     public void test4() {
 //        redisTemplateForTransactional.test();
         redisTemplateForTransactional.test2();
+    }
+
+    /**
+     * 测试RedisTemplate的executePipelined(管道)功能,返回每个命令的执行结果
+     * key,value 必须等序列化
+     * 管道模式并不能支持事物，
+     * 流水线用于发出命令而不立即请求响应，而是在结束时 虽然有点类似于MULTI，但流水线并不能保证原子性 - 它只是在发出大量命令时（例如在批处理场景中）尝试提高性能。
+     *
+     * 使用管道功能，事物是不起作用的，如果
+     *
+     */
+    @Test
+    public void test5() {
+        List list = redisTemplate.executePipelined(new RedisCallback<Object>() {
+            @Override
+            public Object doInRedis(RedisConnection connection) throws DataAccessException {
+                System.out.println(redisTemplate.getValueSerializer().serialize("sdfsfs"));
+                System.out.println("sdfsfs".getBytes());
+                connection.set("test_for_pipeline".getBytes(), redisTemplate.getValueSerializer().serialize("sdfsfs"));
+                connection.set("test_for_pipeline2:".getBytes(), "sdfsfs".getBytes());
+                return null;
+            }
+        });
+        System.out.println(list);
+    }
+
+    /**
+     * 测试RedisTemplate不使用spring的事物管理，且RedisTemplate不开启事物功能，只使用Redis的事物功能，使用RedisCallback方式
+     *
+     */
+    @Test
+    public void test6() {
+        redisTemplate.execute(new RedisCallback<Object>() {
+            @Override
+            public Object doInRedis(RedisConnection connection) throws DataAccessException {
+                connection.multi();
+                connection.set("test_for_pipeline".getBytes(), redisTemplate.getValueSerializer().serialize("sdfsfs"));
+                connection.set("test_for_pipeline2:".getBytes(), redisTemplate.getValueSerializer().serialize("少时诵诗书sss所"));
+                connection.exec();
+                return null;
+            }
+        });
+    }
+
+    /**
+     * 测试RedisTemplate不使用spring的事物管理，只使用Redis的事物功能，使用RedisCallback方式
+     *
+     */
+    @Test
+    public void test7() {
+        redisTemplate.execute(new SessionCallback() {
+
+            @Override
+            public Object execute(RedisOperations operations) throws DataAccessException {
+                operations.multi();
+                operations.boundValueOps("test_for_pipeline").set("sdfsffffssss");
+                operations.exec();
+                return null;
+            }
+        });
     }
 }
