@@ -17,11 +17,15 @@ import org.springframework.core.Ordered;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.*;
+import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.data.redis.support.collections.DefaultRedisSet;
+import org.springframework.data.redis.support.collections.DefaultRedisZSet;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
@@ -62,6 +66,9 @@ public class RedisTests {
 
     @Autowired
     RedisSerializer keySerializer;
+
+    @Autowired
+    RedisScript<Boolean> script;
 
     @Test
     public void test() {
@@ -212,6 +219,9 @@ public class RedisTests {
     /**
      * 测试RedisTemplate不使用spring的事物管理，且RedisTemplate不开启事物功能，只使用Redis的事物功能，使用RedisOperations方式
      * 这种模式是允许的，一个jedis在开启事物后，退出，jedis不允许这种情况出现，代码在BinaryJedis 764行
+     * 如果开启RedisTemplate事物功能，虽然可以正常执行，但这种存在内存泄漏问题，连接永远不会关闭(非连接池场景)，且不会从spring事物中释放，存在内存泄漏问题
+     *
+     * 这种操作时非法的
      */
     @Test
     public void test8() {
@@ -224,13 +234,51 @@ public class RedisTests {
     }
 
     /**
-     * 结合test6，test7，test8可以得出结论，在使用RedisTemplate时无论是使用execute(RedisCallback)方式，还是使用execute(SessionCallback)方式都是在同一个连接（客户端）上进行，不管是否开启了RedisTemplate事物开关
+     * 结合test4,test5,test6，test7，test8可以得出结论，在使用RedisTemplate时无论是使用execute(RedisCallback)方式，还是使用execute(SessionCallback)方式都是在同一个连接（客户端）上进行，不管是否开启了RedisTemplate事物开关
      * 如果是使用RedisOperations方式，RedisOperations的每个方法最后都是调用的execute(RedisCallback)，所以RedisOperations的每个方法都是在新的连接（客户端）上进行
-     * 这个是无法保证redis事物的（也不允许使用这种方式运行），也无法进行管道模式，想要使用事物就只能通过execute(SessionCallback)方式，或者开启Redistemplate的事物开关
-     * 以上都是基于jedis得出的结论
+     * 这个是无法保证redis事物的（也不允许使用这种方式运行），也无法进行管道模式，想要使用事物就只能通过execute(SessionCallback)方式，或者开启Redistemplate的事物开关并同时开启spring事物，否则会导致内存泄漏
+     *
      */
 
     /**
      * RedisConnectionFactory. getConvertPipelineAndTxResults的作用，转换管道，事物的执行结果，其实现JedisConnectionFactory，LettuceConnectionFactory默认为false
      */
+
+    /**
+     * RedisTemplate lua脚本支持，写一个检查并设置的方法
+     */
+    @Test
+    public void checkAndSet() {
+        ArrayList arrayList = new ArrayList();
+        arrayList.add("test");
+        Integer[] integers = {1, 2};
+        Object execute = redisTemplate.execute(script, arrayList, integers);
+        System.out.println(execute);
+    }
+
+    /**
+     * RedisTemplate
+     */
+    @Test
+    public void test9() {
+        DefaultRedisZSet<String> strings = new DefaultRedisZSet<String>("skill_groups_id:", redisTemplate);
+        strings.add("1", System.currentTimeMillis());
+        strings.add("2", System.currentTimeMillis());
+        /**
+         * 只能获取value
+         */
+        Set<String> strings1 = strings.rangeByScore(0, System.currentTimeMillis());
+        System.out.println(strings1);
+
+        /**
+         * 获取得分和value
+         */
+        Set<ZSetOperations.TypedTuple<String>> typedTuples = strings.rangeByScoreWithScores(0, System.currentTimeMillis());
+        typedTuples.forEach(typedTuple -> {
+            System.out.println(typedTuple.getScore());
+            System.out.println(typedTuple.getValue());
+        });
+
+        strings.remove("2");
+    }
 }

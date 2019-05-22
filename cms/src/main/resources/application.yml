@@ -11,10 +11,23 @@ configuration-properties-test:
 
 spring:
   redis:
+    jedis:
+      pool:
+        #最大连接数量
+        max-active: 20
+        #最大空闲数量
+        max-idle: 10
+        #最大等待时间
+        max-wait: 3000ms
+        #最小空闲数量
+        min-idle: 0
     host: 127.0.0.1
     port: 6379
+      #开启连接池，使用其默认配置
+
   cache:
     redis:
+
       #redis 缓存过期时间，1天
       time-to-live: 1d
   task:

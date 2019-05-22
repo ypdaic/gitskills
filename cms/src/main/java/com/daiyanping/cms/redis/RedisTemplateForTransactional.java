@@ -48,7 +48,8 @@ public class RedisTemplateForTransactional {
 
     /**
      * 验证不存在spring事物，仅开启RedisTemplate事物，手动使用Redis事物，看事物是否生效
-     * 验证发现RedisTemplate事物并没有生效
+     * 验证发现RedisTemplate事物可以正常生效，但这种写法是有问题的，最终连接没有关闭，也没有从
+     * spring 事物中释放掉导致内存泄漏
      */
     public void test3() {
         try {
