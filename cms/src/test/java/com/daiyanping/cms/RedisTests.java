@@ -126,7 +126,8 @@ public class RedisTests {
     @Test
     public void test4() {
 //        redisTemplateForTransactional.test();
-        redisTemplateForTransactional.test2();
+//        redisTemplateForTransactional.test2();
+        redisTemplateForTransactional.test3();
     }
 
     /**
@@ -135,7 +136,7 @@ public class RedisTests {
      * 管道模式并不能支持事物，
      * 流水线用于发出命令而不立即请求响应，而是在结束时 虽然有点类似于MULTI，但流水线并不能保证原子性 - 它只是在发出大量命令时（例如在批处理场景中）尝试提高性能。
      *
-     * 使用管道功能，事物是不起作用的，如果
+     * 管道就是一次性向Redis发送多个命令，然后redis一起执行
      *
      */
     @Test
@@ -154,7 +155,10 @@ public class RedisTests {
     }
 
     /**
-     * 测试RedisTemplate不使用spring的事物管理，且RedisTemplate不开启事物功能，只使用Redis的事物功能，使用RedisCallback方式
+     * 测试RedisTemplate不使用spring的事物管理，且RedisTemplate不开启事物功能，只使用Redis的事物功能，使用RedisCallback方式，
+     * 由于RedisCallback方式使用的是RedisConnectionUtils.getConnection获取连接，不是使用RedisConnectionUtils.bindConnection，RedisConnectionUtils.bindConnection
+     * 方式会将连接绑定到spring事物threadLocal中，但RedisCallback中的操作都是使用的同一个连接(客户端)，我们在同一个连接(客户端)上开启redis事物是ok的
+     *
      *
      */
     @Test
@@ -162,17 +166,27 @@ public class RedisTests {
         redisTemplate.execute(new RedisCallback<Object>() {
             @Override
             public Object doInRedis(RedisConnection connection) throws DataAccessException {
-                connection.multi();
-                connection.set("test_for_pipeline".getBytes(), redisTemplate.getValueSerializer().serialize("sdfsfs"));
-                connection.set("test_for_pipeline2:".getBytes(), redisTemplate.getValueSerializer().serialize("少时诵诗书sss所"));
-                connection.exec();
+                try {
+
+                    connection.multi();
+                    connection.set("test_for_pipeline".getBytes(), redisTemplate.getValueSerializer().serialize("sdfsfs"));
+                    int a = 1/0;
+                    connection.set("test_for_pipeline2:".getBytes(), redisTemplate.getValueSerializer().serialize("少时诵诗书ssssddddd所"));
+                    connection.exec();
+                } catch (Exception e) {
+                    connection.discard();
+                }
                 return null;
             }
         });
     }
 
     /**
-     * 测试RedisTemplate不使用spring的事物管理，只使用Redis的事物功能，使用RedisCallback方式
+     * 测试RedisTemplate不使用spring的事物管理，且RedisTemplate不开启事物功能，只使用Redis的事物功能，使用SessionCallback方式
+     * 在使用SessionCallback时，由于其使用的是RedisOperations，而不是RedisCallback的RedisConnection，我们的每个命令都是开启一个
+     * 新的连接去执行，但SessionCallback方式使用的是RedisConnectionUtils.bindConnection获取连接，不是使用RedisConnectionUtils.getConnection获取，
+     * 此时将连接绑定到spring事物threadLocal中后续获取新的连接都是同一个连接
+     *
      *
      */
     @Test
@@ -181,11 +195,42 @@ public class RedisTests {
 
             @Override
             public Object execute(RedisOperations operations) throws DataAccessException {
-                operations.multi();
-                operations.boundValueOps("test_for_pipeline").set("sdfsffffssss");
-                operations.exec();
+                try {
+                    operations.multi();
+                    operations.boundValueOps("test_for_pipeline").set("sdfsffffs少时诵诗书kksss");
+                    int a = 1/0;
+                    operations.boundValueOps("test_for_pipeline2").set("sdfsfffssssssfssssskkkk");
+                    operations.exec();
+                } catch (Exception e) {
+                    operations.discard();
+                }
                 return null;
             }
         });
     }
+
+    /**
+     * 测试RedisTemplate不使用spring的事物管理，且RedisTemplate不开启事物功能，只使用Redis的事物功能，使用RedisOperations方式
+     * 这种模式是允许的，一个jedis在开启事物后，退出，jedis不允许这种情况出现，代码在BinaryJedis 764行
+     */
+    @Test
+    public void test8() {
+        redisTemplate.multi();
+        BoundValueOperations test_for_pipeline = redisTemplate.boundValueOps("test_for_pipeline");
+        test_for_pipeline.set("sfsfsfsssssssss");
+        BoundValueOperations test_for_pipeline2 = redisTemplate.boundValueOps("test_for_pipeline2");
+        test_for_pipeline2.set("fdddddddddd");
+        redisTemplate.discard();
+    }
+
+    /**
+     * 结合test6，test7，test8可以得出结论，在使用RedisTemplate时无论是使用execute(RedisCallback)方式，还是使用execute(SessionCallback)方式都是在同一个连接（客户端）上进行，不管是否开启了RedisTemplate事物开关
+     * 如果是使用RedisOperations方式，RedisOperations的每个方法最后都是调用的execute(RedisCallback)，所以RedisOperations的每个方法都是在新的连接（客户端）上进行
+     * 这个是无法保证redis事物的（也不允许使用这种方式运行），也无法进行管道模式，想要使用事物就只能通过execute(SessionCallback)方式，或者开启Redistemplate的事物开关
+     * 以上都是基于jedis得出的结论
+     */
+
+    /**
+     * RedisConnectionFactory. getConvertPipelineAndTxResults的作用，转换管道，事物的执行结果，其实现JedisConnectionFactory，LettuceConnectionFactory默认为false
+     */
 }

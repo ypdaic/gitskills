@@ -46,5 +46,27 @@ public class RedisTemplateForTransactional {
         int a = 1/0;
     }
 
+    /**
+     * 验证不存在spring事物，仅开启RedisTemplate事物，手动使用Redis事物，看事物是否生效
+     * 验证发现RedisTemplate事物并没有生效
+     */
+    public void test3() {
+        try {
+
+            redisTemplate.multi();
+            BoundValueOperations test_for_transactional = redisTemplate.boundValueOps("test");
+            test_for_transactional.increment();
+            test_for_transactional.increment();
+            int a = 1/0;
+            test_for_transactional.increment();
+            test_for_transactional.increment();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            redisTemplate.discard();
+        }
+
+    }
+
 
 }
