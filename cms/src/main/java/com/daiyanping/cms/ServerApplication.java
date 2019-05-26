@@ -3,6 +3,7 @@ package com.daiyanping.cms;
 import com.daiyanping.cms.dao.UserDao;
 import com.daiyanping.cms.redis.RedisConfig;
 import com.daiyanping.cms.scheduledTask.ScheduledTaskConfig;
+import com.daiyanping.cms.springmvc.SpringMvcConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringBootConfiguration;
@@ -19,7 +20,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootConfiguration
 //开启自动配置，排除springjdbc自动配置
 @EnableAutoConfiguration(exclude = DataSourceAutoConfiguration.class)
-@ComponentScan(basePackageClasses = {ScheduledTaskConfig.class, RedisConfig.class})
+//@ComponentScan(basePackageClasses = {ScheduledTaskConfig.class, RedisConfig.class})
+@ComponentScan(basePackageClasses = {SpringMvcConfig.class})
 //@SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
 //开启缓存
 @EnableCaching

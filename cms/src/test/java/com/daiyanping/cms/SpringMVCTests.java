@@ -50,4 +50,13 @@ public class SpringMVCTests {
 				.andExpect(MockMvcResultMatchers.status().isOk());
 
 	}
+
+	@Test
+	public void test2() throws Exception {
+		mvc.perform(MockMvcRequestBuilders.post("/hello/say/error")
+				.contentType(MediaType.APPLICATION_JSON_UTF8)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.status().isOk());
+
+	}
 }
