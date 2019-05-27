@@ -179,14 +179,20 @@ public class RedisConfig {
     @Autowired
     private MessageListener myMessageListener;
 
+    /**
+     * redis 发布订阅
+     * @param redisConnectionFactory
+     * @param taskExecutor
+     * @return
+     */
     @Bean
     public RedisMessageListenerContainer redisMessageListenerContainer(RedisConnectionFactory redisConnectionFactory, ThreadPoolTaskExecutor taskExecutor) {
         RedisMessageListenerContainer redisMessageListenerContainer = new RedisMessageListenerContainer();
         redisMessageListenerContainer.setConnectionFactory(redisConnectionFactory);
         redisMessageListenerContainer.setTaskExecutor(taskExecutor);
-//        PatternTopic patternTopic = PatternTopic.of("channel");
-        ChannelTopic channel = ChannelTopic.of("channel");
-        redisMessageListenerContainer.addMessageListener(myMessageListener, channel);
+        PatternTopic patternTopic = PatternTopic.of("channel*");
+//        ChannelTopic channel = ChannelTopic.of("channel");
+        redisMessageListenerContainer.addMessageListener(myMessageListener, patternTopic);
         return redisMessageListenerContainer;
     }
 

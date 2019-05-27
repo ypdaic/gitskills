@@ -11,7 +11,7 @@ configuration-properties-test:
 
 spring:
   profiles:
-    active: dev
+    active: prod
 
   cache:
     redis:
@@ -22,9 +22,14 @@ spring:
       pool:
         size: 5
       thread-name-prefix: myscheduling-
+
   # spring 默认开启Redis的repositories支持，这个会默认开启一个RedisMessageListenerContainer，我们先关闭该功能
   data:
     redis:
       repositories:
         enabled: false
+
+
+#查看自动配置的加载情况
+debug: true
 
