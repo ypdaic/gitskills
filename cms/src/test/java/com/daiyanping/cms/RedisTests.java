@@ -264,6 +264,7 @@ public class RedisTests {
         DefaultRedisZSet<String> strings = new DefaultRedisZSet<String>("skill_groups_id:", redisTemplate);
         strings.add("1", System.currentTimeMillis());
         strings.add("2", System.currentTimeMillis());
+        strings.add("3", System.currentTimeMillis());
         /**
          * 只能获取value
          */

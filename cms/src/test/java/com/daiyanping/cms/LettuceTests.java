@@ -1,9 +1,13 @@
 package com.daiyanping.cms;
 
+import io.lettuce.core.ReadFrom;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.RedisFuture;
 import io.lettuce.core.RedisURI;
 import io.lettuce.core.api.async.RedisAsyncCommands;
+import io.lettuce.core.codec.Utf8StringCodec;
+import io.lettuce.core.masterslave.MasterSlave;
+import io.lettuce.core.masterslave.StatefulRedisMasterSlaveConnection;
 import io.lettuce.core.resource.ClientResources;
 import io.lettuce.core.resource.DefaultClientResources;
 import org.junit.Test;
@@ -39,6 +43,50 @@ public class LettuceTests {
             new Thread(new RedisSet()).start();
         }
         Thread.sleep(1000 * 10);
+    }
+
+    /**
+     * 在主从模式下，仅使用主机
+     * @throws InterruptedException
+     */
+    @Test
+    public void test2() throws InterruptedException {
+        RedisClient redisClient = RedisClient.create();
+
+        StatefulRedisMasterSlaveConnection<String, String> connection = MasterSlave.connect(redisClient, new Utf8StringCodec(),
+                redisUrl);
+        connection.setReadFrom(ReadFrom.MASTER_PREFERRED);
+
+        System.out.println("Connected to Redis");
+        RedisAsyncCommands<String, String> async = connection.async();
+        async.set("hello", "wordssss");
+        connection.close();
+        redisClient.shutdown();
+    }
+
+    /**
+     * 哨兵模式
+     * @throws InterruptedException
+     */
+    @Test
+    public void test3() throws InterruptedException {
+        RedisClient redisClient = RedisClient.create();
+
+        RedisURI.Builder mymaster = RedisURI.Builder.sentinel("127.0.0.1", 26379, "mymaster");
+        RedisURI build = mymaster.build();
+        StatefulRedisMasterSlaveConnection<String, String> connection = MasterSlave.connect(redisClient, new Utf8StringCodec(),
+                build);
+        connection.setReadFrom(ReadFrom.SLAVE_PREFERRED);
+
+        System.out.println("Connected to Redis");
+        RedisAsyncCommands<String, String> async = connection.async();
+        RedisFuture<String> hello = async.get("hello");
+        hello.thenAcceptAsync(action -> {
+            System.out.println(action);
+        });
+
+        connection.close();
+        redisClient.shutdown();
     }
 
     static class RedisSet implements Runnable{

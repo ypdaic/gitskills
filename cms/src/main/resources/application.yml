@@ -11,7 +11,7 @@ configuration-properties-test:
 
 spring:
   profiles:
-    active: prod
+    active: dev
 
   cache:
     redis:

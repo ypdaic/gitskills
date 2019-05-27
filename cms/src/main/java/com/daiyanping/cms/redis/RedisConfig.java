@@ -154,6 +154,7 @@ public class RedisConfig {
         return RedisScript.of("", Boolean.class);
     }
 
+    @Bean
     public LettuceClientConfigurationBuilderCustomizer builderCustomizers() {
         return new LettuceClientConfigurationBuilderCustomizer() {
 
