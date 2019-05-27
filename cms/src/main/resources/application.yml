@@ -12,6 +12,7 @@ configuration-properties-test:
 spring:
   profiles:
     active: prod
+
   cache:
     redis:
       #redis 缓存过期时间，1天

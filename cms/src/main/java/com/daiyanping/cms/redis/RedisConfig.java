@@ -3,8 +3,11 @@ package com.daiyanping.cms.redis;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.lettuce.core.ReadFrom;
+import io.lettuce.core.models.role.RedisNodeDescription;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.cache.CacheProperties;
+import org.springframework.boot.autoconfigure.data.redis.LettuceClientConfigurationBuilderCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -13,6 +16,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
@@ -25,6 +29,8 @@ import org.springframework.scripting.support.ResourceScriptSource;
 import java.io.IOException;
 import java.util.LinkedHashSet;
 import java.util.List;
+
+import static io.lettuce.core.ReadFrom.SLAVE_PREFERRED;
 
 /**
  * @ClassName RedisConfig
@@ -146,6 +152,20 @@ public class RedisConfig {
             e.printStackTrace();
         }
         return RedisScript.of("", Boolean.class);
+    }
+
+    public LettuceClientConfigurationBuilderCustomizer builderCustomizers() {
+        return new LettuceClientConfigurationBuilderCustomizer() {
+
+            /**
+             * 设置先访问从机，如果从机没有就读取主机
+             * @param clientConfigurationBuilder
+             */
+            @Override
+            public void customize(LettuceClientConfiguration.LettuceClientConfigurationBuilder clientConfigurationBuilder) {
+                clientConfigurationBuilder.readFrom(SLAVE_PREFERRED);
+            }
+        };
     }
 
 }
