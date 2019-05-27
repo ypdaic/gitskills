@@ -21,7 +21,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 //开启自动配置，排除springjdbc自动配置
 @EnableAutoConfiguration(exclude = DataSourceAutoConfiguration.class)
 //@ComponentScan(basePackageClasses = {ScheduledTaskConfig.class, RedisConfig.class})
-@ComponentScan(basePackageClasses = {SpringMvcConfig.class})
+@ComponentScan(basePackageClasses = {RedisConfig.class})
+//@ComponentScan(basePackageClasses = {SpringMvcConfig.class})
 //@SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
 //开启缓存
 @EnableCaching

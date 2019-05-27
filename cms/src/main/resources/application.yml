@@ -22,4 +22,9 @@ spring:
       pool:
         size: 5
       thread-name-prefix: myscheduling-
+  # spring 默认开启Redis的repositories支持，这个会默认开启一个RedisMessageListenerContainer，我们先关闭该功能
+  data:
+    redis:
+      repositories:
+        enabled: false
 

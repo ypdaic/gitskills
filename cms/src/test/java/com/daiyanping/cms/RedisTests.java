@@ -21,6 +21,7 @@ import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.support.collections.DefaultRedisSet;
 import org.springframework.data.redis.support.collections.DefaultRedisZSet;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -46,8 +47,9 @@ import java.util.concurrent.TimeUnit;
 @EnableAutoConfiguration(exclude = DataSourceAutoConfiguration.class)
 //开启缓存 如果想要支持事物，缓存必须比事物后加载，这就是设置order，缓存的大于事物的order，这个order会用于后续advisors的排序，所以要想支持事物，缓存的调用链必须在事物的调用链中
 //否则事物都结束了，即使缓存开启了事物支持，也是无效的
-@EnableCaching(order = 2)
+//@EnableCaching(order = 2)
 @EnableTransactionManagement
+@EnableAsync
 public class RedisTests {
 
     @Autowired
@@ -281,5 +283,13 @@ public class RedisTests {
         });
 
         strings.remove("2");
+    }
+
+    /**
+     * RedisTemplate
+     */
+    @Test
+    public void test10() {
+        redisTemplate.convertAndSend("message_channel", "this is a message");
     }
 }
