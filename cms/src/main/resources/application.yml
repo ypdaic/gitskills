@@ -8,10 +8,11 @@
 #    driver-class-name: com.mysql.jdbc.Driver
 configuration-properties-test:
   name: 这是我的自定配置
-
+server:
+  port: 8080
 spring:
   profiles:
-    active: prod
+    active: dev
 
   cache:
     redis:

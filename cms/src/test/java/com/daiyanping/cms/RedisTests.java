@@ -286,10 +286,10 @@ public class RedisTests {
     }
 
     /**
-     * RedisTemplate
+     * redis 发布订阅，在哨兵模式下，如果是redis自身的客户端，必须是连到master的客户端才能publish
      */
     @Test
     public void test10() {
-        redisTemplate.convertAndSend("message_channel", "this is a message");
+        redisTemplate.convertAndSend("channel.sd", "this is a message dddd");
     }
 }
