@@ -72,6 +72,8 @@ public class RedisTests {
     @Autowired
     RedisScript<Boolean> script;
 
+    private final String LOCK = "~lock";
+
     @Test
     public void test() {
         List<User> users = userService.getAll();
@@ -291,5 +293,19 @@ public class RedisTests {
     @Test
     public void test10() {
         redisTemplate.convertAndSend("channel.sd", "this is a message dddd");
+    }
+
+    private boolean getLock(String key, Long value) {
+        ValueOperations valueOperations = redisTemplate.opsForValue();
+        Boolean success = valueOperations.setIfAbsent(key + LOCK, value);
+        return success;
+    }
+
+    private void unLock(String key, Long value) {
+        ArrayList arrayList = new ArrayList();
+        arrayList.add(key);
+        Long[] values = {value};
+        Object execute = redisTemplate.execute(script, arrayList, values);
+        System.out.println(execute);
     }
 }
