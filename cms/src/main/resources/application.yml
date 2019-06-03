@@ -9,7 +9,7 @@
 configuration-properties-test:
   name: 这是我的自定配置
 server:
-  port: 8080
+  port: 8081
 spring:
   profiles:
     active: dev
@@ -29,6 +29,12 @@ spring:
     redis:
       repositories:
         enabled: false
+  jta:
+    enabled: true
+  transaction:
+    defaultTimeout: 5
+    rollbackOnCommitFailure: true
+
 
 
 #查看自动配置的加载情况

@@ -1,6 +1,8 @@
 package com.daiyanping.cms;
 
 import com.daiyanping.cms.async.AsyncConfig;
+import com.daiyanping.cms.dao.UserDao;
+import com.daiyanping.cms.entity.User;
 import com.daiyanping.cms.service.IUserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,6 +15,9 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import java.util.List;
 
 //@RunWith,@SpringBootTest,@ContextConfiguration这三个注解，测试springboot项目需要用到
 @RunWith(SpringRunner.class)
@@ -30,8 +35,27 @@ public class TransactionTests {
 	@Qualifier("service1")
 	private IUserService userService;
 
+	@Autowired
+    TransactionTemplate transactionTemplate;
+
+	@Autowired
+	UserDao userDao;
+
 	@Test
 	public void test() {
 		userService.getAll();
+	}
+
+	/**
+	 * 不使用@Transaction 注解的情况下，我们可以使用transactionTemplate进行事物处理
+	 */
+	@Test
+	public void test2() {
+		Object result = transactionTemplate.execute(status -> {
+			List<User> allUser = userDao.getAllUser();
+			return allUser;
+		});
+
+		System.out.println(result);
 	}
 }
