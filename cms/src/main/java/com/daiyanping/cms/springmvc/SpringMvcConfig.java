@@ -20,7 +20,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 /**
  * 导入xml形式的spring.xml文件
  */
-@ImportResource("other.xml")
+//@ImportResource("other.xml")
 public class SpringMvcConfig implements WebMvcConfigurer {
 
 	/**
