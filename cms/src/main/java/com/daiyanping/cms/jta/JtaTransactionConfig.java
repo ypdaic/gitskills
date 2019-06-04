@@ -17,6 +17,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.jta.JtaTransactionManager;
 import org.springframework.transaction.support.AbstractPlatformTransactionManager;
 
 import javax.sql.DataSource;
@@ -74,6 +75,8 @@ public class JtaTransactionConfig {
         dp.put("user","root");
         dp.put("password","test1234");
         dataSource.setDriverProperties(dp);
+        // 不能设置为false，否则必须自己提交资源
+//        dataSource.setAutomaticEnlistingEnabled(false);
         dataSource.init();
         return dataSource;
     }
@@ -167,7 +170,8 @@ public class JtaTransactionConfig {
 
         @Override
         public void customize(AbstractPlatformTransactionManager transactionManager) {
-            transactionManager.setTransactionSynchronization(0);
+            JtaTransactionManager transactionManager1 = (JtaTransactionManager) transactionManager;
+            transactionManager1.setAllowCustomIsolationLevels(true);
         }
     }
 
