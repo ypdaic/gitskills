@@ -1,0 +1,72 @@
+启动docker(liunx): service docker start
+
+查看镜像：docker images
+
+查看已经存在的容器：docker ps -a
+
+查看运行的容器：docker ps
+
+停止运行的容器：docker stop 容器id
+
+启动已停止的容器：docker start 容器id
+
+通过镜像启动容器：docker run -p 8080:80 -d 镜像名称
+
+容器删除：docker rm 容器id （确保容器已经停止）
+
+镜像删除：docker rmi 镜像id （确保由该镜像产生的容器已经删除）
+
+通过已存在的dockerfile文件制作镜像：docker build -t myimages . -f springbootdockerfile  (-t  指定镜像名称 -f 指定dockerfile名称 前面的.表示dockerfile的路径)
+
+将本地文件拷贝到docker容器中：docker cp hello.sh df://opt （df 表示容器id，//opt 表示目录）
+
+保存容器的修改：docker commit -m "保存修改" df mofify_nginx （保存容器的修改会生成新的镜像，df 表示容器id，后面跟的是新镜像的名称）
+
+创建dockerfile : dockerfile 语法
+命令     用途
+FROM     base image
+RUN      执行命令
+ADD      添加文件，带解压功能 （本地文件或远程文件）
+COPY     拷贝文件
+CMD      执行文件
+EXPOSE   暴露端口
+WORKDIR  指定路径
+MAINTAINER  维护者
+ENV       设置环境变量
+ENTRYPOINT  容器入口  (与cmd差不多，如果指定了ENTRYPOINT和CMD 则CMD指定的是ENTRYPOINT的参数)
+USER      指定用户
+VOLUME    mount ponit
+
+查看容器日志：docker logs -f 容器id
+
+进入到容器：docker exec -it 容器id bash
+
+设置容器运行的环境变量：使用-e 环境变量名=值  例：docker run -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 -d mysql  这里用来指定mysql的root密码，设置哪些环境变量由镜像提供
+
+运行mysql这样的容器时，会创建默认的数据卷，删除容器后，必须我们自己手动删除，也可以在启动时带上 --rm 参数，表示容器删除时自动删除数据卷
+
+可以在没有任何容器的前提下创建数据卷
+
+创建实名数据卷
+docker volume create my-vol
+
+创建匿名卷
+docker volume create
+
+查看数据卷列表
+docker volume ls
+
+查看具体的数据卷
+docker volume inspect my-vol
+
+删除数据卷
+
+docker volume rm my-vol
+
+从容器内部连接mysql
+docker exec -it mysql1 mysql -uroot -p123456
+
+
+
+
+
