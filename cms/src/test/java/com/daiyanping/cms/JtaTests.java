@@ -56,16 +56,27 @@ public class JtaTests {
     }
 
     /**
-     * 验证动态数据源的使用
+     *
      */
     @Test
     public void test2() {
         User user = new User();
-        user.setAge(20);
+        user.setAge(70);
         user.setId(1);
-        user.setName("jta");
-        userService.updateById(user);
-
+        user.setName("jta9");
+        Thread thread1 = new Thread(() -> {
+            userService.updateById(user);
+        });
+        Thread thread2 = new Thread(() -> {
+            userService.updateByName(user);
+    });
+        thread1.start();
+        thread2.start();
+        try {
+            Thread.sleep(1000 * 10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
     }
 

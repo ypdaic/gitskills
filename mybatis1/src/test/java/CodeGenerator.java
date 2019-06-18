@@ -31,19 +31,19 @@ public class CodeGenerator {
 //
 //    private final static String MODULE_NAME = "test";
 
-    private final static String PROJECT_PATH = "/Users/daiyanping/code/yyc-css";
+    private final static String PROJECT_PATH = "/Users/daiyanping/code/yyc-rss";
 
-    private final static String MODULE_NAME = "report";
+    private final static String MODULE_NAME = "smzy";
 
-    private final static String PARTENT_PATH = "com.sungo.server";
+    private final static String PARTENT_PATH = "com.sungo.report.server";
 
-    private final static String DATABASE_URL = "jdbc:mysql://192.168.0.12:3306/yyc_ccs_dev";
+    private final static String DATABASE_URL = "jdbc:mysql://192.168.0.12:3306/papv2_smzy";
 
     private final static String USERNAME = "root";
 
     private final static String PASSWORD = "123456";
 
-    private final static String MAPPERXML_PATH = "/src/main/resources/sqlMapperXml/report";
+    private final static String MAPPERXML_PATH = "/src/main/resources/sqlMapperXml/smzy/";
 
     /**
      * <p>
@@ -214,11 +214,11 @@ public class CodeGenerator {
         // 需要生成的表的字段名的策略  此处为下滑线分隔 （具体给什么参数以数据库为准）
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
         // 需要生成的表的表名
-        strategy.setInclude(new String[]{"tag_record"});
+        strategy.setInclude(new String[]{"patient"});
         // 需要排除生成的表的表名
 //        strategy.setExclude(new String[]{"test"});
         // 设置实体类的父类 默认Model
-        strategy.setSuperEntityClass("com.sungo.server.common.base.SuperEntity");
+        strategy.setSuperEntityClass("com.sungo.report.server.common.base.SuperEntity");
         // 自定义 mapper 父类 默认BaseMapper
         strategy.setSuperMapperClass("com.baomidou.mybatisplus.core.mapper.BaseMapper");
         // 自定义 service 父类 默认IService
@@ -226,7 +226,7 @@ public class CodeGenerator {
         // 自定义 service 实现类父类 默认ServiceImpl
         strategy.setSuperServiceImplClass("com.baomidou.mybatisplus.extension.service.impl.ServiceImpl");
         // 自定义 controller 父类
-        strategy.setSuperControllerClass("com.sungo.server.common.base.BaseController");
+        strategy.setSuperControllerClass("com.sungo.report.server.common.base.BaseController");
         // 【实体】是否生成字段常量（默认 false）
         // public static final String ID = "test_id";
         strategy.setEntityColumnConstant(false);
