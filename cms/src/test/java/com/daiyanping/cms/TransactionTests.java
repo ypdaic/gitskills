@@ -1,6 +1,9 @@
 package com.daiyanping.cms;
 
+import com.daiyanping.cms.DB.DB;
+import com.daiyanping.cms.DB.DBTypeEnum;
 import com.daiyanping.cms.async.AsyncConfig;
+import com.daiyanping.cms.config.ApplicationContextProvider;
 import com.daiyanping.cms.dao.UserDao;
 import com.daiyanping.cms.entity.User;
 import com.daiyanping.cms.service.IUserService;
@@ -17,7 +20,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 //@RunWith,@SpringBootTest,@ContextConfiguration这三个注解，测试springboot项目需要用到
 @RunWith(SpringRunner.class)
@@ -57,5 +63,19 @@ public class TransactionTests {
 		});
 
 		System.out.println(result);
+	}
+
+	@Test
+	public void test3() {
+		Map<String, Object> beansWithAnnotation = ApplicationContextProvider.getApplicationContext().getBeansWithAnnotation(DB.class);
+		beansWithAnnotation.forEach((key, value) -> {
+			IUserService userService = (IUserService) value;
+			Class<? extends IUserService> aClass = userService.getClass();
+			DB annotation = aClass.getAnnotation(DB.class);
+			DBTypeEnum db = annotation.DB();
+			System.out.println(db.getDbName());
+			userService.getUserById("1");
+		});
+
 	}
 }

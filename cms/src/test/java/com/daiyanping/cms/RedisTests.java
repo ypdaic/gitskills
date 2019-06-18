@@ -274,6 +274,14 @@ public class RedisTests {
          */
         Set<String> strings1 = strings.rangeByScore(0, System.currentTimeMillis());
         System.out.println(strings1);
+        Set<ZSetOperations.TypedTuple<String>> typedTuples1 = strings.rangeWithScores(1, 1);
+        typedTuples1.forEach(typedTuples -> {
+            Double score = typedTuples.getScore();
+            String value = typedTuples.getValue();
+            System.out.println(score);
+            System.out.println(value);
+        });
+
 
         /**
          * 获取得分和value

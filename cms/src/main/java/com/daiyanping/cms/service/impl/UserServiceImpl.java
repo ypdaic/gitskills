@@ -54,7 +54,7 @@ public class UserServiceImpl extends SqlSessionDaoSupport implements IUserServic
     public User getUserById(String id) {
         User userById = userDao.getUserById(id);
 //        Object o = AopContext.currentProxy();
-//        int a = 1/0;
+        int a = 1/0;
         return userById;
     }
 
@@ -101,7 +101,7 @@ public class UserServiceImpl extends SqlSessionDaoSupport implements IUserServic
     @DB(DB = DBTypeEnum.TEST2)
     public void updateByName(User user) {
         userDao.updateByName(user);
-//        int a = 1/0;
+        int a = 1/0;
     }
 
     /**
