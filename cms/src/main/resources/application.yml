@@ -35,8 +35,16 @@ spring:
     defaultTimeout: 1000
     rollbackOnCommitFailure: true
 
+  mail:
+    username: 841943896@qq.com
+    password: uinilqpqenjrbeic
+    host: smtp.qq.com
+    port: 587
+
+
 
 
 #查看自动配置的加载情况
 #debug: true
+
 
