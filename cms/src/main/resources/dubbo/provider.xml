@@ -4,7 +4,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://dubbo.apache.org/schema/dubbo http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
     <dubbo:application name="demo-provider"/>
-    <!--group 表示将服务放在一组中，消费方也必须在同一个组才能拿到服务-->
+    <!--group 当一个接口有多种实现时，可以用 group 区分。-->
     <dubbo:registry group="aaa" address="zookeeper://127.0.0.1:2181"/>
     <dubbo:protocol name="dubbo" port="20890"/>
     <bean id="providerService" class="com.daiyanping.cms.dubbo.provider.impl.ProviderServiceImpl"/>

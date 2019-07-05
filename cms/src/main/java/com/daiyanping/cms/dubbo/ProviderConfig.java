@@ -1,15 +1,10 @@
 package com.daiyanping.cms.dubbo;
 
-import com.alibaba.dubbo.config.ApplicationConfig;
-import com.alibaba.dubbo.config.ProtocolConfig;
-import com.alibaba.dubbo.config.RegistryConfig;
-import com.alibaba.dubbo.config.ServiceConfig;
-import com.alibaba.dubbo.config.spring.context.annotation.EnableDubbo;
-import com.daiyanping.cms.dubbo.provider.ProviderService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.*;
-
-import javax.annotation.PostConstruct;
+import org.apache.dubbo.config.spring.context.annotation.EnableDubbo;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportResource;
+import org.springframework.context.annotation.PropertySource;
 
 /**
  * @ClassName ProviderConfig
