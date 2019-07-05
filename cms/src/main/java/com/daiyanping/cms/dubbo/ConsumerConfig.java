@@ -1,10 +1,7 @@
 package com.daiyanping.cms.dubbo;
 
-import com.alibaba.dubbo.config.ApplicationConfig;
-import com.alibaba.dubbo.config.ReferenceConfig;
-import com.alibaba.dubbo.config.RegistryConfig;
-import com.alibaba.dubbo.config.spring.context.annotation.EnableDubbo;
 import com.daiyanping.cms.dubbo.provider.ProviderService;
+import org.apache.dubbo.config.spring.context.annotation.EnableDubbo;
 import org.springframework.context.annotation.*;
 
 

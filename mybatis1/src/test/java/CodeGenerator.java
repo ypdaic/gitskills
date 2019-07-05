@@ -31,9 +31,9 @@ public class CodeGenerator {
 //
 //    private final static String MODULE_NAME = "test";
 
-    private final static String PROJECT_PATH = "/Users/daiyanping/code/yyc-rss";
+    private final static String PROJECT_PATH = "/Users/daiyanping/code/yyc-rss-backup/yyc-rss";
 
-    private final static String MODULE_NAME = "smzy";
+    private final static String MODULE_NAME = "total";
 
     private final static String PARTENT_PATH = "com.sungo.report.server";
 
@@ -43,7 +43,7 @@ public class CodeGenerator {
 
     private final static String PASSWORD = "123456";
 
-    private final static String MAPPERXML_PATH = "/src/main/resources/sqlMapperXml/smzy/";
+    private final static String MAPPERXML_PATH = "/src/main/resources/sqlMapperXml/total/";
 
     /**
      * <p>
@@ -214,7 +214,7 @@ public class CodeGenerator {
         // 需要生成的表的字段名的策略  此处为下滑线分隔 （具体给什么参数以数据库为准）
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
         // 需要生成的表的表名
-        strategy.setInclude(new String[]{"patient"});
+        strategy.setInclude(new String[]{"hospital"});
         // 需要排除生成的表的表名
 //        strategy.setExclude(new String[]{"test"});
         // 设置实体类的父类 默认Model

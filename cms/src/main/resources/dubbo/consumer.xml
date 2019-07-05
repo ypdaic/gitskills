@@ -5,5 +5,7 @@
        http://dubbo.apache.org/schema/dubbo http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
     <dubbo:application name="demo-consumer"/>
     <dubbo:registry group="aaa" address="zookeeper://127.0.0.1:2181"/>
-    <dubbo:reference id="providerService" check="true" interface="com.daiyanping.cms.dubbo.provider.ProviderService"/>
+    <dubbo:reference id="providerService" check="true" interface="com.daiyanping.cms.dubbo.provider.ProviderService">
+        <dubbo:method name="sayHello" async="true" />
+    </dubbo:reference>
 </beans>
