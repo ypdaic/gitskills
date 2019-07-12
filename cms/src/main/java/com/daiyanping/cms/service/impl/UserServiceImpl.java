@@ -80,7 +80,7 @@ public class UserServiceImpl extends SqlSessionDaoSupport implements IUserServic
      * @param user
      */
 //    @Transactional(rollbackFor = Exception.class)
-    @Transactional()
+    @Transactional(rollbackFor = Exception.class)
     public void updateById(User user) {
         userDao.updateById(user);
 

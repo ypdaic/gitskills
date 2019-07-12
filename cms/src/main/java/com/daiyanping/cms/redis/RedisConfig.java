@@ -34,8 +34,11 @@ import org.springframework.scripting.ScriptSource;
 import org.springframework.scripting.support.ResourceScriptSource;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 
 import static io.lettuce.core.ReadFrom.SLAVE_PREFERRED;
 
@@ -113,6 +116,13 @@ public class RedisConfig {
         if (!cacheNames.isEmpty()) {
             builder.initialCacheNames(new LinkedHashSet<>(cacheNames));
         }
+
+        // 对每个缓存空间应用不同的配置
+        Map<String, RedisCacheConfiguration> configMap = new HashMap<>();
+        configMap.put("timeGroup", config);
+        configMap.put("user", config.entryTtl(Duration.ofSeconds(120)));
+
+        builder.withInitialCacheConfigurations(configMap);
 
         RedisCacheManager redisCacheManager = builder
                 .transactionAware()
