@@ -35,4 +35,44 @@ public class RabbitTests {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void test2() {
+        rabbitProducer.fanoutSend();
+        try {
+            Thread.sleep(1000 * 60);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void test3() {
+        rabbitProducer.topicTopic1Send();
+        try {
+            Thread.sleep(1000 * 60);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void test4() {
+        rabbitProducer.topicTopic2Send();
+        try {
+            Thread.sleep(1000 * 60);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void test5() {
+        rabbitProducer.topicTopic3Send();
+        try {
+            Thread.sleep(1000 * 60);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 }
