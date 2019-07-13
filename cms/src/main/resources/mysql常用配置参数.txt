@@ -1,0 +1,11 @@
+log-bin = /var/lib/mysql/mysql-bin #设置二进制日志文件路径，用于搭建主从模式时，主机上的配置
+
+server-id=1  #主从配置时，唯一id
+
+binlog-do-db = cmdb  #master上需要同步的数据库
+
+binlog-ignore-db = test #master上不需要同步的数据库（每个数据库分别配置）
+
+innodb-file-per-table = ON  #独立表空间，8.0默认开启
+
+relay_log=edu-mysql-relay-bin  #配置中继日志（作为slave时使用）

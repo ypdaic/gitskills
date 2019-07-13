@@ -1,0 +1,1 @@
+在选择Launch method时，如果没有Launch slave agents on Unix machines via SSH选项，需要安装SSH Slaves plugin插件，若没有Keychains and Provisioning Profiles Management选项，需要安装kpp-management-plugin插件

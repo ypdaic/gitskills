@@ -44,7 +44,7 @@ public class MybatisTests {
         annotationConfigApplicationContext.register(MybatisMapperScanTest.class);
         annotationConfigApplicationContext.refresh();
         MyRunable bean = (MyRunable) annotationConfigApplicationContext.getBean(MyRunable.class);
-        new Thread(bean).start();
+        bean.run();
         try {
             Thread.sleep(1000  * 60);
         } catch (InterruptedException e) {
