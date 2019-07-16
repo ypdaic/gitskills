@@ -42,9 +42,11 @@ public class BioClient {
             socket.connect(inetSocketAddress);
 //            ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream()) ;
             ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream()) ;
-            outputStream.write(new String("hello bio").getBytes());
             ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream()) ;
-
+            outputStream.writeUTF("hello bio");
+//            使用write,read 函数读写时，数据都是先写到缓存区，而不是直接写到网络上，等到一定的数据积压
+//            才会将缓冲区的数据写往网络，而这是TCP协议控制的，必须我们收到调用flush函数将数据刷到网络上
+            outputStream.flush();
 //            String s = inputStream.readUTF();
 //            System.out.println("收到服务器的回应" + s);
 //

@@ -49,14 +49,16 @@ public class BioServer {
             while (true) {
                 // 接受客户端的链接，阻塞在这里
                 Socket accept = serverSocket.accept();
-                System.out.println("服务器收到客户端的数据");
                 ObjectInputStream inputStream = new ObjectInputStream(accept.getInputStream()) ;
                 ObjectOutputStream outputStream = new ObjectOutputStream(accept.getOutputStream()) ;
 //                String s = inputStream.readUTF();
 //                outputStream.writeUTF("服务端的响应" + s);
 //                String s2 = inputStream.readUTF();
 //                System.out.println("客户端的回应" + s2);
-                outputStream.writeUTF("服务端的响应" + inputStream.readUTF());
+                String s = inputStream.readUTF();
+                System.out.println("服务器收到客户端的数据:" + s);
+                outputStream.writeUTF("服务端的响应" + s);
+//                outputStream.flush();
             }
         } catch (IOException e) {
             e.printStackTrace();
