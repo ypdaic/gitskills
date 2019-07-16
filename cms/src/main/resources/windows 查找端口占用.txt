@@ -1,0 +1,1 @@
+根据端口号查找占用该端口程序的pid：netstat -aon|findstr 端口号（查询出来的最后一列即pid）
