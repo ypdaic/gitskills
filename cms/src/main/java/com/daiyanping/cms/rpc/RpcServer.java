@@ -1,10 +1,14 @@
 package com.daiyanping.cms.rpc;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -19,6 +23,7 @@ public class RpcServer {
 
     public static void main(String[] args) {
         ExecutorService executorService = Executors.newFixedThreadPool(10);
+        executorService.submit(new RegistServer());
         ServerSocket serverSocket = null;
         try {
             serverSocket = new ServerSocket();
@@ -60,31 +65,30 @@ public class RpcServer {
 
                     inputStream =  new ObjectInputStream(socket.getInputStream());
                     outputStream = new ObjectOutputStream(socket.getOutputStream());
-//                    ObjectInputStream.GetField getField = inputStream.readFields();
-                    String className = inputStream.readUTF();
-//                    String className = (String) getField.get("className", null);
-                    ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
-                    Class<?> aClass = systemClassLoader.loadClass(className);
-//                    String methedName = (String) getField.get("methedName", null);
-                    String methedName = inputStream.readUTF();
-                    Class<?> parameterTypes = (Class<?>) inputStream.readObject();
-                    Object object = inputStream.readObject();
-//                    Object[] args = (Object[]) getField.get("args", null);
-//
-//                    String[] parameterTypes = (String[]) getField.get("parameterTypes", null);
-//                    Class[] parameterTypesClasses = null;
-//                    if (parameterTypes != null) {
-//
-//                        parameterTypesClasses = new Class[parameterTypes.length];
-//
-//                        for (int i = 0; i < parameterTypes.length; i++) {
-//                            Class<?> parameterTypeClass = systemClassLoader.loadClass(parameterTypes[i]);
-//                            parameterTypesClasses[i] = parameterTypeClass;
-//                        }
-//                    }
 
-                    Method method = aClass.getMethod(methedName, parameterTypes);
-                    Object result = method.invoke(aClass.getInterfaces(), object);
+                    Map<String, Object> object = (Map<String, Object>) inputStream.readObject();
+                    String className = (String) object.get("className");
+                    String methodName = (String) object.get("methodName");
+                    Class[] parameterTypes = (Class[]) object.get("parameterTypes");
+                    Object[] args = (Object[]) object.get("args");
+
+                    ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
+                    Class<?> clazz = systemClassLoader.loadClass(className);
+
+                    Method method = null;
+                    if (parameterTypes != null) {
+
+                        method = clazz.getMethod(methodName, parameterTypes);
+                    } else {
+                        method = clazz.getMethod(methodName);
+                    }
+                    Object result = null;
+                    if (args != null) {
+                        result  = method.invoke(clazz.newInstance(), args);
+                    } else {
+                        result  = method.invoke(clazz.newInstance());
+                    }
+
                     outputStream.writeObject(result);
                     outputStream.flush();
 
@@ -115,4 +119,57 @@ public class RpcServer {
                 }
         }
     }
+
+    static class RegistServer implements Runnable {
+
+        @Override
+        public void run() {
+
+            Socket socket = null;
+            ObjectOutputStream outputStream = null;
+            ObjectInputStream inputStream = null;
+            try {
+                socket = new Socket();
+                InetSocketAddress inetSocketAddress = new InetSocketAddress(9998);
+                socket.connect(inetSocketAddress);
+                outputStream = new ObjectOutputStream(socket.getOutputStream());
+                inputStream = new ObjectInputStream(socket.getInputStream());
+                HashMap<String, Object> map = new HashMap<>();
+                map.put("className", RpcServer.class.getName());
+                map.put("ip", "127.0.0.1");
+                map.put("port", 9999);
+                outputStream.writeObject(map);
+                outputStream.flush();
+                String result = (String) inputStream.readObject();
+                System.out.println(result);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (outputStream != null) {
+                    try {
+                        outputStream.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (inputStream != null) {
+                    try {
+                        inputStream.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (socket != null) {
+                    try {
+                        socket.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
+
+
 }
