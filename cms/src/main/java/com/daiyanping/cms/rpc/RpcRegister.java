@@ -32,7 +32,7 @@ public class RpcRegister {
             while (true) {
                 // 接受客户端的连接，这里是阻塞的
                 Socket socket = serverSocket.accept();
-                executorService.submit(new RpcServer.ServerTask(socket));
+                executorService.submit(new ServerTask(socket));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -78,7 +78,7 @@ public class RpcRegister {
                     outputStream.writeObject(RpcRegister.serverList.get());
                             outputStream.flush();
                 } else {
-
+                    System.out.println("服务开始注册");
                     RpcRegister.serverList.set(object);
                     outputStream.writeUTF("服务注册成功");
                     outputStream.flush();

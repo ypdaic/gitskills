@@ -140,7 +140,7 @@ public class RpcServer {
                 map.put("port", 9999);
                 outputStream.writeObject(map);
                 outputStream.flush();
-                String result = (String) inputStream.readObject();
+                String result = (String) inputStream.readUTF();
                 System.out.println(result);
 
             } catch (Exception e) {
@@ -171,5 +171,8 @@ public class RpcServer {
         }
     }
 
+    public void test2() {
+        System.out.println("这是一个rpc调用测试");
+    }
 
 }

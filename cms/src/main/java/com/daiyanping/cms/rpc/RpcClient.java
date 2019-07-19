@@ -38,7 +38,7 @@ public class RpcClient {
         String ip = "";
         int port = 0;
         for (Map<String, Object> map : list)
-            if (serverName.equals(map.get("serverName"))) {
+            if (serverName.equals(map.get("className").toString())) {
                 ip = (String) map.get("ip");
                 port = (int) map.get("port");
             }
