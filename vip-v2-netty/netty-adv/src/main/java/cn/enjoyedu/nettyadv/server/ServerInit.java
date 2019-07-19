@@ -6,6 +6,8 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 
 /**
@@ -16,7 +18,7 @@ public class ServerInit extends ChannelInitializer<SocketChannel> {
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
         /*Netty提供的日志打印Handler，可以展示发送接收出去的字节*/
-        //ch.pipeline().addLast(new LoggingHandler(LogLevel.INFO));
+        ch.pipeline().addLast(new LoggingHandler(LogLevel.INFO));
         /*剥离接收到的消息的长度字段，拿到实际的消息报文的字节数组*/
         ch.pipeline().addLast("frameDecoder",
                 new LengthFieldBasedFrameDecoder(65535,

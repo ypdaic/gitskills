@@ -7,6 +7,8 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.LengthFieldPrepender;
+import io.netty.handler.codec.LineBasedFrameDecoder;
 
 import java.net.InetSocketAddress;
 
@@ -45,7 +47,14 @@ public class ClientMsgPackEcho {
         @Override
         protected void initChannel(Channel ch) throws Exception {
 
-            //TODO
+            /*设置报文长度，避免粘包半包*/
+            ch.pipeline().addLast("frameEncode",
+                    new LengthFieldPrepender(2));
+
+            /*对发送数据的序列化*/
+            ch.pipeline().addLast("MsaPack-Encoder",new MsgPackEncode());
+
+            ch.pipeline().addLast(new LineBasedFrameDecoder(1024));
 
             //产生实体类，交给编码器进行序列化
             ch.pipeline().addLast(new MsgPackClientHandler(5));

@@ -39,10 +39,11 @@ public class HeartBeatReqHandler extends ChannelInboundHandlerAdapter {
         } else if (message.getMyHeader() != null
                 && message.getMyHeader().getType() == MessageType.HEARTBEAT_RESP
                 .value()) {
-//            LOG.info("Client receive server heart beat message : ---> ");
+            LOG.info("Client receive server heart beat message : ---> ");
             ReferenceCountUtil.release(msg);
         //如果是其他报文，传播给后面的Handler
         } else
+            /*方便以后扩展，报文释放由TailHandler来处理*/
             ctx.fireChannelRead(msg);
     }
 

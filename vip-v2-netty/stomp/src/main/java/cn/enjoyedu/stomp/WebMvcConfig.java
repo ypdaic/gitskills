@@ -13,7 +13,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
 	
 	 @Override
 	   public void addViewControllers(ViewControllerRegistry registry) {
-         registry.addViewController("/chatroom").setViewName("/wechat_room");
+         registry.addViewController("/chatroom")
+				 .setViewName("/wechat_room");
 	   }
 
 }

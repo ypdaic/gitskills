@@ -26,9 +26,9 @@ public class HeartBeatRespHandler extends ChannelInboundHandlerAdapter {
 		if (message.getMyHeader() != null
 			&& message.getMyHeader().getType() == MessageType.HEARTBEAT_REQ
 				.value()) {
-//			LOG.info("Receive client heart beat message : ---> "+ message);
+			LOG.info("Receive client heart beat message : ---> "+ message);
 			MyMessage heartBeat = buildHeatBeat();
-//			LOG.info("Send heart beat response message to ---> client");
+			LOG.info("Send heart beat response message to ---> client");
 			ctx.writeAndFlush(heartBeat);
 			ReferenceCountUtil.release(msg);
 		} else

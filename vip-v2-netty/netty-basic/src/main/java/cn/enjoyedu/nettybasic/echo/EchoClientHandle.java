@@ -23,6 +23,7 @@ public class EchoClientHandle extends SimpleChannelInboundHandler<ByteBuf> {
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         ctx.writeAndFlush(Unpooled.copiedBuffer(
                 "Hello Netty",CharsetUtil.UTF_8));
+//  fire 系列方法，将事件在多个handle中传递
         //ctx.fireChannelActive();
     }
 
@@ -32,5 +33,10 @@ public class EchoClientHandle extends SimpleChannelInboundHandler<ByteBuf> {
         cause.printStackTrace();
 
         ctx.close();
+    }
+
+    @Override
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        super.userEventTriggered(ctx, evt);
     }
 }

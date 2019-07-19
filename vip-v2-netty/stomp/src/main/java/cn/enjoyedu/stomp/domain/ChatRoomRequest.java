@@ -5,8 +5,11 @@ package cn.enjoyedu.stomp.domain;
  * 类说明：聊天室的请求实体
  */
 public class ChatRoomRequest {
+    /*发送者名字*/
     private String name;
+    /*聊天内容*/
     private String chatValue;
+    /*单聊里接收者的ID*/
     private String userId;
 
     public String getUserId() {

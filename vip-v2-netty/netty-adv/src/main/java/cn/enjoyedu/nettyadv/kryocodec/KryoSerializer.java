@@ -16,6 +16,7 @@ import java.io.IOException;
 public class KryoSerializer {
     private static Kryo kryo = KryoFactory.createKryo();
 
+    /*序列化方法*/
     public static void serialize(Object object, ByteBuf out) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Output output = new Output(baos);
@@ -33,6 +34,7 @@ public class KryoSerializer {
         out.writeBytes(b);
     }
 
+    /*反序列化方法*/
     public static Object deserialize(ByteBuf out) {
         if (out == null) {
             return null;

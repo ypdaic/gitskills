@@ -22,11 +22,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URI;
 /**
- * @author Mark老师   享学课堂 https://enjoy.ke.qq.com
- * 类说明：
- */
-
-/**
  这是WebSocket客户端的示例。
  要运行此示例，需要兼容的WebSocket服务器。
  因此，可以通过运行cn.enjoyedu.server.WebSocketServer来启动WebSocket服务器，

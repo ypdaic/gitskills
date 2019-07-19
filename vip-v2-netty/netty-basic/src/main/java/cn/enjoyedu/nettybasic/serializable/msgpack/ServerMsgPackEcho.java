@@ -7,6 +7,7 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 
 import java.net.InetSocketAddress;
 
@@ -47,7 +48,12 @@ public class ServerMsgPackEcho {
 
         @Override
         protected void initChannel(Channel ch) throws Exception {
-            //TODO
+            ch.pipeline().addLast("frameDecoder",
+                    new LengthFieldBasedFrameDecoder(65535,
+                            0,2,0,
+                            2));
+            /*反序列化*/
+            ch.pipeline().addLast("MsgPack-Decoder",new MsgPackDecoder());
             //将反序列化后的实体类交给业务处理
             ch.pipeline().addLast(new MsgPackServerHandler());
         }

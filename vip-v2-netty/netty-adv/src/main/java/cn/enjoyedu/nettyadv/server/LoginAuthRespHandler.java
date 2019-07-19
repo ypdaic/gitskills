@@ -31,7 +31,7 @@ public class LoginAuthRespHandler extends ChannelInboundHandlerAdapter {
 	    throws Exception {
 		MyMessage message = (MyMessage) msg;
 
-		// 如果是握手请求消息，处理，其它消息透传
+		// 如果是登录请求消息，处理，其它消息透传
 		if (message.getMyHeader() != null
 			&& message.getMyHeader().getType() == MessageType.LOGIN_REQ
 				.value()) {

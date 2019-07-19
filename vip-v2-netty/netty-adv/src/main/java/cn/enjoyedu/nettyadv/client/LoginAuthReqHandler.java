@@ -16,6 +16,7 @@ public class LoginAuthReqHandler extends ChannelInboundHandlerAdapter {
 
     private static final Log LOG = LogFactory.getLog(LoginAuthReqHandler.class);
 
+    /*完成后了三次握手后，发起登录请求*/
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         ctx.writeAndFlush(buildLoginReq());
     }

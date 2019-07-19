@@ -51,6 +51,7 @@
             $("#realTimeNews").html(data);
             longLoop();
         })
+
     }
 
 

@@ -28,6 +28,7 @@ public class MsgPackServerHandler extends ChannelInboundHandlerAdapter {
                 + System.getProperty("line.separator");
         ctx.writeAndFlush(Unpooled.copiedBuffer(resp.getBytes()));
         ctx.fireChannelRead(user);
+        //ReferenceCountUtil.release(user);
     }
 
     /*** 发生异常后的处理*/

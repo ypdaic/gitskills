@@ -28,7 +28,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        /*配置一个消息代理*/
+        /*配置一个消息代理(内存中的消息队列)*/
         registry.enableSimpleBroker(
                 "/mass","/queue");
         registry.setUserDestinationPrefix("/queue");

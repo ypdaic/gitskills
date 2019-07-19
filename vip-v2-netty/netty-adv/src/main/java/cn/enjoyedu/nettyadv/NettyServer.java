@@ -12,7 +12,6 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * @author Mark老师   享学课堂 https://enjoy.ke.qq.com
- * 往期课程和VIP课程咨询 依娜老师  QQ：2133576719
  * 类说明：服务端的主入口
  */
 public class NettyServer {
@@ -24,9 +23,10 @@ public class NettyServer {
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         ServerBootstrap b = new ServerBootstrap();
-        b.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
-            .option(ChannelOption.SO_BACKLOG, 1024)
-            .childHandler(new ServerInit());
+        b.group(bossGroup, workerGroup)
+         .channel(NioServerSocketChannel.class)
+         .option(ChannelOption.SO_BACKLOG, 1024)
+         .childHandler(new ServerInit());
 
         // 绑定端口，同步等待成功
         b.bind(NettyConstant.REMOTE_PORT).sync();

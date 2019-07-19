@@ -8,7 +8,6 @@ import io.netty.channel.socket.nio.NioDatagramChannel;
 
 /**
  * @author Mark老师   享学课堂 https://enjoy.ke.qq.com
- * 往期课程和VIP课程咨询 依娜老师  QQ：2133576719
  * 类说明：应答端
  */
 public class UdpAnswerSide {
@@ -18,7 +17,8 @@ public class UdpAnswerSide {
     public void run(int port) throws Exception{
         EventLoopGroup group = new NioEventLoopGroup();
         try {
-            /*和tcp的不同，udp没有接受连接的说法，所以即使是接收端，也使用Bootstrap*/
+            /*和tcp的不同，udp没有接受连接的说法，所以即使是接收端，
+            也使用Bootstrap*/
             Bootstrap b = new Bootstrap();
             /*由于我们用的是UDP协议，所以要用NioDatagramChannel来创建*/
             b.group(group)

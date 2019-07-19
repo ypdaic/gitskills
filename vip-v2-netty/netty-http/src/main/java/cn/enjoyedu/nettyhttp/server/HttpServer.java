@@ -6,25 +6,32 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.util.SelfSignedCertificate;
 
 /**
  * @author Mark老师   享学课堂 https://enjoy.ke.qq.com
- * 往期课程和VIP课程咨询 依娜老师  QQ：2133576719
  * 类说明：
  */
 public class HttpServer {
     public static final int port = 6789; //设置服务端端口
     private static EventLoopGroup group = new NioEventLoopGroup();   // 通过nio方式来接收连接和处理连接
     private static ServerBootstrap b = new ServerBootstrap();
-    private static final boolean SSL = false;
+    private static final boolean SSL = true ;
 
     /**
      * Netty创建全部都是实现自AbstractBootstrap。
      * 客户端的是Bootstrap，服务端的则是    ServerBootstrap。
      **/
     public static void main(String[] args) throws Exception {
-        final SslContext sslCtx = null;
-        //TODO SSL
+        final SslContext sslCtx ;
+        if(SSL){
+            SelfSignedCertificate ssc = new SelfSignedCertificate();
+            sslCtx = SslContextBuilder.forServer(ssc.certificate(),
+                    ssc.privateKey()).build();
+        }else{
+            sslCtx = null;
+        }
         try {
             b.group(group);
             b.channel(NioServerSocketChannel.class);

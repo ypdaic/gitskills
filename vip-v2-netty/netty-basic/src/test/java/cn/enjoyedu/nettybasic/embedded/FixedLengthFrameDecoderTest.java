@@ -9,7 +9,6 @@ import static org.junit.Assert.*;
 
 /**
  * 作者：Mark/Maoke
- * 创建日期：2018/08/26
  * 类说明：测试入站
  */
 public class FixedLengthFrameDecoderTest {
@@ -27,7 +26,7 @@ public class FixedLengthFrameDecoderTest {
             new FixedLengthFrameDecoder(3));
 
         //返回 false，因为没有一个完整的可供读取的帧
-        assertTrue(channel.writeInbound(input.readBytes(1)));
+        assertFalse(channel.writeInbound(input.readBytes(1)));
         //还是返回 false，因为没有一个完整的可供读取的帧
         assertFalse(channel.writeInbound(input.readBytes(1)));
         //返回 true，因为已经有了可供读取的帧
