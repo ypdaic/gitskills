@@ -1,0 +1,121 @@
+ReentrantLock 可重入互斥锁，基于AQS实现，提供公平，非公平两种模式，公平就是谁的Node在前，谁就先获取锁，非公平，不保证已经在排队的Node,和新来的Node获取锁的顺序
+
+ReentrantLock  相关方法
+
+    /**
+     * Acquires the lock only if it is not held by another thread at the time
+     * of invocation.
+     *
+     * <p>Acquires the lock if it is not held by another thread and
+     * returns immediately with the value {@code true}, setting the
+     * lock hold count to one. Even when this lock has been set to use a
+     * fair ordering policy, a call to {@code tryLock()} <em>will</em>
+     * immediately acquire the lock if it is available, whether or not
+     * other threads are currently waiting for the lock.
+     * This &quot;barging&quot; behavior can be useful in certain
+     * circumstances, even though it breaks fairness. If you want to honor
+     * the fairness setting for this lock, then use
+     * {@link #tryLock(long, TimeUnit) tryLock(0, TimeUnit.SECONDS) }
+     * which is almost equivalent (it also detects interruption).
+     *
+     * <p>If the current thread already holds this lock then the hold
+     * count is incremented by one and the method returns {@code true}.
+     *
+     * <p>If the lock is held by another thread then this method will return
+     * immediately with the value {@code false}.
+     *
+     * @return {@code true} if the lock was free and was acquired by the
+     *         current thread, or the lock was already held by the current
+     *         thread; and {@code false} otherwise
+     */
+    public boolean tryLock() {
+        // 不管是使用的公平锁还是非公平锁，tryLock都是以非公平方式去获取锁，如果想要以公平方式的方式获取锁，需要调用tryLock带时间参数的，并设置超时时间为0
+        return sync.nonfairTryAcquire(1);
+    }
+
+Sync 的相关方法
+
+protected final boolean tryRelease(int releases) {
+            // 首先将信号量递减
+            int c = getState() - releases;
+            // 判断当前线程是否是锁持有的线程
+            if (Thread.currentThread() != getExclusiveOwnerThread())
+                throw new IllegalMonitorStateException();
+            boolean free = false;
+            // 判断信号量是否为0，为0则表示释放锁成功
+            if (c == 0) {
+                free = true;
+                setExclusiveOwnerThread(null);
+            }
+            // 不为0，则更新信号量，等待下次再次释放，直到信号量被递减为0
+            setState(c);
+            return free;
+        }
+
+FairSync tryAcquire的具体实现
+
+    /**
+     * Fair version of tryAcquire.  Don't grant access unless
+     * recursive call or no waiters or is first.
+     */
+    protected final boolean tryAcquire(int acquires) {
+        final Thread current = Thread.currentThread();
+        int c = getState();
+        // 信号量为0说明没有线程占有锁，当前线程可以持有锁，但还要检查是否存在前驱节点，不存在，且更新信号量成功，则获取锁成功
+        if (c == 0) {
+            if (!hasQueuedPredecessors() &&
+                compareAndSetState(0, acquires)) {
+                setExclusiveOwnerThread(current);
+                return true;
+            }
+        }
+        // 如果当前线程再次获取锁，则更新信号的值
+        else if (current == getExclusiveOwnerThread()) {
+            int nextc = c + acquires;
+            if (nextc < 0)
+                throw new Error("Maximum lock count exceeded");
+            setState(nextc);
+            return true;
+        }
+        return false;
+    }
+
+
+NonfairSync tryAcquire的具体实现
+
+    /**
+     * Performs non-fair tryLock.  tryAcquire is implemented in
+     * subclasses, but both need nonfair try for trylock method.
+     */
+    final boolean nonfairTryAcquire(int acquires) {
+        final Thread current = Thread.currentThread();
+        int c = getState();
+        // 信号量为0说明没有线程占有锁，当前线程可以持有锁，如果更新信号量成功，则获取锁成功
+        if (c == 0) {
+            if (compareAndSetState(0, acquires)) {
+                setExclusiveOwnerThread(current);
+                return true;
+            }
+        }
+        // 如果当前线程再次获取锁，则更新信号的值
+        else if (current == getExclusiveOwnerThread()) {
+            int nextc = c + acquires;
+            if (nextc < 0) // overflow
+                throw new Error("Maximum lock count exceeded");
+            setState(nextc);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Performs lock.  Try immediate barge, backing up to normal
+     * acquire on failure.
+     */
+    final void lock() {
+        // 直接更新信号，如果成功则获取锁，否则调用     acquire(1)  去获取锁
+        if (compareAndSetState(0, 1))
+            setExclusiveOwnerThread(Thread.currentThread());
+        else
+            acquire(1);
+    }

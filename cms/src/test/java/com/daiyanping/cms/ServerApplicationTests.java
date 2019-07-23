@@ -3,40 +3,23 @@ package com.daiyanping.cms;
 import com.daiyanping.cms.DB.DBAspect;
 import com.daiyanping.cms.dao.UserDao;
 import com.daiyanping.cms.entity.User;
-
+import com.daiyanping.cms.mapper.UserMapper;
 import com.daiyanping.cms.redis.RedisConfig;
 import com.daiyanping.cms.service.IUserService;
-import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.mysql.jdbc.Driver;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mybatis.spring.SqlSessionFactoryBean;
-
-import com.daiyanping.cms.mapper.UserMapper;
-import org.junit.Test;
-
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
-import org.springframework.core.env.MutablePropertySources;
-import org.springframework.core.env.PropertiesPropertySource;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
-import org.springframework.jdbc.datasource.SimpleDriverDataSource;
-import org.springframework.test.context.junit4.SpringRunner;
-
-
-import java.sql.SQLException;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 //@RunWith(SpringRunner.class)
 //@SpringBootTest
@@ -285,6 +268,30 @@ public class ServerApplicationTests {
 		annotationConfigApplicationContext.refresh();
 		annotationConfigApplicationContext.close();
 	}
+	/**
+	 *
+	 */
+	@Test
+	public void test11() {
+		int a = (1 << 16) - 1;
+		System.out.println(a);
+		int b = a;
+		int i = 65536 & a;
+		System.out.println(i);
+
+
+		System.out.println(0 >>> 16);
+
+		ReentrantReadWriteLock reentrantReadWriteLock = new ReentrantReadWriteLock();
+		ReentrantReadWriteLock.WriteLock writeLock = reentrantReadWriteLock.writeLock();
+		ReentrantReadWriteLock.ReadLock readLock = reentrantReadWriteLock.readLock();
+		readLock.lock();
+		readLock.lock();
+		readLock.unlock();
+		readLock.unlock();
+	}
+
+
 
 
 }

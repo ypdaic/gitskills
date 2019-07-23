@@ -1,0 +1,95 @@
+WriteLock  WriteLock  同为互斥锁
+WriteLock  ReadLock  同为互斥锁
+ReadLock   ReadLock  非互斥锁
+
+Sync  相关代码
+
+// 如果信号量不为0，先判断是否是当前线程，不是直接返回，否则将信号量自增，如果0，先判断是否为公平锁，如果是，且存在前驱节点，直接返回，
+// 否则再判断是否更新信号量是否成功，成功则获取锁，如果为非公平锁，直接更新信号量，成功则获取锁
+protected final boolean tryAcquire(int acquires) {
+    /*
+     * Walkthrough:
+     * 1. If read count nonzero or write count nonzero
+     *    and owner is a different thread, fail.
+     * 2. If count would saturate, fail. (This can only
+     *    happen if count is already nonzero.)
+     * 3. Otherwise, this thread is eligible for lock if
+     *    it is either a reentrant acquire or
+     *    queue policy allows it. If so, update state
+     *    and set owner.
+     */
+    // 获取当前线程，信号量
+    Thread current = Thread.currentThread();
+    int c = getState();
+    // 如果信号量为0则w为0，如果信号量为1，则为1
+    int w = exclusiveCount(c);
+    if (c != 0) {
+        // (Note: if c != 0 and w == 0 then shared count != 0)
+        // 不为当前线程则获取失败,有读锁时是w==0
+        if (w == 0 || current != getExclusiveOwnerThread())
+            return false;
+        if (w + exclusiveCount(acquires) > MAX_COUNT)
+            throw new Error("Maximum lock count exceeded");
+        // Reentrant acquire
+        // 重入，将信号量自增
+        setState(c + acquires);
+        return true;
+    }
+    // 判断是写锁阻塞，如果是公平锁，且存在前驱节点，则返回true，如果是非公平锁直接返回false，再判断是否更新信号量成功，成功则获取锁成功
+    if (writerShouldBlock() ||
+        !compareAndSetState(c, c + acquires))
+        return false;
+    setExclusiveOwnerThread(current);
+    return true;
+}
+
+
+protected final int tryAcquireShared(int unused) {
+    /*
+     * Walkthrough:
+     * 1. If write lock held by another thread, fail.
+     * 2. Otherwise, this thread is eligible for
+     *    lock wrt state, so ask if it should block
+     *    because of queue policy. If not, try
+     *    to grant by CASing state and updating count.
+     *    Note that step does not check for reentrant
+     *    acquires, which is postponed to full version
+     *    to avoid having to check hold count in
+     *    the more typical non-reentrant case.
+     * 3. If step 2 fails either because thread
+     *    apparently not eligible or CAS fails or count
+     *    saturated, chain to version with full retry loop.
+     */
+    Thread current = Thread.currentThread();
+    int c = getState();
+    // 如果信号量不为0，getExclusiveOwnerThread() != current 在这里不存在写锁的话永远为false
+    if (exclusiveCount(c) != 0 &&
+        getExclusiveOwnerThread() != current)
+        return -1;
+    // 不管c是1,还是0,结果都是0
+    int r = sharedCount(c);
+    // 如果是公平锁，且存在前驱节点，则返回true,如果是非公平锁，且头节点的下一个节点是独占模式，则返回true（头节点的下个节点是写锁节点）
+    // 如果head节点不存在下个节点，那么当多个读锁同时访问时，只会有一个线程进入下面的代码
+    //
+    if (!readerShouldBlock() &&
+        r < MAX_COUNT &&
+        compareAndSetState(c, c + SHARED_UNIT)) {
+        // 某一个读锁第一次访问
+        if (r == 0) {
+            firstReader = current;
+            firstReaderHoldCount = 1;
+        // 某个读锁再次访问
+        } else if (firstReader == current) {
+            firstReaderHoldCount++;
+        } else {
+            HoldCounter rh = cachedHoldCounter;
+            if (rh == null || rh.tid != getThreadId(current))
+                cachedHoldCounter = rh = readHolds.get();
+            else if (rh.count == 0)
+                readHolds.set(rh);
+            rh.count++;
+        }
+        return 1;
+    }
+    return fullTryAcquireShared(current);
+}
