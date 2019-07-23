@@ -1,0 +1,2 @@
+hashMap为什么要扩容：提高数据离散度,对于ConcurrentHashMap缩小锁的粒度，避免多个线程挤在同一个Node上
+进行操作

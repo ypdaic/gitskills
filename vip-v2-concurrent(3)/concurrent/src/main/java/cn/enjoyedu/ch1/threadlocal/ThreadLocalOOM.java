@@ -17,7 +17,7 @@ public class ThreadLocalOOM {
             new LinkedBlockingQueue<>());
 
     static class LocalVariable {
-        private byte[] a = new byte[1024*1024*5];/*5M大小的数组*/
+        private byte[] a = new byte[1024*1024*30];/*5M大小的数组*/
     }
 
     ThreadLocal<LocalVariable> localVariable;
@@ -33,11 +33,11 @@ public class ThreadLocalOOM {
                     oom.localVariable.set(new LocalVariable());
                     //new LocalVariable();
                     System.out.println("use local varaible");
-                    //oom.localVariable.remove();
+//                    oom.localVariable.remove();
                 }
             });
 
-            Thread.sleep(100);
+//            Thread.sleep(2000 * 10);
         }
         System.out.println("pool execute over");
     }

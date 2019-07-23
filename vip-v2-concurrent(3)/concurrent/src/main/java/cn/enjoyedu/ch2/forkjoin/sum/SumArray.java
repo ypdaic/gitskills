@@ -57,8 +57,8 @@ public class SumArray {
 
         long start = System.currentTimeMillis();
 
-        pool.invoke(innerFind);
-        //System.out.println("Task is Running.....");
+        Integer invoke = pool.invoke(innerFind);
+        System.out.println("Task is Running.....");
 
         System.out.println("The count is "+innerFind.join()
                 +" spend time:"+(System.currentTimeMillis()-start)+"ms");
