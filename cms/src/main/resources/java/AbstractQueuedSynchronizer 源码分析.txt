@@ -210,3 +210,259 @@
         if (s != null)
             LockSupport.unpark(s.thread);
     }
+
+    /**
+     * Acquires in exclusive mode, aborting if interrupted.
+     * Implemented by first checking interrupt status, then invoking
+     * at least once {@link #tryAcquire}, returning on
+     * success.  Otherwise the thread is queued, possibly repeatedly
+     * blocking and unblocking, invoking {@link #tryAcquire}
+     * until success or the thread is interrupted.  This method can be
+     * used to implement method {@link Lock#lockInterruptibly}.
+     *
+     * @param arg the acquire argument.  This value is conveyed to
+     *        {@link #tryAcquire} but is otherwise uninterpreted and
+     *        can represent anything you like.
+     * @throws InterruptedException if the current thread is interrupted
+     */
+    public final void acquireInterruptibly(int arg)
+            throws InterruptedException {
+        // 获取锁时，当前线程被中断，直接抛出异常
+        if (Thread.interrupted())
+            throw new InterruptedException();
+        // 尝试获取信号量失败后，自旋获取信号量，并阻塞当前线程，待线程被唤醒后，判断线程是否被中断过，如果是，则抛出异常
+        if (!tryAcquire(arg))
+            doAcquireInterruptibly(arg);
+    }
+
+    /**
+     * Acquires in exclusive timed mode.
+     *
+     * @param arg the acquire argument
+     * @param nanosTimeout max wait time
+     * @return {@code true} if acquired
+     */
+    // 某个时间周期内获取信号量
+    private boolean doAcquireNanos(int arg, long nanosTimeout)
+            throws InterruptedException {
+        // 如果小于等于0，直接获取失败
+        if (nanosTimeout <= 0L)
+            return false;
+        // 获取未来的超时时间点
+        final long deadline = System.nanoTime() + nanosTimeout;
+        final Node node = addWaiter(Node.EXCLUSIVE);
+        boolean failed = true;
+        try {
+            for (;;) {
+                final Node p = node.predecessor();
+                if (p == head && tryAcquire(arg)) {
+                    setHead(node);
+                    p.next = null; // help GC
+                    failed = false;
+                    return true;
+                }
+                // 获取剩余的超时时间，如果小于等于0,直接获取失败
+                nanosTimeout = deadline - System.nanoTime();
+                if (nanosTimeout <= 0L)
+                    return false;
+                // 设置前驱节点的waitStatus为 -1，并且剩余超时时间大于1000ns 则阻塞当前线程剩余超时时间
+                if (shouldParkAfterFailedAcquire(p, node) &&
+                    nanosTimeout > spinForTimeoutThreshold)
+                    LockSupport.parkNanos(this, nanosTimeout);
+                if (Thread.interrupted())
+                    throw new InterruptedException();
+            }
+        } finally {
+            if (failed)
+                cancelAcquire(node);
+        }
+    }
+
+
+ConditionObject 相关代码分析
+
+    /**
+     * Adds a new waiter to wait queue.
+     * @return its new wait node
+     */
+    private Node addConditionWaiter() {
+        Node t = lastWaiter;
+        // If lastWaiter is cancelled, clean out.
+        // 如果尾节点不为null，且不是等待状态，则将为节点删除
+        if (t != null && t.waitStatus != Node.CONDITION) {
+            unlinkCancelledWaiters();
+            t = lastWaiter;
+        }
+        // 不存在等待节点，创建一个新的等待节点，并设置首，尾节点都是当前节点
+        Node node = new Node(Thread.currentThread(), Node.CONDITION);
+        if (t == null)
+            firstWaiter = node;
+        else
+            t.nextWaiter = node;
+        lastWaiter = node;
+        return node;
+    }
+
+    /**
+     * Unlinks cancelled waiter nodes from condition queue.
+     * Called only while holding lock. This is called when
+     * cancellation occurred during condition wait, and upon
+     * insertion of a new waiter when lastWaiter is seen to have
+     * been cancelled. This method is needed to avoid garbage
+     * retention in the absence of signals. So even though it may
+     * require a full traversal, it comes into play only when
+     * timeouts or cancellations occur in the absence of
+     * signals. It traverses all nodes rather than stopping at a
+     * particular target to unlink all pointers to garbage nodes
+     * without requiring many re-traversals during cancellation
+     * storms.
+     */
+    // 去除首节点后不是condition状态的节点
+    private void unlinkCancelledWaiters() {
+        Node t = firstWaiter;
+        Node trail = null;
+        while (t != null) {
+            // 获取首节点的下个节点
+            Node next = t.nextWaiter;
+            // 如果首节点的状态不是condition，则去除首节点
+            if (t.waitStatus != Node.CONDITION) {
+                t.nextWaiter = null;
+                // 如果trail尾null直接将首节点的下个节点置为首节点
+                if (trail == null)
+                    firstWaiter = next;
+                else
+                    trail.nextWaiter = next;
+                if (next == null)
+                    lastWaiter = trail;
+            }
+            // 如果首节点的状态是condition，trail置为首节点，t为首节点的下个节点
+            else
+                trail = t;
+            t = next;
+        }
+    }
+
+    /**
+     * Invokes release with current state value; returns saved state.
+     * Cancels node and throws exception on failure.
+     * @param node the condition node for this wait
+     * @return previous sync state
+     */
+    // 释放信号量，并解除下个节点的阻塞状态
+    final int fullyRelease(Node node) {
+        boolean failed = true;
+        try {
+            int savedState = getState();
+            if (release(savedState)) {
+                failed = false;
+                return savedState;
+            } else {
+                throw new IllegalMonitorStateException();
+            }
+        } finally {
+            if (failed)
+                node.waitStatus = Node.CANCELLED;
+        }
+    }
+
+    /**
+     * Implements interruptible condition wait.
+     * <ol>
+     * <li> If current thread is interrupted, throw InterruptedException.
+     * <li> Save lock state returned by {@link #getState}.
+     * <li> Invoke {@link #release} with saved state as argument,
+     *      throwing IllegalMonitorStateException if it fails.
+     * <li> Block until signalled or interrupted.
+     * <li> Reacquire by invoking specialized version of
+     *      {@link #acquire} with saved state as argument.
+     * <li> If interrupted while blocked in step 4, throw InterruptedException.
+     * </ol>
+     */
+    public final void await() throws InterruptedException {
+        if (Thread.interrupted())
+            throw new InterruptedException();
+        // 创建一个等待节点
+        Node node = addConditionWaiter();
+        // 释放信号量
+        int savedState = fullyRelease(node);
+        int interruptMode = 0;
+        // 如果node的waitSatus为condition 则阻塞当前线程
+        while (!isOnSyncQueue(node)) {
+            LockSupport.park(this);
+            if ((interruptMode = checkInterruptWhileWaiting(node)) != 0)
+                break;
+        }
+        // 当当前线程阻塞状态被解除后，重新获取信号量
+        if (acquireQueued(node, savedState) && interruptMode != THROW_IE)
+            interruptMode = REINTERRUPT;
+        if (node.nextWaiter != null) // clean up if cancelled
+            unlinkCancelledWaiters();
+        if (interruptMode != 0)
+            reportInterruptAfterWait(interruptMode);
+    }
+
+     // public methods
+
+    /**
+     * Moves the longest-waiting thread, if one exists, from the
+     * wait queue for this condition to the wait queue for the
+     * owning lock.
+     *
+     * @throws IllegalMonitorStateException if {@link #isHeldExclusively}
+     *         returns {@code false}
+     */
+    public final void signal() {
+        // 判断是否是当前线程
+        if (!isHeldExclusively())
+            throw new IllegalMonitorStateException();
+        Node first = firstWaiter;
+        if (first != null)
+            doSignal(first);
+    }
+
+    /**
+     * Removes and transfers nodes until hit non-cancelled one or
+     * null. Split out from signal in part to encourage compilers
+     * to inline the case of no waiters.
+     * @param first (non-null) the first node on condition queue
+     */
+    private void doSignal(Node first) {
+        do {
+            if ( (firstWaiter = first.nextWaiter) == null)
+                lastWaiter = null;
+            first.nextWaiter = null;
+        } while (!transferForSignal(first) &&
+                 (first = firstWaiter) != null);
+    }
+
+    /**
+     * Transfers a node from a condition queue onto sync queue.
+     * Returns true if successful.
+     * @param node the node
+     * @return true if successfully transferred (else the node was
+     * cancelled before signal)
+     */
+    final boolean transferForSignal(Node node) {
+        /*
+         * If cannot change waitStatus, the node has been cancelled.
+         */
+        // 将第一个等待node的状态设置为0
+        if (!compareAndSetWaitStatus(node, Node.CONDITION, 0))
+            return false;
+
+        /*
+         * Splice onto queue and try to set waitStatus of predecessor to
+         * indicate that thread is (probably) waiting. If cancelled or
+         * attempt to set waitStatus fails, wake up to resync (in which
+         * case the waitStatus can be transiently and harmlessly wrong).
+         */
+        // 将第一个等待节点放到同步队列队尾，并返回旧的队尾node，如果旧的队尾的的node取消或者，设置旧的队尾的的node状态失败，则取消等待node线程的阻塞状态，使其重新可以获取到信号量
+        // 如果设置成功，则等待同步队列的前驱节点正常释放信号量
+        Node p = enq(node);
+        int ws = p.waitStatus;
+        if (ws > 0 || !compareAndSetWaitStatus(p, ws, Node.SIGNAL))
+            LockSupport.unpark(node.thread);
+        return true;
+    }
+
+
