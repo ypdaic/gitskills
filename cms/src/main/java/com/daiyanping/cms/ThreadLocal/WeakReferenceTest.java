@@ -21,16 +21,18 @@ public class WeakReferenceTest {
     };
 
 
-//    public void main(String[] args) {
-//
-//        WeakReference<String> sr = new WeakReference<String>(test);
-//
-//        System.out.println(sr.get());
-//        System.gc();                //通知JVM的gc进行垃圾回收
-//        System.out.println(sr.get());
-//    }
-
     public static void main(String[] args) {
+        test1();
+        test2();
+        test3();
+        test4();
+
+    }
+
+    /**
+     * threadLocal只存在弱引用，gc后，就会被回收
+     */
+    public static void test1() {
 
         WeakReference<ThreadLocal<String>> sr = new WeakReference<ThreadLocal<String>>(new ThreadLocal(){
             @Override
@@ -44,30 +46,38 @@ public class WeakReferenceTest {
         System.out.println(sr.get());
     }
 
-//    public static void main(String[] args) {
-//
-//        WeakReference<ThreadLocal<String>> sr = new WeakReference<ThreadLocal<String>>(threadLocal);
-//
-//        System.out.println(sr.get());
-//        System.gc();                //通知JVM的gc进行垃圾回收
-//        System.out.println(sr.get());
-//    }
+    /**
+     * threadLocal存在static的强引用，gc后，不会被回收
+     */
+    public static void test2() {
 
-//    public static void main(String[] args) {
-//
-//        ThreadLocal<String> threadLocal = new ThreadLocal(){
-//            @Override
-//            protected Object initialValue() {
-//                return "hello";
-//            }
-//        };
-//
-//        System.out.println(threadLocal.get());
-//    }
-//
-//    public static void test(ThreadLocal<String> threadLocal) {
-//        threadLocal = null;
-//    }
+        WeakReference<ThreadLocal<String>> sr = new WeakReference<ThreadLocal<String>>(threadLocal);
 
+        System.out.println(sr.get());
+        System.gc();                //通知JVM的gc进行垃圾回收
+        System.out.println(sr.get());
+    }
+
+
+    public static void test3() {
+        // initialValue() 方法会在使用get方法返回null的threadLocalMap时调用
+        ThreadLocal<String> threadLocal = new ThreadLocal(){
+            @Override
+            protected Object initialValue() {
+                return "hello";
+            }
+        };
+
+        System.out.println(threadLocal.get());
+    }
+
+    public static void test4() {
+
+        WeakReference<String> sr = new WeakReference<String>(test);
+
+        System.out.println(sr.get());
+        System.gc();                //通知JVM的gc进行垃圾回收
+        System.out.println(sr.get());
+    }
 
 }
