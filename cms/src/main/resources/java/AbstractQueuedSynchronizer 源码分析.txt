@@ -392,7 +392,7 @@ ConditionObject 相关代码分析
             if ((interruptMode = checkInterruptWhileWaiting(node)) != 0)
                 break;
         }
-        // 当当前线程阻塞状态被解除后，重新获取信号量
+        // 当当前线程阻塞状态被解除后，重新设置回阻塞前的信号量，保证信号量可以正常释放
         if (acquireQueued(node, savedState) && interruptMode != THROW_IE)
             interruptMode = REINTERRUPT;
         if (node.nextWaiter != null) // clean up if cancelled
