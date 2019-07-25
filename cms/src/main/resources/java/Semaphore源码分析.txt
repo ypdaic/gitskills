@@ -1,0 +1,42 @@
+
+
+FairSync 分析
+
+ static final class FairSync extends Sync {
+        private static final long serialVersionUID = 2014338818796000944L;
+
+        FairSync(int permits) {
+            super(permits);
+        }
+
+        protected int tryAcquireShared(int acquires) {
+            for (;;) {
+                // 存在前驱节点直接返回，然后将该线程加入到同步队列
+                if (hasQueuedPredecessors())
+                    return -1;
+                int available = getState();
+                int remaining = available - acquires;
+                if (remaining < 0 ||
+                    compareAndSetState(available, remaining))
+                    return remaining;
+            }
+        }
+    }
+
+
+  NonfairSync  分析
+  /**
+   * NonFair version
+   */
+  static final class NonfairSync extends Sync {
+      private static final long serialVersionUID = -2694183684443567898L;
+
+      NonfairSync(int permits) {
+          super(permits);
+      }
+
+      // 直接调用AQS的nonfairTryAcquireShared方法，判断信号量减去传入的值如果大于0 ，同时更新信号量成功，则获取信号成功，否则如果小于0，就阻塞当前线程，直到被释放
+      protected int tryAcquireShared(int acquires) {
+          return nonfairTryAcquireShared(acquires);
+      }
+  }
