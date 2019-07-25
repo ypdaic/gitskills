@@ -1,0 +1,13 @@
+
+await方法会调用调用下面的方法，只有信号量为0后，才会返回true，否则阻塞当前线程
+
+protected int tryAcquireShared(int acquires) {
+            return (getState() == 0) ? 1 : -1;
+        }
+
+countDown方法就是将信号量减1
+public void countDown() {
+        sync.releaseShared(1);
+    }
+
+

@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveAction;
 
 /**
@@ -47,10 +48,11 @@ public class FindDirsFiles extends RecursiveAction {
         try {
             // 用一个 ForkJoinPool 实例调度总任务
             ForkJoinPool pool = new ForkJoinPool();
-            FindDirsFiles task = new FindDirsFiles(new File("F:/"));
+            FindDirsFiles task = new FindDirsFiles(new File("/"));
 
             /*异步提交*/
-            pool.execute(task);
+//            pool.execute(task);
+            ForkJoinTask<Void> submit = pool.submit(task);
 
             /*主线程做自己的业务工作*/
             System.out.println("Task is Running......");
@@ -61,7 +63,7 @@ public class FindDirsFiles extends RecursiveAction {
             }
             System.out.println("Main Thread done sth......,otherWork="
                     +otherWork);
-            //task.join();//阻塞方法
+            submit.join();//阻塞方法
             System.out.println("Task end");
         } catch (Exception e) {
             // TODO Auto-generated catch block

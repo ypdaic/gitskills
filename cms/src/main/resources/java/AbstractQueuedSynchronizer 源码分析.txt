@@ -52,6 +52,7 @@
      * @param node the node to insert
      * @return node's predecessor
      */
+    // 最先开始的头节点不保存任务信息，只是一个空节点，然后再将排队的节点放到头节点后
     private Node enq(final Node node) {
         // 自旋设置尾节点，如果尾节点尾null,则将头和尾都指向自己
         for (;;) {

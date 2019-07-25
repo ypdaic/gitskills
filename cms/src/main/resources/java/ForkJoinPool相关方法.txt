@@ -1,0 +1,5 @@
+pool.invoke(innerFind);   invoke 为同步方法，必须等到任务执行结束主线程才能放下执行
+
+pool.execute(task);  execute 为异步方法，主线程不会再这里阻塞，execute用于提交没有返回值的任务
+
+ForkJoinTask<Void> submit = pool.submit(task);  submit 为异步方法，主线程不会再这里阻塞，submit用于提交有返回值的任务

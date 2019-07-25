@@ -36,7 +36,10 @@ public class FkSort {
         }
     }
 
-
+    /**
+     *
+     * @param args
+     */
     public static void main(String[] args) {
 
         ForkJoinPool pool = new ForkJoinPool();
@@ -45,11 +48,12 @@ public class FkSort {
         SumTask innerFind = new SumTask(src);
 
         long start = System.currentTimeMillis();
-
+        System.out.println("开始执行任务");
         int[] invoke = pool.invoke(innerFind);
-//        for(int number:invoke){
-//            System.out.println(number);
-//        }
+        System.out.println("检查是否同步");
+        for(int number:invoke){
+            System.out.println(number);
+        }
         System.out.println(" spend time:"+(System.currentTimeMillis()-start)+"ms");
 
     }
