@@ -387,8 +387,9 @@ ConditionObject 相关代码分析
         // 释放信号量
         int savedState = fullyRelease(node);
         int interruptMode = 0;
-        // 如果node的waitSatus为condition 则阻塞当前线程
+        // 如果node的waitSatus为condition 则阻塞当前线程，如果该节点已经在同步队列中，则跳出循环，开始获取锁
         while (!isOnSyncQueue(node)) {
+            // 等待同步队列的首节点释放器阻塞状态
             LockSupport.park(this);
             if ((interruptMode = checkInterruptWhileWaiting(node)) != 0)
                 break;
@@ -397,6 +398,7 @@ ConditionObject 相关代码分析
         if (acquireQueued(node, savedState) && interruptMode != THROW_IE)
             interruptMode = REINTERRUPT;
         if (node.nextWaiter != null) // clean up if cancelled
+            // 如果存在后继节点，且后继状态为取消，则将该节点移除，直到全部移除为止
             unlinkCancelledWaiters();
         if (interruptMode != 0)
             reportInterruptAfterWait(interruptMode);
@@ -429,6 +431,7 @@ ConditionObject 相关代码分析
      */
     private void doSignal(Node first) {
         do {
+            // 将等待首节点修改原等待首节点的后继节点
             if ( (firstWaiter = first.nextWaiter) == null)
                 lastWaiter = null;
             first.nextWaiter = null;
@@ -447,7 +450,7 @@ ConditionObject 相关代码分析
         /*
          * If cannot change waitStatus, the node has been cancelled.
          */
-        // 将第一个等待node的状态设置为0
+        // 将第一个等待node的状态设置为0，不成功则取下一个等待节点继续操作
         if (!compareAndSetWaitStatus(node, Node.CONDITION, 0))
             return false;
 
@@ -461,6 +464,7 @@ ConditionObject 相关代码分析
         // 如果设置成功，则等待同步队列的前驱节点正常释放信号量
         Node p = enq(node);
         int ws = p.waitStatus;
+        // 尾节点ws = 0，更新状态肯定是成功的
         if (ws > 0 || !compareAndSetWaitStatus(p, ws, Node.SIGNAL))
             LockSupport.unpark(node.thread);
         return true;

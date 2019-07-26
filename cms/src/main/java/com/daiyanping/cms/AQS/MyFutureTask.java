@@ -17,9 +17,9 @@ public class MyFutureTask<V> implements RunnableFuture<V> {
 
     private volatile V v;
 
-    private ReentrantLock lock = new ReentrantLock();
+    private final ReentrantLock lock = new ReentrantLock();
 
-    private Condition condition = lock.newCondition();
+    private final Condition condition = lock.newCondition();
 
     private volatile boolean cancelState = false;
 
