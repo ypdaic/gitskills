@@ -21,11 +21,12 @@ protected final boolean tryAcquire(int acquires) {
     // 获取当前线程，信号量
     Thread current = Thread.currentThread();
     int c = getState();
-    // 如果信号量为0则w为0，如果信号量为1，则为1
+    // 如果信号量为0则w为0x0000 0000 0000 0000
+    // 如果信号量不为0则说明有读锁或者写锁占用着
     int w = exclusiveCount(c);
     if (c != 0) {
         // (Note: if c != 0 and w == 0 then shared count != 0)
-        // 不为当前线程则获取失败,有读锁时是w==0
+        // 不为当前线程则获取失败
         if (w == 0 || current != getExclusiveOwnerThread())
             return false;
         if (w + exclusiveCount(acquires) > MAX_COUNT)
