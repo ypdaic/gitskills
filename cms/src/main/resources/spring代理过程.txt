@@ -25,3 +25,20 @@
 @EnableAspectJAutoProxy，@EnableTransactionManagement同时启用的话，最终生效的是@EnableAspectJAutoProxy
 给的AnnotationAwareAspectJAutoProxyCreator，该类会创建BeanFactoryAspectJAdvisorsBuilderAdapter为使用了
 使用了@After，@Before注解的方法创建advisor，这个优先级在AopConfigUtils的静态块中写死了
+
+Advisor --> PointcutAdvisor  Advice  Advised  Pointcut  4个接口的关系
+
+PointcutAdvisor 包含 Advice,Pointcut
+
+Advised  包含Advisor
+
+Pointcut  用于匹配具体的方法，匹配上就添加Advisor
+
+代理类中保存的是Advised
+
+代理类第一次执行某个方法时，会从Advised找到所有的Advisor，然后使用每个Advisor的
+pointcut去匹配方法，如果匹配上就将Advice添加到集合中，并保存在Advised（AdvisedSupport） 的缓存中
+下次执行方法直接取出来，最后循环链式调用Advice（Interceptor）,直到实体方法
+
+开启异步的Advisor级别最高，开启Aop,默认会添加一个默认的advisor 其advice为ExposeInvocationInterceptor
+其作用是在当前线程暴露ReflectiveMethodInvocation,其级别从在异步后面

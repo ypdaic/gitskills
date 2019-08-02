@@ -25,7 +25,7 @@ import org.springframework.web.context.WebApplicationContext;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 //@ContextConfiguration注解，加载我们指定的配置类
-@ContextConfiguration(classes = {SpringMvcConfig.class})
+@ContextConfiguration(classes = {SpringMvcConfig.class, MybatisMapperScanTest.class})
 //@EnableAutoConfiguration注解用于开启自动配置，@EnableAsync注解开启的异步功能使用的线程池就是由
 // 自动配置提供，由于我们不连数据库，就需要排除springjdbc自动配置
 @EnableAutoConfiguration(exclude = DataSourceAutoConfiguration.class)

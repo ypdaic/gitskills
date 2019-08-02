@@ -9,6 +9,7 @@ import java.util.List;
 public class Step03 {
 
     /*定义挑选圆的行为接口*/
+    @FunctionalInterface
     interface ChoiceCircle{
         boolean getCircle(Circle circle);
     }
