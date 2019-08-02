@@ -36,7 +36,7 @@ public class DelayQueueTest {
             this.activeTime = activeTime * 1000 + System.currentTimeMillis();
         }
 
-        // 重新计算过期时间，单位是纳秒
+        // 重新计算过期时间，单位是纳秒，必须重新计算
         @Override
         public long getDelay(TimeUnit unit) {
             long d = unit.convert((this.activeTime

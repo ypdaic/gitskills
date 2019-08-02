@@ -39,6 +39,8 @@ import java.util.HashMap;
 
 // 开启事物支持
 @EnableTransactionManagement(order = 1)
+// proxyTargetClass 配置为false表如果是实现的接口则使用jdk动态代理
+// 如果没有使用接口即使为false，也会使用CGLIB进行代理
 @EnableAspectJAutoProxy
 public class MybatisMapperScanTest {
 

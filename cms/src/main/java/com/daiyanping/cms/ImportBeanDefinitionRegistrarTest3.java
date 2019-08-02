@@ -20,7 +20,7 @@ public class ImportBeanDefinitionRegistrarTest3 implements ImportBeanDefinitionR
         ClassPathBeanDefinitionScanner classPathBeanDefinitionScanner = new ClassPathBeanDefinitionScanner(registry);
         //AssignableTypeFilter  类 类型过滤器
         classPathBeanDefinitionScanner.addIncludeFilter(new AssignableTypeFilter(UserMapper.class));
-        classPathBeanDefinitionScanner.scan("com.daiyanping.cms.mapper");
+        classPathBeanDefinitionScanner.scan("com.daiyanpingcms.m.apper");
 
     }
 }
