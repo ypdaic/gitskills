@@ -1,13 +1,11 @@
 package com.daiyanping.cms.springmvc;
 
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportResource;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 /**
  * 从spring5.0开始，我们自己需要对webMvc增加自定配置，可以直接实现WebMvcConfigurer接口
@@ -15,7 +13,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  * 将方法都定义为了default
  */
 @Configuration
-@ComponentScan("com.daiyanping.cms.springmvc")
+@MapperScan("com.daiyanping.cms.dao")
+@ComponentScan(basePackages = {"com.daiyanping.cms.springmvc", "com.daiyanping.cms.service", "com.daiyanping.cms.dao"})
 @EnableWebMvc
 /**
  * 导入xml形式的spring.xml文件

@@ -168,6 +168,7 @@ public class ServerApplicationTests {
 	 */
 	@Test
 	public void test5() {
+
 		AnnotationConfigApplicationContext annotationConfigApplicationContext = new AnnotationConfigApplicationContext();
 		annotationConfigApplicationContext.register(AppConfig.class);
 		annotationConfigApplicationContext.refresh();

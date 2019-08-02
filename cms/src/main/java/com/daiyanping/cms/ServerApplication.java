@@ -1,6 +1,7 @@
 package com.daiyanping.cms;
 
 import com.daiyanping.cms.springmvc.SpringMvcConfig;
+import org.redisson.spring.starter.RedissonAutoConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -11,7 +12,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootConfiguration
 //开启自动配置，排除springjdbc自动配置
-@EnableAutoConfiguration(exclude = DataSourceAutoConfiguration.class)
+@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class, RedissonAutoConfiguration.class})
 //@ComponentScan(basePackageClasses = {ScheduledTaskConfig.class, RedisConfig.class})
 //@ComponentScan(basePackageClasses = {RedisConfig.class})
 @ComponentScan(basePackageClasses = {SpringMvcConfig.class})
