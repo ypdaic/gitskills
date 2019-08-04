@@ -4,6 +4,7 @@ import bitronix.tm.resource.jdbc.PoolingDataSource;
 import com.daiyanping.cms.DB.DBTypeEnum;
 import com.daiyanping.cms.DB.MyDynamicDataSource;
 import com.github.pagehelper.PageInterceptor;
+import org.apache.ibatis.logging.stdout.StdOutImpl;
 import org.apache.ibatis.plugin.Interceptor;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -61,7 +62,7 @@ public class JtaTransactionConfig {
 
 
         //当 EntityManager 被挂起或者没有被加入事务的情况下，允许事务自动提交
-        dataSource.setAllowLocalTransactions(true);
+//        dataSource.setAllowLocalTransactions(true);
 
 //        logger.info("选定的数据库是:" + databaseProduct);
 //        this.databaseProduct = databaseProduct;
@@ -69,7 +70,7 @@ public class JtaTransactionConfig {
 //
 //        logger.fine("初始化事务与资源管理器");
         dataSource.setClassName("bitronix.tm.resource.jdbc.lrc.LrcXADataSource");
-        dataSource.getDriverProperties().put("url","jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull");
+        dataSource.getDriverProperties().put("url","jdbc:mysql://192.168.140.128:3306/test?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull");
         Properties dp = dataSource.getDriverProperties();
         dp.put("driverClassName", "com.mysql.jdbc.Driver");
         dp.put("user","root");
@@ -94,7 +95,7 @@ public class JtaTransactionConfig {
 
 
         //当 EntityManager 被挂起或者没有被加入事务的情况下，允许事务自动提交
-        dataSource.setAllowLocalTransactions(true);
+//        dataSource.setAllowLocalTransactions(true);
 
 //        logger.info("选定的数据库是:" + databaseProduct);
 //        this.databaseProduct = databaseProduct;
@@ -102,7 +103,7 @@ public class JtaTransactionConfig {
 //
 //        logger.fine("初始化事务与资源管理器");
         dataSource.setClassName("bitronix.tm.resource.jdbc.lrc.LrcXADataSource");
-        dataSource.getDriverProperties().put("url","jdbc:mysql://localhost:3306/test2?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull");
+        dataSource.getDriverProperties().put("url","jdbc:mysql://192.168.140.128:3306/test2?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull");
         Properties dp = dataSource.getDriverProperties();
         dp.put("driverClassName", "com.mysql.jdbc.Driver");
         dp.put("user","root");
@@ -133,6 +134,9 @@ public class JtaTransactionConfig {
         sqlSessionFactoryBean.setMapperLocations(new Resource[] {new ClassPathResource("UserMapper.xml")});
         // 注入分页插件
         sqlSessionFactoryBean.setPlugins(new Interceptor[]{getInvocation()});
+        org.apache.ibatis.session.Configuration configuration = new org.apache.ibatis.session.Configuration();
+        configuration.setLogImpl(StdOutImpl.class);
+        sqlSessionFactoryBean.setConfiguration(configuration);
         sqlSessionFactoryBean.afterPropertiesSet();
         return sqlSessionFactoryBean;
     }

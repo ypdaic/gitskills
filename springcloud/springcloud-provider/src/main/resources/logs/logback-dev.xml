@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+scan:当此属性设置为true时，配置文件如果发生改变，将会被重新加载，默认值为true。
+scanPeriod:设置监测配置文件是否有修改的时间间隔，如果没有给出时间单位，默认单位是毫秒。当scan为true时，此属性生效。默认的时间间隔为1分钟。
+debug:当此属性设置为true时，将打印出logback内部日志信息，实时查看logback运行状态。默认值为false。
+-->
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+
+    <!-- TRACE < DEBUG < INFO < WARN < ERROR 日志级别-->
+
+    <!--文件输出的格式设置 -->
+    <appender name="fileDebugLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 文件输出的日志 的格式 -->
+        <encoder>
+            <pattern>
+                [%date{yyyy-MM-dd HH:mm:ss}] %-5level ---- [%thread] %logger{96} [%line] : %msg%n
+            </pattern>
+            <charset>UTF-8</charset> <!-- 此处设置字符集，防止中文乱码 -->
+        </encoder>
+
+        <!--样例：-->
+        <!--[ INFO ]     [2017-06-09 15:15:59]      org.apache.tomcat.util.net.NioSelectorPool [179] - Using a shared selector for servlet-->
+        <!--[ %-5level]  [%date{yyyy-MM-dd HH:mm:ss}]  %logger{96}                             [%line]   %msg%n、-->
+        <!--level日志级别  时间                          打印日志所处包.类                          出现代码行  日志信息-->
+
+
+
+        <!-- 配置日志所生成的目录以及生成文件名的规则 在logs/mylog-2016-10-31.0.log -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/provider/mylog-debug-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <!-- 最大10KB 超过最大值，会重新建一个文件-->
+                <maxFileSize>10 KB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <!-- 如果按天来回滚，则最大保存时间为30天，30天之前的都将被清理掉 -->
+            <maxHistory>30</maxHistory>
+            <!-- 日志总保存量为10MB 超过则删除-->
+            <totalSizeCap>20KB</totalSizeCap>
+        </rollingPolicy>
+        <!--<filter>:-->
+        <!--过滤器，执行一个过滤器会有返回个枚举值，即DENY，NEUTRAL，ACCEPT其中之一。返回DENY，日志将立即被抛弃不再经过其他过滤器；返回NEUTRAL，有序列表里的下个过滤器过接着处理日志；返回ACCEPT，日志会被立即处理，不再经过剩余过滤器。-->
+        <!--过滤器被添加到<appender> 中，为<appender> 添加一个或多个过滤器后，可以用任意条件对日志进行过滤。<appender> 有多个过滤器时，按照配置顺序执行。-->
+
+
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <!--匹配到就禁止-->
+            <onMatch>DENY</onMatch>
+            <!--没有匹配到下一个appender处理-->
+            <onMismatch>NEUTRAL</onMismatch>
+        </filter>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+            <!--匹配到就禁止-->
+            <onMatch>DENY</onMatch>
+            <!--没有匹配到下一个appender处理-->
+            <onMismatch>NEUTRAL</onMismatch>
+        </filter>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <!--匹配到就禁止-->
+            <onMatch>DENY</onMatch>
+            <!--没有匹配到下一个appender处理-->
+            <onMismatch>ACCEPT</onMismatch>
+        </filter>
+        <!-- Safely log to the same file from multiple JVMs. Degrades performance! -->
+        <!--<prudent>：如果是 true，日志会被安全的写入文件，即使其他的FileAppender也在向此文件做写入操作，效率低，默认是 false。-->
+        <prudent>false</prudent>
+    </appender>
+
+    <!--文件输出的格式设置 -->
+    <appender name="fileInfoLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <pattern>
+                [%date{yyyy-MM-dd HH:mm:ss}] %-5level ---- [%thread] %logger{96} [%line] : %msg%n
+            </pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/provider/mylog-info-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>10 KB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>20KB</totalSizeCap>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+            <!--匹配到就禁止-->
+            <onMatch>DENY</onMatch>
+            <!--没有匹配到下一个appender处理-->
+            <onMismatch>NEUTRAL</onMismatch>
+        </filter>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+            <!--匹配到就禁止-->
+            <onMatch>DENY</onMatch>
+            <!--没有匹配到下一个appender处理-->
+            <onMismatch>NEUTRAL</onMismatch>
+        </filter>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <!--匹配到就禁止-->
+            <onMatch>DENY</onMatch>
+            <!--没有匹配到下一个appender处理-->
+            <onMismatch>ACCEPT</onMismatch>
+        </filter>
+    </appender>
+
+    <!--文件输出的格式设置 -->
+    <appender name="fileWarnLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <pattern>
+                [%date{yyyy-MM-dd HH:mm:ss}] %-5level ---- [%thread] %logger{96} [%line] : %msg%n
+            </pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/provider/mylog-warn-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>10 KB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>20KB</totalSizeCap>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+            <!--匹配到就禁止-->
+            <onMatch>DENY</onMatch>
+            <!--没有匹配到下一个appender处理-->
+            <onMismatch>NEUTRAL</onMismatch>
+        </filter>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <!--匹配到就禁止-->
+            <onMatch>DENY</onMatch>
+            <!--没有匹配到下一个appender处理-->
+            <onMismatch>NEUTRAL</onMismatch>
+        </filter>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <!--匹配到就禁止-->
+            <onMatch>DENY</onMatch>
+            <!--没有匹配到下一个appender处理-->
+            <onMismatch>ACCEPT</onMismatch>
+        </filter>
+    </appender>
+
+    <!--文件输出的格式设置 -->
+    <appender name="fileErrorLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <pattern>
+                [%date{yyyy-MM-dd HH:mm:ss}] %-5level ---- [%thread] %logger{96} [%line] : %msg%n
+            </pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/provider/mylog-error-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>10 KB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>20KB</totalSizeCap>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+    </appender>
+
+    <!--控制台输出的格式设置 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- 控制台输出的日志 的格式 -->
+        <encoder>
+            <pattern>
+                [%date{yyyy-MM-dd HH:mm:ss}] %-5level ---- [%thread] %logger{96} [%line] : %msg%n
+            </pattern>
+            <charset>UTF-8</charset> <!-- 此处设置字符集 -->
+        </encoder>
+        <!-- 只是DEBUG级别以上的日志才显示 -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+    </appender>
+
+    <logger name="org.springframework" level="INFO" additivity="false">
+        <appender-ref ref="fileInfoLog"/>
+        <appender-ref ref="fileWarnLog"/>
+        <appender-ref ref="fileErrorLog"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <!--com.alibaba.dubbo是dubbo服务的包，在如何是info以下的级别会产生大量的启动日志，调成WARN减少日志输出-->
+    <logger name="com.alibaba.dubbo" level="WARN" additivity="false">
+        <appender-ref ref="fileWarnLog"/>
+        <appender-ref ref="fileErrorLog"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <!--com.daiyanping.springcloud是本项目的包，把这个包的打印日志级别调成 DEBUG级别可以看到sql执行-->
+    <logger name="com.daiyanping.springcloud" level="DEBUG" additivity="false">
+        <appender-ref ref="fileDebugLog"/>
+        <appender-ref ref="fileInfoLog"/>
+        <appender-ref ref="fileWarnLog"/>
+        <appender-ref ref="fileErrorLog"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="com.baomidou.mybatisplus" level="DEBUG" additivity="false">
+        <appender-ref ref="fileDebugLog"/>
+        <appender-ref ref="fileInfoLog"/>
+        <appender-ref ref="fileWarnLog"/>
+        <appender-ref ref="fileErrorLog"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="com.ibatis.common.jdbc.ScriptRunner" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+
+
+
+    <!--指定最基础的日志输出级别-->
+    <root level="info">
+        <!--appender将会添加到这个loger-->
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="fileErrorLog"/>
+        <appender-ref ref="fileWarnLog"/>
+        <appender-ref ref="fileInfoLog"/>
+        <appender-ref ref="fileDebugLog"/>
+        <!--<appender-ref ref="consoleLog2"/>-->
+    </root>
+
+</configuration>

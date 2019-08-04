@@ -2,6 +2,8 @@ package com.daiyanping.cms.service;
 
 import com.daiyanping.cms.dao.UserDao;
 import com.daiyanping.cms.entity.User;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Param;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -31,4 +33,6 @@ public interface IUserService{
     default void test(){};
 
     static void test2(){};
+
+    void addUser(User user);
 }

@@ -1,0 +1,8 @@
+server:
+  port: 8082
+spring:
+ profiles:
+   active: @env@
+
+logging:
+  config: classpath:logs/logback-@env@.xml

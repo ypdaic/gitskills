@@ -66,6 +66,11 @@ public class ConfigurationTest {
 				return null;
 			}
 
+			@Override
+			public void addUser(User user) {
+
+			}
+
 			public void init() {
 				System.out.println("bean初始化之前调用");
 			}
@@ -117,6 +122,10 @@ public class ConfigurationTest {
 			@Override
 			public List<Map<String, Object>> queryPage(String id) {
 				return null;
+			}
+
+			@Override
+			public void addUser(User user) {
 			}
 
 			public void init() {

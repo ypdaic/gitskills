@@ -48,7 +48,9 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.jdbc.Driver
 
-
+  banner:
+    charset: UTF-8
+    location: classpath:/banner.txt
 
 
 #查看自动配置的加载情况
