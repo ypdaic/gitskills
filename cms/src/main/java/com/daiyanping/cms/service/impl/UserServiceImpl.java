@@ -66,6 +66,12 @@ public class UserServiceImpl extends SqlSessionDaoSupport implements IUserServic
         return userById;
     }
 
+    @Override
+    @Transactional
+    public void addUser(User user) {
+        userDao.addUser(user);
+    }
+
     /**
      * 父类属性注入
      * @param sqlSessionFactory
@@ -101,7 +107,7 @@ public class UserServiceImpl extends SqlSessionDaoSupport implements IUserServic
     @DB(DB = DBTypeEnum.TEST2)
     public void updateByName(User user) {
         userDao.updateByName(user);
-        int a = 1/0;
+//        int a = 1/0;
     }
 
     /**

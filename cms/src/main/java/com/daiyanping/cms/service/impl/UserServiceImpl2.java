@@ -8,6 +8,7 @@ import com.daiyanping.cms.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -53,5 +54,12 @@ public class UserServiceImpl2 implements IUserService {
     @Override
     public User getUser(String id) {
         return null;
+    }
+
+    @Override
+    @Transactional
+    public void addUser(User user) {
+        userDao.addUser(user);
+        int a = 1 /0;
     }
 }

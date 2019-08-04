@@ -13,8 +13,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * 将方法都定义为了default
  */
 @Configuration
-@MapperScan("com.daiyanping.cms.dao")
-@ComponentScan(basePackages = {"com.daiyanping.cms.springmvc", "com.daiyanping.cms.service", "com.daiyanping.cms.dao"})
+@ComponentScan(basePackages = {"com.daiyanping.cms.springmvc"})
 @EnableWebMvc
 /**
  * 导入xml形式的spring.xml文件

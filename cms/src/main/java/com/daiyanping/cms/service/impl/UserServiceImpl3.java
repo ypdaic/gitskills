@@ -42,4 +42,9 @@ public class UserServiceImpl3 implements IUserService {
 	public void test2(){
 
 	};
+
+	@Override
+	public void addUser(User user) {
+
+	}
 }

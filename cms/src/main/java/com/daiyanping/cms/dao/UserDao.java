@@ -1,6 +1,7 @@
 package com.daiyanping.cms.dao;
 
 import com.daiyanping.cms.entity.User;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
@@ -31,4 +32,7 @@ public interface UserDao {
 	List<Map<String, Object>> queryPage();
 
 	List<Map<String, Object>> queryPage(String id);
+
+	@Insert("insert into user (name,password,age) values (#{user.name},#{user.password},#{user.age})")
+	void addUser(@Param("user") User user);
 }
