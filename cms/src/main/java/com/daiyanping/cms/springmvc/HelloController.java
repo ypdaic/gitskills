@@ -5,6 +5,7 @@ import com.daiyanping.cms.entity.User;
 import com.daiyanping.cms.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +19,12 @@ public class HelloController {
 
 	@PostMapping("/say")
 	public JSONObject sayHello() {
+		JSONObject jsonObject = new JSONObject();
+		return jsonObject;
+	}
+
+	@GetMapping("/say2")
+	public JSONObject sayHello2() {
 		JSONObject jsonObject = new JSONObject();
 		return jsonObject;
 	}
