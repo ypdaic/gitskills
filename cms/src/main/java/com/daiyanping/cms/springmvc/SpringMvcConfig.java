@@ -2,6 +2,7 @@ package com.daiyanping.cms.springmvc;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -18,6 +19,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 //@ImportResource("other.xml")
 public class SpringMvcConfig implements WebMvcConfigurer {
+	@Override
+	public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
+//		// 设置callable异步任务拦截器
+//		configurer.registerCallableInterceptors(null);
+//
+//		// 设置DeferredResult异步任务拦截器
+//		configurer.registerDeferredResultInterceptors(null);
+	}
 
 	/**
 	 * addInterceptors方法最终会被WebMvcConfigurationSupport中的getInterceptors方法
