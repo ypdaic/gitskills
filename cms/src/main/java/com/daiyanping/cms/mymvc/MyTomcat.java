@@ -30,7 +30,8 @@ public class MyTomcat {
 
         Context ctx = tomcat.addContext("mymvc",null);//网络访问路径
 
-        Wrapper dispatchServlet = tomcat.addServlet(ctx, "dispatchServlet", DispatchServlet.class.getName());//配置servlet
+//        Wrapper dispatchServlet = tomcat.addServlet(ctx, "dispatchServlet", DispatchServlet.class.getName());//配置servlet
+        Wrapper dispatchServlet = tomcat.addServlet(ctx, "dispatchServlet", new DispatchServlet());
 
         ctx.addServletMappingDecoded("/", "dispatchServlet");//配置servlet映射路径
 
@@ -49,7 +50,8 @@ public class MyTomcat {
 
 //        Wrapper dispatchServlet = tomcat.addServlet("/", "dispatchServlet", DispatchServlet.class.getName());
 //        dispatchServlet.addMapping("/mymvc");
-        dispatchServlet.setLoadOnStartup(0);
+        dispatchServlet.setLoadOnStartup(-1);
+        dispatchServlet.setAsyncSupported(true);
         try {
             tomcat.start();
         } catch (LifecycleException e) {

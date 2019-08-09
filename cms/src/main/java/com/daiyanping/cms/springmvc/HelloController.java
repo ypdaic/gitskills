@@ -5,13 +5,12 @@ import com.daiyanping.cms.entity.User;
 import com.daiyanping.cms.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.WebAsyncTask;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.concurrent.Callable;
 
 @RequestMapping("/hello")
 @RestController
@@ -25,6 +24,38 @@ public class HelloController {
 
 	@GetMapping("/say2")
 	public JSONObject sayHello2() {
+		JSONObject jsonObject = new JSONObject();
+		return jsonObject;
+	}
+
+	@GetMapping("/say3")
+	public WebAsyncTask<JSONObject> sayHello3() {
+		WebAsyncTask<JSONObject> jsonObjectWebAsyncTask = new WebAsyncTask<JSONObject>(() -> {
+//			Thread.sleep(1000 * 60);
+			JSONObject jsonObject = new JSONObject();
+			return jsonObject;
+		});
+
+		return jsonObjectWebAsyncTask;
+
+	}
+
+	@GetMapping("/say5")
+	public Callable<JSONObject> sayHello5() {
+		Callable<JSONObject> callable = new Callable<JSONObject>() {
+			@Override
+			public JSONObject call() throws Exception {
+				return new JSONObject();
+			}
+		};
+
+
+		return callable;
+
+	}
+
+	@GetMapping("/say4")
+	public JSONObject sayHello4(@ModelAttribute("name") JSONObject jsonObject2) {
 		JSONObject jsonObject = new JSONObject();
 		return jsonObject;
 	}

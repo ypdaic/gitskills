@@ -4,6 +4,7 @@ import com.daiyanping.cms.mymvc.annotation.*;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import javax.servlet.AsyncContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -113,20 +114,70 @@ public class DispatchServlet extends HttpServlet {
             }
         }
 
-        try {
-            String method1 = req.getMethod();
-            System.out.println(method1);
-            Object result = method.invoke(bean, args);
-            resp.setCharacterEncoding("UTF-8");
-            resp.setContentType("text/html;charset=UTF-8");
-            PrintWriter writer = resp.getWriter();
-            writer.println(result);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            String method1 = req.getMethod();
+//            System.out.println(method1);
+//            Object result = method.invoke(bean, args);
+//            resp.setCharacterEncoding("UTF-8");
+//            resp.setContentType("text/html;charset=UTF-8");
+//            PrintWriter writer = resp.getWriter();
+//            writer.println(result);
+//        } catch (IllegalAccessException e) {
+//            e.printStackTrace();
+//        } catch (InvocationTargetException e) {
+//            e.printStackTrace();
+//        }
+        async(req,bean,args,method,resp);
 
+
+    }
+
+    private void async (HttpServletRequest request, Object bean, Object[] args, Method method, HttpServletResponse httpServletResponse) {
+        AsyncContext asyncContext = request.startAsync();
+//        asyncContext.addListener(new AsyncListener() {
+//            @Override
+//            public void onComplete(AsyncEvent event) throws IOException {
+//                System.out.println("异步执行完成");
+//            }
+//
+//            @Override
+//            public void onTimeout(AsyncEvent event) throws IOException {
+//                System.out.println("超时了");
+//            }
+//
+//            @Override
+//            public void onError(AsyncEvent event) throws IOException {
+//                System.out.println("发生错误了");
+//            }
+//
+//            @Override
+//            public void onStartAsync(AsyncEvent event) throws IOException {
+//                System.out.println("开始异步了");
+//            }
+//        });
+
+        new Thread(() -> {
+            String method1 = request.getMethod();
+            System.out.println(method1);
+            Object result = null;
+            try {
+                result = method.invoke(bean, args);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+            httpServletResponse.setCharacterEncoding("UTF-8");
+            httpServletResponse.setContentType("text/html;charset=UTF-8");
+            PrintWriter writer = null;
+            try {
+                writer = httpServletResponse.getWriter();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            writer.println(result);
+            asyncContext.dispatch();
+        }).start();
     }
 
     private void doScan(String filePath, String packageName) {
