@@ -58,7 +58,7 @@
 
                 if (g.broken)
                     throw new BrokenBarrierException();
-                // 线程阻塞释放后，在这里就返回了
+                // 线程阻塞释放后，释放锁后，在这里就返回了
                 if (g != generation)
                     return index;
 
@@ -71,3 +71,8 @@
             lock.unlock();
         }
     }
+
+
+    总结：使用ReentrantLock 和 Condition 实现，在调用await方法时，先获取锁，然后判断count是否等待0，如果不等于0，就使用condition进行阻塞，
+         当最后一个线程调用await方法时，判断count等于0，先释放所有在condition阻塞的线程，然后变更generation，最后释放锁，锁释放后那些被释放的线程会去抢锁，抢到锁的线程会去
+         判断之前的generation和现在的generation是否相等，很明显已经不等，就直接返回，然后释放锁，排在同步队列最前面的节点就会获取锁，直到所有等待的节点执行完成。
