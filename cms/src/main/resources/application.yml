@@ -19,6 +19,9 @@ spring:
       #redis 缓存过期时间，1天
       time-to-live: 1d
   task:
+    execution:
+      pool:
+        core-size: 4
     scheduling:
       pool:
         size: 5

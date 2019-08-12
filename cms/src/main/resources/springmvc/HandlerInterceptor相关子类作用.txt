@@ -1,0 +1,5 @@
+MappedInterceptor作用：第一个参数表示其包含的路径不要使用指定的拦截器进行拦截，第二个参数表示其包含的路径需要使用指定的拦截器进行拦截， 第三个参数表示具体拦截处理的拦截器，自己并不进行拦截
+
+LongTaskTimingHandlerInterceptor：废弃，最新api已不提供说明
+
+WebContentInterceptor：缓存头的处理
