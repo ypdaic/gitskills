@@ -178,7 +178,10 @@ public class DispatchServlet extends HttpServlet {
                 e.printStackTrace();
             }
             writer.println(result);
-            asyncContext.complete();
+            // dispatch 会重新触发请求
+            asyncContext.dispatch();
+//          表示异步处理完成
+//            asyncContext.complete();
         }).start();
     }
 

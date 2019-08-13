@@ -23,12 +23,14 @@ public class HelloController {
 	@Autowired
 	ThreadPoolTaskExecutor taskExecutor;
 
-	@PostMapping("/say")
+	@GetMapping("/say")
 	public JSONObject sayHello() {
 		JSONObject jsonObject = new JSONObject();
 		return jsonObject;
 	}
 
+	// 处理跨域请求，先去校验request请求头的Origin字段对应的ip,端口,主机名是否和本机一样，一样就放行，否则使用origins和methods去匹配
+	@CrossOrigin(origins = "test", methods = {RequestMethod.GET})
 	@GetMapping("/say2")
 	public JSONObject sayHello2() {
 		JSONObject jsonObject = new JSONObject();
@@ -125,6 +127,18 @@ public class HelloController {
 
 	}
 
+	/**
+	 * 私有方法一样支持
+	 */
+	@PostMapping("/say9")
+	private JSONObject say9() {
+		System.out.println("私有方法");
+		JSONObject object = new JSONObject();
+		return object;
+
+	}
+
+
 	public void onError(Throwable t) {
 		System.out.println("错误回调");
 	}
@@ -137,7 +151,7 @@ public class HelloController {
 		return jsonObject;
 	}
 
-	@PostMapping("/say/error")
+	@GetMapping("/say/error")
 	public JSONObject sayError() {
 		int a= 1/0;
 		return null;
