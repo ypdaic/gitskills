@@ -1,14 +1,21 @@
 package com.daiyanping.cms.springmvc;
 
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.boot.web.servlet.RegistrationBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.handler.MappedInterceptor;
 import org.springframework.web.servlet.handler.WebRequestHandlerInterceptorAdapter;
+
+import javax.servlet.Filter;
 
 /**
  * 从spring5.0开始，我们自己需要对webMvc增加自定配置，可以直接实现WebMvcConfigurer接口
@@ -43,8 +50,15 @@ public class SpringMvcConfig implements WebMvcConfigurer {
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(mappedInterceptor());
+
 		// WebRequestHandlerInterceptorAdapter只是获取request中参数，其并不做拦截处理
 		registry.addInterceptor(new WebRequestHandlerInterceptorAdapter(new MyWebRequestInterceptor()));
+
+		InterceptorRegistration interceptorRegistration1 = registry.addInterceptor(myInterceptor());
+		// 配置那些请求不被拦截
+		interceptorRegistration1.excludePathPatterns("/hello/say");
+		// 配置那些请求可以被拦截
+		interceptorRegistration1.addPathPatterns("/hello/**");
 	}
 
 	HandlerInterceptor myInterceptor() {
@@ -64,5 +78,75 @@ public class SpringMvcConfig implements WebMvcConfigurer {
 		return new MappedInterceptor(new String[]{"/hello/say2"}, new String[]{"/hello/say3"}, myInterceptor());
 	}
 
+
+	/**
+	 * Access-Control-Allow-Credentials: 容许浏览器解析结果
+	 * Access-Control-Allow-Origin: 用于校验预检请求和实际请求的请求源，必须和服务端配的一致
+	 * Access-Control-Allow-Methods: 作为预检请求的响应头，允许实际请求时使用的方法
+	 * Access-Control-Allow-Headers: 作为预检请求的响应头，允许实际请求时使用的请求头
+	 * Access-Control-Max-Age: 作为预检请求的响应头，表示此次结果在预检缓存中缓存的时间
+	 * Access-Control-Request-Headers: 预检请求包含的请求头，将和服务端配置的Access-Control-Allow-Headers进行合并，最终实际请求允许访问的请求头以合并的为准
+	 * Access-Control-Expose-Headers: 指定那些头可以安全的被公开给CORS API
+	 * Access-Control-Request-Method: 预检请求包含的请求头，将和服务端配置的Access-Control-Allow-Methods进行合并， 最终实际请求允许访问的请求头以合并的为准
+	 * @return
+	 */
+	CorsConfigurationSource getCorsConfigurationSource() {
+		UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
+		CorsConfiguration corsConfiguration = new CorsConfiguration();
+//	    容许跨域的头
+		corsConfiguration.addAllowedHeader("X-Token");
+		corsConfiguration.addAllowedHeader("x-requested-with");
+		corsConfiguration.addAllowedHeader("x-user-session,origin");
+		corsConfiguration.addAllowedHeader("content-type");
+		corsConfiguration.addAllowedHeader("accept");
+		corsConfiguration.addAllowedHeader("Authorization");
+//		容许跨域的方法
+		corsConfiguration.addAllowedMethod("POST");
+		corsConfiguration.addAllowedMethod("GET");
+		corsConfiguration.addAllowedMethod("OPTIONS");
+		corsConfiguration.addAllowedMethod("DELETE");
+		corsConfiguration.addAllowedMethod("PUT");
+//		容许跨域的来源
+		corsConfiguration.addAllowedOrigin("*");
+		// 表示是否可以将对请求的响应暴露给页面。返回true则可以，其他值均不可以。
+		corsConfiguration.setAllowCredentials(true);
+		urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
+		return urlBasedCorsConfigurationSource;
+	}
+
+	/**
+	 * 添加跨域请求处理过滤器
+	 * @return
+	 */
+	@Bean
+	RegistrationBean filterRegistraionBean() {
+		FilterRegistrationBean<Filter> filterFilterRegistrationBean = new FilterRegistrationBean<>();
+		CorsFilter corsFilter = new CorsFilter(getCorsConfigurationSource());
+		filterFilterRegistrationBean.setFilter(corsFilter);
+		filterFilterRegistrationBean.addUrlPatterns("/*");
+		return filterFilterRegistrationBean;
+	}
+
+	/**
+	 * 最终会往RequestMappingHandlerMapping 中注入UrlBasedCorsConfigurationSource，并在DispatchServlet 获取handle时
+	 * 根据路径匹配是否添加CorsInterceptor拦截器，但CorsInterceptor被添加到了最末尾，如果前面一个拦截器拦截成功了，CorsInterceptor不会进行
+	 * 处理
+	 * @param registry
+	 */
+	@Override
+	public void addCorsMappings(CorsRegistry registry) {
+		/**
+		 * 获取一个默认的CorsConfig
+		 */
+		CorsRegistration corsRegistration = registry.addMapping("/**");
+		// 配置CorsConfig
+		corsRegistration.allowedHeaders("X-Token","x-requested-with","x-user-session,origin", "content-type", "accept", "Authorization");
+		corsRegistration.allowedMethods(HttpMethod.DELETE.name(), HttpMethod.GET.name(), HttpMethod.HEAD.name(), HttpMethod.OPTIONS.name()
+		,HttpMethod.POST.name(), HttpMethod.PUT.name());
+		// 用于校验预检请求和实际请求的请求源，必须和服务端配的一致
+		corsRegistration.allowedOrigins("*");
+		// 表示是否可以将对请求的响应暴露给页面。返回true则可以，其他值均不可以。
+		corsRegistration.allowCredentials(true);
+	}
 
 }
