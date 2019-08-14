@@ -1,0 +1,5 @@
+spring-webmvc对Servlet3.0 异步支持的实现，从spring 3.2开始提供
+
+主要功能就是将常规请求变为一个异步请求，然后等待业务处理完毕后，保存业务执行的结果，并通过异步上下文重新派发一次请求，从WebAsyncManager
+中获取之前已经保存的结果，并返回到浏览器。在业务代码执行前后可以添加拦截器进行前置处理，后置处理，并且为异步上下文添加了addTimeoutHandler，addErrorHandler
+addCompletionHandler的监听。最后还是调用了拦截器，当监听到超时，和异常，也会设置响应的结果，并重新派发请求

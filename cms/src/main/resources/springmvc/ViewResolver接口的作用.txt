@@ -1,0 +1,1 @@
+ViewResolver 接口的作用：解析view名称，并获取相关的view，最后调用view.render() 进行view的渲染
