@@ -1,0 +1,89 @@
+HandlerMethodReturnValueHandler   返回值解析器接口（处理controller层的返回值） spring 3.1 开始提供，早版本期不支持
+
+HandlerMethodReturnValueHandler -> ViewNameMethodReturnValueHandler （解析CharSequence类型的返回值，也就是字符串）
+
+HandlerMethodReturnValueHandler -> MapMethodProcessor (解析Map.class类型的返回值)
+
+HandlerMethodReturnValueHandler -> ViewMethodReturnValueHandler (解析View.class类型的放回值)
+
+HandlerMethodReturnValueHandler -> StreamingResponseBodyReturnValueHandler (解析StreamingResponseBody.cass类型的返回值)
+
+HandlerMethodReturnValueHandler -> HandlerMethodReturnValueHandlerComposite (委托类，内部包含了多个返回值解析实现，实际工作有内部的返回值解析器提供)
+
+HandlerMethodReturnValueHandler -> DeferredResultMethodReturnValueHandler (解析DeferredResult.class,ListenableFuture.class,CompletionStage.class类型的返回值，也就是异步请求)
+
+HandlerMethodReturnValueHandler -> HttpHeadersReturnValueHandler (解析HttpHeaders.class 类型的返回值)
+
+HandlerMethodReturnValueHandler -> CallableMethodReturnValueHandler (解析Callable.class类型的返回值，也就是异步请求)
+
+HandlerMethodReturnValueHandler -> ModelMethodProcessor (解析Model.class类型的返回值)
+
+HandlerMethodReturnValueHandler -> ModelAttributeMethodProcessor (解析包含ModelAttribute.class注解返回值，或者ModelAttribute.class不是比填的，且不是如下的类型，就处理)
+
+return (ClassUtils.isPrimitiveOrWrapper(clazz) ||
+				Enum.class.isAssignableFrom(clazz) ||
+				CharSequence.class.isAssignableFrom(clazz) ||
+				Number.class.isAssignableFrom(clazz) ||
+				Date.class.isAssignableFrom(clazz) ||
+				URI.class == clazz || URL.class == clazz ||
+				Locale.class == clazz || Class.class == clazz);
+
+ModelAttributeMethodProcessor   -> ServletModelAttributeMethodProcessor (没有重写父类的方法)
+ModelAttributeMethodProcessor   -> ProxyingHandlerMethodArgumentResolver (没有重写父类的方法)
+
+
+
+HandlerMethodReturnValueHandler -> ResponseBodyEmitterReturnValueHandler (解析ResponseEntity.class类型的返回值，且bodyType是ResponseBodyEmitter.class类型，如果不是解析ResponseEntity但是ReactiveType的)
+
+HandlerMethodReturnValueHandler -> ModelAndViewMethodReturnValueHandler (解析ModelAndView.class类型的返回值)
+
+HandlerMethodReturnValueHandler -> ModelAndViewResolverMethodReturnValueHandler (匹配所有返回值类型，默认不会使用)
+
+HandlerMethodReturnValueHandler -> AbstractMessageConverterMethodProcessor (具体解析何种类型由子类确定)
+
+AbstractMessageConverterMethodProcessor -> RequestResponseBodyMethodProcessor (解析带有ResponseBody注解的返回类型)
+
+AbstractMessageConverterMethodProcessor -> HttpEntityMethodProcessor (解析HttpEntity.class类型但不是RequestEntity.class类型的返回值)
+
+HandlerMethodReturnValueHandler -> AsyncHandlerMethodReturnValueHandler (接口，目前没看到实现)
+
+HandlerMethodReturnValueHandler -> AsyncTaskMethodReturnValueHandler (解析WebAsyncTask.cass类型的返回值)
+
+
+RequestMappingHandlerAdapter默认加载如下返回值解析器
+
+// Single-purpose return value types
+handlers.add(new ModelAndViewMethodReturnValueHandler());
+handlers.add(new ModelMethodProcessor());
+handlers.add(new ViewMethodReturnValueHandler());
+handlers.add(new ResponseBodyEmitterReturnValueHandler(getMessageConverters(),
+        this.reactiveAdapterRegistry, this.taskExecutor, this.contentNegotiationManager));
+handlers.add(new StreamingResponseBodyReturnValueHandler());
+handlers.add(new HttpEntityMethodProcessor(getMessageConverters(),
+        this.contentNegotiationManager, this.requestResponseBodyAdvice));
+handlers.add(new HttpHeadersReturnValueHandler());
+handlers.add(new CallableMethodReturnValueHandler());
+handlers.add(new DeferredResultMethodReturnValueHandler());
+handlers.add(new AsyncTaskMethodReturnValueHandler(this.beanFactory));
+
+// Annotation-based return value types
+handlers.add(new ModelAttributeMethodProcessor(false));
+handlers.add(new RequestResponseBodyMethodProcessor(getMessageConverters(),
+        this.contentNegotiationManager, this.requestResponseBodyAdvice));
+
+// Multi-purpose return value types
+handlers.add(new ViewNameMethodReturnValueHandler());
+handlers.add(new MapMethodProcessor());
+
+// Custom return value types
+if (getCustomReturnValueHandlers() != null) {
+    handlers.addAll(getCustomReturnValueHandlers());
+}
+
+// Catch-all
+if (!CollectionUtils.isEmpty(getModelAndViewResolvers())) {
+    handlers.add(new ModelAndViewResolverMethodReturnValueHandler(getModelAndViewResolvers()));
+}
+else {
+    handlers.add(new ModelAttributeMethodProcessor(true));
+}

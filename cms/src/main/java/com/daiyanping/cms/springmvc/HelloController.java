@@ -138,6 +138,18 @@ public class HelloController {
 
 	}
 
+	/**
+	 * 私有方法一样支持
+	 */
+	@PostMapping("/say10")
+	private JSONObject say10(@RequestBody JSONObject jsonObject) {
+		System.out.println(jsonObject);
+		System.out.println("私有方法");
+		JSONObject object = new JSONObject();
+		return object;
+
+	}
+
 
 	public void onError(Throwable t) {
 		System.out.println("错误回调");

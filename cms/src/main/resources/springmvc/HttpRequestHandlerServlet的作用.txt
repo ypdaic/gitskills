@@ -1,0 +1,11 @@
+HttpRequestHandlerServlet出现在DispatchServlet之前，也就是spring3.1之前提供的功能，如果我们业务不写Servlet处理请求，可以配置
+一个HttpRequestHandlerServlet，具体的业务需要放在HttpRequestHandler实现类中去处理，每个HttpRequestHandlerServlet只能
+包含一个HttpRequestHandler，
+
+HttpRequestHandler的实现类包含了HttpInvokerServiceExporter，HessianServiceExporter用于远程服务调用，
+
+DefaultServletHttpRequestHandler，ResourceHttpRequestHandler （3.0.4才开始提供）
+
+DefaultServletHttpRequestHandler在WebMvcConfigurationSupport使用到了，默认自动注入，会映射/** 路径，WebMvcConfigurationSupport默认不会创建
+                                DefaultServletHttpRequestHandler，需要在WebMvcConfigurer实例类中重写configureDefaultServletHandling方法，并调用configurer.enable();
+                                则会创建一个DefaultServletHttpRequestHandler

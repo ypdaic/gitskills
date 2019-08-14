@@ -1,0 +1,12 @@
+HandlerMapping 接口的作用 根据请求路径匹配相应的HandlerMapping, 然后提供相应的Handler
+
+HandlerMapping -> RequestMappingHandlerMapping (spirng 容器加载时，会去扫描使用@Controller或者@RequestMapping的类，并获取使用了@RequestMapping
+                                               的方法，将映射路径信息和，method 封装在HandlerMethod中，同时获取相应的拦截器)
+
+HandlerMapping -> BeanNameUrlHandlerMapping (spring 容器加载时，会去扫描bean名称以"/" 开头的类，并将bean名称的全名作为一个映射路径，handler就是该bean,
+                                             同时获取相应的拦截器)
+
+HandlerMapping -> SimpleUrlHandlerMapping (映射路径，和handler 需要我们自己指定，spring默认使用ParameterizableViewController这个handler处理请求)
+
+
+HandlerMapping -> WelcomePageHandlerMapping (欢迎页设置，springboot 提供，会自动加载)

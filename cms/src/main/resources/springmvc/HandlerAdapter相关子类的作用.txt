@@ -1,0 +1,9 @@
+HandlerAdapter 接口的作用，通过HandlerMapping处理完毕后获取到相应的handler，接着HandlerAdapter根据具体的handler
+的具体类型，调用handler的相应方法进行处理。
+
+
+HandlerAdapter -> HttpRequestHandlerAdapter (处理HttpRequestHandler类型的handler)
+HandlerAdapter -> SimpleServletHandlerAdapter (处理Servlet类型的handler)
+HandlerAdapter -> AbstractHandlerMethodAdapter (处理HandlerMethod类型的handler)
+HandlerAdapter -> SimpleControllerHandlerAdapter (处理Controller类型的handler)
+

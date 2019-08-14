@@ -1,0 +1,13 @@
+HandlerMethodArgumentResolver 接口的作用：用于解析controller层方法的入参
+
+HandlerMethodArgumentResolver -> MapMethodProcessor (解析Map.class 类型的参数，直接从mav容器中获取 mavContainer.getModel();)
+HandlerMethodArgumentResolver -> PathVariableMapMethodArgumentResolver (解析使用了@PathVariable注解，且是Map.class类型的参数，其值
+                                 在RequestMappingInfoHandlerMapping 135行代码添加到了request中)
+
+HandlerMethodArgumentResolver -> ErrorsMethodArgumentResolver (解析Errors.class类型的参数)
+
+HandlerMethodArgumentResolver -> RequestHeaderMethodArgumentResolver (解析@RequestHeader注解的类型参数)
+
+HandlerMethodArgumentResolver -> RequestAttributeMethodArgumentResolver (解析@RequestAttribute注解类型的参数)
+
+等等
