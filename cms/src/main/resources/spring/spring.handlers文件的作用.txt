@@ -1,0 +1,1 @@
+早期使用xml文件配置bean时，spring将xml中的bean配置解析为BeanDefinition，就是依靠spring.handlers文件中配置的NamespaceHandler去解析的

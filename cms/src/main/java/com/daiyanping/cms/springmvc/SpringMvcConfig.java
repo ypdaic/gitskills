@@ -14,6 +14,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.handler.MappedInterceptor;
 import org.springframework.web.servlet.handler.WebRequestHandlerInterceptorAdapter;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import javax.servlet.Filter;
 
@@ -24,6 +25,7 @@ import javax.servlet.Filter;
  */
 @Configuration
 @ComponentScan(basePackages = {"com.daiyanping.cms.springmvc"})
+// springboot 不需要该注解，实现WebMvcConfigurer接口就可以了，除非需要自己控制bean的加载
 @EnableWebMvc
 /**
  * 导入xml形式的spring.xml文件
@@ -148,5 +150,31 @@ public class SpringMvcConfig implements WebMvcConfigurer {
 		// 表示是否可以将对请求的响应暴露给页面。返回true则可以，其他值均不可以。
 		corsRegistration.allowCredentials(true);
 	}
+
+	@Override
+	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+		configurer.enable();
+	}
+
+	/**
+	 * 只是涉及页面的请求，我们可以使用如下的方式添加请求路径与视图的映射关系，而不需要写而外的java控制层代码
+	 * @GetMapping("/upload3")
+	 * 	public String sayHello() {
+	 * 		return "upload";
+	 * 	}
+	 * @param registry
+	 */
+	@Override
+	public void addViewControllers(ViewControllerRegistry registry) {
+		registry.addViewController("/html/upload3").setViewName("upload");
+		// 配置redirect
+		registry.addRedirectViewController("/html/upload4", "/html/upload3");
+	}
+
+	@Override
+	public void configureViewResolvers(ViewResolverRegistry registry) {
+		registry.viewResolver(new InternalResourceViewResolver());
+	}
+
 
 }
