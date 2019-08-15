@@ -140,8 +140,12 @@ public class HelloController {
 
 	/**
 	 * 私有方法一样支持
+	 * produces 表示请求需要指定MediaType为application/xml类型才能匹配我们的方法
+	 * 请求的MediaType获取就是使用ContentNegotiationManager去获取的，可以根据路径后缀名，和参数获取
+	 * 设置produces后，会在当前request上设置PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE属性
+	 * RequestMappingInfoHandlerMapping 139行
 	 */
-	@PostMapping("/say10")
+	@PostMapping(value = "/say10", produces = "application/xml")
 	private JSONObject say10(@RequestBody JSONObject jsonObject) {
 		System.out.println(jsonObject);
 		System.out.println("私有方法");

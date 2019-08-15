@@ -9,3 +9,16 @@ DefaultServletHttpRequestHandler，ResourceHttpRequestHandler （3.0.4才开始�
 DefaultServletHttpRequestHandler在WebMvcConfigurationSupport使用到了，默认自动注入，会映射/** 路径，WebMvcConfigurationSupport默认不会创建
                                 DefaultServletHttpRequestHandler，需要在WebMvcConfigurer实例类中重写configureDefaultServletHandling方法，并调用configurer.enable();
                                 则会创建一个DefaultServletHttpRequestHandler
+                                其作用就是，当有路径映射不到时，就会这个handle处理，处理的方式就是转发请求到defaultServlet,就是初始tomcat时
+                                添加的defaultServlet
+
+ResourceHttpRequestHandler  一样是使用SimpleUrlHandlerMapping作为mapping，只不过url是在创建ResourceHttpRequestHandler时，我们自己指定了
+                            springboot  默认提供了/webjars/** 和 /** 这两个路径的ResourceHttpRequestHandler，且指定的resourceLocation
+                            为classpath:/META-INF/resources/webjars/ 和  "classpath:/META-INF/resources/", "classpath:/resources/",
+                                                                       			"classpath:/static/", "classpath:/public/"
+
+                            这个目录下resource资源文件，会在创建ResourceHttpRequestHandler被加载进来，并且根据资源文件的类型会有不同的
+                            ResourceResolver进行处理，多个ResourceResolver会组成一个链，最终返回给浏览器是由ResourceHttpMessageConverter
+                            处理后，返回给浏览器
+
+

@@ -1,0 +1,52 @@
+可以通过请求的后缀名，向浏览器返回对应的数据
+
+ContentNegotiationManager的初始化过程：由WebMvcConfigurationSupport自动注入
+
+
+@Bean
+public ContentNegotiationManager mvcContentNegotiationManager() {
+    if (this.contentNegotiationManager == null) {
+        // 初始化ContentNegotiationManagerFactoryBean
+        ContentNegotiationConfigurer configurer = new ContentNegotiationConfigurer(this.servletContext);
+        // 获取MediaType默认(xml，application/xml) (json，application/json)
+        configurer.mediaTypes(getDefaultMediaTypes());
+        // 获取WebMvcConfigurer实现类的配置
+        // 包括开启路径后缀匹配,开启参数匹配，默认的参数是format，也可以设置
+        configureContentNegotiation(configurer);
+        // 创建一个ContentNegotiationManager
+        this.contentNegotiationManager = configurer.buildContentNegotiationManager();
+    }
+    return this.contentNegotiationManager;
+}
+
+protected Map<String, MediaType> getDefaultMediaTypes() {
+    Map<String, MediaType> map = new HashMap<>(4);
+    if (romePresent) {
+        map.put("atom", MediaType.APPLICATION_ATOM_XML);
+        map.put("rss", MediaType.APPLICATION_RSS_XML);
+    }
+    if (jaxb2Present || jackson2XmlPresent) {
+        map.put("xml", MediaType.APPLICATION_XML);
+    }
+    if (jackson2Present || gsonPresent || jsonbPresent) {
+        map.put("json", MediaType.APPLICATION_JSON);
+    }
+    if (jackson2SmilePresent) {
+        map.put("smile", MediaType.valueOf("application/x-jackson-smile"));
+    }
+    if (jackson2CborPresent) {
+        map.put("cbor", MediaType.valueOf("application/cbor"));
+    }
+    return map;
+}
+
+
+ContentNegotiationManager在如下类中使用到了
+
+ProducesRequestCondition 用来校验请求的MediaType类型是否是否和我们controller上设置的一致，请求的MediaType获取就是根据ContentNegotiationManager来获取
+
+AbstractMessageConverterMethodProcessor  用来校验请求的MediaType类型是否和AbstractMessageConverterMethodProcessor上的一致，在数据返回时校验，即使一致，最后还是要和HttpMessageConverter所支持的MediaType进行匹配
+
+AbstractMessageConverterMethodProcessor所支持的MeteType类型通过HttpMessageConverter设置，而HttpMessageConverter的MeteType类型则是创建时添加
+
+ContentNegotiatingViewResolver
