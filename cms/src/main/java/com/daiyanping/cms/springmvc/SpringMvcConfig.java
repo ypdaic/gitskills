@@ -14,7 +14,6 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.handler.MappedInterceptor;
 import org.springframework.web.servlet.handler.WebRequestHandlerInterceptorAdapter;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import javax.servlet.Filter;
 
@@ -171,10 +170,37 @@ public class SpringMvcConfig implements WebMvcConfigurer {
 		registry.addRedirectViewController("/html/upload4", "/html/upload3");
 	}
 
+	// springboot 自动注入
+//	@Autowired
+//	InternalResourceViewResolver internalResourceViewResolver;
+
+	// 添加视图解析器,并开启ContentNegotiatingViewResolver（内容协商视图解析器）
 	@Override
 	public void configureViewResolvers(ViewResolverRegistry registry) {
-		registry.viewResolver(new InternalResourceViewResolver());
+//		registry.viewResolver(internalResourceViewResolver);
+		registry.enableContentNegotiation();
 	}
 
 
+	@Override
+	public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+		// 开启则会创建一个ServletPathExtensionContentNegotiationStrategy
+		configurer.favorPathExtension(true);
+		// 开启则会创建一个ParameterContentNegotiationStrategy
+		configurer.favorParameter(true);
+		// 设置匹配的参数，默认format
+		configurer.parameterName("test");
+		// 添加一个默认的FixedContentNegotiationStrategy MediaType 由我们自己指定
+//		configurer.defaultContentType();
+		// 添加一个我们指定的ContentNegotiationStrategy
+//		configurer.defaultContentTypeStrategy();
+		// 是否忽略不知道的路径后缀
+//		configurer.ignoreUnknownPathExtensions(true);
+		// 重新指定MediaType
+//		configurer.replaceMediaTypes();
+
+		// 指定自己的ContentNegotiationStrategy
+//		configurer.strategies();
+//		configurer.
+	}
 }

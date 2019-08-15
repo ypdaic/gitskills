@@ -1,4 +1,4 @@
 RequestBodyAdvice, ResponseBodyAdvice 接口的作用
 
-RequestBodyAdvice：请求参数解析器在解析参数时，前后预处理
-ResponseBodyAdvice：返回值参数在解析时，前后预处理
+RequestBodyAdvice：请求参数解析器在解析参数时，前后预处理  主要在HttpMessageConverter 转换数据时，前后处理
+ResponseBodyAdvice：返回值参数在解析时，前后预处理        主要在HttpMessageConverter 转换数据时，前后处理

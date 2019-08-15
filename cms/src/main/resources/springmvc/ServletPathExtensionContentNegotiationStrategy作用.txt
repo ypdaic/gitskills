@@ -1,0 +1,4 @@
+
+getMediaTypeKey(webRequest) 方法获取request路径的后缀名
+
+resolveMediaTypes(NativeWebRequest webRequest) 通过上一步获取的后缀名，获取相应的MediaType
