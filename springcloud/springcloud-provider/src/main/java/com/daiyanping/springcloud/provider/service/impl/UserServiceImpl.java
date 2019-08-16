@@ -25,7 +25,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         User user = new User();
         user.setAge(userDto.getAge());
         user.setName(userDto.getName());
-        user.setPassword(userDto.getPassword());
         boolean save = save(user);
         return save ? user : null;
     }
