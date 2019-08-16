@@ -25,7 +25,7 @@ import static com.daiyanping.springcloud.common.DB.DBTypeEnum.DB1;
 import static com.daiyanping.springcloud.common.DB.DBTypeEnum.DB2;
 
 @Configuration
-@MapperScan("com.daiyanping.springcloud.*.mapper")
+@MapperScan("com.daiyanping.springcloud.**.mapper")
 public class MybatisPlusConfig {
 
     @Bean

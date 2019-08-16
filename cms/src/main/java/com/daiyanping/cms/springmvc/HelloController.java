@@ -3,15 +3,18 @@ package com.daiyanping.cms.springmvc;
 import com.alibaba.fastjson.JSONObject;
 import com.daiyanping.cms.entity.User;
 import com.daiyanping.cms.service.IUserService;
+import com.daiyanping.cms.vo.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.util.concurrent.ListenableFuture;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.context.request.async.WebAsyncTask;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
@@ -141,14 +144,26 @@ public class HelloController {
 	/**
 	 * 私有方法一样支持
 	 * produces 表示请求需要指定MediaType为application/xml类型才能匹配我们的方法
-	 * 请求的MediaType获取就是使用ContentNegotiationManager去获取的，可以根据路径后缀名，和参数获取
+	 * 请求的MediaType获取就是使用ContentNegotiationManager去获取的，可以根据路径后缀名，和参数获取，或者根据请求头Accept获取，都不填默认匹配全部
 	 * 设置produces后，会在当前request上设置PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE属性
-	 * RequestMappingInfoHandlerMapping 139行
+	 * RequestMappingInfoHandlerMapping 139行，向浏览器返回数据时，同样HttpMessageConverter也要判断是否支持application/xml，否则不会向浏览器返回数据
 	 */
 	@PostMapping(value = "/say10", produces = "application/xml")
 	private JSONObject say10(@RequestBody JSONObject jsonObject) {
 		System.out.println(jsonObject);
 		System.out.println("私有方法");
+		JSONObject object = new JSONObject();
+		return object;
+
+	}
+
+	@PostMapping(value = "/say11")
+	private JSONObject say11(@RequestBody @Valid UserDto userDto, BindingResult bindingResult) {
+//		String[] tests = bindingResult.resolveMessageCodes("test");
+		System.out.println(bindingResult.getAllErrors().get(0).getDefaultMessage());
+		System.out.println(bindingResult.getAllErrors().get(0).getCode());
+		System.out.println(bindingResult.getAllErrors().get(0));
+		System.out.println(userDto);
 		JSONObject object = new JSONObject();
 		return object;
 

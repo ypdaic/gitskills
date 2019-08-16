@@ -1,8 +1,7 @@
-server:
-  servlet:
-    context-path: /@project.name@
+
 druid:
   db1:
+    filters: stat,wall #合并sql
     url: jdbc:mysql://192.168.140.128:3306/test
     username: root
     password: test1234
@@ -20,6 +19,7 @@ druid:
     testWhileIdle: true #建议配置为true，不影响性能，并且保证安全性。申请连接的时候检测，如果空闲时间大于timeBetweenEvictionRunsMillis，执行validationQuery检测连接是否有效。
     keepAlive: false #连接池中的minIdle数量以内的连接，空闲时间超过minEvictableIdleTimeMillis，则会执行keepAlive操作。
   db2:
+    filters: stat,wall #合并sql
     url: jdbc:mysql://192.168.140.128:3306/test2
     username: root
     password: test1234
@@ -36,3 +36,6 @@ druid:
     testOnReturn: false #归还连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能。
     testWhileIdle: true #建议配置为true，不影响性能，并且保证安全性。申请连接的时候检测，如果空闲时间大于timeBetweenEvictionRunsMillis，执行validationQuery检测连接是否有效。
     keepAlive: false #连接池中的minIdle数量以内的连接，空闲时间超过minEvictableIdleTimeMillis，则会执行keepAlive操作。
+
+logging:
+  config: classpath:logs/logback-dev.xml

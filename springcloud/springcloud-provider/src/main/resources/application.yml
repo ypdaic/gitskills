@@ -1,17 +1,21 @@
 server:
   port: 8081
+  servlet:
+    context-path: /@project.name@
 spring:
  profiles:
    active: @env@
  datasource:
-  type: com.alibaba.druid.pool.DruidDataSource
- security:
-  user:
-    name: admin  # 认证用户名
-    password: test1234  # 认证密码
+  druid:
+    filter:
+      stat:
+        log-slow-sql: true
+        merge-sql: true
+ #security:
+  #user:
+  #  name: admin  # 认证用户名
+  #  password: test1234  # 认证密码
 
 mybatis-plus:
   mapperLocations: classpath:/sqlMapperXml/**/*.xml
 
-logging:
-  config: classpath:logs/logback-@env@.xml
