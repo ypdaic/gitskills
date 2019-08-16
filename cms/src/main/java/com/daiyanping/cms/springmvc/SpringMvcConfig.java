@@ -185,11 +185,11 @@ public class SpringMvcConfig implements WebMvcConfigurer {
 	@Override
 	public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
 		// 开启则会创建一个ServletPathExtensionContentNegotiationStrategy
-		configurer.favorPathExtension(true);
+//		configurer.favorPathExtension(true);
 		// 开启则会创建一个ParameterContentNegotiationStrategy
-		configurer.favorParameter(true);
+//		configurer.favorParameter(true);
 		// 设置匹配的参数，默认format
-		configurer.parameterName("test");
+//		configurer.parameterName("test");
 		// 添加一个默认的FixedContentNegotiationStrategy MediaType 由我们自己指定
 //		configurer.defaultContentType();
 		// 添加一个我们指定的ContentNegotiationStrategy
