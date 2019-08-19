@@ -4,7 +4,7 @@
 
 <mapper namespace="com.daiyanping.cms.dao.UserDao">
     <select id="queryPage" resultType="java.util.HashMap">
-        select * from user;
+        select * from user where id = #{id};
     </select>
 
 </mapper>

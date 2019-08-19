@@ -5,7 +5,6 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
-import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -29,7 +28,8 @@ public interface UserDao {
 	@Select("select * from user where id=#{id}")
     User getUserById(@Param("id") String id);
 
-	List<Map<String, Object>> queryPage();
+
+	List<Map<String, Object>> queryPage(@Param("id") Integer id);
 
 	List<Map<String, Object>> queryPage(String id);
 
