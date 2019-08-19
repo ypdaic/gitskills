@@ -28,6 +28,12 @@
                 <version>${spring-cloud.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+                <exclusions>
+                <exclusion>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-security</artifactId>
+                </exclusion>
+                </exclusions>
             </dependency>
             <dependency> <!-- SpringCloud离不开SpringBoot，所以必须要配置此依赖包 -->
                 <groupId>org.springframework.boot</groupId>

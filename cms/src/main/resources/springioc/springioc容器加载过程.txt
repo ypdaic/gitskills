@@ -1,0 +1,61 @@
+在我们new AnnotationConfigApplicationContext() 的时候，会new AnnotatedBeanDefinitionReader 这个对象，这个对象会往DefaultListableBeanFactory
+中注册如下几个beandefinition
+
+org.springframework.context.annotation.internalConfigurationAnnotationProcessor
+
+org.springframework.context.annotation.internalAutowiredAnnotationProcessor
+
+org.springframework.context.annotation.internalCommonAnnotationProcessor
+
+org.springframework.context.annotation.internalPersistenceAnnotationProcessor (jpa的支持，引入jpa依赖才会有)
+
+org.springframework.context.event.internalEventListenerProcessor
+
+org.springframework.context.event.internalEventListenerFactory
+
+接下来调用容器refresh();方法
+
+该方法先进行BeanFactoryPostProcessor，BeanDefinitionRegistryPostProcessor实现类的处理，具体在invokeBeanFactoryPostProcessors(beanFactory);方法中，具体如下：
+
+
+ConfigurationClassPostProcessor ->  BeanDefinitionRegistryPostProcessor
+springioc容器最先开始ConfigurationClassPostProcessor的处理工作，BeanDefinitionRegistryPostProcessor该接口的工作就是
+在BeanDefinitionRegistry开始工作的时候，可以继续往BeanDefinitionRegistry添加一些BeanDefinition
+
+ConfigurationClassParser开始解析我们的ConfigurationClass,
+
+解析我们的元数据是否存在@Component注解，存在开始处理
+@Nullable
+	protected final SourceClass doProcessConfigurationClass(ConfigurationClass configClass, SourceClass sourceClass)
+			throws IOException {
+
+		if (configClass.getMetadata().isAnnotated(Component.class.getName())) {
+			// Recursively process any member (nested) classes first
+			processMemberClasses(configClass, sourceClass);
+		}
+
+接着扫描是否包含@ComponentScans，@ComponentScan注解，存在就使用ComponentScanAnnotationParser开始解析
+ComponentScanAnnotationParser先是获取@ComponentScans，@@ComponentScan中配置的属性，然后开始具体解析
+解析就是扫描我们配置的包名下是否有类使用了@Component注解，然后生成BeanDefinition注册到BeanDefinitionRegister
+接下来使用同样的规则继续解析上面的BeanDefinition
+解析规则：ConfigurationClassParser.doProcessConfigurationClass方法，
+ 先解析是否包含@Component注解
+ 然后解析是否包含@PropertySources注解
+ 然后解析是否包含@ComponentScans注解
+ 然后解析是否包含@Import注解
+ 然后解析是否包含@ImportResource注解
+ 然后解析方法是否包含@Bean注解
+ 然后解析接口方法是否包含@Bean注解
+ 然后查看是否包含父类，包含就再次解析一遍
+
+
+上面就搜集了所有的beanDefinition,接下来还要进行BeanDefinitionRegistryPostProcessor的处理，因为之前解析的beanDefinition是有可能包含BeanDefinitionRegistryPostProcessor
+的实例的，比如MapperScannerConfigurer，
+
+接下来处理BeanFactoryPostProcessor接口的实例
+
+然后调用registerBeanPostProcessors(beanFactory);获取BeanPostProcessor接口的实例，并注入到容器中
+
+最后调用finishBeanFactoryInitialization(beanFactory);方法加载所有的BeanDefinition,加载过的不会重复加载
+
+

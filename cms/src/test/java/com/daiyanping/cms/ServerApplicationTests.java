@@ -4,7 +4,6 @@ import com.daiyanping.cms.DB.DBAspect;
 import com.daiyanping.cms.dao.UserDao;
 import com.daiyanping.cms.entity.User;
 import com.daiyanping.cms.mapper.UserMapper;
-import com.daiyanping.cms.redis.RedisConfig;
 import com.daiyanping.cms.service.IUserService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -265,8 +264,9 @@ public class ServerApplicationTests {
 	@Test
 	public void test10() {
 		AnnotationConfigApplicationContext annotationConfigApplicationContext = new AnnotationConfigApplicationContext();
-		annotationConfigApplicationContext.register(RedisConfig.class);
+		annotationConfigApplicationContext.register(FactoryBeanTest.class);
 		annotationConfigApplicationContext.refresh();
+		annotationConfigApplicationContext.getBean(User.class);
 		annotationConfigApplicationContext.close();
 	}
 	/**
