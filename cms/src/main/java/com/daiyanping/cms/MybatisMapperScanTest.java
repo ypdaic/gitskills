@@ -2,10 +2,8 @@ package com.daiyanping.cms;
 
 import com.daiyanping.cms.DB.DBTypeEnum;
 import com.daiyanping.cms.DB.MyDynamicDataSource;
-import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInterceptor;
 import org.apache.ibatis.plugin.Interceptor;
-import org.apache.ibatis.plugin.Invocation;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
@@ -44,29 +42,29 @@ import java.util.HashMap;
 @EnableAspectJAutoProxy
 public class MybatisMapperScanTest {
 
-//    @Bean(name = "test1")
-//    DataSource getDataSource1() {
-//        SimpleDriverDataSource simpleDriverDataSource = new SimpleDriverDataSource();
-//        simpleDriverDataSource.setDriverClass(com.mysql.jdbc.Driver.class);
-//        simpleDriverDataSource.setPassword("test1234");
-//        simpleDriverDataSource.setUsername("root");
-//        simpleDriverDataSource.setUrl("jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=UTF8&serverTimezone=UTC");
-//        return simpleDriverDataSource;
-//    }
-
-    /**
-     * 基于mycat的配置
-     * @return
-     */
     @Bean(name = "test1")
     DataSource getDataSource1() {
         SimpleDriverDataSource simpleDriverDataSource = new SimpleDriverDataSource();
         simpleDriverDataSource.setDriverClass(com.mysql.jdbc.Driver.class);
-//        simpleDriverDataSource.setPassword("test1234");
+        simpleDriverDataSource.setPassword("test1234");
         simpleDriverDataSource.setUsername("root");
-        simpleDriverDataSource.setUrl("jdbc:mysql://192.168.184.128:8806/TESTDB?useUnicode=true&characterEncoding=UTF8&serverTimezone=UTC");
+        simpleDriverDataSource.setUrl("jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=UTF8&serverTimezone=UTC");
         return simpleDriverDataSource;
     }
+
+//    /**
+//     * 基于mycat的配置
+//     * @return
+//     */
+//    @Bean(name = "test1")
+//    DataSource getDataSource1() {
+//        SimpleDriverDataSource simpleDriverDataSource = new SimpleDriverDataSource();
+//        simpleDriverDataSource.setDriverClass(com.mysql.jdbc.Driver.class);
+////        simpleDriverDataSource.setPassword("test1234");
+//        simpleDriverDataSource.setUsername("root");
+//        simpleDriverDataSource.setUrl("jdbc:mysql://192.168.184.128:8806/TESTDB?useUnicode=true&characterEncoding=UTF8&serverTimezone=UTC");
+//        return simpleDriverDataSource;
+//    }
 
     @Bean(name = "test2")
     DataSource getDataSource2() {

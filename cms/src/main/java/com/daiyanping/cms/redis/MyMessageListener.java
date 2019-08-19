@@ -2,9 +2,6 @@ package com.daiyanping.cms.redis;
 
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
-import org.springframework.stereotype.Component;
-
-import java.nio.charset.Charset;
 
 import static org.apache.commons.codec.Charsets.UTF_8;
 
@@ -15,7 +12,7 @@ import static org.apache.commons.codec.Charsets.UTF_8;
  * @Date 2019-05-27
  * @Version 0.1
  */
-@Component
+//@Component
 public class MyMessageListener implements MessageListener {
     @Override
     public void onMessage(Message message, byte[] pattern) {

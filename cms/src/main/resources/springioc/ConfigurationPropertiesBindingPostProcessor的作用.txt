@@ -1,0 +1,1 @@
+ConfigurationPropertiesBindingPostProcessor  解析@ConfigurationProperties注解，并绑定到bean的属性上

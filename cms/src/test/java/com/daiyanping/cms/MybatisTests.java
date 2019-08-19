@@ -1,17 +1,9 @@
 package com.daiyanping.cms;
 
-import com.daiyanping.cms.batchSubmission.AppConfig;
 import com.daiyanping.cms.dao.UserDao;
-import com.daiyanping.cms.entity.User;
 import com.daiyanping.cms.service.impl.MyRunable;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 import java.util.Map;
@@ -31,7 +23,7 @@ public class MybatisTests {
         annotationConfigApplicationContext.register(MybatisMapperScanTest.class);
         annotationConfigApplicationContext.refresh();
         UserDao bean = annotationConfigApplicationContext.getBean(UserDao.class);
-        List<Map<String, Object>> list = bean.queryPage();
+        List<Map<String, Object>> list = bean.queryPage(1);
         System.out.println(list);
         List<Map<String, Object>> list1 = bean.queryPage("");
         System.out.println(list1);

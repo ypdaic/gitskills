@@ -5,8 +5,10 @@ import com.daiyanping.cms.entity.User;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.*;
-import org.springframework.core.annotation.Order;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
 
 import java.util.List;
 import java.util.Map;
@@ -57,7 +59,7 @@ public class ConfigurationTest {
 			}
 
 			@Override
-			public List<Map<String, Object>> queryPage() {
+			public List<Map<String, Object>> queryPage(Integer id) {
 				return null;
 			}
 
@@ -115,7 +117,7 @@ public class ConfigurationTest {
 			}
 
 			@Override
-			public List<Map<String, Object>> queryPage() {
+			public List<Map<String, Object>> queryPage(Integer id) {
 				return null;
 			}
 

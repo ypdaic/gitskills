@@ -1,0 +1,1 @@
+AutowiredAnnotationBeanPostProcessor  先获取类上的@Autowire @Value注解，然后使用反射注入属性值
