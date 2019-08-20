@@ -11,7 +11,7 @@ import java.lang.ref.WeakReference;
  */
 public class WeakReferenceTest {
 
-    private static String test = "hello";
+//    private static String test = "hello";
 
     private static ThreadLocal<String> threadLocal = new ThreadLocal(){
         @Override
@@ -22,9 +22,9 @@ public class WeakReferenceTest {
 
 
     public static void main(String[] args) {
-        test1();
-        test2();
-        test3();
+//        test1();
+//        test2();
+//        test3();
         test4();
 
     }
@@ -71,10 +71,14 @@ public class WeakReferenceTest {
         System.out.println(threadLocal.get());
     }
 
+    /**
+     * String的字面量常量不会被GC回收，因为其并没有保存在堆中，而是字符串池中
+     */
     public static void test4() {
+        String test = "hello";
 
-        WeakReference<String> sr = new WeakReference<String>(test);
-
+        WeakReference<String> sr = new WeakReference<String>("hello");
+//        test = null;
         System.out.println(sr.get());
         System.gc();                //通知JVM的gc进行垃圾回收
         System.out.println(sr.get());
