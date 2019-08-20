@@ -1,0 +1,20 @@
+zookeeper集群最好使用奇数个进行搭建
+
+
+配置文件参数
+# The number of milliseconds of each tick
+tickTime=2000
+# The number of ticks that the initial
+# synchronization phase can take
+initLimit=10
+# The number of ticks that can pass between
+# sending a request and getting an acknowledgement
+syncLimit=5
+# the directory where the snapshot is stored.
+dataDir=/opt/zookeeper-cluster-2/data
+# the port at which the clients will connect
+clientPort=2183
+#集群使用一下配置，需要在data 目录下创建一个myid文件，并写上对应的服务器id 0,1,2
+server.0=192.168.140.128:2888:3888
+server.1=192.168.140.128:2889:3889
+server.2=192.168.140.128:2890:3890
