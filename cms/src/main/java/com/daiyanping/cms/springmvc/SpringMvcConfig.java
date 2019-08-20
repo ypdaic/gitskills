@@ -56,6 +56,8 @@ public class SpringMvcConfig implements WebMvcConfigurer {
 		registry.addInterceptor(new WebRequestHandlerInterceptorAdapter(new MyWebRequestInterceptor()));
 
 		InterceptorRegistration interceptorRegistration1 = registry.addInterceptor(myInterceptor());
+
+//		里面还是使用了MappedInterceptor进行包装了一下
 		// 配置那些请求不被拦截
 		interceptorRegistration1.excludePathPatterns("/hello/say");
 		// 配置那些请求可以被拦截
