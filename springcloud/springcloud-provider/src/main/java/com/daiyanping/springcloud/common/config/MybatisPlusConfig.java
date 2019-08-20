@@ -94,6 +94,8 @@ public class MybatisPlusConfig {
     public PerformanceInterceptor performanceInterceptor() {
         PerformanceInterceptor performanceInterceptor = new PerformanceInterceptor();
         performanceInterceptor.setFormat(true);
+        // 将sql写入log文件，不只是在控制台打印，还需要结合druid的merge-sql功能，才能打印完整的sql
+        performanceInterceptor.setWriteInLog(true);
         return performanceInterceptor;
     }
 }

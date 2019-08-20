@@ -6,6 +6,8 @@ debug:当此属性设置为true时，将打印出logback内部日志信息，实
 -->
 <configuration scan="true" scanPeriod="60 seconds" debug="false">
 
+    <property name="log.path" value="logs/provider"/>
+
     <!-- TRACE < DEBUG < INFO < WARN < ERROR 日志级别-->
 
     <!--文件输出的格式设置 -->
@@ -27,7 +29,7 @@ debug:当此属性设置为true时，将打印出logback内部日志信息，实
 
         <!-- 配置日志所生成的目录以及生成文件名的规则 在logs/mylog-2016-10-31.0.log -->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/consumer/mylog-debug-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>${log.path}/mylog-debug-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy
                     class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <!-- 最大10KB 超过最大值，会重新建一个文件-->
@@ -61,7 +63,7 @@ debug:当此属性设置为true时，将打印出logback内部日志信息，实
             <charset>UTF-8</charset>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/consumer/mylog-info-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>${log.path}/mylog-info-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>10 KB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
@@ -85,7 +87,7 @@ debug:当此属性设置为true时，将打印出logback内部日志信息，实
             <charset>UTF-8</charset>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/consumer/mylog-warn-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>${log.path}/mylog-warn-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>10 KB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
@@ -109,7 +111,7 @@ debug:当此属性设置为true时，将打印出logback内部日志信息，实
             <charset>UTF-8</charset>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/consumer/mylog-error-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>${log.path}/mylog-error-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>10 KB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
