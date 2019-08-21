@@ -1,9 +1,7 @@
 package com.daiyanping.cms.zookeeper;
 
-import org.I0Itec.zkclient.ZkClient;
 import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;
-import org.junit.Test;
 
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
@@ -25,7 +23,7 @@ public class ZookeeperTest {
 	 * CONNECTING
 	 * 这种方式客户端的连接状态还是CONNECTING，CONNECTED的状态才表示连接成功
 	 */
-	@Test
+//	@Test
 	public void test1() {
 		ZooKeeper zooKeeper = null;
 		try {
@@ -43,7 +41,7 @@ public class ZookeeperTest {
 	 * State:CONNECTED Timeout:30000 sessionid:0x6c9a9b51fc0000 local:/192.168.140.1:59655 remoteserver:192.168.140.128/192.168.140.128:2181 lastZxid:0 xid:1 sent:1 recv:1 queuedpkts:0 pendingresp:0 queuedevents:0
 	 * CONNECTED
 	 */
-	@Test
+//	@Test
 	public void test2() {
 		CountDownLatch countDownLatch = new CountDownLatch(1);
 		ZooKeeper zooKeeper = null;
@@ -69,7 +67,7 @@ public class ZookeeperTest {
 	/**
 	 * zookeeper原生api 增删查改
 	 */
-	@Test
+//	@Test
 	public void test3() {
 		CountDownLatch countDownLatch = new CountDownLatch(1);
 		ZooKeeper zooKeeper = null;
@@ -122,7 +120,7 @@ public class ZookeeperTest {
 	/**
 	 * zookeeper原生api 增删查改
 	 */
-	@Test
+//	@Test
 	public void test4() {
 		CountDownLatch countDownLatch = new CountDownLatch(1);
 		ZooKeeper zooKeeper = null;

@@ -1,0 +1,33 @@
+重要的两个线程：
+
+SendThread和EventThread，SendThread主要负责和服务端的通信，EventThread主要处理相关事件，然后调用我们的watch进行事件处理
+
+SendThread：
+    在where循环中主要处理如下事物：
+        连接服务端
+            调用startConnect(serverAddress);方法，具体做了如下事情：
+                使用Java原生nio连接，只注册OP_CONNECT事件，并将state设置为CONNECTING
+        读取服务端数据，向服务端写入数据
+            调用clientCnxnSocket.doTransport(to, pendingQueue, outgoingQueue, ClientCnxn.this);方法，处理socket事件
+                最先处理OP_CONNECT事件，调用sendThread.primeConnection();方法往outgoingQueue队列中放入一个ConnectRequest，然后
+                注册socket的读写事件。并将isFirstConnect = false;设置为false,完成首次连接
+                由于当前还没有往服务端发送任何数据，socket是不会触发read事件的，只会触发write事件，write事件在写缓冲区为空时就会触发
+                当第一次触发write事件后，取出outgoingQueue队列中的第一条数据，也就是处理OP_CONNECT事件放入的Packet，并发往服务器，然后关闭socket的write事件
+                等待服务器的响应，服务器响应后首先会发送数据长度信息过来，然后再发送具体的数据，具体数据就包含首次连接响应数据，和普通响应数据
+                首次连接响应具体做了如下事情：具体看sendThread.onConnected(conRsp.getTimeOut(), this.sessionId,
+                                                  conRsp.getPasswd(), isRO);方法
+                主要就是获取sessionid,readonly,然后发送None事件，并设置initialized为true，并设置stat为CONNECTEDREADONLY 或者 CONNECTED
+                普通响应数据调用sendThread.readResponse(incomingBuffer);方法处理
+                具体根据响应头的xid分别处理：-2：心跳请求，打印心跳日志，-4：权限校验失败请求，并发送None事件，stat为AUTHFAILED
+                -1：增删查改请求，主要就是获取type,path,stat,然后根据type类型，获取我们业务添加的watch监听器，最后往EventThread队列中添加事件
+
+                最后从pendingQueue中移除我们的添加的Packet，然后根据响应封装我们的Packet，最后滴调用finishPacket(packet);方法，判断如果packet中不存在异步回调就释放
+                在packet等待的线程，否则往EventThread队列中添加Packet
+
+
+        发送心跳请求
+
+EventThread：
+    在where循环中主要做如下事物；
+        处理我们的watch事件
+        处理异步回调

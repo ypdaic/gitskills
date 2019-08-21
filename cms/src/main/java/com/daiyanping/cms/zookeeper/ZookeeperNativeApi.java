@@ -32,7 +32,7 @@ public class ZookeeperNativeApi implements Watcher {
     public static void test1 () throws Exception {
         ZookeeperNativeApi zookeeperNativeApi = new ZookeeperNativeApi();
 
-        ZooKeeper zooKeeper = new ZooKeeper(SERVER_IP_PORT, 3000, zookeeperNativeApi);
+        ZooKeeper zooKeeper = new ZooKeeper(SERVER_IP_PORT, 30000000, zookeeperNativeApi);
         zookeeperNativeApi.countDownLatch.await();
         zookeeperNativeApi.setZooKeeper(zooKeeper);
 
@@ -80,6 +80,7 @@ public class ZookeeperNativeApi implements Watcher {
                 System.out.println(stat);
             }
         }, "自己的上下文");
+
         zooKeeper.close();
     }
 

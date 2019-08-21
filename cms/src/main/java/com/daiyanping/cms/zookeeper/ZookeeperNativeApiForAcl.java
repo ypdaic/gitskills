@@ -48,7 +48,7 @@ public class ZookeeperNativeApiForAcl implements Watcher {
 //        String s1 = DigestAuthenticationProvider.generateDigest("123456");
 //        List<ACL> digest = Collections.singletonList(new ACL(ZooDefs.Perms.ALL, new Id("digest", s1)));
 
-        List<ACL> digest = Collections.singletonList(new ACL(ZooDefs.Perms.WRITE, new Id("auth", "1234567")));
+        List<ACL> digest = Collections.singletonList(new ACL(ZooDefs.Perms.ALL , new Id("auth", "1234567")));
 
         // 需要事先添加exits事件，否则不能监听到节点创建事件
         zooKeeper.exists("/test", true);

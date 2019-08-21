@@ -1,12 +1,10 @@
 package com.daiyanping.cms.lock;
 
 import org.I0Itec.zkclient.IZkChildListener;
-import org.I0Itec.zkclient.IZkDataListener;
 import org.I0Itec.zkclient.ZkClient;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.locks.LockSupport;
 
 /**
  * @ClassName ZookeeperDistributedLock
@@ -17,48 +15,35 @@ import java.util.concurrent.locks.LockSupport;
  */
 public class ZookeeperDistributedLock extends AbstractDistributedLock implements Lock {
 
-    private final static LockThreadLocal<ZkClient> lockThreadLocal = new LockThreadLocal<>();
-
-    private final static LockThreadLocal<CountDownLatch> lockThreadLocal2 = new LockThreadLocal<>();
-
     private final static String LOCK_PATH = "/lock";
+
+    private static ThreadLocal<ZkClient> zkClientThreadLocal = new ThreadLocal<>();
 
     @Override
     protected boolean getTryLock(String lock) {
-        ZkClient zkClient = lockThreadLocal.getT();
-        if (zkClient == null) {
-            zkClient = new ZkClient("127.0.0.1:2181");
-            lockThreadLocal.setT(zkClient);
-        }
-        CountDownLatch countDownLatch = lockThreadLocal2.getT();
-        if (countDownLatch == null) {
-            countDownLatch = new CountDownLatch(1);
-            lockThreadLocal2.setT(countDownLatch);
-        }
-        zkClient.subscribeChildChanges(LOCK_PATH, new IZkChildListener() {
-
-            @Override
-            public void handleChildChange(String parentPath, List<String> currentChilds) throws Exception {
-                System.out.println("收到节点变化事件");
-                CountDownLatch countDownLatch = lockThreadLocal2.getT();
-
-                countDownLatch.countDown();
-                lockThreadLocal2.clean();
-            }
-
-        });
+        ZkClient zkClient = new ZkClient("127.0.0.1:2181", 3000);
         try {
-            zkClient.createEphemeral(LOCK_PATH + lock);
+            zkClient.createPersistent(LOCK_PATH + lock, true);
         } catch (Exception e) {
             return false;
+        } finally {
+            zkClientThreadLocal.set(zkClient);
         }
-
         return true;
     }
 
     @Override
     protected void waitLock() {
-        CountDownLatch countDownLatch = lockThreadLocal2.getT();
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+        IZkChildListener iZkChildListener = new IZkChildListener() {
+            @Override
+            public void handleChildChange(String parentPath, List<String> currentChilds) throws Exception {
+                countDownLatch.countDown();
+            }
+        };
+
+        ZkClient zkClient = zkClientThreadLocal.get();
+        zkClient.subscribeChildChanges(LOCK_PATH, iZkChildListener);
         try {
             countDownLatch.await();
         } catch (InterruptedException e) {
@@ -68,11 +53,17 @@ public class ZookeeperDistributedLock extends AbstractDistributedLock implements
 
     @Override
     public void unLock(String lock) {
-        ZkClient zkClient = lockThreadLocal.getT();
-        zkClient.delete(lock);
-        zkClient.close();
-        lockThreadLocal.clean();
+        ZkClient zkClient = zkClientThreadLocal.get();
+        try {
 
+            zkClient.delete(LOCK_PATH + lock);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            zkClient.close();
+            zkClientThreadLocal.remove();
+        }
     }
 
     public static void main(String[] args) {
