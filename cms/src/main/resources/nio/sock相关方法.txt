@@ -1,0 +1,22 @@
+
+zookeeper 客户端开启sock时，会将调用socket的setTcpNoDelay，setSoLinger方法
+
+SocketChannel sock;
+        sock = SocketChannel.open();
+        sock.configureBlocking(false);
+        sock.socket().setSoLinger(false, -1);
+        sock.socket().setTcpNoDelay(true);
+        return sock;
+
+
+        setTcpNoDelay 设置为true后，客户端不会等待服务端响应ack后才再次发送数据，而是立马发送过去
+        https://blog.csdn.net/sunny_ss12/article/details/51509753
+        https://www.jianshu.com/p/ccafdeda0b95
+
+        setSoLinger 设置false,客户端在关闭后,必须等待数据发送完毕后，才能真正关闭，也就是正常四次挥手关闭连接
+                    如果设置为true，当网卡收到关闭连接请求后，等待delay_time
+
+                              如果在delay_time过程中数据发送完毕，正常四次挥手关闭连接
+
+                              如果在delay_time过程中数据没有发送完毕，发送RST包关闭连接
+
