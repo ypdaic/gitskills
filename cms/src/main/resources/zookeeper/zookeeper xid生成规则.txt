@@ -1,0 +1,13 @@
+
+ClientCnxnSocketNIO 110行，除开ping,auth操作，xid是从1往上递增的，ping请求的xid为-2，auth请求为-4，还有一个setWatches请求是-8,-1为watch机制的响应
+
+if (p.bb == null) {
+    if ((p.requestHeader != null) &&
+            (p.requestHeader.getType() != OpCode.ping) &&
+            (p.requestHeader.getType() != OpCode.auth)) {
+        p.requestHeader.setXid(cnxn.getXid());
+    }
+    p.createBB();
+}
+sock.write(p.bb);
+

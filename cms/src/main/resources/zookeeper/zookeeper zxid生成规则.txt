@@ -1,0 +1,3 @@
+zks.getNextZxid();通过原子操作自增生成。
+
+PrepRequestProcessor的pRequest()方法。

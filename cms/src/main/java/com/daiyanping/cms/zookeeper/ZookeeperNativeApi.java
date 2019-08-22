@@ -19,7 +19,7 @@ import static org.apache.zookeeper.CreateMode.EPHEMERAL_SEQUENTIAL;
 @Data
 public class ZookeeperNativeApi implements Watcher {
 
-    private static String SERVER_IP_PORT = "192.168.0.4:2181";
+    private static String SERVER_IP_PORT = "192.168.0.4:2182";
 
     CountDownLatch countDownLatch = new CountDownLatch(1);
 
@@ -32,14 +32,14 @@ public class ZookeeperNativeApi implements Watcher {
     public static void test1 () throws Exception {
         ZookeeperNativeApi zookeeperNativeApi = new ZookeeperNativeApi();
 
-        ZooKeeper zooKeeper = new ZooKeeper(SERVER_IP_PORT, 30000000, zookeeperNativeApi);
+        ZooKeeper zooKeeper = new ZooKeeper(SERVER_IP_PORT, 300000000, zookeeperNativeApi);
         zookeeperNativeApi.countDownLatch.await();
         zookeeperNativeApi.setZooKeeper(zooKeeper);
 
         // 需要事先添加exits事件，否则不能监听到节点创建事件
         zooKeeper.exists("/test", true);
         // 创建一个临时anyone权限的节点(临时节点不能创建子节点)
-        String s = zooKeeper.create("/test", "haha".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, EPHEMERAL);
+        String s = zooKeeper.create("/test3", "haha".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, EPHEMERAL);
         System.out.println(s);
 
         // 获取节点数据

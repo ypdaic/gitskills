@@ -1,0 +1,13 @@
+日志文件：log.1 log.2 log.3
+快照文件：snapshot.1 snapshot.2 snapshot.3
+
+zookeeper服务器启动的时候，
+加载最后100个快照文件，并获取这100个快照最大的zxid,也就是snapshot.3的后缀3，并设置dataTree的lastProcessedZxid为这个值
+然后加载日志文件，日志文件获取的规则是，在没有生成快照时，取所有的日志文件，
+在有日志快照时，取log文件zxid大于快照最大zxid + 1的log文件，和log文件zxid小于快照最大zxid + 1的最后一个log文件
+然后再从log文件zixd最小往最大的顺序依次解析log文件，如果TxnHeader数据的zixd小于lastProcessedZxid则放弃这条数据，大于则解析这条数据，并重新设置lastProcessedZxid
+直到log文件全部解析完
+
+
+
+看了下zookeeper 日志，快照读取源码，日志，快照的后缀就是zxid，并且是个16进制的数，zookeeper只会读取最后100个快照文件，日志文件只会读取日志后缀大于最大快照后缀+1，和最后一个日志后缀小于最大快照后缀+1的日志，

@@ -13,7 +13,7 @@ import org.I0Itec.zkclient.ZkClient;
 public class ZkClientApi {
 
     public static void main(String[] args) {
-        ZkClient zkClient = new ZkClient("192.168.0.4:2181", 3000);
+        ZkClient zkClient = new ZkClient("192.168.0.4:2182", 3000);
 
         // 由于这些事件的调用都是在另外的线程中调用，可能会出现某些事件触发不了，比如节点删除事件，
         // 在触发节点删除事件时，如果节点由被创建了是无法触发节点删除事件的

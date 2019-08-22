@@ -1,0 +1,8 @@
+首先客户端通过getData方法，exists方法，getChildren方法向服务端发送请求后，服务端会往DataTree对象的
+    private final WatchManager dataWatches = new WatchManager();
+
+    private final WatchManager childWatches = new WatchManager();
+
+    两个属性中存入path及watch,也就是NIOServerCnxn自己
+    当我们调用setData方法时，就会调用DataTree的dataWatches，或者childWatches派发path的事件，
+    也就是NIOServerCnxn的process方法，向客户端发送xid为-1的事件响应，客户端收到响应后，就会调用客户端对应path上注册的事件执行
