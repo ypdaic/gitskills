@@ -1,8 +1,8 @@
 server:
-  port: 8082
+  port: 8086
+  servlet:
+    context-path: /springcloud-provider
 spring:
  profiles:
    active: @env@
 
-logging:
-  config: classpath:logs/logback-@env@.xml

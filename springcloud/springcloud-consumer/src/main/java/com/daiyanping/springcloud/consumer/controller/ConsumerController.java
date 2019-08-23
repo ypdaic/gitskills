@@ -5,16 +5,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 @RestController
-@RequestMapping(value = "/consumer")
+@RequestMapping(value = "/product")
 public class ConsumerController {
 
-    public static final String PRODUCT_GET_URL = "http://localhost:8081/springcloud-provider/product/getProduct";
+//    public static final String PRODUCT_GET_URL = "http://test:8089/product/getProduct";
+    public static final String PRODUCT_GET_URL = "http://localhost:8088/springcloud-provider/product/getProduct";
     public static final String PRODUCT_LIST_URL="http://localhost:8080/prodcut/list/";
     public static final String PRODUCT_ADD_URL = "http://localhost:8080/prodcut/add/";
 
@@ -24,15 +23,18 @@ public class ConsumerController {
     @Autowired
     HttpHeaders httpHeaders;
 
-    @PostMapping("/getProduct")
+    @GetMapping("/getProduct")
     public Product getProduct() {
         Product product = restTemplate.postForObject(PRODUCT_GET_URL, null, Product.class);
         return  product;
     }
 
-    @PostMapping("/getProduct2")
+    @GetMapping("/getProduct2")
     public Product getProduct2() {
-        Product product = restTemplate.exchange(PRODUCT_GET_URL, HttpMethod.POST, new HttpEntity<Object>(null, httpHeaders), Product.class).getBody();
+//        Product product = restTemplate.exchange(PRODUCT_GET_URL, HttpMethod.POST, new HttpEntity<Object>(null, httpHeaders), Product.class).getBody();
+        Product product = restTemplate.postForObject(PRODUCT_GET_URL, null, Product.class);
+        product.setProductDesc("sfsfsf");
         return  product;
     }
+
 }

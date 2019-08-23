@@ -1,3 +1,2 @@
-server:
-  servlet:
-    context-path: @project.name@
+logging:
+  config: classpath:logs/logback-dev.xml
