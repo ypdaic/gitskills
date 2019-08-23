@@ -1,0 +1,9 @@
+以安装wepy开发框架为例
+
+输入npm install wepy-cli -g
+
+会出现权限拒绝的情况
+
+输入sudo npm install wepy-cli -g
+
+再输入管理员密码即可

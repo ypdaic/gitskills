@@ -1,0 +1,9 @@
+curl -O https://download.sublimetext.com/Sublime%20Text%20Build%203143.dmg
+
+ 如果报错"curl: (35) Server aborted the SSL handshake"
+
+那么加上参数--insecure即可,如下
+
+
+
+curl -O --insecure https://download.sublimetext.com/Sublime%20Text%20Build%203143.dmg
