@@ -2,10 +2,7 @@ package com.daiyanping.springcloud.provider.controller;
 
 import com.daiyanping.springcloud.Product;
 import com.daiyanping.springcloud.common.base.BaseController;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/product")
@@ -20,6 +17,20 @@ public class ProviderController extends BaseController {
 
     @GetMapping("/getProduct2")
     public Product getProduct2() {
+        Product product = new Product();
+        product.setProductDesc("rest调用");
+        return product;
+    }
+
+    @PutMapping("/getProduct3")
+    public Product getProduct3() {
+        Product product = new Product();
+        product.setProductDesc("rest调用");
+        return product;
+    }
+
+    @DeleteMapping("/getProduct4")
+    public Product getProduct4() {
         Product product = new Product();
         product.setProductDesc("rest调用");
         return product;
