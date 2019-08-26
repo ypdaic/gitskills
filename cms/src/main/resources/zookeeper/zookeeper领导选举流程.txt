@@ -1,0 +1,10 @@
+首先通过确定领导选举算法，QuorumPeer.createElectionAlgorithm()
+该方法第一步就是创建一个QuorumCnxManager，并创建一个Listener线程，该线程主要接受集群其他节点的链接
+第二步：创建一个FastLeaderElection，FastLeaderElection会创建一个Message，用于处理其他节点发送消息，和给其他节点发送消息
+
+接着开始具体的选举过程，即QuorumPeer的run方法，初始化时，服务器的状态LOOKING，
+然后调用FastLeaderElection.lookForLeader()方法开始向其他服务器和本机发送本机的myid,zxid,currentEpoch，也就是往sendqueue添加我们要发送的消息
+接着开始从recvqueue中获取消息，最开始获取就是本机发送给本机的
+
+投票就是比较先比较界号，如果相等就比较zxid,如果zxid相等就比较myi，比较后，其他节点比本机节点高，就更新本机的leaderid，zxid，peerEpoch为其他节点的，并向其他节点发送
+新的leaderid，zxid，peerEpoch信息，包括本机
