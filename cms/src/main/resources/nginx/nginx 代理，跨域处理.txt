@@ -34,6 +34,23 @@ server {
 
             # 设置代理
             proxy_pass http://localhost:8086/springcloud-provider/;
+            proxy_read_timeout 60s;
+            # 设置请求的host，如果不设置则为代理的host,
+            # $host(它的值在请求包含“Host”请求头时为“Host”字段的值，在请求未携带“Host”请求头时为虚拟主机的主域名：),
+            # $proxy_host(取代理的host),$http_host(取客户端请求头，如果客户端没有携带则没有)
+            # $proxy_port (取代理服务器的port)
+            proxy_set_header Host $host:$proxy_port;
+            # 设置请求客户端的真实ip，在一级代理上设置即可，如果后面代理设置了就会覆盖前面的
+            proxy_set_header X-Real_IP $remote_addr;
+            # 在多级代理情况下，设置客户端，代理请求转发的过程，X-Forwarded-For：192.168.1.110, 192.168.1.120, 192.168.1.130,
+            # X-Forwarded-For是一个可叠加的过程，后面的代理会把前面代理的IP加入X-Forwarded-For
+            # 我们看到在三层代理情况下无论如何设置，应用服务器不可能从$http_x_forwarded_for拿到与它直连的这台服务器的ip（proxy03 ip）,此时我们可以使用$remote_addr（远程ip,表示直连的那台代理）.一句话，当前服务器无法通过$http_x_forwarded_for获得上级代理或者客户端的ip,应该使用$remote_addr.
+            proxy_set_header X-Forwarded-for $proxy_add_x_forwarded_for;
+            proxy_http_version 1.1;
+            # 代理websocket的配置
+            proxy_set_header Upgrade $http_upgrade;
+            # 代理websocket的配置
+            proxy_set_header Connection 'Upgrade';
         }
         #error_page  404              /404.html;
 
