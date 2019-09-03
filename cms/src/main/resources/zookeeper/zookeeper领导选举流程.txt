@@ -1,6 +1,6 @@
 首先通过确定领导选举算法，QuorumPeer.createElectionAlgorithm()
 该方法第一步就是创建一个QuorumCnxManager，并创建一个Listener线程，该线程主要接受集群其他节点的链接
-第二步：创建一个FastLeaderElection，FastLeaderElection会创建一个Message，用于处理其他节点发送消息，和给其他节点发送消息
+第二步：创建一个FastLeaderElection，FastLeaderElection会创建一个Message，用于处理存储其他节点发送消息，和给其他节点发送消息
 
 接着开始具体的选举过程，即QuorumPeer的run方法，初始化时，服务器的状态LOOKING，
 然后调用FastLeaderElection.lookForLeader()方法开始向其他服务器和本机发送本机的myid,zxid,currentEpoch，也就是往sendqueue添加我们要发送的消息
@@ -10,5 +10,18 @@
 新的leaderid，zxid，peerEpoch信息，包括本机
 
 
-在向其他节点发送本机的投票信息时，发送消息就是先发送本机myid，如果其他节点的myid大于本机就不发送本机的投票信息，接受方先接受到myid，然后对比myid，如果myid比自己的小，直接关闭连接，重新
-开启一个连接，连接比自己小的
+在向其他节点发送本机的投票信息时，只会往myid小于本机的服务器发送。发送消息就是先发送本机myid，然后使用SendWorker将投票信息发给其他节点，使用RecvWorker接受其他节点返回的投票
+信息
+
+
+接受方先接受到myid，然后对比myid，如果myid比自己的小，直接关闭连接，重新
+开启一个连接，连接比自己小的，如果大于自己的myid,这使用SendWorker往回发送本机的投票信息，使用RecvWorker接受其他节点投票信息
+
+比如有myid为0，1，2的服务器，
+myid:0先投一票给自己，然后接受myid:1的消息，投一票给myid:1，比较大小后，发现myid:1 大，再次发送投票通知，更新myid:0的投票为myid:1，此时myid:1已满足leader选举算法
+
+myid:1先投一票给自己，然后接受myid:0的返回消息，投一票给myid:0，再次接受myid:0的消息，更新myid:0的投票为myid:1，此时myid:1已满足leader选举算法，
+
+myid:2继续上面的过程。
+
+完成选举后，leader会在Leader.lead() 方法中死循环ping follower 如果发现某个follower ping不通，就会重新出发选举，follow一样，如果发现leader 不能通信，也会出发重新选举
