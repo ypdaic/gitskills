@@ -1,0 +1,4 @@
+由于LinkedList 是基于链表的，理论上存放数据的个数没有大小限制，
+
+LinkedList 内部使用Node保存数据，Node是保存前驱节点，后续节点的引用，以构成双向链表，LinkedList 本身会保存first,last Node的引用，
+当添加一个元素时，会创建一个新的Node，然后将last指向自己，上个last的next指向自己

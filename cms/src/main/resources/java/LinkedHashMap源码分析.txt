@@ -1,0 +1,5 @@
+LinkedHashMap 继承自HashMap, 内部使用Entry<K,V> 保存数据，该Entry也是继承自HashMap的Node<K,V>
+
+LinkedHashMap 内部保存了head,tail 节点，用于指向我们创建的Entry，
+
+Entry 内部使用befor,after 指向前驱Node,后续Node

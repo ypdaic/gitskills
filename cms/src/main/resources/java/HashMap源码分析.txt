@@ -1,0 +1,23 @@
+HashMap
+
+        loadFactor 负载因子，默认0.75
+        threshold  用于扩容的阀门
+        modCount   修改次数
+        size       存放的数据个数
+        table      用于存放数据的Node<key,value>[]
+
+
+        MAXIMUM_CAPACITY  2的30次方，表示Map存放的最大数据个数
+
+        内部使用Node<key,value>[] 的table数组用于保存数据，每个Node保存有hash值，（根据key计算出来的hash）key，value，nextNode
+        当几个key计算出来的hash一样时，就会在Node<key,value>[] 数组的某个Node上形成一个单向链表，或者一个红黑数，当同一个Node的
+        形成的链表节点个数大于等于8时，且table的长度大于64时会将链表转化成红黑数,否则进行扩容
+
+
+        默认是负载因子loadFactor 0.75, 默认tableSize也就是为16, table只会在存放第一个数据才进行初始化，初始会时，table的length默认是 16, threshold 为12 也就是tableSize * loadFactor
+
+        当size 大于threshold时就会进行扩容操作，扩容就是，将table的length扩充为原来的一倍，threshold为一倍后的0.75
+
+
+
+

@@ -1,0 +1,17 @@
+总接口：Executor
+子接口：ScheduledExecutorService -> ExecutorService -> Executor
+抽象实现：AbstractExecutorService -> ExecutorService （实现了invokeAll，invokeAny，submit 这些公共方法）
+子类实现：ThreadPoolExecutor -> AbstractExecutorService | ForkJoinPool -> AbstractExecutorService
+         ScheduledThreadPoolExecutor -> ScheduledExecutorService (延时任务，定时任务)
+
+工具类：Executors 用于提供各种固定的线程池
+
+       // 缓存线程池，核心程序池大小为0，最大任务数为Integer.MAX_VALUE，任务闲置时间60s，任务队列为无空间的SynchronousQueue
+       // 对队列的读，写都需要等对队列的写和读
+       // 这个线程的工作原理就是
+       public static ExecutorService newCachedThreadPool() {
+               return new ThreadPoolExecutor(0, Integer.MAX_VALUE,
+                                             60L, TimeUnit.SECONDS,
+                                             new SynchronousQueue<Runnable>());
+           }
+
