@@ -1,0 +1,6 @@
+内部使用private transient volatile Object[] array; 存储数据，存储数据的个数没有上限
+
+使用final transient ReentrantLock lock = new ReentrantLock(); 保证增删只会有一个操作进行，每次增删都是重新将array copy一份，在copy
+array上进行修改。完成后将array指向新的array
+
+使用读写分类的思想，保证最终一致性。适合读多写少的场景

@@ -1,0 +1,1 @@
+内部使用 CopyOnWriteArrayList 保存数据，保存数据时使用CopyOnWriteArrayList的addIfAbsent方法，该方法会校验要保存的数据是否已经添加过，添加过就不会添加
