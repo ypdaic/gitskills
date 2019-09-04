@@ -1,0 +1,43 @@
+LinkedBlockingDeque 是一个有界阻塞双向队列，默认数据存放的最大个数是int最大值
+
+内部使用Node 保存数据，Node会保存前驱，后续节点的引用，所以是双向的
+
+/** Doubly-linked list node class */
+    static final class Node<E> {
+        /**
+         * The item, or null if this node has been removed.
+         */
+        E item;
+
+        /**
+         * One of:
+         * - the real predecessor Node
+         * - this Node, meaning the predecessor is tail
+         * - null, meaning there is no predecessor
+         */
+        Node<E> prev;
+
+        /**
+         * One of:
+         * - the real successor Node
+         * - this Node, meaning the successor is head
+         * - null, meaning there is no successor
+         */
+        Node<E> next;
+
+        Node(E x) {
+            item = x;
+        }
+    }
+
+使用head,last 存放对node节点的引用，每次添加node，都会更新last节点的next指向新的node，新的node的prev指向last节点，并变更自己为last
+
+在读取数据，写入数据使用了一个lock，性能上比不上LinkedBlockingQueue
+/** Main lock guarding all access */
+final ReentrantLock lock = new ReentrantLock();
+
+/** Condition for waiting takes */
+private final Condition notEmpty = lock.newCondition();
+
+/** Condition for waiting puts */
+private final Condition notFull = lock.newCondition();

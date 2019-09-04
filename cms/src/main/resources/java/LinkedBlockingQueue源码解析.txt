@@ -1,0 +1,31 @@
+LinkedBlockingQueue 是一个有界的阻塞单向队列，按先进先出规则，默认数据存放的最大个数是int最大值
+
+内部使用Node 保存数据，Node只会保存后续节点的引用，所以是单向的，默认会创建一个空元素的head节点，
+
+static class Node<E> {
+        E item;
+
+        /**
+         * One of:
+         * - the real successor Node
+         * - this Node, meaning the successor is head.next
+         * - null, meaning there is no successor (this is the last node)
+         */
+        Node<E> next;
+
+        Node(E x) { item = x; }
+    }
+
+使用head,last 存放对node节点的引用，每次添加node，都会更新last节点的next指向新的node
+
+在读取数据，写入数据使用了两个lock，也就是读写进行了分离，可以同时读写，因为读始终是操作首节点的next节点的item，而写入始终是操作尾节点的next引用
+private final ReentrantLock takeLock = new ReentrantLock();
+
+/** Wait queue for waiting takes */
+private final Condition notEmpty = takeLock.newCondition();
+
+/** Lock held by put, offer, etc */
+private final ReentrantLock putLock = new ReentrantLock();
+
+/** Wait queue for waiting puts */
+private final Condition notFull = putLock.newCondition();

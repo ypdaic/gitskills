@@ -1,0 +1,1 @@
+内部就是使用HashMap存储值，只是使用了Key，而value是一个固定的Object对象

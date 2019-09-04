@@ -1,0 +1,13 @@
+DelayQueue 无界阻塞延时队列
+
+内部使用PriorityQueue保存数据，
+
+PriorityQueue内部使用数组保存元素，数据存放的个数是int最大值，数组初始化大小为11，当存放的个数
+超过数据长度时就会进行扩容，每次扩大一倍，或者50%，往PriorityQueue存放的数据每次都会被重新排序，要么使用指定的Comparator，要么使用元素继承Comparator
+获取时，总数获取下标为0的数据。
+
+
+DelayQueue 使用一个lock，保证读写同步，每次获取数据都是使用peek获取PriorityQueue数组下标为0的数据，然后获取元素delay的值，如果小于等于0就
+使用poll方法将该元素取出，否则等待delay时间，如果新添加的数据被排到了前面，这会唤醒已经在等待的线程，重新获取新的数据，并等待新的延时时间
+
+private final transient ReentrantLock lock = new ReentrantLock();
