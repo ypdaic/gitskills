@@ -1,0 +1,16 @@
+ArrayBlockingQueue 是一个有界，阻塞的单向队列，先进先出原则，
+
+创建时必须指定数据长度，内部使用final Object[] items; 保存元素，
+使用putIndex，takeIndex 保证先进先出，每次写操作putIndex++,下次存放直接存放putIndex索引位置
+每次读操作takeInex++,下次读直接读takeIndex索引位置。
+
+内部使用一个lock进行读写操作同步，性能上比不上LinkedBlockingQueue
+
+/** Main lock guarding all access */
+    final ReentrantLock lock;
+
+/** Condition for waiting takes */
+private final Condition notEmpty;
+
+/** Condition for waiting puts */
+private final Condition notFull;
