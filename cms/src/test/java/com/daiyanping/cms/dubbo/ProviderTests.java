@@ -1,6 +1,5 @@
 package com.daiyanping.cms.dubbo;
 
-import com.daiyanping.cms.async.AsyncConfig;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.redisson.spring.starter.RedissonAutoConfiguration;
@@ -8,7 +7,6 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.XADataSourceAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -32,9 +30,11 @@ public class ProviderTests {
     @Test
     public void test() {
         try {
-            Thread.sleep(1000 * 60 * 10);
+            Thread.sleep(1000 * 60 * 60);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
+
+
 }
