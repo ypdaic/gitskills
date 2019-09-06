@@ -1,0 +1,1 @@
+内部使用了TreeMap存储值，只是使用了key，value使用一个固定的object
