@@ -1,0 +1,11 @@
+mybatis的Executor接口定义了数据库操作的基本动作，实现类有CachingExecutor，BaseExecutor。
+CachingExecutor用于提供缓存能力，在开启二级缓存时会使用该执行器，其本身不提供查询数据库的能力。
+
+BaseExecutor提供基础数据库操作能力，子类又包含SimpleExecutor，ReuseExecutor，BatchExecutor这三个执行器
+
+默认使用SimpleExecutor，标准的JDBC方式获取Statement，并执行相应的sql
+
+ReuseExecutor，标准的JDBC方式获取Statement，但是会将Statement缓存起来
+
+BatchExecutor，标准的JDBC方式获取Statement，且使用JDBC批处理的方式进行更新或新增操作
+

@@ -1,0 +1,5 @@
+一级缓存在BaseExecutor中定义，使用localCache属性定义，实例是一个PerpetualCache
+
+一级缓存默认开启，且不可配置将其关闭，其作用域为SqlSession，或者一次查询，默认是SESSION级别
+
+通过setting文件的localCacheScope属性进行指定作用域，其值有SESSION,STATEMENT

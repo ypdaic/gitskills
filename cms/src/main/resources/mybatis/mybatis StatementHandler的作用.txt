@@ -1,0 +1,10 @@
+在进行数据库操作我们需要创建statement，mybatis提供三方式创建statement
+
+StatementHandler接口定义了创建statement，并在statemnt上进行增删查改的基本操作
+
+一共有三个实现PreparedStatementHandler，支持预编译的statement
+            CallableStatementHandler，支持存储过程的statement
+            SimpleStatementHandler，不支持预编译的statement
+
+            mybatis 默认使用PreparedStatementHandler，可以在Mapper.xml 文件中使用statementType属性进行指定，
+            使用如下三个值指定 STATEMENT，PREPARED，CALLABLE

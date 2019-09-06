@@ -1,0 +1,7 @@
+mybatis的sql打印能力通过jdk的动态代理实现
+
+ConnectionLogger  打印sql
+
+PreparedStatementLogger  打印参数
+
+ResultSetLogger  打印结果

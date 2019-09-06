@@ -1,0 +1,24 @@
+mybatis在解析Mapper.xml或者Mapper接口时，如果发现<cache>标签，或者@CacheNamespace注解，则会创建一个Cache
+具体创建过程就是调用MapperBuilderAssistant.useNewCache()方法为每个namespace域创建一个了Cache，该Cache默认的实现是PerpetualCache
+就是使用了一个HashMap来缓存数据，默认使用LruCache进行装饰，LruCache的能力就默认缓存1024个数据，大于后，就会将以前添加的移除掉，移除功能
+使用了HashMap提供的afterNodeInsertion() 方法的能力。大小可以配置，也就cache标签的size属性，想要加更多的缓存装饰器，可以使用eviction
+属性，但只能添加一个缓存装饰器，其他的缓存通过如下属性设置：
+
+clearInterval，定时清除缓存，默认1小时
+readWrite，序列化缓存
+
+默认添加，LoggingCache（添加日志能力），SynchronizedCache（添加同步能力）
+
+blocking，BlockingCache 锁的细化，对每个key都会生成一个锁，而且该Cache最先执行
+
+
+上面的Cache创建好后，在创建当前namespace下的MapperStatement时，会将这个Cache传递进去，并且会将这个Cache放到Configuration的caches
+属性中，以namespace做key，Cache做value，这样作为一个应用级别的缓存。
+
+mybatis创建的mapperStatement一样会被保存在Configuration对象中，以namespace+id 作为key, mapperStatement作为值保存
+
+
+当我们在setting配置文件中配置cacheEnabled为true时，表示开启二级缓存。mybatis也是默认开启的。
+
+由于二级缓存是应用级别，且是namespace域的，当其中一个A namespace域修改数据后，而B namespace域的数据还是旧的，导致数据不同步。一般不使用
+二级缓存
