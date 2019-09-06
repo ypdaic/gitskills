@@ -1,0 +1,5 @@
+mybatis 结合spring时，默认使用SqlSessionTemplate充当SqlSession
+
+在我们开始事物后，会通过jdk动态代理创建DefaultSqlSession，并通过spring的事物管理器将其绑定到当前线程中
+
+开启spring事物功能后 ，资源的释放在SqlSessionSynchronization中进行
