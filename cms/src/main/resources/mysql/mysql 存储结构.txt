@@ -1,0 +1,3 @@
+在安装mysql时，我们会指定mysql的datadir，datadir表示我们数据库数据保存的路径，查看datadir，基本每个数据库
+都会对应一个文件夹，在5.7以前，一个数据库会包含一个.frm和.idb这两个文件，.frm 用来保存表的结构数据，.idb用来
+保存表的数据，在8.0 .frm文件已经移除了。已经将其放入到数据字典表，也就是information_schema

@@ -1,0 +1,17 @@
+mysql  MyISAM，InnoDB引擎表锁分为读锁，写锁
+
+lock table read   读锁
+
+读锁，对MyISAM表的读操作，不会阻塞其他用户对同一表的读请求，但会阻塞对同一表的写请求
+
+读锁，对MyISAM表的读操作，不会阻塞当前session对表读，当对表进行修改会报错
+
+读锁，一个session使用LOCK TABLE命令给表f加了读锁，这个session可以查询锁定表中的记录，但更新或访问其他表都会提示错误；
+
+
+lock table write  写锁
+
+写锁，对 MyISAM表的写操作，则会阻塞其他用户对同一表的读和写操作；
+
+写锁，对 MyISAM表的写操作，当前session可以对本表做CRUD,但对其他表进行操作会报错
+

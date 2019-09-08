@@ -1,0 +1,27 @@
+MySql 5.5之前默认的存储引擎
+MyISAM 存储引擎由MYD和MYI组成
+
+[root@localhost test]# ls
+json_user.ibd  test_auto_increment.ibd  testmysam_357.sdi  testmysam.MYD  testmysam.MYI  user.ibd
+
+
+MyISAM 是非聚集索引，也就是索引和数据是分开的，MYI表示索引，MYD表示数据
+
+innerDB 是索引组织表，也就是索引和数据没有分开，idb 存储索引和数据
+
+MyISAM 特性，支持数据压缩，命令
+
+ myisampack -b -f /usr/local/mysql/data/test/testmysam.MYI
+
+ 如果失败就是使用
+
+ myisampack -b -f /usr/local/mysql/data/test/testmysam
+
+MyISAM 的锁是表级别的，而InnoDB 的锁即有表锁，也有行锁
+MyISAM 不支持事务
+
+压缩修复命令： myisamchk -r -f /usr/local/mysql/data/test/testmysam
+
+
+
+

@@ -1,0 +1,4 @@
+datatime 没有时区概念
+timestamp 区分时区
+
+datatime(3) 后面的(3) 表示精度，这里指毫秒

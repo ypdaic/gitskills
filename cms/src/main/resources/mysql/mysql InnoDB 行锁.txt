@@ -1,0 +1,13 @@
+mysql  的行锁，只有InnoDB 引擎支持
+
+共享锁，也称读锁，写法：lock in share mode
+
+当一个事务对某几行上读锁时，允许其他事务对这几行进行读操作，但不允许其进行写操作，也不允许其他事务给这几行上排它锁，但允许上读锁。
+
+例子： select  *  from 表 where  条件  lock in share mode;
+
+排他锁：也称写锁，写法：for update
+
+当一个事务对某几个上写锁时，不允许其他事务写，但允许读。更不允许其他事务给这几行上任何锁。包括写锁。
+
+例子：select *  from 表  where 条件 for update;

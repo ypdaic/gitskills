@@ -1,0 +1,23 @@
+类型 	      说明	        N的含义 	   是否有字符集	最大长度
+CHAR(N)	      定长字符 	    字符       	是	        255
+VARCHAR(N)	  变长字符 	    字符      	是	        16384
+BINARY(N) 	  定长二进制字节	字节  	    否	        255
+VARBINARY(N)  变长二进制字节 	字节	        否	        16384
+TINYBLOB(N)	  二进制大对象 	字节	        否	        256
+BLOB(N)	      二进制大对象 	字节	        否	        16K
+MEDIUMBLOB(N) 二进制大对象 	字节	        否	        16M
+LONGBLOB(N)   二进制大对象	字节	        否	        4G
+TINYTEXT(N)	  大对象	        字节	        是	        256
+TEXT(N)	      大对象	        字节  	    是	        16K
+MEDIUMTEXT(N) 大对象	        字节   	    是	        16M
+LONGTEXT(N)   大对象      	字节	        是	        4G
+
+
+char定义的是固定长度，长度范围为0-255，存储时，如果字符数没有达到定义的位数，会在后面用空格补全存入数据库中，在上例中，name实际存储在数据中的数据为'zejin '
+varchar是变长长度，长度范围为0-65535，存储时，如果字符没有达到定义的位数，也不会在后面补空格
+
+
+@MapperScan 实际上就是用了BeanFactoryPostProcessor，往spring容器中注入MapperFatoryBean，MapperFatoryBean又实现了
+FactoryBean接口，getObject方法会往spirng容器中注入我们的Mapper接口
+
+sqlSessionTemplate内部又有一个sqlSession的动态代理实现

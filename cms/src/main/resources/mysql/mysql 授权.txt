@@ -1,0 +1,14 @@
+通过mysql创建用户后，我们需要给用户授权，用户的操作权限通过User表的字段可查看，比如增删查改，create，drop等
+如果要设置普通用户的grant权限，需要使用with grant option
+
+
+创建用户：CREATE USER 'daiyanping'@'localhost' IDENTIFIED BY 's3kr1t';
+删除用户：DROP USER 'daiyanping'@'localhost';
+授权：GRANT privileges ON databasename.tablename TO 'username'@'host' with grant option(表示给用户grant权限)
+删除授权：REVOKE privilege ON databasename.tablename FROM 'username'@'host';
+
+只给某个表某几个字段权限：
+grant select(id,name) on test.user 'dev'@'%';
+
+mysql  user表保存用户信息，db表保存用户数据库权限信息，table_priv表保存用户对某个表的权限信息，
+       columns_priv保存用户对某个表某个字段的权限信息。

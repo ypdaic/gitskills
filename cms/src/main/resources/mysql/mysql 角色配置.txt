@@ -1,0 +1,33 @@
+使用show VARIABLES like '%proxy%'命令 查看角色配置是否开启
+
+默认是关闭的，如下：
+check_proxy_users	OFF
+mysql_native_password_proxy_users	OFF
+proxy_user
+sha256_password_proxy_users	OFF
+
+需要开启check_proxy_users，mysql_native_password_proxy_users
+
+set GLOBAL check_proxy_users = 1;
+set GLOBAL mysql_native_password_proxy_users  = 1;
+
+接下来创建角色（其实就是一个用户）
+create user 'dev_role';
+
+创建用户
+create user 'deer';
+create user 'enjoy';
+
+在服务器使用root用户执行如下命令：
+
+ grant proxy on 'dev_role' to  'deer'
+ grant proxy on 'dev_role' to  'enjoy'
+
+ grant select(id,name) on mall.account to 'dev_role'
+
+
+如果是普通用户有grant权限，在使用普通用户创建用户，并被用户设置代理时，需要执行如下命令：
+
+ GRANT PROXY ON ''@'' TO 'root'@'%' WITH GRANT OPTION;
+
+ 才可以正常设置代理，root@localhost用户则不用

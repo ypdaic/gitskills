@@ -1,0 +1,20 @@
+CREATE TABLE `user` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
+  `age` int(4) unsigned zerofill DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+COLLATE=utf8mb4_0900_ai_ci;  表示指定的排序规则
+
+ci表示忽略大小写
+bin表示二进制存储
+
+数据库中的排序规则用来定义字符在进行排序和比较的时候的一种规则。 常见的如下：
+（1） utf8_general_cs 和 utf8_general_ci （后缀"_cs"或者"_ci"意思是区分大小写和不区分大小写（Case Sensitive & Case Insensitve））
+（2） utf8_bin 规定每个字符串用二进制编码存储，区分大小写，可以直接存储二进制的内容
+
+
+
+说明：所为排序规则，就是指字符比较时是否区分大小写，以及是按照字符编码进行比较还是直接用二进制数据比较。
