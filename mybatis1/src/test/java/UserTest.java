@@ -27,6 +27,7 @@ import java.sql.*;
 import java.util.Properties;
 
 import static javafx.scene.input.KeyCode.T;
+import static org.apache.ibatis.session.ExecutorType.BATCH;
 
 /**
  * 使用最原始的mybatis只需要mybatis-config.xml  mapper.xml就够了
@@ -73,14 +74,20 @@ public class UserTest {
         String resource = "mybatis-config.xml";
         InputStream inputStream = Resources.getResourceAsStream(resource);
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream, properties);
-        SqlSession session = sqlSessionFactory.openSession();
+        SqlSession session = sqlSessionFactory.openSession(BATCH);
         try {
             // 使用映射接口去查询
             // 映射接口和映射文件的关联由映射文件的namespace属性进行关联
             // 如果namespace写的不对，使用接口将会失败
             UserMapper mapper = session.getMapper(UserMapper.class);
-
-            User user = mapper.getAll(1);
+//
+//            User user = mapper.getAll(1);
+            User user = new User();
+            user.setAge(94);
+            user.setId(-900);
+            user.setEmail("sdfsfs");
+            user.setName("ssss");
+            mapper.insert(user);
 
             System.out.println(user.getName());
             mapper.update(user);
