@@ -6,6 +6,9 @@
         <module>springcloud-api</module>
         <module>springcloud-provider</module>
         <module>springcloud-consumer</module>
+        <module>springcloud-security</module>
+        <module>springcloud-eureka</module>
+        <module>springcloud-eureka2</module>
     </modules>
 
     <groupId>com.daiyanping</groupId>
@@ -28,12 +31,12 @@
                 <version>${spring-cloud.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-                <exclusions>
-                <exclusion>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-security</artifactId>
-                </exclusion>
-                </exclusions>
+                <!--<exclusions>-->
+                <!--<exclusion>-->
+                <!--<groupId>org.springframework.boot</groupId>-->
+                <!--<artifactId>spring-boot-starter-security</artifactId>-->
+                <!--</exclusion>-->
+                <!--</exclusions>-->
             </dependency>
             <dependency> <!-- SpringCloud离不开SpringBoot，所以必须要配置此依赖包 -->
                 <groupId>org.springframework.boot</groupId>
@@ -89,6 +92,11 @@
             <dependency>
                 <groupId>com.daiyanping</groupId>
                 <artifactId>springcloud-api</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.daiyanping</groupId>
+                <artifactId>springcloud-security</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
         </dependencies>

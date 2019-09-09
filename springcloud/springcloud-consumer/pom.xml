@@ -70,7 +70,11 @@
             <artifactId>springcloud-api</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
-
+        <!--服务消费-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
 
     </dependencies>
 

@@ -36,5 +36,10 @@ public class ConsumerTests {
     @Test
     public void test() {
         consumerService.say();
+        try {
+            Thread.sleep(1000 * 60 * 60);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

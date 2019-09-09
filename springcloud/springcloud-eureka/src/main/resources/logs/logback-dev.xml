@@ -6,7 +6,7 @@ debug:当此属性设置为true时，将打印出logback内部日志信息，实
 -->
 <configuration scan="true" scanPeriod="60 seconds" debug="false">
 
-    <property name="log.path" value="logs/provider"/>
+    <property name="log.path" value="logs/eureka"/>
 
     <!-- TRACE < DEBUG < INFO < WARN < ERROR 日志级别-->
 

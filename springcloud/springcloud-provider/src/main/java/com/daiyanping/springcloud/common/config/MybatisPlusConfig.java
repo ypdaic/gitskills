@@ -58,14 +58,14 @@ public class MybatisPlusConfig {
     private MybatisPlusProperties mybatisPlusProperties;
 
     @Bean
-    public SqlSessionFactory getSqlSessionFactory(DataSource dataSource) throws Exception {
+    public MybatisSqlSessionFactoryBean getSqlSessionFactory(DataSource dataSource) throws Exception {
         MybatisSqlSessionFactoryBean factory = new MybatisSqlSessionFactoryBean();
         factory.setDataSource(dataSource);
         factory.setMapperLocations(mybatisPlusProperties.resolveMapperLocations());
         factory.setPlugins(new Interceptor[]{paginationInterceptor(), performanceInterceptor()});
         GlobalConfig globalConfig = mybatisPlusProperties.getGlobalConfig();
         factory.setGlobalConfig(globalConfig);
-        return factory.getObject();
+        return factory;
     }
 
     @Bean

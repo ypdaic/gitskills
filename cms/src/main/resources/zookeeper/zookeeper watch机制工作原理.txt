@@ -6,3 +6,14 @@
     两个属性中存入path及watch,也就是NIOServerCnxn自己
     当我们调用setData方法时，就会调用DataTree的dataWatches，或者childWatches派发path的事件，
     也就是NIOServerCnxn的process方法，向客户端发送xid为-1的事件响应，客户端收到响应后，就会调用客户端对应path上注册的事件执行
+
+    服务端，收到创建节点请求，会处理节点的Event.EventType.NodeCreated和父节点的Event.EventType.NodeChildrenChanged这两个事件，
+    收到节点删除请求，会处理节点的Event.EventType.NodeDeleted和父节点的Event.EventType.NodeChildrenChanged这两个事件
+    收到节点修改数据请求，会处理节点的EventType.NodeDataChanged事件
+
+    服务端处理事件就是向客户端发送事件响应，也就是ReplyHeader的xid为-1的响应
+    上面的服务端处理事件的前提是你要提前往服务端注册事件
+    具体看DataTree的createNode,deleteNode,setData方法
+
+
+    客户端事件一次性的原因大致是以为节点数据变更后，而你的监听事件还在，也就你的监听事件从来都是增加，而不会减少，ZooKeeper对象对这些事件存在强引用，如果说一直添加事件，这样会导致内存泄漏
