@@ -1,0 +1,28 @@
+server:
+  port: 8090
+  servlet:
+    context-path: /@project.name@
+spring:
+ profiles:
+   active: @env@
+ security:
+   user:
+     name: admin
+     password: test1234
+
+eureka:
+  instance: # eureak实例定义
+    hostname: eureka2 # 定义 Eureka 实例所在的主机名称
+  server:
+    eviction-interval-timer-in-ms: 1000   #设置清理的间隔时间，而后这个时间使用的是毫秒单位（默认是60秒）
+    enable-self-preservation: false #设置为false表示关闭保护模式
+
+  client:
+    register-with-eureka: false #是否注册到eureka
+    fetch-registry: false #指示此客户端是否应从eureka服务器获取eureka注册表信息
+    service-url:
+      # 单例配置
+      #defaultZone: http://admin:enjoy@localhost:7001/eureka
+
+      # 高可用配置
+      defaultZone: http://admin:test1234@eureka1:8087/springcloud-eureka/eureka,http://admin:test1234@eureka2:8090/springcloud-eureka2/eureka
