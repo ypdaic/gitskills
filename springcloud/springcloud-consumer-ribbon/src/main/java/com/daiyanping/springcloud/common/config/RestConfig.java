@@ -17,7 +17,6 @@ import java.util.Base64;
 public class RestConfig {
 
     @Bean
-    @LoadBalanced
     public RestTemplate getRestTemplate(RestTemplateBuilder builder) {
         RestTemplate build = builder.build();
         return build;

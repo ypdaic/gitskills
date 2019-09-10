@@ -6,8 +6,6 @@ debug:当此属性设置为true时，将打印出logback内部日志信息，实
 -->
 <configuration scan="true" scanPeriod="60 seconds" debug="false">
 
-    <property name="log.path" value="logs/consumer"/>
-
     <!-- TRACE < DEBUG < INFO < WARN < ERROR 日志级别-->
 
     <!--文件输出的格式设置 -->
@@ -29,16 +27,16 @@ debug:当此属性设置为true时，将打印出logback内部日志信息，实
 
         <!-- 配置日志所生成的目录以及生成文件名的规则 在logs/mylog-2016-10-31.0.log -->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${log.path}/mylog-debug-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>logs/consumer/mylog-debug-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy
                     class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <!-- 最大10KB 超过最大值，会重新建一个文件-->
-                <maxFileSize>10 MB</maxFileSize>
+                <maxFileSize>10 KB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
             <!-- 如果按天来回滚，则最大保存时间为30天，30天之前的都将被清理掉 -->
             <maxHistory>30</maxHistory>
             <!-- 日志总保存量为10MB 超过则删除-->
-            <totalSizeCap>20MB</totalSizeCap>
+            <totalSizeCap>20KB</totalSizeCap>
         </rollingPolicy>
         <!--<filter>:-->
         <!--过滤器，执行一个过滤器会有返回个枚举值，即DENY，NEUTRAL，ACCEPT其中之一。返回DENY，日志将立即被抛弃不再经过其他过滤器；返回NEUTRAL，有序列表里的下个过滤器过接着处理日志；返回ACCEPT，日志会被立即处理，不再经过剩余过滤器。-->
@@ -63,12 +61,12 @@ debug:当此属性设置为true时，将打印出logback内部日志信息，实
             <charset>UTF-8</charset>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${log.path}/mylog-info-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>logs/consumer/mylog-info-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>10 MB</maxFileSize>
+                <maxFileSize>10 KB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
             <maxHistory>30</maxHistory>
-            <totalSizeCap>20MB</totalSizeCap>
+            <totalSizeCap>20KB</totalSizeCap>
         </rollingPolicy>
 
         <filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印DEBUG日志 -->
@@ -87,12 +85,12 @@ debug:当此属性设置为true时，将打印出logback内部日志信息，实
             <charset>UTF-8</charset>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${log.path}/mylog-warn-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>logs/consumer/mylog-warn-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>10 MB</maxFileSize>
+                <maxFileSize>10 KB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
             <maxHistory>30</maxHistory>
-            <totalSizeCap>20MB</totalSizeCap>
+            <totalSizeCap>20KB</totalSizeCap>
         </rollingPolicy>
 
         <filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印DEBUG日志 -->
@@ -111,12 +109,12 @@ debug:当此属性设置为true时，将打印出logback内部日志信息，实
             <charset>UTF-8</charset>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${log.path}/mylog-error-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>logs/consumer/mylog-error-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>10 MB</maxFileSize>
+                <maxFileSize>10 KB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
             <maxHistory>30</maxHistory>
-            <totalSizeCap>20MB</totalSizeCap>
+            <totalSizeCap>20KB</totalSizeCap>
         </rollingPolicy>
         <!--LevelFilter： 级别过滤器，根据日志级别进行过滤。如果日志级别等于配置级别，过滤器会根据onMath 和 onMismatch接收或拒绝日志-->
         <filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印DEBUG日志 -->
@@ -153,7 +151,7 @@ debug:当此属性设置为true时，将打印出logback内部日志信息，实
     <logger name="com.daiyanping.springcloud" level="DEBUG"/>
 
     <!--指定最基础的日志输出级别-->
-    <root level="debug">
+    <root level="info">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="fileErrorLog"/>
         <appender-ref ref="fileWarnLog"/>
