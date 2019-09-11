@@ -31,19 +31,19 @@ public class CodeGenerator {
 //
 //    private final static String MODULE_NAME = "test";
 
-    private final static String PROJECT_PATH = "/Users/daiyanping/code/yyc-rss-backup/yyc-rss";
+    private final static String PROJECT_PATH = "/Users/daiyanping/code/yyc-css";
 
-    private final static String MODULE_NAME = "total";
+    private final static String MODULE_NAME = "search";
 
-    private final static String PARTENT_PATH = "com.sungo.report.server";
+    private final static String PARTENT_PATH = "com.sungo.server";
 
-    private final static String DATABASE_URL = "jdbc:mysql://192.168.0.12:3306/papv2_smzy";
+    private final static String DATABASE_URL = "jdbc:mysql://192.168.0.12:3306/papv2_admin";
 
     private final static String USERNAME = "root";
 
     private final static String PASSWORD = "123456";
 
-    private final static String MAPPERXML_PATH = "/src/main/resources/sqlMapperXml/total/";
+    private final static String MAPPERXML_PATH = "/src/main/resources/sqlMapperXml/search/";
 
     /**
      * <p>
@@ -214,7 +214,7 @@ public class CodeGenerator {
         // 需要生成的表的字段名的策略  此处为下滑线分隔 （具体给什么参数以数据库为准）
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
         // 需要生成的表的表名
-        strategy.setInclude(new String[]{"hospital"});
+        strategy.setInclude(new String[]{"province"});
         // 需要排除生成的表的表名
 //        strategy.setExclude(new String[]{"test"});
         // 设置实体类的父类 默认Model

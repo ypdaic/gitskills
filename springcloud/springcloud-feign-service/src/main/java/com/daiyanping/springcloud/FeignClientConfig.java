@@ -1,5 +1,6 @@
-package com.daiyanping.spingcloud;
+package com.daiyanping.springcloud;
 
+import feign.Logger;
 import feign.auth.BasicAuthRequestInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,5 +18,11 @@ public class FeignClientConfig {
     @Bean
     public BasicAuthRequestInterceptor getBasicAuthRequestInterceptor() {
         return new BasicAuthRequestInterceptor("admin", "test1234");
+    }
+
+//    开启feign调用日志
+    @Bean
+    public Logger.Level getFeignLoggerLevel() {
+        return feign.Logger.Level.FULL ;
     }
 }

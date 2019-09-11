@@ -6,10 +6,17 @@ spring:
  profiles:
    active: @env@
 
-ribbon:
-  eureka:
-    enabled: false
-
-SPRINGCLOUD-PROVIDER:
-  ribbon:
-    listOfServers: http://localhost:8088,http://localhost:8091
+eureka:
+  client:
+    register-with-eureka: false
+    service-url:
+      defaultZone: http://admin:test1234@eureka1:8087/springcloud-eureka/eureka,http://admin:test1234@eureka2:8090/springcloud-eureka2/eureka
+feign:
+  compression:
+    request:
+      enabled: true
+      mime-types: # 可以被压缩的类型
+        - text/xml
+        - application/xml
+        - application/json
+      min-request-size: 2048 # 超过2048的字节进行压缩

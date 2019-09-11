@@ -18,6 +18,6 @@ public class RibbonConfig {
 
     @Bean
     public IRule ribbonRule() { // 其中IRule就是所有规则的标准
-        return new com.netflix.loadbalancer.RoundRobinRule(); // 轮询的访问策略
+        return new com.netflix.loadbalancer.RandomRule(); // 轮询的访问策略
     }
 }
