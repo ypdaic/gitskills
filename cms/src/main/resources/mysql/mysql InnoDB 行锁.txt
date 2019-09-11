@@ -11,3 +11,46 @@ mysql  的行锁，只有InnoDB 引擎支持
 当一个事务对某几个上写锁时，不允许其他事务写，但允许读。更不允许其他事务给这几行上任何锁。包括写锁。
 
 例子：select *  from 表  where 条件 for update;
+
+
+innodb  必须有索引才会生效，否则就会锁全表
+
+一般使用BEGIN; 命令开启事务，使用ROLLBACK,BEGIN,COMMIT释放事务
+
+查询mysql 锁的使用情况
+
+8.0
+select * from performance_schema.data_locks;
+
+5.7
+select * from information_schema.INNODB_LOCKS;
+
+
+ENGINE  ENGINE_LOCK_ID                          ENGINE_TRANSCATION_ID                                                               LOCK_TYPE        LOCK_MODE
+INNODB	139756871041456:1075:139756759489656	15647	        51	119	test	testdemo				     139756759489656	    TABLE	IX	          GRANTED
+INNODB	139756871041456:18:4:2:139756759486776	15647	        51	119	test	testdemo			PRIMARY	 139756759486776	    RECORD	X,REC_NOT_GAP GRANTED	1
+INNODB	139756871040560:1075:139756759483672	421231847751216	49	146	test	testdemo				     139756759483672	    TABLE	IS	          GRANTED
+INNODB	139756871040560:18:4:2:139756759480744	421231847751216	49	146	test	testdemo			PRIMARY	 139756759480744	    RECORD	S,REC_NOT_GAP WAITING	1
+
+
+5.7 以后的版本可以同如下sql 得知加锁的进程
+
+select * from sys.innodb_lock_waits
+
+sql_kill_blocking_connection  字段的值直接执行就可以kill掉加锁的连接
+
+5.6 使用如下sql:
+
+SELECT
+  r.trx_id waiting_trx_id,
+  r.trx_mysql_thread_id waiting_thread,
+  r.trx_query waiting_query,
+  b.trx_id blocking_trx_id,
+  b.trx_mysql_thread_id blocking_thread
+FROM
+  information_schema.innodb_lock_waits w
+INNER JOIN
+  information_schema.innodb_trx b ON b.trx_id = w.blocking_trx_id
+INNER JOIN
+  information_schema.innodb_trx r ON r.trx_id = w.requesting_trx_id;
+
