@@ -11,15 +11,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @Configuration
 @EnableWebSecurity
 public class WebSecurity extends WebSecurityConfigurerAdapter {
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.httpBasic().and().authorizeRequests().anyRequest()
-                .fullyAuthenticated();
-        http.sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.csrf().disable();
-        super.configure(http);
-    }
+//    @Override
+//    protected void configure(HttpSecurity http) throws Exception {
+//        http.httpBasic().and().authorizeRequests().anyRequest();
+////                .fullyAuthenticated();
+//        http.sessionManagement()
+//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+//        http.csrf().disable();
+//        super.configure(http);
+//    }
 
     @Override
     public void configure(AuthenticationManagerBuilder auth)
