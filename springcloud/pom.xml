@@ -9,10 +9,15 @@
         <module>springcloud-consumer</module>
         <module>springcloud-consumer-ribbon</module>
         <module>springcloud-consumer-feign</module>
+        <module>springcloud-consumer-feign-hystrix</module>
         <module>springcloud-security</module>
         <module>springcloud-eureka</module>
         <module>springcloud-eureka2</module>
         <module>springcloud-feign-service</module>
+        <module>springcloud-provider-hystrix</module>
+        <module>springcloud-user-hystrix</module>
+        <module>springcloud-consumer-hystrix-dashboard</module>
+        <module>springcloud-zuul-gateway</module>
     </modules>
 
     <groupId>com.daiyanping</groupId>

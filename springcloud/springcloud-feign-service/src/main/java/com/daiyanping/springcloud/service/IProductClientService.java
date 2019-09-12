@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @Date 2019-09-10
  * @Version 0.1
  */
-@FeignClient(name = "SPRINGCLOUD-PROVIDER",configuration = FeignClientConfig.class)
+@FeignClient(name = "SPRINGCLOUD-PROVIDER",configuration = FeignClientConfig.class, fallbackFactory = IProductClientServiceFallbackFactory.class)
 public interface IProductClientService {
 
     @PostMapping("/springcloud-provider/product/getProduct")
