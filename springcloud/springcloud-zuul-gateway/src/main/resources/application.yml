@@ -1,0 +1,46 @@
+server:
+  port: 8094
+  servlet:
+    context-path: /@project.name@
+spring:
+ profiles:
+   active: @env@
+ application:
+  name: @project.name@
+ #security:
+  #user:
+  #  name: admin  # 认证用户名
+  #  password: test1234  # 认证密码
+
+# 将服务注册到eureka上
+eureka:
+  client:
+    serviceUrl:
+      # 单例
+      #defaultZone: http://admin:test1234@localhost:8087/springcloud-eureka/eureka/
+
+      # 高可用
+      defaultZone: http://admin:test1234@eureka1:8087/springcloud-eureka/eureka,http://admin:test1234@eureka2:8090/springcloud-eureka2/eureka
+    register-with-eureka: false
+
+info:
+  app.name: @project.name@
+  company.name: daiyanping
+  build.artifactId: @project.artifactId@
+  build.modelVersion: @project.modelVersion@
+
+zuul:
+  routes:
+    users:
+      path: /users-proxy/**
+      serviceId: springcloud-user-hystrix
+    users2: #不通过eureka访问
+      path: /users2-proxy/**
+      url: http://localhost:8095/
+    product:
+      path: /product-proxy/**
+      serviceId: springcloud-provider-hystrix
+  ignored-services: #禁止直接通过服务名访问
+    "*"
+  prefix: /zuul-api #设置公共前缀，设置后所有请求都要加上该前缀
+
