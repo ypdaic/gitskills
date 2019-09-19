@@ -1,0 +1,13 @@
+Spring Bean生命周期 刚才面试官给的答案：
+
+① 实例化Bean对象
+② 设置对象属性
+③ 检查是否实现Aware相关接口，并设置相关依赖
+④ 执行BeanPostProcessor前置处理
+⑤ 检查是否是InitializingBean以决定是否调用afterPropertiesSet方法
+⑥ 检查是否配置有自定义的init-method方法
+⑦ 执行BeanPostProcessor后置处理
+⑧ 注册必要的Destruction相关回调接口
+⑨ 使用中
+⑩ 是否实现DisposableBean接口，如果有，则执行相应的方法
+⑪是否配置有自定义的destroy方法，如果有则执行销毁
