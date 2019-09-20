@@ -26,6 +26,11 @@ public class EurekaApplication {
     @EnableWebSecurity
     static class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+        /**
+         * 忽略/eureka 路径，防止被csrf拦截
+         * @param http
+         * @throws Exception
+         */
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             http.csrf().ignoringAntMatchers("/eureka/**");
