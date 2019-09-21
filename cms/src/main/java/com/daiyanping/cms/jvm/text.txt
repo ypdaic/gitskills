@@ -1,0 +1,117 @@
+Classfile /D:/git-repository/gitskills/cms/target/classes/com/daiyanping/cms/jvm/JvmStack.class
+  Last modified 2019-8-17; size 632 bytes
+  MD5 checksum 24e7825851863897e91681ef0632975b
+  Compiled from "JvmStack.java"
+public class com.daiyanping.cms.jvm.JvmStack
+  minor version: 0
+  major version: 52
+  flags: ACC_PUBLIC, ACC_SUPER
+Constant pool:
+   #1 = Methodref          #5.#26         // java/lang/Object."<init>":()V
+   #2 = Methodref          #4.#27         // com/daiyanping/cms/jvm/JvmStack.test2:(I)I
+   #3 = Methodref          #4.#28         // com/daiyanping/cms/jvm/JvmStack.test:(I)I
+   #4 = Class              #29            // com/daiyanping/cms/jvm/JvmStack
+   #5 = Class              #30            // java/lang/Object
+   #6 = Utf8               <init>
+   #7 = Utf8               ()V
+   #8 = Utf8               Code
+   #9 = Utf8               LineNumberTable
+  #10 = Utf8               LocalVariableTable
+  #11 = Utf8               this
+  #12 = Utf8               Lcom/daiyanping/cms/jvm/JvmStack;
+  #13 = Utf8               test
+  #14 = Utf8               (I)I
+  #15 = Utf8               a
+  #16 = Utf8               I
+  #17 = Utf8               b
+  #18 = Utf8               i
+  #19 = Utf8               MethodParameters
+  #20 = Utf8               test2
+  #21 = Utf8               c
+  #22 = Utf8               d
+  #23 = Utf8               main
+  #24 = Utf8               SourceFile
+  #25 = Utf8               JvmStack.java
+  #26 = NameAndType        #6:#7          // "<init>":()V
+  #27 = NameAndType        #20:#14        // test2:(I)I
+  #28 = NameAndType        #13:#14        // test:(I)I
+  #29 = Utf8               com/daiyanping/cms/jvm/JvmStack
+  #30 = Utf8               java/lang/Object
+{
+  public com.daiyanping.cms.jvm.JvmStack();
+    descriptor: ()V
+    flags: ACC_PUBLIC
+    Code:
+      stack=1, locals=1, args_size=1
+         0: aload_0
+         1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+         4: return
+      LineNumberTable:
+        line 6: 0
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0       5     0  this   Lcom/daiyanping/cms/jvm/JvmStack;
+
+  public static int test(int);
+    descriptor: (I)I
+    flags: ACC_PUBLIC, ACC_STATIC
+    Code:
+      stack=2, locals=3, args_size=1
+         0: iload_0 第一个i表示int类型 load_0 表示LocalVariableTable中Slot为0的参数，
+         1: bipush        100  将一个byte类型的常量入栈
+         3: isub               将栈顶两个int的数据出栈，相减，结果入栈
+         4: istore_1           栈顶的int类型，1表示存入局部变量1的位置
+         5: iload_1
+         6: invokestatic  #2                  // Method test2:(I)I  调用方法test2
+         9: istore_2           栈顶的int类型，2表示存入局部变量2的位置
+        10: iload_2            将局部变量2的数据入栈
+        11: ireturn            将栈顶数据return
+      LineNumberTable:
+        line 9: 0
+        line 10: 5
+        line 11: 10
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0      12     0     a   I
+            5       7     1     b   I
+           10       2     2     i   I
+    MethodParameters:
+      Name                           Flags
+      a
+
+  public static int test2(int);
+    descriptor: (I)I
+    flags: ACC_PUBLIC, ACC_STATIC
+    Code:
+      stack=2, locals=2, args_size=1
+         0: iload_0
+         1: bipush        100
+         3: isub
+         4: istore_1
+         5: iload_1
+         6: ireturn
+      LineNumberTable:
+        line 15: 0
+        line 16: 5
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0       7     0     c   I
+            5       2     1     d   I
+    MethodParameters:
+      Name                           Flags
+      c
+
+  public static void main();
+    descriptor: ()V
+    flags: ACC_PUBLIC, ACC_STATIC
+    Code:
+      stack=1, locals=0, args_size=0
+         0: sipush        1000
+         3: invokestatic  #3                  // Method test:(I)I
+         6: pop
+         7: return
+      LineNumberTable:
+        line 20: 0
+        line 21: 7
+}
+SourceFile: "JvmStack.java"

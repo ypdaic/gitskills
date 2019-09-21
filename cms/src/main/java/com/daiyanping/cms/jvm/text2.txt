@@ -1,0 +1,206 @@
+Classfile /D:/git-repository/gitskills/cms/target/classes/com/daiyanping/cms/jvm/JvmStack.class
+  Last modified 2019-8-17; size 1121 bytes
+  MD5 checksum 7a4959cd0fd4ec9d1d84095dc6a0b47a
+  Compiled from "JvmStack.java"
+public class com.daiyanping.cms.jvm.JvmStack
+  minor version: 0
+  major version: 52
+  flags: ACC_PUBLIC, ACC_SUPER
+Constant pool:
+   #1 = Methodref          #13.#41        // java/lang/Object."<init>":()V
+   #2 = String             #42            // 常量放在方法区
+   #3 = Fieldref           #9.#43         // com/daiyanping/cms/jvm/JvmStack.Fs:Ljava/lang/String;
+   #4 = Fieldref           #9.#44         // com/daiyanping/cms/jvm/JvmStack.count:I
+   #5 = Fieldref           #45.#46        // java/lang/System.out:Ljava/io/PrintStream;
+   #6 = Fieldref           #9.#47         // com/daiyanping/cms/jvm/JvmStack.Ss:Ljava/lang/String;
+   #7 = Methodref          #48.#49        // java/io/PrintStream.println:(Ljava/lang/String;)V
+   #8 = Methodref          #9.#50         // com/daiyanping/cms/jvm/JvmStack.test2:(I)I
+   #9 = Class              #51            // com/daiyanping/cms/jvm/JvmStack
+  #10 = Methodref          #9.#41         // com/daiyanping/cms/jvm/JvmStack."<init>":()V
+  #11 = Methodref          #9.#52         // com/daiyanping/cms/jvm/JvmStack.test:(I)I
+  #12 = String             #53            // 静态属性放在方法区
+  #13 = Class              #54            // java/lang/Object
+  #14 = Utf8               Fs
+  #15 = Utf8               Ljava/lang/String;
+  #16 = Utf8               ConstantValue
+  #17 = Utf8               Ss
+  #18 = Utf8               count
+  #19 = Utf8               I
+  #20 = Utf8               <init>
+  #21 = Utf8               ()V
+  #22 = Utf8               Code
+  #23 = Utf8               LineNumberTable
+  #24 = Utf8               LocalVariableTable
+  #25 = Utf8               this
+  #26 = Utf8               Lcom/daiyanping/cms/jvm/JvmStack;
+  #27 = Utf8               test
+  #28 = Utf8               (I)I
+  #29 = Utf8               a
+  #30 = Utf8               b
+  #31 = Utf8               i
+  #32 = Utf8               MethodParameters
+  #33 = Utf8               test2
+  #34 = Utf8               c
+  #35 = Utf8               d
+  #36 = Utf8               main
+  #37 = Utf8               jvmStack
+  #38 = Utf8               <clinit>
+  #39 = Utf8               SourceFile
+  #40 = Utf8               JvmStack.java
+  #41 = NameAndType        #20:#21        // "<init>":()V
+  #42 = Utf8               常量放在方法区
+  #43 = NameAndType        #14:#15        // Fs:Ljava/lang/String;
+  #44 = NameAndType        #18:#19        // count:I
+  #45 = Class              #55            // java/lang/System
+  #46 = NameAndType        #56:#57        // out:Ljava/io/PrintStream;
+  #47 = NameAndType        #17:#15        // Ss:Ljava/lang/String;
+  #48 = Class              #58            // java/io/PrintStream
+  #49 = NameAndType        #59:#60        // println:(Ljava/lang/String;)V
+  #50 = NameAndType        #33:#28        // test2:(I)I
+  #51 = Utf8               com/daiyanping/cms/jvm/JvmStack
+  #52 = NameAndType        #27:#28        // test:(I)I
+  #53 = Utf8               静态属性放在方法区
+  #54 = Utf8               java/lang/Object
+  #55 = Utf8               java/lang/System
+  #56 = Utf8               out
+  #57 = Utf8               Ljava/io/PrintStream;
+  #58 = Utf8               java/io/PrintStream
+  #59 = Utf8               println
+  #60 = Utf8               (Ljava/lang/String;)V
+{
+  final java.lang.String Fs;
+    descriptor: Ljava/lang/String;
+    flags: ACC_FINAL
+    ConstantValue: String 常量放在方法区
+
+  static java.lang.String Ss;
+    descriptor: Ljava/lang/String;
+    flags: ACC_STATIC
+
+  int count;
+    descriptor: I
+    flags:
+
+  public com.daiyanping.cms.jvm.JvmStack();
+    descriptor: ()V
+    flags: ACC_PUBLIC
+    Code:
+      stack=2, locals=1, args_size=1
+         0: aload_0
+         1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+         4: aload_0
+         5: ldc           #2                  // String 常量放在方法区
+         7: putfield      #3                  // Field Fs:Ljava/lang/String;
+        10: aload_0
+        11: iconst_0
+        12: putfield      #4                  // Field count:I
+        15: return
+      LineNumberTable:
+        line 6: 0
+        line 8: 4
+        line 12: 10
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0      16     0  this   Lcom/daiyanping/cms/jvm/JvmStack;
+
+  public int test(int);
+    descriptor: (I)I
+    flags: ACC_PUBLIC
+    Code:
+      stack=3, locals=4, args_size=2
+         0: aload_0
+         1: dup
+         2: getfield      #4                  // Field count:I
+         5: iconst_1
+         6: iadd
+         7: putfield      #4                  // Field count:I
+        10: getstatic     #5                  // Field java/lang/System.out:Ljava/io/PrintStream;
+        13: getstatic     #6                  // Field Ss:Ljava/lang/String;
+        16: invokevirtual #7                  // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+        19: iload_1
+        20: bipush        100
+        22: isub
+        23: istore_2
+        24: aload_0
+        25: iload_2
+        26: invokevirtual #8                  // Method test2:(I)I
+        29: istore_3
+        30: getstatic     #5                  // Field java/lang/System.out:Ljava/io/PrintStream;
+        33: ldc           #2                  // String 常量放在方法区
+        35: invokevirtual #7                  // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+        38: iload_3
+        39: ireturn
+      LineNumberTable:
+        line 20: 0
+        line 21: 10
+        line 22: 19
+        line 23: 24
+        line 24: 30
+        line 25: 38
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0      40     0  this   Lcom/daiyanping/cms/jvm/JvmStack;
+            0      40     1     a   I
+           24      16     2     b   I
+           30      10     3     i   I
+    MethodParameters:
+      Name                           Flags
+      a
+
+  public int test2(int);
+    descriptor: (I)I
+    flags: ACC_PUBLIC
+    Code:
+      stack=2, locals=3, args_size=2
+         0: iload_1
+         1: bipush        100
+         3: isub
+         4: istore_2
+         5: iload_2
+         6: ireturn
+      LineNumberTable:
+        line 29: 0
+        line 30: 5
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0       7     0  this   Lcom/daiyanping/cms/jvm/JvmStack;
+            0       7     1     c   I
+            5       2     2     d   I
+    MethodParameters:
+      Name                           Flags
+      c
+
+  public static void main();
+    descriptor: ()V
+    flags: ACC_PUBLIC, ACC_STATIC
+    Code:
+      stack=2, locals=1, args_size=0
+         0: new           #9                  // class com/daiyanping/cms/jvm/JvmStack
+         3: dup
+         4: invokespecial #10                 // Method "<init>":()V
+         7: astore_0
+         8: aload_0
+         9: sipush        1000
+        12: invokevirtual #11                 // Method test:(I)I
+        15: pop
+        16: return
+      LineNumberTable:
+        line 34: 0
+        line 35: 8
+        line 36: 16
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            8       9     0 jvmStack   Lcom/daiyanping/cms/jvm/JvmStack;
+
+  static {};
+    descriptor: ()V
+    flags: ACC_STATIC
+    Code:
+      stack=1, locals=0, args_size=0
+         0: ldc           #12                 // String 静态属性放在方法区
+         2: putstatic     #6                  // Field Ss:Ljava/lang/String;
+         5: return
+      LineNumberTable:
+        line 10: 0
+}
+SourceFile: "JvmStack.java"
