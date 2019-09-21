@@ -1,0 +1,22 @@
+case OpCode.create:
+case OpCode.delete:
+case OpCode.setData:
+case OpCode.multi:
+case OpCode.setACL:
+case OpCode.createSession:
+case OpCode.closeSession:
+
+这些操作被learner,follower,observer获取后，follower,observer会将消息已REQUEST的类型发送给learner。
+learner的LearnerHandler收到后，会将消息发送给ZooKeeperServer.submitRequest方法，learner本身收到这些操作后
+同样是发送给ZooKeeperServer.submitRequest方法，之后同单机一样，首先请求发送给PrepRequestProcessor
+进行处理，然后发送ProposalRequestProcessor，ProposalRequestProcessor的作用就是先将请求发送给CommitProcessor
+使其在CommitProcessor中阻塞，然后给follower发送投票通知，最后使用SyncRequestProcessor进行写日志，快照操作，
+
+follower，在收到投票操作后，Follower.processPacket方法会先通知SyncRequestProcessor进行日志，快照的写入，然后使用
+SendAckRequestProcessor向learner发送ack响应，当learner收到的ack超过半数时，就向follower
+发送commit消息，向observer发送INFORM消息，并使用zk.commitProcessor.commit(p.request);
+释放CommitProcessor
+
+
+follower收到commit后，释放CommitProcessor，将数据写入内存，并响应客户端
+observer收到inform后，释放CommitProcessor，将数据写入内存，并响应客户端
