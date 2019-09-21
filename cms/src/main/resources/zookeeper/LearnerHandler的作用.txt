@@ -1,0 +1,3 @@
+每个follower和observer在连接learner后，在learner端都会对应一个LearnerHandler
+其作用就是接受follower，observer转发的事务请求，接受follower的投票响应，向follower，observer发送
+commit消息，inform消息，

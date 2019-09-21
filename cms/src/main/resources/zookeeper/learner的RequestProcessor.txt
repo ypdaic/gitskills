@@ -1,0 +1,12 @@
+
+PrepRequestProcessor （收到客户端的请求和follower，observer转发的请求，并做相应处理后，然后将请求发给ProposalRequestProcessor）
+ProposalRequestProcessor （如果是事务请求给follower发送投票信息，并将请求发送给SyncRequestProcessor，CommitProcessor）
+
+
+SyncRequestProcessor （记录日志和快照，按后将请求发给AckRequestProcessor）
+AckRequestProcessor （收集自己的投票信息）
+
+CommitProcessor （如果是事务请求，等待自己发送commit消息，非事务请求直接交给ToBeAppliedRequestProcessor）
+ToBeAppliedRequestProcessor （清空投票信息，请求交给FinalRequestProcessor）
+FinalRequestProcessor （数据入内存，并响应 客户端）
+

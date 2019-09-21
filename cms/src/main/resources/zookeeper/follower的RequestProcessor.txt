@@ -1,0 +1,8 @@
+下面3个由上到下形成一个链条
+FollowerRequestProcessor （先将请求发送给CommitProcessor，如果是事务请求，转发给learner）
+CommitProcessor （如果是事务请求，等待learner发送commit消息，非事务请求直接交给FinalRequestProcessor）
+FinalRequestProcessor （数据入内存，并响应 客户端）
+
+下面两个由上到下形成一个链条
+SyncRequestProcessor （等待learner发送投票消息，并将数据写入日志，快照）
+SendAckRequestProcessor （给learner发送ack应答）
