@@ -1,0 +1,42 @@
+id   字段：
+     值越大，越先执行，相同，从上到下执行
+selete_type 字段类型:
+     SIMPLE：简单的select查询，查询中不包含子查询或UNION
+     PRIMARY:查询中包含任何复杂的子部分，最外层查询则被标记为PRIMARY
+     SUBQUERY:select,where 中包含的子查询
+     DERIVED:在from列表中包含子查询的则被标记为DERIVED（衍生）
+     UNION:若第二个select出现在union之后，则被标记为union
+     UNION RESULT:从UNION表获取结果的SELECT
+type 字段值类型：
+     system：表中就一条记录
+     Const:通过索引一次就可以找到，只有主键和unique(唯一)索引才会出现
+     eq_ref:唯一性索引扫描，对于每个索引键，表中只有一条记录与之匹配。常见于主键或唯一索引扫描
+     ref:非唯一索引扫描
+     range:索引范围扫描
+     index:全索引扫描
+     all:全表扫描
+
+possible_keys:可能使用的索引
+key:实际使用的索引
+key_len:索引长度（和字符集，数据长度，是否为null相关）计算方式就是字段类型所占用的字节数+是否为null
+                (为null，则加1)
+                比如：int 类型占用4个字节，如果允许为null,则key_len为5
+                char类型，且编码个utf-8，每个字符占用3个字段，如果容许为null,则加上1
+                vachar类型，且编码格式为utf-8，每个字符占用3个字节，如果容许为null，则加2
+
+        复合索引，key_len的计算，就是用到的索引长度之和
+
+ref:表示引用的列，就是where条件使用了那些 列
+rows:查询了多少条数据
+extra:Using filesort  说明mysql会对数据使用一个外部的索引排序，而不是按照表内的索引顺序进行
+                      读取，mysql无法使用索引的排序都叫文件排序
+
+      Using Template 说明使用临时表
+
+      Using index 表示用到了覆盖索引
+
+      Using where 表示用到了where过滤
+
+      Using join buffer 表示使用使用到了join缓存
+
+      impossible where  表示where总是返回false
