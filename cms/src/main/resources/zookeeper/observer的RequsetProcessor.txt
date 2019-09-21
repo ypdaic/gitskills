@@ -1,0 +1,5 @@
+ObserverRequestProcessor （先将请求发送给CommitProcessor，如果是事务请求，转发给learner）
+CommitProcessor （如果是事务请求，等待learner发送inform消息，非事务请求直接交给FinalRequestProcessor）
+FinalRequestProcessor （数据入内存，并响应 客户端）
+
+Observer并不会写日志，快照，也不会参与投票
