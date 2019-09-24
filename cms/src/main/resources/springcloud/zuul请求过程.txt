@@ -1,0 +1,71 @@
+当我们使用zuul后，请求一样是通过DispatcherServlet派发，当我们添加请求前缀，或者添加路由映射路径时也就是如下配置：
+
+zuul:
+  routes:
+    users:
+      path: /users-proxy/**
+      serviceId: springcloud-user-hystrix
+    users2: #不通过eureka访问
+      path: /users2-proxy/**
+      url: http://localhost:8095/
+    product:
+      path: /product-proxy/**
+      serviceId: springcloud-provider-hystrix
+  ignored-services: #禁止直接通过服务名访问
+    "*"
+  prefix: /zuul-api #设置公共前缀，设置后所有请求都要加上该前缀
+
+如果我们不想通过DispatcherServlet处理的话，默认加上/zuul后，就由ZuulServlet或者ZuulServletFilter进行处理，ZuulServlet，ZuulServletFilter
+二者只能生效一个，默认使用ZuulServlet，如果想使用ZuulServletFilter，则需添加zuul.use-filter = true 的配置项
+
+
+zuul会通过ZuulHandlerMapping处理请求,进而使用ZuulController处理请求,然后将请求给ZuulServlet进行处理
+
+zuulServlet中包含ZuulRunner,然后开始ZuulRunner的init工作,然后进行路由前置处理,路由处理,路由后置处理,最后将结果给前台
+
+
+@Override
+    public void service(javax.servlet.ServletRequest servletRequest, javax.servlet.ServletResponse servletResponse) throws ServletException, IOException {
+        try {
+
+            // 获取RequestContext并绑定到当前线程上
+            init((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse);
+
+            // Marks this request as having passed through the "Zuul engine", as opposed to servlets
+            // explicitly bound in web.xml, for which requests will not have the same data attached
+            RequestContext context = RequestContext.getCurrentContext();
+            context.setZuulEngineRan();
+
+            try {
+                // 获取ZuulFilter类型为pre的ZuulFilter实例,并调用run进行处理
+                preRoute();
+            } catch (ZuulException e) {
+                error(e);
+                postRoute();
+                return;
+            }
+            try {
+                // 获取ZuulFilter类型为route的ZuulFilter实例,并调用run进行处理,就是开始调用下游服务器进行处理
+                route();
+            } catch (ZuulException e) {
+                error(e);
+                postRoute();
+                return;
+            }
+            try {
+                // 下游服务器返回结果后，后置处理
+                postRoute();
+            } catch (ZuulException e) {
+                error(e);
+                return;
+            }
+
+        } catch (Throwable e) {
+            error(new ZuulException(e, 500, "UNHANDLED_EXCEPTION_" + e.getClass().getName()));
+        } finally {
+            RequestContext.getCurrentContext().unset();
+        }
+    }
+
+ RibbonRoutingFilter(根据服务名进行下发请求)
+ SimpleHostRoutingFilter(根据url进行下发请求)
