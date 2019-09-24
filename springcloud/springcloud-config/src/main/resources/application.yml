@@ -1,0 +1,20 @@
+server:
+  port: 8095
+  servlet:
+    context-path: /@project.name@
+spring:
+ profiles:
+   active: @env@
+ application:
+  name: @project.name@
+ #security:
+  #user:
+  #  name: admin  # 认证用户名
+  #  password: test1234  # 认证密码
+ cloud:
+   config:
+     server:
+       git:
+         uri: https://github.com/ypdaic/springcloud-config.git
+
+

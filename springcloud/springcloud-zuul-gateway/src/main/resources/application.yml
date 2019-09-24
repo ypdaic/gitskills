@@ -21,7 +21,11 @@ eureka:
 
       # 高可用
       defaultZone: http://admin:test1234@eureka1:8087/springcloud-eureka/eureka,http://admin:test1234@eureka2:8090/springcloud-eureka2/eureka
-    register-with-eureka: false
+  instance: #zuul注册到erake上，使其可以被消费者客户端发现
+    instanceId: @project.name@
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 30 # 设置心跳的时间间隔（默认是30秒）
+    lease-expiration-duration-in-seconds: 90  # 如果现在超过了5秒的间隔（默认是90秒）
 
 info:
   app.name: @project.name@
@@ -43,4 +47,5 @@ zuul:
   ignored-services: #禁止直接通过服务名访问
     "*"
   prefix: /zuul-api #设置公共前缀，设置后所有请求都要加上该前缀
+  sensitive-headers: "Cookie,Set-Cookie" #设置不向下游服务器传递的heads，默认为"Cookie", "Set-Cookie", "Authorization"
 
