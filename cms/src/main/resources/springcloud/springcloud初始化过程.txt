@@ -1,0 +1,6 @@
+BootstrapApplicationListener
+
+相比于springboot启动，springcloud启动时，会通过BootstrapApplicationListener，往DefaultListableBeanFactory中注册BootstrapImportSelectorConfiguration
+
+
+BootstrapApplicationListener会启动一个spring容器,其配置类又会启动一个spring容器
