@@ -1,0 +1,27 @@
+调用processConfigBeanDefinitions方法开始获取最初往spring容器中添加的6个beanDefinition,如下6个:
+
+org.springframework.context.annotation.internalConfigurationAnnotationProcessor
+
+org.springframework.context.annotation.internalAutowiredAnnotationProcessor
+
+org.springframework.context.annotation.internalCommonAnnotationProcessor
+
+org.springframework.context.annotation.internalPersistenceAnnotationProcessor (jpa的支持，引入jpa依赖才会有)
+
+org.springframework.context.event.internalEventListenerProcessor
+
+org.springframework.context.event.internalEventListenerFactory
+
+然后判断这些beanDefinition是否包含@Configuration,@Component
+                                       		@ComponentScan
+                                       		@Import
+                                       		@ImportResource
+                                       		@Bean
+                                       		这些注解
+
+                                       		如果包含任意一个,就要开始解析这个配置类
+
+如果是springboot应用,第一个配置类就是我们的启动配置类,
+如果是springcloud应用,会加载两个spring容器,第一个是由BootstrapApplicationListener加载的,第二个则是springboot的启动配置类
+
+启动配置类通过BeanDefinitionLoader.load() 方法添加到Spring容器中
