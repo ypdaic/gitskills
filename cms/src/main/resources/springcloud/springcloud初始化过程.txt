@@ -4,3 +4,7 @@ BootstrapApplicationListener
 
 
 BootstrapApplicationListener会启动一个spring容器,其配置类又会启动一个spring容器
+
+BootstrapImportSelectorConfiguration会去spring.factories文件中查找BootstrapConfiguration配置项，并将其注入到spring容器中
+
+当前spring-cloud-config-client,spring-cloud-config-server,spring-cloud-context,spring-cloud-netfix包提供BootstrapConfiguration配置

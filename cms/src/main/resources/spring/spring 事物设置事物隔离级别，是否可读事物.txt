@@ -1,0 +1,2 @@
+在使用DataSourceTransactionManager的doBegin() 方法获取连接后，会通过TransactionDefinition的isReadOnly和getIsolationLevel 分别设置连接是否为只读事物，事物的隔离级别
+后，然后再开启事物
