@@ -1,0 +1,13 @@
+如果是开启事物,缓存,异步的话先通过
+
+BeanFactoryAdvisorRetrievalHelper的findAdvisorBeans方法进行寻找, 查找方法就是从beanFactory中查找所有的Advisor接口实现类
+代码如下:
+advisors.add(this.beanFactory.getBean(name, Advisor.class));
+
+如果开启aop,还会通过BeanFactoryAspectJAdvisorsBuilderAdapter 进一部寻找,查找方法就是从beanFactory中查找所有的bean的Class,然后查看是否包含有
+@Aspect注解,且属性中没有"ajc$"开头属性的类, 然后寻找每个方法是否有如下注解:
+Around.class, Before.class, After.class, AfterReturning.class, AfterThrowing.class
+
+有的话就为每个方法生成一个InstantiationModelAwarePointcutAdvisorImpl的Advisor
+
+找到所有的Advisor 后, 然后通过Advisor的Pointcut匹配所有的方法,匹配上就说明业务类需要该Advisor,最终生成的代理类就是一个Advised,Advised中包含多个Advisor

@@ -34,7 +34,7 @@ Advised  包含Advisor
 
 Pointcut  用于匹配具体的方法，匹配上就添加Advisor
 
-代理类中保存的是Advised
+代理类中保存的是Advised,Advised保存多个Advisor,Advisor保存Advice,Pointcut,Pointcut用于匹配具体的方法,Advice进行方法增强
 
 代理类第一次执行某个方法时，会从Advised找到所有的Advisor，然后使用每个Advisor的
 pointcut去匹配方法，如果匹配上就将Advice添加到集合中，并保存在Advised（AdvisedSupport） 的缓存中
