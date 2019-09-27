@@ -1,0 +1,7 @@
+SpringApplication的prepareEnvironment() 方法会进行Environment的创建,具体在getOrCreateEnvironment方法中,而且会根据
+webApplicationType的类型来创建
+
+StandardServletEnvironment
+还是StandardReactiveWebEnvironment
+还是StandardEnvironment
+
