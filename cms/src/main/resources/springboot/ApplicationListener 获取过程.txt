@@ -1,0 +1,3 @@
+Springboot 应用是通过SpringApplication实例启动的,在创建SpringApplication实例时会从spring.factories文件中搜集配置的ApplicationListener的实现类
+
+
