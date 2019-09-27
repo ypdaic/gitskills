@@ -1,0 +1,12 @@
+EnvironmentController 提供通过请求方法直接拿到配置文件的内容
+
+提供如下3种方式：
+1	/{application}-{profile}.yml	http://localhost:7101/application-dev.yml
+                                    http://localhost:7101/application-default.yml
+                                    http://localhost:7101/application-beta.yml 不存在
+
+2	/{application}/{profile}[/{label}]	http://localhost:7101/application/dev/master
+                                        http://localhost:7101/application/default/master
+3	/{label}/{application}-{profile}.yml	http://localhost:7101/master/application-default.yml
+                                            http://localhost:7101/master/application-dev.yml
+
