@@ -1,0 +1,8 @@
+当我们创建多个FutureTask后，遍历这些FutureTask去获取我们的结果时，假如第一个
+FutureTask执行的时间是最长的，那就必须要等到这个FutureTask执行完毕后，才能
+去获取其他FutureTask的结果。而CompletionService就是为了解决这个问题，解决方案就是
+谁先出执行完，就可以立马获取其结果，这种方式必然要比上面的等待时间要短。
+
+其源码就是使用了一个LinkedBlockingQueue用了保存我们的执行完毕的FutureTask，只要
+有FutureTask执行完了就放到LinkedBlockingQueue中，然后使用take方法从队列中
+获取FutureTask，这必然是先到先得
