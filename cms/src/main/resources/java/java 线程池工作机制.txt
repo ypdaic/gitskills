@@ -1,0 +1,12 @@
+1:当前线程数小于核心线程数，创建新的work处理任务
+2:当前线程大于等于核心线程数，则将任务放进队列
+3：队列满后，继续放任务，此时会创建新的work处理任务，work数小于等于最大线程数
+4：当队列满，且当前线程等于最大线程数，则使用拒绝策略处理任务
+5：默认的拒绝策略为AbortPolicy，也就抛异常
+6：jdk提供的几种拒绝策略
+   DiscardOldestPolicy（丢弃最老的任务，将当前任务放进队列）
+   AbortPolicy（直接抛异常）
+   CallerRunsPolicy（使用提交任务的线程，执行该任务）
+   DiscardPolicy （丢弃该任务）
+7：当队列是无界队列时，keepAliveTime 参数和maximumPoolSize将无效
+8：keepAliveTime当线程数超过corePoolSize才有用

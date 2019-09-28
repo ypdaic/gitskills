@@ -15,3 +15,7 @@
                                              new SynchronousQueue<Runnable>());
            }
 
+work获取任务的流程就是如果当前Work小于核心线程数，使用队列的take方法取任务，否则使用队列的poll方法，并指定超时时间，该
+     * 超时时间就是我们的keepAliveTime参数，所以这个参数就是给超过核心线程数的work使用的，当该work 获取任务超时，则会退出执行
+     * 退出后，如果当前work数大于核心线程数则不做任何处理，否则重新创建一个work
+
