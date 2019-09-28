@@ -17,9 +17,10 @@ http {
     #gzip  on;
 
     # 此次配置负载均衡，ip+port
+    # weigh 权重 也就是请求的占比
     upstream server {
-        server 127.0.0.1:8086;
-        server 127.0.0.1:8088;
+        server 127.0.0.1:8086 weigh=2 max_fair;
+        server 127.0.0.1:8088 weigh=1 max_fair;
     }
     server {
         listen       8089;
