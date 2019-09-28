@@ -1,0 +1,2 @@
+cd 到redis 安装目录，然后进入到bin目录下执行如下命令：
+./redis-server redis.conf

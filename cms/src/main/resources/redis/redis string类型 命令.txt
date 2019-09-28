@@ -1,0 +1,36 @@
+#ex 10 表示10秒后过期
+set age 23 ex 10
+#查看过期时间
+ttl age
+
+#setnx 不存在则插入，返回值1表示插入成功，返回值0表示插入失败
+setnx name test
+
+#mset 批量插入
+mset a james b deer
+
+#字符串计数自增
+incr age
+
+#字符串计数自减
+decr age
+
+#字符串 整形age + 2
+incrby age 2
+
+#字符串 整形age - 2
+decrby age 2
+
+#浮点型age + 1.1
+incrbyfloat age 1.1
+
+#字符串追加
+append name ss
+
+#字符串长度
+strlen name
+
+#字符串截取，1 表示起始位置，3表示结束位置
+getrange name 1 3
+
+
