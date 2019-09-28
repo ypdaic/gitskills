@@ -1,0 +1,6 @@
+shutdown()方法，会将线程池的运行状态设置为SHUTDOWN，SHUTDOWN状态的线程池，不能添加新任务。shutdown
+只会中断空闲的work线程，正在执行的业务的线程无法被中断。shutdown 后，work线程会执行完当前任务，和
+列队中的任务后，work线程才会退出。
+
+shutdownNow()方法，会将线程池的运行状态设置为STOP，STOP状态的线程池，不能添加新任务
+会移除队列中所有未执行的任务，并中断work线程，work线程执行完业务后就会退出
