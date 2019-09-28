@@ -1,0 +1,25 @@
+在不指定大小时，默认是空数组，指定大小后，会创建一个指定大小的数组存放元素
+
+不指定大小默认空数组
+public ArrayList() {
+        this.elementData = DEFAULTCAPACITY_EMPTY_ELEMENTDATA;
+    }
+
+指定大小就创一个指定大小的数组
+public ArrayList(int initialCapacity) {
+        if (initialCapacity > 0) {
+            this.elementData = new Object[initialCapacity];
+        } else if (initialCapacity == 0) {
+            this.elementData = EMPTY_ELEMENTDATA;
+        } else {
+            throw new IllegalArgumentException("Illegal Capacity: "+
+                                               initialCapacity);
+        }
+    }
+
+add 方法会先判断数组是否为空数组，如果为空数组会创建一个长度为10的数组，然后判断当前size是否已经超过数组的长度，如果超过的话就需要进行扩容
+    扩容后的大小是原数组大小的1.5倍
+
+remove 方法，首先判断移除数据索引是否小于size，然后将索引后面的数据往前移动，再将size位置的数据置为null，size会相应减一，而数组的length并不会减少
+
+最大存放个数为int 最大值，也就是 2的30次方减一
