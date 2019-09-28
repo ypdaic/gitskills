@@ -20,63 +20,68 @@ public class ThreadPoolExecutorTest {
      * @throws InterruptedException
      */
     public static void main(String[] args) throws InterruptedException {
-//        test2();
+        test2();
 //        test3();
 //        test4();
-        test6();
+//        test6();
+//        test();
     }
 
     /**
-     * shutdown()方法，会将线程池的运行状态设置为SHUTDOWN，SHUTDOWN状态的线程池，不能添加新任务，但如果
-     * work线程在执行的话，无法设置work线程的中断标志，也就是已经添加过的任务是不影响执行的
+     * shutdown()方法，会将线程池的运行状态设置为SHUTDOWN，SHUTDOWN状态的线程池，不能添加新任务。shutdown
+     * 只会中断空闲的work线程，正在执行的业务的线程无法被中断。shutdown 后，work线程会执行完当前任务，和
+     * 列队中的任务后，work线程才会退出。
+     *
      */
     public static void test() {
-        ExecutorService executorService = Executors.newFixedThreadPool(1);
+        ExecutorService executorService = Executors.newFixedThreadPool(3);
         for (int i = 0; i < 10; i++) {
             executorService.execute(()->{
                 System.out.println("ssss");
-                try {
-                    Thread.sleep(1000 * 10);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+//                try {
+//                    Thread.sleep(1000 * 10);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//                System.out.println("sdfsf");
             });
         }
 
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(1000 * 5);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         executorService.shutdown();
-        executorService.execute(()-> {
-            System.out.println("sdfs");
-        });
+
+//        executorService.execute(()-> {
+//            System.out.println("sdfs");
+//        });
     }
 
     /**
      * shutdownNow()方法，会将线程池的运行状态设置为STOP，STOP状态的线程池，不能添加新任务
-     * work线程在执行业务任务的之前，会设置work线程的中断标志，并且不会再取后续任务去执行，而是退出执行
+     * 且会移除队列中所有未执行的任务，并中断work线程，work线程执行完业务后就会退出
      */
     public static void test2() {
         ExecutorService executorService = Executors.newFixedThreadPool(1);
         for (int i = 0; i < 10; i++) {
             executorService.execute(()->{
                 System.out.println("ssss");
-                try {
-                    Thread.sleep(1000 * 10);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-//                    Thread.interrupted();
-                }
+//                try {
+//                    Thread.sleep(1000 * 10);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+////                    Thread.interrupted();
+//                }
             });
         }
 
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(1000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         executorService.shutdownNow();
 //        executorService.execute(()-> {
 //            System.out.println("sdfs");
@@ -90,7 +95,7 @@ public class ThreadPoolExecutorTest {
      * 其工作原理就是，核心线程数为0，所以先就入队列，而队列又是SynchronousQueue，第一次入队列失败，立马添加一个work进行处理，
      * 如果在work线程获取任务时，添加任务，此时添加的任务
      * 会被该work消化，否则创建新的work进行处理，如果某个work在keepAliveTime时间获取不到任务，该work就会退出。
-     * 该work退出后，不会再次创建work
+     * 该work退出后，不会再次创建work（总结就是没有空闲的work，就创建新的work，空闲work的的空闲时间为60秒，所有的work都获取不到任务，则线程池没有任何work运行）
      */
     public static void test3() {
         ExecutorService executorService = Executors.newCachedThreadPool();
@@ -98,7 +103,7 @@ public class ThreadPoolExecutorTest {
             executorService.execute(()->{
                 System.out.println("ssss");
                 try {
-                    Thread.sleep(1000 * 10);
+                    Thread.sleep(1000 * 100);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
 //                    Thread.interrupted();

@@ -1,6 +1,8 @@
 package com.daiyanping.cms.javabase;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @ClassName ThreadTest
@@ -24,7 +26,8 @@ public class ThreadTest {
 //        test4();
 //        test5();
 //        test6();
-        test7();
+//        test7();
+        test8();
     }
 
     /**
@@ -494,6 +497,39 @@ public class ThreadTest {
             e.printStackTrace();
         }
 
+
+
+    }
+
+    /**
+     * await使用的LockSupport.park(this);阻塞的当前线程，如果在阻塞期间调用
+     * 当前线程的interrupt() 方法，当前线程会被唤醒，和wait是一样的
+     */
+    public static void test8() {
+        ReentrantLock reentrantLock = new ReentrantLock();
+        Condition condition = reentrantLock.newCondition();
+
+        Thread thread = new Thread(() -> {
+            reentrantLock.lock();
+            try {
+                condition.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } finally {
+                reentrantLock.unlock();
+            }
+
+        });
+
+        thread.start();
+
+        try {
+            Thread.sleep(1000 * 10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        thread.interrupt();
 
 
     }
