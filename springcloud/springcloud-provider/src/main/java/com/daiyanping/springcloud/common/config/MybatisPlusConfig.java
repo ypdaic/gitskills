@@ -17,12 +17,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
 
 import static com.daiyanping.springcloud.common.DB.DBTypeEnum.DB1;
 import static com.daiyanping.springcloud.common.DB.DBTypeEnum.DB2;
+import static org.springframework.transaction.TransactionDefinition.PROPAGATION_NOT_SUPPORTED;
+import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW;
 
 @Configuration
 @MapperScan("com.daiyanping.springcloud.**.mapper")
@@ -84,6 +87,13 @@ public class MybatisPlusConfig {
         DataSourceTransactionManager dataSourceTransactionManager = new DataSourceTransactionManager();
         dataSourceTransactionManager.setDataSource(getDataSource3());
         return dataSourceTransactionManager;
+    }
+
+    @Bean
+    public TransactionTemplate transactionTemplate() {
+        TransactionTemplate transactionTemplate = new TransactionTemplate(getDataSourceTransactionManager());
+        transactionTemplate.setPropagationBehavior(PROPAGATION_NOT_SUPPORTED);
+        return transactionTemplate;
     }
 
     /**

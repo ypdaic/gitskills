@@ -24,7 +24,11 @@ public class ThreadPoolExecutorTest {
 //        test3();
 //        test4();
 //        test6();
+
 //        test();
+
+        test();
+
     }
 
     /**
@@ -43,11 +47,14 @@ public class ThreadPoolExecutorTest {
 //                } catch (InterruptedException e) {
 //                    e.printStackTrace();
 //                }
+
 //                System.out.println("sdfsf");
+
             });
         }
 
 //        try {
+
 //            Thread.sleep(1000 * 5);
 //        } catch (InterruptedException e) {
 //            e.printStackTrace();
@@ -57,6 +64,17 @@ public class ThreadPoolExecutorTest {
 //        executorService.execute(()-> {
 //            System.out.println("sdfs");
 //        });
+
+//            Thread.sleep(1000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+        executorService.shutdownNow();
+        executorService.shutdownNow();
+        executorService.execute(()-> {
+            System.out.println("sdfs");
+        });
+
     }
 
     /**
