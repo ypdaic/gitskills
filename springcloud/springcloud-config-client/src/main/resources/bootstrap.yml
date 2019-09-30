@@ -1,0 +1,9 @@
+spring:
+  cloud:
+    config:
+      name: application-client # 定义要读取的资源文件的名称
+      profile: dev # 定义profile的 名称
+      label: master # 定义配置文件所在的分支
+      uri: http://localhost:8095/springcloud-config # SpringCloudConfig的服务地址
+      username: admin # 连接的用户名
+      password: test1234 # 连接的密码
