@@ -37,4 +37,47 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <!--filtering为ture,只会将被过滤的文件打到jar中，其他配置
+                文件也想要打到jar包中，就必须在配置一个resource-->
+                <filtering>true</filtering>
+                <!--开启过滤，并对application.yml文件中包含${key}的配置
+                将使用maven配置的值进行替换-->
+                <includes>
+                    <include>*-${env}.yml</include>
+                    <include>application.yml</include>
+                    <include>bootstrap.yml</include>
+                </includes>
+            </resource>
+
+            <resource>
+                <directory>src/main/resources</directory>
+                <!--filtering为false,表示不过滤文件，但需要排除掉上面我们需要
+                过滤的文件-->
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>*.yml</exclude>
+                </excludes>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

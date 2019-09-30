@@ -1,7 +1,11 @@
 SpringApplication的prepareEnvironment() 方法会进行Environment的创建,具体在getOrCreateEnvironment方法中,而且会根据
 webApplicationType的类型来创建
 
-StandardServletEnvironment
-还是StandardReactiveWebEnvironment
+StandardServletEnvironment 继承 StandardEnvironment
+还是StandardReactiveWebEnvironment 继承 StandardEnvironment
 还是StandardEnvironment
+
+StandardEnvironment会加载jvm系统信息
+
+然后创建ApplicationEnvironmentPreparedEvent事件并通知各个ApplicationListener进行处理
 

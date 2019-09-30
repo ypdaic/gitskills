@@ -10,3 +10,5 @@ EnvironmentController 提供通过请求方法直接拿到配置文件的内容
 3	/{label}/{application}-{profile}.yml	http://localhost:7101/master/application-default.yml
                                             http://localhost:7101/master/application-dev.yml
 
+
+ConfigClientProperties  config配置中心客户端配置文件,用于配置config server的信息,并从config server中获取信息

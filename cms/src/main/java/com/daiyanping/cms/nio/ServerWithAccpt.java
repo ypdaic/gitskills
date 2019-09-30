@@ -11,13 +11,13 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
- * @ClassName Server
+ * @ClassName ServerWithAccpt
  * @Description TODO
  * @Author daiyanping
- * @Date 2019-07-19
+ * @Date 2019-09-30
  * @Version 0.1
  */
-public class Server {
+public class ServerWithAccpt {
 
     private static Selector selector = null;
 
@@ -31,10 +31,10 @@ public class Server {
             ServerSocket socket = serverSocketChannel.socket();
             socket.bind(inetSocketAddress);
             serverSocketChannel.configureBlocking(true);
-//            serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
-            serverSocketChannel.accept();
+            SocketChannel accept = serverSocketChannel.accept();
+//            selector = accept.socket();
             System.out.println("服务端启动成功");
-            new Thread(new ServerTask()).start();
+            new Thread(new Server.ServerTask()).start();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
