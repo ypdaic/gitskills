@@ -1,0 +1,7 @@
+redis-benchmark 用于测试我们redis服务器的性能
+
+redis-benchmark -h 192.168.140.129 -p 6379 -n 100000 -q script load "redis.call('set', 'foo', 'bar')"
+
+测试某些数值的存储性能
+
+script load redis.call('set', 'foo', 'bar'): 44365.57 requests per second

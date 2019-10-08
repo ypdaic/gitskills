@@ -1,0 +1,5 @@
+pipeline 并不具有原子性，只是将多个命令一起发往server端，主要解决多个命令分开执行的网络开销时间
+
+redis 自身提供的批处理命令mset,mget 是具有原子性的，但是redis原生提供的批处理命令太单一，只提供字符串的批处理
+其他数据类型不提供，而pipeline是没有这个限制的，使用pipeline可以同时发送string，set，list，zset， hash数据
+类型的命令。

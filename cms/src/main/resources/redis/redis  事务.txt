@@ -1,0 +1,29 @@
+redis 事务是一个弱事务。在语法错误时，它能够进行自动回滚，而在没有语法错误，而是在key上使用不是key本身类型的命令时，
+此时该命令执行失败，但是前面已经执行的成功的命令并不能进行回滚。
+
+192.168.140.129:6379> multi
+OK
+192.168.140.129:6379> set hhhh s
+QUEUED
+192.168.140.129:6379> get hhhh
+QUEUED
+192.168.140.129:6379> smembers hhhh
+QUEUED
+192.168.140.129:6379> exec
+1) OK
+2) "s"
+3) (error) WRONGTYPE Operation against a key holding the wrong kind of value
+192.168.140.129:6379> get hhhh
+"s"
+
+从上面的执行结果可以看到事务并没有后全部回滚
+
+
+192.168.140.129:6379> set aaaaa a
+QUEUED
+192.168.140.129:6379> setttl aaa a
+(error) ERR unknown command 'setttl'
+192.168.140.129:6379> exec
+(error) EXECABORT Transaction discarded because of previous errors.
+
+这种情况事务全部回滚了

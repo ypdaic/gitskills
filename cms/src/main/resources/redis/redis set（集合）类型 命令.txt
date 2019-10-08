@@ -1,0 +1,22 @@
+redis set（集合）中的元素是无序且不可重复的
+
+# 往集合中添加元素
+sadd user a b c
+
+# 返回集合中所有元素
+smembers user
+
+# 删除元素
+srem user a
+
+# 元素个数
+scard user
+
+# 求两个集合的交集
+sadd user:1:fav basball fball pq
+sadd user:2:fav basball fball
+ #求交集
+ sinter user:1:fav user:2:fav
+ #结果
+ 1) "basball"
+ 2) "fball"

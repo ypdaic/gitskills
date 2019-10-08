@@ -1,0 +1,28 @@
+客户端动态设置：config set slowlog-log-slower-than 10000 //10毫秒
+配置文件永久设置：slowlog log slower than 10000
+
+客户端动态设置慢查询存放条数：config set slowlog-max-len 128
+配置文件永久设置：slowlog-max-len 128
+注意点：就是慢查询存放都是最新的，当存放满了后，就会移除老的
+
+查看慢查询：slowlog get
+
+1) 1) (integer) 0
+   2) (integer) 1569766603    #数据操作的时间
+   3) (integer) 11            #数据操作的耗时
+   4) 1) "HSET"
+      2) "uer:info20"
+      3) "user_name"
+      4) "daiyanping"
+      5) "user_password"
+      6) "1234546"
+      7) "user_age"
+      8) "20"
+   5) "192.168.140.129:40472"
+   6) ""
+
+慢查询列表重置命令：slowlog reset
+
+线上环境，慢查询建议默认10ms，慢查询条数建议1000
+
+慢查询列表是先进先出队列，考虑数据丢失，需定期执行slowlog get 将数据转储到mysql中

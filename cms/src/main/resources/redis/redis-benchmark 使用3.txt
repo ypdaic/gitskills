@@ -1,0 +1,8 @@
+redis-benchmark 用于测试我们redis服务器的性能
+
+redis-benchmark -h 192.168.140.129 -p 6379 -t set,lpush, -n 100000 -q
+
+只测试set,lpush操作的性能
+
+SET: 39936.10 requests per second
+LPUSH: 19751.13 requests per second

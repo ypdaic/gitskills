@@ -1,0 +1,32 @@
+redis 的list 是个双向队列，可以从左边插入，取出，也可以从右边插入，取出
+
+# 右边插入
+rpush james c b a
+
+# 左边插入
+lpush james d
+
+# 右边取出
+rpop james
+
+# 左边取出
+lpop james
+
+# 查找指定索引的数据，从左往右查找
+lrange james 0 3
+
+# 在某个value前面插入,下面是在c之前插入d
+linsert james before c d
+
+# 在某个value后面插入,下面是在b之后插入e
+linsert james after b e
+
+# 返回列表长度
+llen james
+
+# 查找指定索引位置的value,索引为负数表示从右边开始查找
+lindex james 0
+
+# 查找指定索引位置的value,索引为负数表示从右边开始查找
+lindex james -1
+

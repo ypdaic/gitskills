@@ -1,0 +1,23 @@
+当我们开启aof后，我们的增删改操作会记录到appendonly.aof 文件中
+
+如下为aof文件记录的东西，其实就是RESP（redis serialization simple protocol）：
+
+*2
+$6
+SELECT
+$1
+0
+*3
+$3
+set
+$4
+name
+$4
+test
+*3
+$3
+set
+$9
+nametest2
+$10
+daiyanping

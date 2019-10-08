@@ -1,0 +1,36 @@
+单个设值命令
+hset key filed value
+
+# user:001 为key  name为filed dai为value
+hset user:001 name dai
+
+# 获取指定key，指定filed的值
+hget user:001 name
+
+# 删除指定key，指定filed
+hdel user:001 name
+
+# 获取指定key的filed个数
+hlen user:001
+
+# 批量设置filed
+hmset user:001 height 190 weight 90
+
+# 批量查询filed
+hmget user:001 name age height weight
+
+# 获取所有的filed
+hkeys user:001
+
+# 获取所有的value
+hvals user:001
+
+# 获取所有的filed,value
+hgetall user:001
+
+# 某个filed加1
+hincrby user:001 age 1
+
+# 某个filed float型加1
+hincrbyfloat user:001 age 1.1
+

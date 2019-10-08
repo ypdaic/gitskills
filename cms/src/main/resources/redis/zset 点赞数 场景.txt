@@ -1,0 +1,11 @@
+#设置点赞数
+zadd user:1:20180106 3 mike
+#再获得一赞
+zincrby user:1:20180106 1 mike
+#用户作弊，将用户从排行榜删除
+zrem user:1:20180106 mike
+#展示赞数最多的5个用户：
+zrevrange user:1:20180106 0 4
+#查看用户赞数于排名
+zscore user:1:20180106 mike
+zrank user:1:20180106 mike

@@ -1,0 +1,66 @@
+zset和set一样,不能有重复数据，但是和set不同，zset有一个 score（分数）属性用来排序
+命令格式：
+zadd key score member [score member...]
+
+# 往zset中插入数据
+zadd user:zan 200 james
+
+# 往zset中插入多个数据
+zdd user:zan 120 mike 100 lee
+
+# 键不存在则添加
+zadd test:1 nx 100 james
+
+# 键必须存在，主要用于修改
+zadd test:1 xx incr 200 james
+
+# 查看点赞数与成员
+zrange test:1 0 -1 withscores
+
+# 计数成员个数
+zcard test:1
+
+# 查看分值在某个范围的个数，3-4表示分值范围
+zcount user:1:20180106 3 4
+
+# 查看某个元素的分数
+zscore user:1:20180106 mike
+
+# 查看某个元素的排名，返回值越小，分值越低
+zrank user:1:20180106 james
+
+# 查看某个元素的排名，返回值越小，分值越高
+zrevrank user:1:20180106 james
+
+# 查看指定排名范围的元素,0-1表示排名，由低到高，也就是分数由低到高
+zrange user:1:20180106 0 1
+
+# 查看指定排名范围的元素，0-1表示排名，由高到低，也就是分数由高到低
+zrevrange user:1:20180106 0 1
+
+# 查看指定分数范围的元素，3-4表示分数范围，由低到高（必须是由低到高）
+zrangebyscore user:1:20180106 3 4
+
+# 查看指定分数范围的元素，4-3表示分数范围，由高到低（必须是由高到低）
+zrevrangebyscore user:1:20180106 4 3
+
+# 删除指定分数范围的元素，不可指定key,且必须是个分数范围
+zremrangebyscore by 3 4
+
+# 删除指定排行的元素，排行必须是个范围，由低到高
+zremrangebyrank user:1:20180106 0 1
+
+凡是指定范围的命令，必须是个范围，如果只想去一个值，就是0 0 或者1 1这样
+
+# 取交集，key3用于存储key1,key2的交集，2是获取交集key的个数，交集后的
+  分数也会增加
+zinterstore key3 2 key1 key2
+
+# 取并集，key4用于存储key1,key2的并集，2是获取并集key的个数，必须和交集的实际数量相等，并集后
+        分数也会增加
+zunionstore key4 2 key1 key2
+
+
+
+
+

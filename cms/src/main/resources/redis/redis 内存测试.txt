@@ -1,0 +1,2 @@
+检测服务器是否可以提供1g的内存给redis
+redis-server --test-momery 1024

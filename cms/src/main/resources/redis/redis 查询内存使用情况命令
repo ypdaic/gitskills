@@ -1,0 +1,5 @@
+redis 查询内存使用情况命令：
+redis-cli -h 192.168.140.129 -p 6479 -a test1234 -r 100 -i 1 info | grep used_memory_human
+
+-i 1 表示每1秒输出
+-r 100 重试100次

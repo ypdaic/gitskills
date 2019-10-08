@@ -1,0 +1,26 @@
+1：查看所有键
+keys *
+
+2:键总数
+dbsize
+
+3:查看键是否存在
+exists user
+
+4:删除key
+del kdy
+
+5:设置键的过期时间
+expire key seconds
+
+6:查看键剩余过期时间
+ttl key
+
+7:查看键的类型
+type key
+
+8:清空当前库的数据
+flushdb
+
+9:清除所有库的数据
+flushall
