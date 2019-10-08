@@ -1,0 +1,3 @@
+AbstractEndpoint的maxConnections属性,默认10000,该属性会在initializeConnectionLatch方法中使用,创建一个共享锁LimitLatch
+
+最终在Acceptor中使用LimitLatch

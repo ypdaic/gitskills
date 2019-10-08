@@ -1,0 +1,10 @@
+1：Acceptor 接受请求
+2：转给Poller处理,在此之间会将请求包装为NioSocketWrapper
+3：将请求封装为SocketProcessor，并交给executor去执行，也就是丢给线程池去执行
+4：AbstractProtocol处理请求，使用ConnectionHandler处理
+5：AbstractProcessorLight接着处理请求
+6：Http11Processor处理请求
+7：CoyoteAdapter处理请求
+8：Pipeline开始处理
+9：最终调用到StandardWrapperValve开始使用filter进行处理
+10：调用具体Servlet进行处理
