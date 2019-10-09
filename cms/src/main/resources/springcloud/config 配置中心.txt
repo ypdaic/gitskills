@@ -12,3 +12,6 @@ EnvironmentController 提供通过请求方法直接拿到配置文件的内容
 
 
 ConfigClientProperties  config配置中心客户端配置文件,用于配置config server的信息,并从config server中获取信息
+
+DiscoveryClientConfigServiceBootstrapConfiguration 用于从eureka获取config 服务，提供config服务的应用不可配置contextpath，原因是DiscoveryClientConfigServiceBootstrapConfiguration
+106代码获取url是获取的host+port 并没有加上contextpath

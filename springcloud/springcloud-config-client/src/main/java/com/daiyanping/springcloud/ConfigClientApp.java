@@ -1,7 +1,9 @@
 package com.daiyanping.springcloud;
 
+import com.daiyan.springcloud.WebSecurity;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Import;
 
 /**
  * @ClassName ConfigClientApp
@@ -11,6 +13,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @Version 0.1
  */
 @SpringBootApplication
+@Import({WebSecurity.class})
 public class ConfigClientApp {
 
     public static void main(String[] args) {

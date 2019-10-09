@@ -1,8 +1,11 @@
 package com.daiyanping.springcloud.controller;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * @ClassName ConfigClientController
@@ -17,12 +20,15 @@ public class ConfigClientController {
     @Value("${spring.application.name}")
     private String applicationName;
 
-    @Value("${eureka.client.serviceUrl.defaultZone}")
+    @Value("${eureka.client.service-url.defaultZone}")
     private String eurekaServers;
 
-    @RequestMapping("/config")
+    @Value("${spring.profiles.active}")
+    private List<String> profile;
+
+    @GetMapping("/config")
     public String getConfig() {
         return "ApplicationName = " + this.applicationName + "、EurekaServers = "
-                + this.eurekaServers;
+                + this.eurekaServers + " 、profiles=" + profile;
     }
 }

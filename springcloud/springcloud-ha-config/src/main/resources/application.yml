@@ -1,0 +1,36 @@
+server:
+  port: 9003
+  #servlet:
+    # context-path eureka下，不可配置，否则config-client 找不到config服务
+    #context-path: /@project.name@
+spring:
+ profiles:
+   active: @env@
+ application:
+  name: ha-config
+ #security:
+  #user:
+  #  name: admin  # 认证用户名
+  #  password: test1234  # 认证密码
+ cloud:
+   config:
+     server:
+       git:
+         uri: https://github.com/ypdaic/springcloud-config.git
+
+# 将服务注册到eureka上
+eureka:
+  client:
+    serviceUrl:
+      # 单例
+      defaultZone: http://admin:test1234@localhost:9002/springcloud-ha-config-eureka/eureka/
+
+      # 高可用
+      #defaultZone: http://admin:test1234@eureka1:8087/springcloud-eureka/eureka,http://admin:test1234@eureka2:8090/springcloud-eureka2/eureka
+  instance:
+    instanceId: @project.name@
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 30 # 设置心跳的时间间隔（默认是30秒）
+    lease-expiration-duration-in-seconds: 90  # 如果现在超过了5秒的间隔（默认是90秒）
+    home-page-url-path: /@project.name@
+

@@ -20,6 +20,11 @@
         <module>springcloud-zuul-gateway</module>
         <module>springcloud-config</module>
         <module>springcloud-config-client</module>
+        <module>springcloud-config-eureka</module>
+        <module>springcloud-config-provider-hystrix</module>
+        <module>springcloud-ha-config-eureka</module>
+        <module>springcloud-ha-config</module>
+        <module>springcloud-ha-config2</module>
     </modules>
 
     <groupId>com.daiyanping</groupId>
