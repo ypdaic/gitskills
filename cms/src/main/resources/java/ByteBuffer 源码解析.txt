@@ -1,0 +1,20 @@
+声明一个ByteBuffer的方式
+
+ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
+
+实际上使用了HeapByteBuffer
+
+new HeapByteBuffer(capacity, capacity);
+
+super(-1, 0, lim, cap, new byte[cap], 0);
+
+实际上ByteBuffer内部使用数组保存数据, cap 表示最大值,lim 表示实际存储数据的大小,position表示读取或者写入时数组的索引
+
+当调用flip方法时,position重置为0,limit设置为position的位置
+
+public final Buffer flip() {
+        limit = position;
+        position = 0;
+        mark = -1;
+        return this;
+    }

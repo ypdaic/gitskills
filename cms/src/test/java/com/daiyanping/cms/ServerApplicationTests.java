@@ -18,6 +18,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -291,6 +292,23 @@ public class ServerApplicationTests {
 		readLock.lock();
 		readLock.unlock();
 		readLock.unlock();
+
+
+		List<String> list=new ArrayList<String>();
+		list.add("a");
+		list.add("b");
+		list.add("c");
+		list.add("d");
+		list.add("e");
+		list.add("f");
+		System.out.println("list.size() : "+list.size());
+		List<String> list2= new ArrayList<String>();
+		list2= list.subList(3,5);
+		System.out.println("list.size() : "+list.size());
+		list2.add(list.get(list.size() - 1));
+		System.out.println("list.size() : "+list.size());
+		System.out.println("list2 : "+list2);
+		System.out.println("list"+list);
 	}
 
 

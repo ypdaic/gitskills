@@ -1,0 +1,3 @@
+应用使用非内嵌式部署,部署到外部tomcat时,就需要继承该类,并重新configure方法,向SpringApplicationBuilder的sources属性中,注入Configuration
+
+不重写该方法也可以,springboot 会去实现类上找是否有@Configuration注解,存在就已改配置类为主类进行扫描

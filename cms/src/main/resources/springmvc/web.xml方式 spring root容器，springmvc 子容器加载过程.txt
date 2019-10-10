@@ -1,0 +1,38 @@
+在使用web.xml 时，配置spring 容器，springmvc 子容器的方式如下
+
+<context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>/WEB-INF/config/applicationContext.xml</param-value>
+  </context-param>
+  <!-- 用于加载父容器 -->
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  <!-- Spring Application Context Listener End -->
+
+
+  <!-- Spring MVC Config Start -->
+  <servlet>
+    <servlet-name>SpringMVC</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <!-- 用于加载子容器 -->
+    <init-param>
+      <param-name>contextConfigLocation</param-name>
+      <param-value>/WEB-INF/config/spring-mvc.xml</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SpringMVC</servlet-name>
+    <!-- Filter all resources -->
+    <url-pattern>/</url-pattern>
+  </servlet-mapping>
+
+  父容器加载过程:
+  StandardContext启动时就是调用startInternal方法时会去调用listenerStart方法,listenerStart方法会去调用我们在web.xml文件注册的listener,也就是我们的ContextLoaderListener
+
+  ContextLoaderListener是spring提供的,ContextLoaderListener的contextInitialized方法会加载父容器,并将父容器绑定到servletContext上
+
+  子容器加载过程:
+  DispatcherServlet在创建时会调用HttpServletBean的init方法,进而调用FrameworkServlet的initServletBean方法,该方法先去servletContext中获取父容器
+  然后开始创建子容器，并项子容器中注册ContextRefreshListener，监听Application事件,监听到后,调用DispatcherServlet 的onRefresh方法,初始化DispatcherServlet
