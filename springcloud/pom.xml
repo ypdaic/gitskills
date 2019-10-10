@@ -20,11 +20,13 @@
         <module>springcloud-zuul-gateway</module>
         <module>springcloud-config</module>
         <module>springcloud-config-client</module>
+        <module>springcloud-config-bus-client</module>
         <module>springcloud-config-eureka</module>
         <module>springcloud-config-provider-hystrix</module>
         <module>springcloud-ha-config-eureka</module>
         <module>springcloud-ha-config</module>
         <module>springcloud-ha-config2</module>
+        <module>springcloud-config-bus</module>
     </modules>
 
     <groupId>com.daiyanping</groupId>
@@ -176,6 +178,7 @@
                 <includes>
                     <include>*-${env}.yml</include>
                     <include>application.yml</include>
+                    <include>bootstrap.yml</include>
                 </includes>
             </resource>
 
@@ -195,7 +198,16 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
         </plugins>
+
     </build>
 
 </project>

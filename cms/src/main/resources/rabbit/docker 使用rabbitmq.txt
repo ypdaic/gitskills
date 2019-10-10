@@ -1,0 +1,11 @@
+docker run -d --hostname my-rabbit --name some-rabbit -p 15672:15672 -p 5672:5672 -e RABBITMQ_DEFAULT_USER=root -e RABBITMQ_DEFAULT_PASS=test1234 rabbitmq:3
+
+--hostname 指定主机名  --name 容器名称 rabbitmq 镜像名称 :3 tag
+
+-e RABBITMQ_DEFAULT_USER=user 指定用户名
+-e RABBITMQ_DEFAULT_PASS=password 指定密码
+
+
+docker run -d --hostname my-rabbit --name some-rabbit -p 15672:15672 -p 5672:5672 -e RABBITMQ_DEFAULT_USER=root -e RABBITMQ_DEFAULT_PASS=test1234 rabbitmq:3-management
+
+:3-management 代管理插件的镜像包
