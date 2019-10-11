@@ -1,0 +1,22 @@
+@Cacheable是用来声明方法是可缓存的。将结果存储到缓存中以便后续使用相同参数调用时不需执行实际的方法。直接从缓存中取值。最简单的格式需要制定缓存名称。
+
+value 缓存的名称，在 spring 配置文件中定义，必须指定至少一个	例如：
+
+    @Cacheable(value=”mycache”) 或者 
+    @Cacheable(value={”cache1”,”cache2”}
+
+key	缓存的 key，可以为空，如果指定要按照 SpEL 表达式编写，如果不指定，则缺省按照方法的所有参数进行组合	例如：
+
+    @Cacheable(value=”testcache”,key=”#userName”)
+
+condition 缓存的条件（参数进行判断），可以为空，使用 SpEL 编写，返回 true 或者 false，只有为 true 才进行缓存	例如：
+
+    @Cacheable(value=”testcache”,condition=”#userName.length()>2”)
+
+unless  缓存的条件（返回值进行判断），可以为空，使用 SpEL 编写，返回 true 或者 false，只有为 true 才进行缓存	例如：
+
+    @Cacheable(value = "usercache", keyGenerator = "smpkeyGenerator",condition="#name!=null", unless = "#result==null")
+
+keyGenerator 缓存的 key的生成器，可以为空，如果指定需要自己实现KeyGenerator 接口
+
+sync 是否同步，就是对同一个key进行缓存时，只允许一个线程进行操作

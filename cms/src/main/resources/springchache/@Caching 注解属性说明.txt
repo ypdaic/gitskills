@@ -1,0 +1,6 @@
+组合注解,可包含多个Cacheable,CacheEvict,CachePut
+
+@Caching(evict = {
+        @CacheEvict(keyGenerator = "childColumnKeyGenerator"),
+        @CacheEvict(keyGenerator = "articleIdKeyGenerator")
+    })

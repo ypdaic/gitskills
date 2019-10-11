@@ -103,9 +103,9 @@ public class RedisConfig {
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(valueSerializer()))
                 .disableCachingNullValues();
 
-        // 查看使用builder(redisConnectionFactory)创建的DefaultRedisCacheWriter的代码发现DefaultRedisCacheWriter可以支持锁操作
-        // ，也就是同一个key是在多线程下同时只有一个线程能对该key进行操作，但该功能默认是关闭的，理由就是Redis本身是单线程的，不需要而外的
-        // 多线程保护
+        // 查看使用builder(redisConnectionFactory)创建的DefaultRedisCacheWriter的代码发现DefaultRedisCacheWriter可以支持分布式锁操作,
+//        加锁就是创建一个key+ "~lock" 解锁就是删除key+ "~lock",其他需要锁定的操作通过while循环判断key+ "~lock"是否存在,存在就睡眠一段
+//        时间,但是该功能默认是关闭的,页启动不了,只能说是一个简单的分布式锁
         RedisCacheManager.RedisCacheManagerBuilder builder = RedisCacheManager.builder(redisConnectionFactory);
         builder = builder.cacheDefaults(config);
         //获取初始化缓存库名称

@@ -19,6 +19,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -309,6 +310,8 @@ public class ServerApplicationTests {
 		System.out.println("list.size() : "+list.size());
 		System.out.println("list2 : "+list2);
 		System.out.println("list"+list);
+
+		int sdfsdf = Arrays.binarySearch(new String[]{"确认", "待确认"}, "待确认");
 	}
 
 

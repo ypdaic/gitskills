@@ -1,0 +1,42 @@
+当我们开启@EnableCaching注解后，如下3个bean会被注入到spring容器中，
+     BeanFactoryCacheOperationSourceAdvisor在aop 后置处理器会用到，也就是业务类存在缓存相关的注解，该业务类就要被代理，并将
+     BeanFactoryCacheOperationSourceAdvisor放到代理类中
+
+     CacheInterceptor就是代理在执行代理的拦截链时，具体需要执行的业务
+
+     AnnotationCacheOperationSource，通过业务类的方法获取缓存注解相关信息
+
+     AnnotationCacheOperationSource默认只匹配public 方法，其解析注解信息，并将其放入到
+     CacheableOperation中
+
+         @Bean(name = CacheManagementConfigUtils.CACHE_ADVISOR_BEAN_NAME)
+     	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+     	public BeanFactoryCacheOperationSourceAdvisor cacheAdvisor() {
+     		BeanFactoryCacheOperationSourceAdvisor advisor = new BeanFactoryCacheOperationSourceAdvisor();
+     		advisor.setCacheOperationSource(cacheOperationSource());
+     		advisor.setAdvice(cacheInterceptor());
+     		if (this.enableCaching != null) {
+     			advisor.setOrder(this.enableCaching.<Integer>getNumber("order"));
+     		}
+     		return advisor;
+     	}
+
+     	@Bean
+     	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+     	public CacheOperationSource cacheOperationSource() {
+     		return new AnnotationCacheOperationSource();
+     	}
+
+     	@Bean
+     	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+     	public CacheInterceptor cacheInterceptor() {
+     		CacheInterceptor interceptor = new CacheInterceptor();
+     		interceptor.configure(this.errorHandler, this.keyGenerator, this.cacheResolver, this.cacheManager);
+     		interceptor.setCacheOperationSource(cacheOperationSource());
+     		return interceptor;
+     	}
+
+
+
+    CacheInterceptor在执行时根据AnnotationCacheOperationSource获取CacheableOperation，并将CacheableOperation缓存起来
+
