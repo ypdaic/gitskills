@@ -1,12 +1,19 @@
 package com.daiyanping.cms.redis;
 
+import com.daiyanping.cms.cache.MyRedisCacheWriter;
+import com.daiyanping.cms.cache.RedisCacheManagerProxy;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.cache.CacheProperties;
 import org.springframework.boot.autoconfigure.data.redis.LettuceClientConfigurationBuilderCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cache.CacheManager;
+import org.springframework.cglib.core.SpringNamingPolicy;
+import org.springframework.cglib.proxy.Enhancer;
+import org.springframework.cglib.proxy.MethodInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +21,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
+import org.springframework.data.redis.cache.RedisCacheWriter;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
@@ -26,6 +34,7 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scripting.ScriptSource;
 import org.springframework.scripting.support.ResourceScriptSource;
 
@@ -96,7 +105,7 @@ public class RedisConfig {
      * @return
      */
     @Bean
-    public RedisCacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
+    public RedisCacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory, RedissonClient redissonClient, ThreadPoolTaskScheduler TaskScheduler) {
         RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl(cacheProperties.getRedis().getTimeToLive())
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(keySerializer()))
@@ -124,8 +133,17 @@ public class RedisConfig {
         RedisCacheManager redisCacheManager = builder
                 .transactionAware()
                 .build();
-        //初始化缓存库
-        redisCacheManager.afterPropertiesSet();
+        RedisCacheManagerProxy redisCacheManagerProxy = new RedisCacheManagerProxy(redisCacheManager, redissonClient, TaskScheduler);
+
+        Enhancer enhancer = new Enhancer();
+        enhancer.setSuperclass(RedisCacheManager.class);
+        enhancer.setInterfaces(new Class<?>[] {CacheManager.class});
+        enhancer.setNamingPolicy(SpringNamingPolicy.INSTANCE);
+        enhancer.setCallbackTypes(new Class[]{MethodInterceptor.class});
+        enhancer.setCallback(redisCacheManagerProxy);
+        RedisCacheManager redisCacheManager2 = (RedisCacheManager) enhancer.create(new Class[]{RedisCacheWriter.class, RedisCacheConfiguration.class}, new Object[]{new MyRedisCacheWriter(), config});
+
+        return redisCacheManager2;
 
         return redisCacheManager;
     }

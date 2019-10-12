@@ -1,6 +1,7 @@
 package com.daiyanping.cms;
 
 import com.daiyanping.cms.mybatis.MybatisConfig;
+import com.daiyanping.cms.redis.RedisConfig;
 import com.daiyanping.cms.springmvc.SpringMvcConfig;
 import org.redisson.spring.starter.RedissonAutoConfiguration;
 import org.springframework.boot.SpringApplication;
@@ -20,7 +21,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableAutoConfiguration(exclude = {RedisAutoConfiguration.class, DataSourceAutoConfiguration.class, XADataSourceAutoConfiguration.class, TransactionAutoConfiguration.class, RabbitAutoConfiguration.class})
 //@ComponentScan(basePackageClasses = {ScheduledTaskConfig.class, RedisConfig.class})
 //@ComponentScan(basePackageClasses = {RedisConfig.class})
-@ComponentScan(basePackageClasses = {SpringMvcConfig.class, MybatisConfig.class, RedissonAutoConfiguration.class})
+@ComponentScan(basePackageClasses = {SpringMvcConfig.class, MybatisConfig.class, RedissonAutoConfiguration.class, RedisConfig.class})
 //@ComponentScan(basePackageClasses = {SpringMvcConfig.class})
 //@SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
 //开启缓存

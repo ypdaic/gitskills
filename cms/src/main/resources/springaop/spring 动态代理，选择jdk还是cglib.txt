@@ -1,0 +1,49 @@
+DefaultAopProxyFactory 来判断
+
+advisedSupport.isOptimize()与a
+dvisedSupport.isProxyTargetClass()默认返回都是false，
+所以在默认情况下目标对象有没有实现接口决定着Spring采取的策略，
+当然可以设置advisedSupport.isOptimize()或者advisedSupport.isProxyTargetClass()返回为true，
+这样无论目标对象有没有实现接口Spring都会选择使用CGLIB代理。
+
+
+上面说的是默认情况下，也可以手动配置一些选项使Spring采用CGLIB代理。
+org.springframework.transaction.interceptor.TransactionProxyFactoryBean是org.springframework.aop.framework. ProxyConfig的子类，
+所以可以参照ProxyConfig里的一些设置如下所示，将optimize和proxyTargetClass任意一个设置为true都可以强制Spring采用CGLIB代理。
+
+如果当需要使用CGLIB代理和@AspectJ自动代理支持，请按照如下的方式设置 |aop:aspectj-autoproxy| 的 proxy-target-class 属性：
+|aop:aspectj-autoproxy proxy-target-class="true"/|
+
+这样使用CGLIB代理也就不会出现前面提到的ClassCastException问题了，也可以在性能上有所提高，关键是对于代理对象是否继承接口可以统一使用。
+
+public class DefaultAopProxyFactory implements AopProxyFactory, Serializable {
+
+	@Override
+	public AopProxy createAopProxy(AdvisedSupport config) throws AopConfigException {
+		if (config.isOptimize() || config.isProxyTargetClass() || hasNoUserSuppliedProxyInterfaces(config)) {
+			Class<?> targetClass = config.getTargetClass();
+			if (targetClass == null) {
+				throw new AopConfigException("TargetSource cannot determine target class: " +
+						"Either an interface or a target is required for proxy creation.");
+			}
+			if (targetClass.isInterface() || Proxy.isProxyClass(targetClass)) {
+				return new JdkDynamicAopProxy(config);
+			}
+			return new ObjenesisCglibAopProxy(config);
+		}
+		else {
+			return new JdkDynamicAopProxy(config);
+		}
+	}
+
+	/**
+	 * Determine whether the supplied {@link AdvisedSupport} has only the
+	 * {@link org.springframework.aop.SpringProxy} interface specified
+	 * (or no proxy interfaces specified at all).
+	 */
+	private boolean hasNoUserSuppliedProxyInterfaces(AdvisedSupport config) {
+		Class<?>[] ifcs = config.getProxiedInterfaces();
+		return (ifcs.length == 0 || (ifcs.length == 1 && SpringProxy.class.isAssignableFrom(ifcs[0])));
+	}
+
+}
