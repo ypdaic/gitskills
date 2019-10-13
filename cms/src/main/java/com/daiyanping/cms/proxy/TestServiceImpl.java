@@ -13,6 +13,10 @@ public class TestServiceImpl implements ITestService {
 
     }
 
+    public TestServiceImpl() {
+
+    }
+
     public TestServiceImpl(String a, String b) {
         this(a);
     }
@@ -25,6 +29,11 @@ public class TestServiceImpl implements ITestService {
 
 
     public synchronized void say2() {
+        try {
+            Thread.sleep(1000 *10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         System.out.println("aaa");
     }
 }

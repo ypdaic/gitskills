@@ -20,10 +20,10 @@ import java.lang.reflect.Proxy;
 public class Test {
 
     public static void main(String[] args) {
-//        test2();
+        test2();
 //        test3();
 //        test4();
-        test5();
+//        test5();
 
     }
 
@@ -38,6 +38,7 @@ public class Test {
 
     /**
      * cglib动态代理，代理非接口，实际是生成的子类, 所以可以转型为TestServiceImpl
+     * 生成的子类重新了父类方法，在方法中判断是否是调用call还是父类的方法
      */
     public static void test2() {
         TestServiceImpl testService = new TestServiceImpl("a", "b");
@@ -49,7 +50,12 @@ public class Test {
         enhancer.setCallbackTypes(new Class[]{MethodInterceptor.class});
         enhancer.setCallback(testServerImplCglibProxy);
         TestServiceImpl o = (TestServiceImpl) enhancer.create();
-        o.say();
+        new Thread(()->{
+            o.say2();
+        }).start();
+        new Thread(()->{
+            o.say2();
+        }).start();
 
 
     }

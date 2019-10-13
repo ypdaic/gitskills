@@ -48,30 +48,33 @@ public class RedisCacheManagerProxy implements MethodInterceptor {
             }
             else {
                 synchronized (this.cacheMap) {
-                    Cache redisCache = (Cache) method.invoke(redisCacheManager, objects);
-                    RedisCacheProxy redisCacheProxy = new RedisCacheProxy(redisCache, redissonClient, redisCache.getName(), threadPoolTaskScheduler);
-                    Enhancer enhancer = new Enhancer();
-                    if (redisCache.getClass().isAssignableFrom(TransactionAwareCacheDecorator.class)) {
+                    cache = this.cacheMap.get(objects[0]);
+                    if (cache == null) {
 
-                       enhancer.setSuperclass(TransactionAwareCacheDecorator.class);
-                    }
-                    if (redisCache.getClass().isAssignableFrom(RedisCache.class)) {
-                        enhancer.setSuperclass(RedisCache.class);
-                    }
-                    enhancer.setInterfaces(new Class<?>[] {Cache.class});
-                    enhancer.setNamingPolicy(SpringNamingPolicy.INSTANCE);
-                    enhancer.setCallbackTypes(new Class[]{MethodInterceptor.class});
-                    enhancer.setCallback(redisCacheProxy);
-                    Cache newCache = null;
-                    if (redisCache.getClass().isAssignableFrom(TransactionAwareCacheDecorator.class)) {
-                        newCache = (Cache) enhancer.create(new Class[]{Cache.class}, new Object[]{redisCache});
-                    }
-                    if (redisCache.getClass().isAssignableFrom(RedisCache.class)) {
+                        Cache redisCache = (Cache) method.invoke(redisCacheManager, objects);
+                        RedisCacheProxy redisCacheProxy = new RedisCacheProxy(redisCache, redissonClient, redisCache.getName(), threadPoolTaskScheduler);
+                        Enhancer enhancer = new Enhancer();
+                        if (redisCache.getClass().isAssignableFrom(TransactionAwareCacheDecorator.class)) {
 
-                        newCache = (Cache) enhancer.create(new Class[]{String.class, RedisCacheWriter.class, RedisCacheConfiguration.class}, new Object[]{"", new MyRedisCacheWriter(), RedisCacheConfiguration.defaultCacheConfig()});
+                           enhancer.setSuperclass(TransactionAwareCacheDecorator.class);
+                        }
+                        if (redisCache.getClass().isAssignableFrom(RedisCache.class)) {
+                            enhancer.setSuperclass(RedisCache.class);
+                        }
+                        enhancer.setInterfaces(new Class<?>[] {Cache.class});
+                        enhancer.setNamingPolicy(SpringNamingPolicy.INSTANCE);
+                        enhancer.setCallbackTypes(new Class[]{MethodInterceptor.class});
+                        enhancer.setCallback(redisCacheProxy);
+                        if (redisCache.getClass().isAssignableFrom(TransactionAwareCacheDecorator.class)) {
+                            cache = (Cache) enhancer.create(new Class[]{Cache.class}, new Object[]{redisCache});
+                        }
+                        if (redisCache.getClass().isAssignableFrom(RedisCache.class)) {
+
+                            cache = (Cache) enhancer.create(new Class[]{String.class, RedisCacheWriter.class, RedisCacheConfiguration.class}, new Object[]{"", new MyRedisCacheWriter(), RedisCacheConfiguration.defaultCacheConfig()});
+                        }
+                        cacheMap.put(objects[0].toString(), cache);
                     }
-                    cacheMap.put(objects[0].toString(), newCache);
-                    return newCache;
+                    return cache;
                 }
 
             }

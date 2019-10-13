@@ -11,9 +11,15 @@ import org.springframework.boot.autoconfigure.cache.CacheProperties;
 import org.springframework.boot.autoconfigure.data.redis.LettuceClientConfigurationBuilderCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.CacheManager;
+
 import org.springframework.cglib.core.SpringNamingPolicy;
 import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.cglib.proxy.MethodInterceptor;
+
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
+import org.springframework.cache.interceptor.KeyGenerator;
+import org.springframework.cache.transaction.TransactionAwareCacheManagerProxy;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -39,11 +45,9 @@ import org.springframework.scripting.ScriptSource;
 import org.springframework.scripting.support.ResourceScriptSource;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.time.Duration;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static io.lettuce.core.ReadFrom.SLAVE_PREFERRED;
 
@@ -144,8 +148,35 @@ public class RedisConfig {
         RedisCacheManager redisCacheManager2 = (RedisCacheManager) enhancer.create(new Class[]{RedisCacheWriter.class, RedisCacheConfiguration.class}, new Object[]{new MyRedisCacheWriter(), config});
 
         return redisCacheManager2;
+    }
 
-        return redisCacheManager;
+    /**
+     * 本地缓存，并且支持事务
+     * @return
+     */
+    public CacheManager cacheManager() {
+        ConcurrentMapCacheManager concurrentMapCacheManager = new ConcurrentMapCacheManager();
+        concurrentMapCacheManager.setAllowNullValues(true);
+        concurrentMapCacheManager.setCacheNames(Collections.singletonList("test"));
+        TransactionAwareCacheManagerProxy transactionAwareCacheManagerProxy = new TransactionAwareCacheManagerProxy();
+        transactionAwareCacheManagerProxy.setTargetCacheManager(concurrentMapCacheManager);
+        return transactionAwareCacheManagerProxy;
+    }
+
+    /**
+     * 自定义key的生成
+     * @return
+     */
+    public KeyGenerator keyGenerator(){
+        KeyGenerator keyGenerator = new KeyGenerator() {
+//            target表示业务的实例，method表示业务的方法，params表示业务参数
+            @Override
+            public Object generate(Object target, Method method, Object... params) {
+                return null;
+            }
+        };
+
+        return keyGenerator;
     }
 
     @Bean

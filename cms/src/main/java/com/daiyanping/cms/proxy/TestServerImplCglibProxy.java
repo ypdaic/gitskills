@@ -31,7 +31,10 @@ public class TestServerImplCglibProxy implements MethodInterceptor {
      */
     @Override
     public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
-
+        if (method.getName().equals("say2")) {
+            System.out.println("sdfsdf");
+            return "sdfs";
+        }
         Object invoke = method.invoke(testService, objects);
         return invoke;
     }

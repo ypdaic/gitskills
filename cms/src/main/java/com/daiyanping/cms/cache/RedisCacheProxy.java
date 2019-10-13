@@ -70,6 +70,11 @@ public class RedisCacheProxy implements MethodInterceptor {
      * @return
      */
     public <T> T get(Object key, Callable<T> valueLoader) {
+        // 获取到结果立马返回
+        Cache.ValueWrapper result = redisCache.get(key);
+        if (result != null) {
+            return (T) result.get();
+        }
 
         String lock = key + lockSuffix;
 
@@ -78,11 +83,17 @@ public class RedisCacheProxy implements MethodInterceptor {
         });
         // 先使用本地锁
         synchronized (o) {
+//            本地锁再次尝试获取结果，有就立马返回
+            result = redisCache.get(key);
+            if (result != null) {
+                return (T) result.get();
+            }
 //            然后使用分布式锁
             RLock fairLock = redissonClient.getFairLock(lock);
             fairLock.lock();
             try {
-                Cache.ValueWrapper result = redisCache.get(key);
+//              分布式锁再次尝试获取结果，有就立马返回
+                result = redisCache.get(key);
                 if (result != null) {
                     return (T) result.get();
                 }
