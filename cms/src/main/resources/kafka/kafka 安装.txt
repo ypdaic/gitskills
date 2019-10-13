@@ -1,0 +1,10 @@
+1：进入到官网下载最新的安装包http://kafka.apache.org/downloads
+   https://www.apache.org/dyn/closer.cgi?path=/kafka/2.3.0/kafka_2.11-2.3.0.tgz
+2: 解压kafka_2.11-2.3.0.tgz
+3：由于kafka使用Scala语言编写，在JVM虚拟机上运行，运行kafka需要jdk环境，
+   且kafka强依赖zookeeper，虽然自身带了zookeeper，但是是单机版的，如果需要zookeeper集群
+   需要我们修改zookeeper.properties，或者直接修改server.properties的zookeeper.connect配置项
+   修改成zookeeper集群即可
+4：启动kafka
+   先启动zookeeper：./bin/zookeeper-server-start.sh ../config/zookeeper.properties
+   再启动kafka: ./bin/kafka-server-start.sh ../config/server.properties

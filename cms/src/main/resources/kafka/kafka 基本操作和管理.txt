@@ -1,0 +1,26 @@
+##列出所有主题
+kafka-topics.bat --zookeeper localhost:2181 --list
+
+##列出所有主题的详细信息
+kafka-topics.bat --zookeeper localhost:2181 --describe
+
+##创建主题 主题名 my-topic，1 副本，8 分区
+kafka-topics.bat --zookeeper localhost:2181 --create --topic my-topic --replication-factor 1 --partitions 8
+
+##增加分区，注意：分区无法被删除，只能增加分区不能减少分区
+kafka-topics.bat --zookeeper localhost:2181 --alter --topic my-topic --partitions 16
+
+##删除主题 （文件并没有删除，但是会被标记为删除）
+kafka-topics.bat --zookeeper localhost:2181 --delete --topic my-topic
+
+##创建生产者（控制台）
+kafka-console-producer.bat --broker-list localhost:9092 --topic my-topic
+
+##创建消费者（控制台）
+kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic my-topic --from-beginning
+
+##列出消费者群组（仅 Linux）
+kafka-topics.sh --new-consumer --bootstrap-server localhost:9092 --list
+
+##列出消费者群组详细信息（仅 Linux）
+kafka-topics.sh --new-consumer --bootstrap-server localhost:9092 --describe --group 群组名
