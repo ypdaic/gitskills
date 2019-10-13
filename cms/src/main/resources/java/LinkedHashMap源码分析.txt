@@ -3,3 +3,7 @@ LinkedHashMap 继承自HashMap, 内部使用Entry<K,V> 保存数据，该Entry�
 LinkedHashMap 内部保存了head,tail 节点，用于指向我们创建的Entry，
 
 Entry 内部使用befor,after 指向前驱Node,后续Node
+
+LinkedHashMap默认是按照插入顺序排序，也提供按访问顺序排序，（被访问的始终放在队尾，插入的时候，需要我们
+自己实现removeEldestEntry方法，进行first节点的移除，mybatis的LRUCache就是基于LinkedHashMap做的）
+accessOrder：true:按访问顺序排序（LRU），false:按插入顺序排序；

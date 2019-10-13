@@ -1,0 +1,32 @@
+1：准备如下sql,子查询内容可以随业务修改，外层查询用于拼接RESP协议，然后将该段slq保存到
+   某个.sql文件
+
+select 
+	concat('*8\r\n',
+	       '$', length(redis_info.redis_cmd), '\r\n', redis_info.redis_cmd, '\r\n',
+	       '$', length(redis_info.redis_key), '\r\n', redis_info.redis_key, '\r\n',
+	       '$', length(redis_info.hkey1), '\r\n', redis_info.hkey1, '\r\n',
+	       '$', length(redis_info.hval1), '\r\n', redis_info.hval1, '\r\n',
+	       '$', length(redis_info.hkey2), '\r\n', redis_info.hkey2, '\r\n',
+	       '$', length(redis_info.hval2), '\r\n', redis_info.hval2, '\r\n',
+	       '$', length(redis_info.hkey3), '\r\n', redis_info.hkey3, '\r\n',
+	       '$', length(redis_info.hval3), '\r\n', redis_info.hval3, '\r'
+	       ) as redis_cmd
+from(
+	select 
+		'HSET' AS redis_cmd,
+		concat('uer:info', id) as redis_key,
+		'user_name' as hkey1, name as hval1,
+		'user_password' as hkey2, password as hval2,
+		'user_age' as hkey3, age as hval3
+	from 
+	user
+) as redis_info
+
+2：确保mysql，redis在同一台机器上，执行如下命令
+ 
+mysql -uroot -ptest1234 test --default-character-set=utf8 --skip-column-names --raw < user.sql | redis-cli -h 192.168.140.129 -p 6379 -a test1234 --pipe
+
+
+--skip-colum-names 表示跳过行的名称
+--piple 表示管道执行结果
