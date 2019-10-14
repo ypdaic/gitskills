@@ -1,0 +1,4 @@
+nestedTransactionAllowed  是否允许在事务中设置保存点
+
+rollbackOnCommitFailure   是否允许在事务提交失败后进行回滚，默认false，开启需要设置，
+                          只是在出现TransactionException异常才生效

@@ -50,11 +50,11 @@ public class UserServiceImpl extends SqlSessionDaoSupport implements IUserServic
      * @param id
      * @return
      */
-    @Transactional
+    @Transactional(propagation = Propagation.NESTED)
     public User getUserById(String id) {
         User userById = userDao.getUserById(id);
 //        Object o = AopContext.currentProxy();
-        int a = 1/0;
+//        int a = 1/0;
         return userById;
     }
 

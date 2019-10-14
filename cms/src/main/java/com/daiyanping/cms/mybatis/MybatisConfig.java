@@ -48,7 +48,8 @@ public class MybatisConfig {
         simpleDriverDataSource.setDriverClass(com.mysql.jdbc.Driver.class);
         simpleDriverDataSource.setPassword("test1234");
         simpleDriverDataSource.setUsername("root");
-        simpleDriverDataSource.setUrl("jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=UTF8&serverTimezone=UTC");
+//        simpleDriverDataSource.setUrl("jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=UTF8&serverTimezone=UTC");
+        simpleDriverDataSource.setUrl("jdbc:mysql://192.168.140.129:3306/test?useUnicode=true&characterEncoding=UTF8&serverTimezone=UTC");
         return simpleDriverDataSource;
     }
 
@@ -72,7 +73,7 @@ public class MybatisConfig {
         simpleDriverDataSource.setDriverClass(com.mysql.jdbc.Driver.class);
         simpleDriverDataSource.setPassword("test1234");
         simpleDriverDataSource.setUsername("root");
-        simpleDriverDataSource.setUrl("jdbc:mysql://localhost:3306/test2?useUnicode=true&characterEncoding=UTF8&serverTimezone=UTC");
+        simpleDriverDataSource.setUrl("jdbc:mysql://192.168.140.129:3306/test2?useUnicode=true&characterEncoding=UTF8&serverTimezone=UTC");
         return simpleDriverDataSource;
     }
 
@@ -125,6 +126,8 @@ public class MybatisConfig {
     public DataSourceTransactionManager getDataSourceTransactionManager() {
         DataSourceTransactionManager dataSourceTransactionManager = new DataSourceTransactionManager();
         dataSourceTransactionManager.setDataSource(getDataSource());
+//        事务提交失败后回滚
+        dataSourceTransactionManager.setRollbackOnCommitFailure(true);
         return dataSourceTransactionManager;
     }
 

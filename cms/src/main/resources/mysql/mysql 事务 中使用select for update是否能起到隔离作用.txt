@@ -1,0 +1,12 @@
+A客户端执行如下语句：
+
+begin;
+SELECT * from user where id = 20 for update;
+
+UPDATE user set name="test1" where id = 20;
+
+B客户端执行如下语句：
+begin;
+SELECT * from user where id = 20 for update;
+
+A客户端提交后，B客户端查询到的数据是修改后的，此时事务的隔离级别不起作用
