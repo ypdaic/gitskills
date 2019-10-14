@@ -3,8 +3,6 @@ package com.daiyanping.cms.kafka.nativeapi;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.log4j.Level;
-import org.apache.log4j.LogManager;
 
 import java.util.Properties;
 
@@ -14,7 +12,6 @@ import java.util.Properties;
 public class HelloKafkaProducer {
 
     public static void main(String[] args) {
-        LogManager.getRootLogger().setLevel(Level.ERROR);
         //TODO 生产者三个属性必须指定(broker地址清单、key和value的序列化器)
         Properties properties = new Properties();
         properties.put("bootstrap.servers","192.168.140.129:9092");

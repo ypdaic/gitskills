@@ -7,6 +7,7 @@ import com.daiyanping.cms.vo.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -205,12 +206,14 @@ public class HelloController {
 	 * 验证动态数据源的使用
 	 */
 	@PostMapping("/updateById")
+	@Transactional
 	public void test2() {
 		User user = new User();
 		user.setAge(20);
 		user.setId(1);
 		user.setName("jta");
 		userService.updateById(user);
+		userService.getUserById("1");
 
 	}
 

@@ -1,0 +1,2 @@
+kafka 只接受字节数组，序列化需要实现org.apache.kafka.common.serialization.Serializer
+      接口
