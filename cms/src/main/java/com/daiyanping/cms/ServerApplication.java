@@ -18,10 +18,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootConfiguration
 //开启自动配置，排除springjdbc自动配置
-@EnableAutoConfiguration(exclude = {RedisAutoConfiguration.class, DataSourceAutoConfiguration.class, XADataSourceAutoConfiguration.class, TransactionAutoConfiguration.class, RabbitAutoConfiguration.class})
+@EnableAutoConfiguration(exclude = {RedisAutoConfiguration.class, DataSourceAutoConfiguration.class, XADataSourceAutoConfiguration.class, TransactionAutoConfiguration.class, RabbitAutoConfiguration.class,
+		RedissonAutoConfiguration.class})
 //@ComponentScan(basePackageClasses = {ScheduledTaskConfig.class, RedisConfig.class})
 //@ComponentScan(basePackageClasses = {RedisConfig.class})
-@ComponentScan(basePackageClasses = {SpringMvcConfig.class, MybatisConfig.class, RedissonAutoConfiguration.class, RedisConfig.class})
+@ComponentScan(basePackageClasses = {SpringMvcConfig.class, MybatisConfig.class})
 //@ComponentScan(basePackageClasses = {SpringMvcConfig.class})
 //@SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
 //开启缓存
