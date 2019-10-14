@@ -25,3 +25,10 @@ myid:1先投一票给自己，然后接受myid:0的返回消息，投一票给my
 myid:2继续上面的过程。
 
 完成选举后，leader会在Leader.lead() 方法中死循环ping follower 如果发现某个follower ping不通，就会重新出发选举，follow一样，如果发现leader 不能通信，也会出发重新选举
+
+
+
+
+
+
+https://www.cnblogs.com/crazylqy/p/7132133.html

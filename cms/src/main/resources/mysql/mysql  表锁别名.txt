@@ -1,0 +1,7 @@
+当使用MySQL 表锁时,没有锁别名,查询中使用锁定表的别名是不容许查询的,如果要查询就需要对别名再次进行锁定
+
+lock table actor read; 锁定表
+
+select a.first_name,a.last_name,b.first_name,b.last_name from actor a,actor b  执行会报错
+
+lock table actor as a read,actor as b read; 需要再次锁定别名
