@@ -30,3 +30,11 @@ lindex james 0
 # 查找指定索引位置的value,索引为负数表示从右边开始查找
 lindex james -1
 
+#阻塞右边取出,没有数据等待5秒，有数据立马返回
+brpop testlist 5
+master:0>brpop testlist 5
+1) testlist (key)
+2) ssssss
+
+
+
