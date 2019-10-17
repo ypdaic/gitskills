@@ -1,0 +1,4 @@
+ctrl+shift+f12，最大化编辑器
+ctrl+w，自动选择代码，+shift回退
+ctrl+e，历史打开文件的列表
+ctrl+y，删除行

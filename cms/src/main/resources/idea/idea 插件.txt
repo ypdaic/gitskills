@@ -1,0 +1,14 @@
+1、CodeGlance
+    如果你用过 Sublime text，那么对这个插件一定不会陌生，它的作用是把代码小地图嵌入到编辑窗口，给人一种极客范。
+
+2、Grep Console
+    为什么要提一下这个插件呢？当你密密麻麻一大片的日志，去查看起来，很容易看花眼；这个工具正好解决了这个痛点，可以说它就是 IDEA 自带 Console 的升级版本。
+
+3、Rainbow Brackets
+    彩虹颜色的括号 看着很舒服 敲代码效率变高
+
+4、GenerateAllSetter
+    一键调用一个对象的所有set方法并且赋予默认值 在对象字段多的时候非常方便，在做项目时，每层都有各自的实体对象需要相互转换，但是考虑BeanUtil.copyProperties()等这些工具的弊端，有些地方就需要手动的赋值时，有这个插件就会很方便，创建完对象后在变量名上面按Alt+Enter就会出来 generate all setter选项。
+
+5、CamelCase
+    将不是驼峰格式的名称，快速转成驼峰格式，安装好后，选中要修改的名称，按快捷键shift+alt+u。
