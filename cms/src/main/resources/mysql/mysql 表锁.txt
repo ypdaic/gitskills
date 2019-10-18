@@ -19,6 +19,13 @@ lock table write  写锁 例：lock tabel user write
 对多个表同时加锁
 LOCK table user read,json_user read;
 
+解锁
+unlock tables;
+
 资料
 https://www.cnblogs.com/zyy1688/p/9924048.html
+
+切记不要在业务繁忙时去锁某个表，否则可能导致某个事物刚开启后，然后这个表被锁了，后面事物的更新操作全部被阻塞
+
+
 
