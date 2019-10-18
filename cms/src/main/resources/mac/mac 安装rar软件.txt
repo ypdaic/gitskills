@@ -1,0 +1,18 @@
+mac下安装rar解压工具
+2018.11.19 10:09:39
+字数 99
+阅读 3171
+第一、下载安装包 RAR for Mac OS X，下载地址。
+
+第二、解压压缩包，cd Downloads/rar 。
+
+第三、使用以下命令安装 rar 和 unrar：
+
+1、sudo install -c -o $USER rar /usr/local/bin
+2、sudo install -c -o $USER unrar /usr/local/bin
+第四、命令：
+
+解压：unrar x fileName.rar(files with full path) dirName
+压缩：rar a fileName.rar(files with full path) dirName
+
+https://www.jianshu.com/p/e001591f5366

@@ -1,0 +1,11 @@
+mysql 全局锁可以理解为数据库级别的锁，这个锁会将整个数据库锁住，让整个数据库处于只读状态，之后的增删改语句会被阻塞，包括事物的提交，表结构的修改与创建。
+
+当我们拷贝整个mysql时，就可以使用这个锁
+上锁
+Flush tables with read lock;
+
+主要做了3件事：上全局读锁（lock_global_read_lock）
+             清理表缓存（close_cached_tables）
+             上全局COMMIT锁（make_global_read_lock_block_commit）
+取消锁
+unlock tables
