@@ -1,0 +1,41 @@
+创建伪集群：
+
+比如创建包含两个节点的集群
+    拷贝两个一模一样的server.properties文件
+    修改server_cluster_0.properties 文件如下配置项
+        broker.id=0
+        listeners=PLAINTEXT://:9092
+        log.dirs=/opt/kafka_2.11-2.3.0/data/kafka_cluster/broker_0/kafka-logs
+        zookeeper.connect=localhost:2181/kafka
+        host.name=192.168.140.129
+    修改server_cluster_1.properties 文件如下配置
+        broker.id=1
+        listeners=PLAINTEXT://:9093
+        log.dirs=/opt/kafka_2.11-2.3.0/data/kafka_cluster/broker_1/kafka-logs
+        zookeeper.connect=localhost:2181/kafka
+        host.name=192.168.140.129
+
+然后先启动zookeeper
+./zookeeper-server-start.sh ../config/zookeeper.properties
+再启动2个kafka broker节点
+./kafka-server-start.sh ../config/server_cluster_0.properties
+./kafka-server-start.sh ../config/server_cluster_1.properties
+
+kafka集群创建完成，zookeeper也可以创建集群
+
+kafka集群会产生一个控制器，连接zookeeper，查看kafka节点下有个controller节点,保存的就是控制器信息
+{"version":1,"brokerid":0,"timestamp":"1571407158693"}
+控制器一般是先加入的为控制器
+
+创建主题
+./kafka-topics.sh --zookeeper localhost:2181/kafka --create --topic my-topic-cluster --replication-factor 2 --partitions 2
+
+--replication-factor 的值一定要和broker数相等
+
+消费者，生成者都是从分区首领拿数据，如下是两个分区的信息
+    {"controller_epoch":1,"leader":0,"version":1,"leader_epoch":0,"isr":[0,1]}
+    {"controller_epoch":1,"leader":1,"version":1,"leader_epoch":0,"isr":[1,0]}
+
+客户端会缓存kafka的元数据，包含集群信息，默认30s刷新 ProducerConfig.METADATA_MAX_AGE_CONFIG 参数
+
+

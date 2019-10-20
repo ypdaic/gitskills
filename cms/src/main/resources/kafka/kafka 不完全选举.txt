@@ -1,0 +1,3 @@
+当将配置参数unclean.leader.election设置为false后
+将关闭不完全选举，也就是leader挂掉后，如果其他副本的
+数据不是完整的，则不会进行leader选举
