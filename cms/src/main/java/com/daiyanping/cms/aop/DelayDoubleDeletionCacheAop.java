@@ -10,6 +10,7 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.BeansException;
@@ -54,9 +55,9 @@ public class DelayDoubleDeletionCacheAop implements InitializingBean, Disposable
 
     private volatile boolean running = true;
 
-//    TODO 根据业务可能需要调整
+    //    TODO 根据业务可能需要调整
     // 延时时间
-    private static long DELETE_TIME = 2 * 1000_000l;
+    private static long DELETE_TIME = 3 * 1000_000_000l;
 
     @Autowired
     RedisTemplate redisTemplate;
@@ -73,8 +74,12 @@ public class DelayDoubleDeletionCacheAop implements InitializingBean, Disposable
 
     }
 
+    /**
+     * 后置处理，用于业务方法之后执行
+     * @param joinPoint
+     */
     @After(value = "deletePointcut() || deletePointcuts()")
-    public void delete(JoinPoint joinPoint) {
+    public void deleteAfter(JoinPoint joinPoint) {
         Signature signature = joinPoint.getSignature();
         MethodSignature methodSignature = (MethodSignature) signature;
         Method targetMethod = methodSignature.getMethod();
@@ -92,6 +97,45 @@ public class DelayDoubleDeletionCacheAop implements InitializingBean, Disposable
             for (int i = 0; i < deletes.length; i++) {
                 String redisKey = getRedisKey(joinPoint, deletes[i]);
                 supportTransaction(delayDoubleDeletes.transactionAware(), delayDoubleDeletes.cacheNames() + redisKey);
+            }
+        }
+    }
+
+    /**
+     * 前置处理，用于业务方法之前执行，删除以前的缓存
+     * @param joinPoint
+     */
+    @Before(value = "deletePointcut() || deletePointcuts()")
+    public void deleteBefore(JoinPoint joinPoint) {
+        Signature signature = joinPoint.getSignature();
+        MethodSignature methodSignature = (MethodSignature) signature;
+        Method targetMethod = methodSignature.getMethod();
+        DelayDoubleDelete delayDoubleDelete = AnnotationUtils.findAnnotation(targetMethod, DelayDoubleDelete.class);
+        if (delayDoubleDelete != null && delayDoubleDelete.beforeInvocation()) {
+
+            String redisKey = getRedisKey(joinPoint, delayDoubleDelete);
+            supportTransaction(delayDoubleDelete.transactionAware(), delayDoubleDelete.cacheNames() + redisKey);
+
+        }
+
+        DelayDoubleDeletes delayDoubleDeletes = AnnotationUtils.findAnnotation(targetMethod, DelayDoubleDeletes.class);
+        if (delayDoubleDeletes != null) {
+            if (delayDoubleDeletes.beforeInvocation()) {
+
+                DelayDoubleDelete[] deletes = delayDoubleDeletes.delete();
+                for (int i = 0; i < deletes.length; i++) {
+                    String redisKey = getRedisKey(joinPoint, deletes[i]);
+                    supportTransaction(delayDoubleDeletes.transactionAware(), delayDoubleDeletes.cacheNames() + redisKey);
+                }
+            } else {
+                DelayDoubleDelete[] deletes = delayDoubleDeletes.delete();
+                for (int i = 0; i < deletes.length; i++) {
+                    if (deletes[i].beforeInvocation()) {
+
+                        String redisKey = getRedisKey(joinPoint, deletes[i]);
+                        supportTransaction(delayDoubleDeletes.transactionAware(), delayDoubleDeletes.cacheNames() + redisKey);
+                    }
+                }
             }
         }
     }

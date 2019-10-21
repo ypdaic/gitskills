@@ -16,7 +16,6 @@ import org.springframework.boot.autoconfigure.transaction.TransactionProperties;
 import org.springframework.context.annotation.*;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.jta.JtaTransactionManager;
 import org.springframework.transaction.support.AbstractPlatformTransactionManager;
@@ -40,7 +39,7 @@ import java.util.Properties;
  * MapperFactoryBean中的sqlSession的生成是由于有SqlSessionFactory的注入，而SqlSessionFactory的注入是由SqlSessionFactoryBean生成，也是实现了FactoryBean接口
  *
  */
-@MapperScan("com.daiyanping.cms.dao")
+@MapperScan("com.daiyanping.cms.dao.UserDao")
 @ComponentScan({"com.daiyanping.cms.DB","com.daiyanping.cms.service"})
 // 开启注解支持,要想使用注解的拦截器，就必须开启
 
@@ -70,7 +69,8 @@ public class JtaTransactionConfig {
 //
 //        logger.fine("初始化事务与资源管理器");
         dataSource.setClassName("bitronix.tm.resource.jdbc.lrc.LrcXADataSource");
-        dataSource.getDriverProperties().put("url","jdbc:mysql://192.168.140.128:3306/test?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull");
+//        dataSource.getDriverProperties().put("url","jdbc:mysql://192.168.140.128:3306/test?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull");
+        dataSource.getDriverProperties().put("url","jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull");
         Properties dp = dataSource.getDriverProperties();
         dp.put("driverClassName", "com.mysql.jdbc.Driver");
         dp.put("user","root");
@@ -103,7 +103,8 @@ public class JtaTransactionConfig {
 //
 //        logger.fine("初始化事务与资源管理器");
         dataSource.setClassName("bitronix.tm.resource.jdbc.lrc.LrcXADataSource");
-        dataSource.getDriverProperties().put("url","jdbc:mysql://192.168.140.128:3306/test2?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull");
+//        dataSource.getDriverProperties().put("url","jdbc:mysql://192.168.140.128:3306/test2?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull");
+        dataSource.getDriverProperties().put("url","jdbc:mysql://localhost:3306/test2?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull");
         Properties dp = dataSource.getDriverProperties();
         dp.put("driverClassName", "com.mysql.jdbc.Driver");
         dp.put("user","root");
@@ -141,7 +142,7 @@ public class JtaTransactionConfig {
         return sqlSessionFactoryBean;
     }
 
-    @Bean
+    @Bean(name = "sqlSession1")
     public SqlSessionTemplate getSqlSessionTemplate() throws Exception {
         SqlSessionTemplate sqlSessionTemplate = new SqlSessionTemplate(getSqlSessionFactoryBean().getObject());
         return sqlSessionTemplate;

@@ -1,12 +1,8 @@
 package com.daiyanping.cms;
 
-import com.daiyanping.cms.DB.DBAspect;
 import com.daiyanping.cms.entity.User;
 import com.daiyanping.cms.jta.JtaTransactionConfig;
-import com.daiyanping.cms.redis.RedisConfig;
 import com.daiyanping.cms.service.IUserService;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.redisson.spring.starter.RedissonAutoConfiguration;
@@ -16,15 +12,10 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 /**
  * @ClassName JtaTests
@@ -94,12 +85,13 @@ public class JtaTests {
      *
      */
     @Test
-//    @Transactional
+    @Transactional
 //    @Rollback(value = false)
     public void test3() {
         User user = new User();
         user.setAge(80);
-        user.setId(1);
+        user.setId(78);
+        user.setPassword("dsfsdf");
         user.setName("jt21");
 
         userService.addUser(user);

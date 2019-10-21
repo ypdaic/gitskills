@@ -25,4 +25,10 @@ public @interface DelayDoubleDelete {
      * @return
      */
     String cacheNames() default "";
+
+    /**
+     * 前置处理
+     * @return
+     */
+    boolean beforeInvocation() default false;
 }

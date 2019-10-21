@@ -1,0 +1,6 @@
+Timer 内部使用TaskQueue保存任务，并使用synchronized确保线程安全，TaskQueue和DelayedWorkQueue一样，都是用数组保存我们的任务，并将延时最小的任务
+放在数据最前面，获取时直接获取数组的第一个即可。
+
+Timer 内部使用TimerThread运行任务，由于该线程只是捕获了InterruptedException异常，如果业务抛异常没有捕获的话，该定时器就失效了
+
+由于timer使用一个TimerThread线程运行任务，所以是单线程阻塞的，而ScheduledThreadPoolExecutor多线程的

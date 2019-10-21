@@ -1,0 +1,6 @@
+# 打开慢查询日志
+slow_query_log=1
+# 慢日志存储路径
+slow_qeury_log_file=/var/log/mysql/log-slow-queries.log
+# sql执行时间大于3秒，则记录日志
+long-query-time=3
