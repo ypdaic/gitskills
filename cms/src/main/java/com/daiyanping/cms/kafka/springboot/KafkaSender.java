@@ -2,7 +2,9 @@ package com.daiyanping.cms.kafka.springboot;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
+import org.springframework.util.concurrent.ListenableFuture;
 
 /**
  *
@@ -16,7 +18,7 @@ public class KafkaSender {
 
     public void messageSender(String tpoic,String key,String message){
         try {
-            kafkaTemplate.send(tpoic,key,message);
+            ListenableFuture<SendResult<String, String>> send = kafkaTemplate.send(tpoic, key, message);
         } catch (Exception e) {
             e.printStackTrace();
         }

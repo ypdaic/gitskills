@@ -5,12 +5,10 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.config.KafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
-import org.springframework.kafka.listener.AbstractMessageListenerContainer;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.listener.ContainerProperties;
 
@@ -22,20 +20,32 @@ import java.util.Map;
  * 类说明：
  */
 @Configuration
-@EnableKafka
 public class KafkaConsumerConfig {
+    // kafka 节点地址
     @Value("${kafka.consumer.servers}")
     private String servers;
+
+    // 是否自动提交
     @Value("${kafka.consumer.enable.auto.commit}")
     private boolean enableAutoCommit;
+
+    // 会话超时时间
     @Value("${kafka.consumer.session.timeout}")
     private String sessionTimeout;
+
+    // 自动提交时间间隔
     @Value("${kafka.consumer.auto.commit.interval}")
     private String autoCommitInterval;
+
+    // 群组id
     @Value("${kafka.consumer.group.id}")
     private String groupId;
+
+    // 偏移量获取规则
     @Value("${kafka.consumer.auto.offset.reset}")
     private String autoOffsetReset;
+
+    // 容器的并发数
     @Value("${kafka.consumer.concurrency}")
     private int concurrency;
 
@@ -101,6 +111,7 @@ public class KafkaConsumerConfig {
         factory.setConcurrency(concurrency);
         factory.getContainerProperties().setPollTimeout(1500);
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE);
+//        factory.setReplyTemplate();
         return factory;
     }
 }
