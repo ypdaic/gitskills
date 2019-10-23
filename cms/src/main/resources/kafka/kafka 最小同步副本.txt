@@ -1,2 +1,8 @@
 参数min.insync.replicas=2 配置最小同步副本数
 也就是保证至少两个副本的数据是一致的
+
+配合acks参数使用
+-1表示根据指定的最少Partition确认后才返回
+min.insync.replicas
+该属性规定了最小的ISR数。当producer设置request.required.acks为all或-1时，指定副本(replicas)的最小数目（必须确认每一个repica的写数据都是成功的），
+如果这个数目没有达到，producer会产生异常。
