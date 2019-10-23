@@ -1,0 +1,12 @@
+rocketmq 由java编写，所以必须安装jdk
+
+进入到官网http://rocketmq.apache.org/dowloading/releases/ 下载安装包
+
+然后解压，进入到bin目录下，先启动nameserver，命令:./mqnamesrv
+
+然后启动rockemq，命令：nohup sh mqbroker -c ../conf/broker.conf  -n 192.168.0.128:9876 autoCreateTopicEnable=true &
+                     生成环境不建议开启启动创建主题配置
+
+                     -n 192.168.0.128:9876 指定nameServer地址
+
+为了能让外网访问到，需要在broker.conf 中添加brokerIP1=192.168.140.129的配置项

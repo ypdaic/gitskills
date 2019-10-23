@@ -1,0 +1,36 @@
+ ./mqbroker -m
+
+2019-10-23 22\:36\:03 INFO main - namesrvAddr=
+2019-10-23 22\:36\:03 INFO main - brokerIP1=192.168.140.129
+2019-10-23 22\:36\:03 INFO main - brokerName=localhost.localdomain
+2019-10-23 22\:36\:03 INFO main - brokerClusterName=DefaultCluster
+2019-10-23 22\:36\:03 INFO main - brokerId=0
+2019-10-23 22\:36\:03 INFO main - autoCreateTopicEnable=true #自动创建主题
+2019-10-23 22\:36\:03 INFO main - autoCreateSubscriptionGroup=true #自动创建消费者
+2019-10-23 22\:36\:03 INFO main - msgTraceTopicName=RMQ_SYS_TRACE_TOPIC
+2019-10-23 22\:36\:03 INFO main - traceTopicEnable=false
+2019-10-23 22\:36\:03 INFO main - rejectTransactionMessage=false
+2019-10-23 22\:36\:03 INFO main - fetchNamesrvAddrByAddressServer=false
+2019-10-23 22\:36\:03 INFO main - transactionTimeOut=6000
+2019-10-23 22\:36\:03 INFO main - transactionCheckMax=15
+2019-10-23 22\:36\:03 INFO main - transactionCheckInterval=60000
+2019-10-23 22\:36\:03 INFO main - aclEnable=false
+2019-10-23 22\:36\:03 INFO main - storePathRootDir=/root/store
+2019-10-23 22\:36\:03 INFO main - storePathCommitLog=/root/store/commitlog
+2019-10-23 22\:36\:03 INFO main - flushIntervalCommitLog=500
+2019-10-23 22\:36\:03 INFO main - commitIntervalCommitLog=200
+2019-10-23 22\:36\:03 INFO main - flushCommitLogTimed=false
+2019-10-23 22\:36\:03 INFO main - deleteWhen=04
+2019-10-23 22\:36\:03 INFO main - fileReservedTime=72
+2019-10-23 22\:36\:03 INFO main - maxTransferBytesOnMessageInMemory=262144
+2019-10-23 22\:36\:03 INFO main - maxTransferCountOnMessageInMemory=32
+2019-10-23 22\:36\:03 INFO main - maxTransferBytesOnMessageInDisk=65536
+2019-10-23 22\:36\:03 INFO main - maxTransferCountOnMessageInDisk=8
+2019-10-23 22\:36\:03 INFO main - accessMessageInMemoryMaxRatio=40
+2019-10-23 22\:36\:03 INFO main - messageIndexEnable=true
+2019-10-23 22\:36\:03 INFO main - messageIndexSafe=false
+2019-10-23 22\:36\:03 INFO main - haMasterAddress=
+2019-10-23 22\:36\:03 INFO main - brokerRole=ASYNC_MASTER
+2019-10-23 22\:36\:03 INFO main - flushDiskType=ASYNC_FLUSH
+2019-10-23 22\:36\:03 INFO main - cleanFileForciblyEnable=true
+2019-10-23 22\:36\:03 INFO main - transientStorePoolEnable=false
