@@ -1,0 +1,14 @@
+3.事务是如何实现的MVCC呢?
+(1)每个事务都有一个事务ID,叫做transaction id(严格递增)
+(2)事务在启动时,找到已提交的最大事务ID记为up_limit_id。
+(3)事务在更新一条语句时,比如id=1改为了id=2.会把id=1和该行之前的row trx_id写到undo log里,
+并且在数据页上把id的值改为2,并且把修改这条语句的transaction id记在该行行头
+(4)再定一个规矩,一个事务要查看一条数据时,必须先用该事务的up_limit_id与该行的transaction id做比对,
+如果up_limit_id>=transaction id,那么可以看.如果up_limit_id<transaction id,则只能去undo log里去取。去undo log查找数据的时候,也需要做比对,必须up_limit_id>transaction id,才返回数据
+
+4.什么是当前读,由于当前读都是先读后写,只能读当前的值,所以为当前读.会更新事务内的up_limit_id为该事务的transaction id
+
+5.为什么rr能实现可重复读而rc不能,分两种情况
+(1)快照读的情况下,rr不能更新事务内的up_limit_id,
+而rc每次会把up_limit_id更新为快照读之前最新已提交事务的transaction id,则rc不能可重复读
+(2)当前读的情况下,rr是利用record lock+gap lock来实现的,而rc没有gap,所以rc不能可重复读

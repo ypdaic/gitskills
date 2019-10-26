@@ -1,0 +1,9 @@
+场景一
+第一步执行事物A: begin;update t set name＝'x' where id＝1; 不提交
+第二步执行sql B: update t set name＝'x' where id＝1;被阻塞，锁等待
+第三步执行 sql C : flush tables with read lock; 被阻塞，状态为waiting for global read lock
+
+场景二
+第一步执行事物A: begin;update t set name＝'x' where id＝1; 不提交
+第二步执行sql C : flush tables with read lock;
+顺利执行完。但是事务A提交必须要等待全局锁解锁完成才行

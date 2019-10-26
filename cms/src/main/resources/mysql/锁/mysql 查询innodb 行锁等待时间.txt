@@ -1,0 +1,1 @@
+SHOW GLOBAL VARIABLES like 'innodb_lock_wait_timeout'
