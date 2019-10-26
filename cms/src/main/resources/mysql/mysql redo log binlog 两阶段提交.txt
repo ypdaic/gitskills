@@ -1,0 +1,9 @@
+1 redo log prepare阶段
+2 写binlog
+3 redo log commit
+
+当在2之前崩溃时
+重启恢复：后发现没有commit，回滚。备份恢复：没有binlog 。一致
+
+当在3之前崩溃
+重启恢复：虽没有commit，但满足prepare和binlog完整，所以重启后会自动commit。备份：有binlog. 一致

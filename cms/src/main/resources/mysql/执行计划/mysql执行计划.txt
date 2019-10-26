@@ -27,6 +27,7 @@ key_len:索引长度（和字符集，数据长度，是否为null相关）计�
         复合索引，key_len的计算，就是用到的索引长度之和
 
 ref:表示引用的列，就是where条件使用了那些 列
+filtered：实际显示行数占扫描rows的比例
 rows:查询了多少条数据
 extra:Using filesort  说明mysql会对数据使用一个外部的索引排序，而不是按照表内的索引顺序进行
                       读取，mysql无法使用索引的排序都叫文件排序
@@ -40,3 +41,5 @@ extra:Using filesort  说明mysql会对数据使用一个外部的索引排序�
       Using join buffer 表示使用使用到了join缓存
 
       impossible where  表示where总是返回false
+
+      Select tables optimized away  表示直接从表信息中就可以取到结果，不用查询

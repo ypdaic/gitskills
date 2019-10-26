@@ -1,0 +1,6 @@
+alter table T drop primary key;
+alter table T add primary key(id);
+
+上面的做法优化为
+
+ alter table T engine=InnoDB;

@@ -1,0 +1,7 @@
+10、事务启动方式：
+一、显式启动事务语句，begin或者start transaction,提交commit，回滚rollback；
+二、set autocommit=0，该命令会把这个线程的自动提交关掉。这样只要执行一个select语句，事务就启动，并不会自动提交，直到主动执行commit或rollback或断开连接。
+
+11、建议使用方法一，如果考虑多一次交互问题，可以使用commit work and chain语法。
+在autocommit=1的情况下用begin显式启动事务，如果执行commit则提交事务。
+如果执行commit work and chain则提交事务并自动启动下一个事务
