@@ -1,4 +1,4 @@
-package com.daiyanping.cms.rocketmq.nativeapi.normal;
+package com.daiyanping.cms.rocketmq.nativeapi.timer;
 
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.client.producer.SendResult;
@@ -7,27 +7,22 @@ import org.apache.rocketmq.remoting.common.RemotingHelper;
 
 /**
  *
- * 同步发送
+ * 延时发送
  */
-public class SyncProducer {
+public class TimerProducer {
     public static void main(String[] args) throws Exception {
         DefaultMQProducer producer = new DefaultMQProducer("sync");
-        producer.setRetryTimesWhenSendFailed(2);
         producer.setNamesrvAddr("192.168.140.129:9876");
-
         producer.start();
         for (int i = 0; i < 10; i++) {
             Message msg = new Message("TopicTest" ,
                     "TagB" ,
                     ("Hello RocketMQ " + i).getBytes(RemotingHelper.DEFAULT_CHARSET)
             );
-            // 每个消息的发送必须等上个消费发送成功
+            //"1s 5s 10s 30s 1m 2m 3m 4m 5m 6m 7m 8m 9m 10m 20m 30m 1h 2h"  18个等级
+            msg.setDelayTimeLevel(5);
             SendResult sendResult = producer.send(msg);
-            // msgId 由rocket生成，queueId（一个主题，默认4个queue，相当于kafka的分区吧）
-            System.out.printf("%s%n%n%n", sendResult.getSendStatus()+":(MsgId):"
-                    +sendResult.getMsgId()+":(queueId):"
-                    +sendResult.getMessageQueue().getQueueId()
-                    +"(value):"+ new String(msg.getBody()));
+            System.out.printf("%s%n", sendResult);
         }
         producer.shutdown();
     }

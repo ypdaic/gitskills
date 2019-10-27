@@ -1,0 +1,4 @@
+当我们消费端返回ConsumeConcurrentlyStatus.RECONSUME_LATER;时
+这个消息会被发送RETRY topic，具体的取名方式是%RETRY%group1(group1为消费群组的名称)
+然后这个消费大概10s中会被发送到原来的队列给消费者再次进行消费，直到成功为止。rocketmq要
+确保消息至少被消费一次（重试次数默认15，可以进行配置consumer.setMaxReconsumeTimes(3);）

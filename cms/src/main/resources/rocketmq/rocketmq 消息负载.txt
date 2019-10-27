@@ -1,0 +1,10 @@
+rocketmq默认提供5种 消费者负载机制，可以通过consumer.setAllocateMessageQueueStrategy();
+进行设置
+
+AllocateMessageQueueStrategy接口就是负载算法接口
+
+AllocateMessageQueueAveragely（队列平均分配，默认配置）
+AllocateMessageQueueAveragelyByCircle （平均轮询分配）
+AllocateMessageQueueConsistentHash （一致性hash，一般不推荐）
+AllocateMessageQueueByConfig (根据配置，一个消费固定一个队列)
+AllocateMessageQueueByMachineRoom（根据机器房号）

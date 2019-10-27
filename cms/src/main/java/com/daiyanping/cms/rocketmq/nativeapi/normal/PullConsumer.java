@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @author 【享学课堂】 King老师
+ *
  * 消费者-拉模式
  */
 
