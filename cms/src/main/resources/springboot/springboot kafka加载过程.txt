@@ -1,0 +1,32 @@
+当我们使用@EnableKafka注解后，就代表开启kafka功能，该注解往容器中注入了KafkaListenerAnnotationBeanPostProcessor，KafkaListenerEndpointRegistry
+这两个bean，KafkaListenerAnnotationBeanPostProcessor的作用就是基于bean的后置处理器功能，扫描类上，或是类的方法上是否有@KafkaListener注解，如果
+存在的话就将bean信息，方法信息，注解信息包装到KafkaListenerEndpoint中，如果类上存在@KafkaListener这个注解则需要在方法上使用@KafkaHandle注解，将
+封装后的KafkaListenerEndpoint添加到KafkaListenerEndpointRegistrar中
+
+然后KafkaListenerEndpointRegistrar的afterPropertiesSet方法会解析每个KafkaListenerEndpoint，生成ConcurrentMessageListenerContainer，
+并将器注册到KafkaListenerEndpointRegistry中
+解析的步骤如下：
+
+    1：通过KafkaListenerEndpoint中的指定的KafkaListenerContainerFactory（其实现就是ConcurrentKafkaListenerContainerFactory）获取一个ConcurrentMessageListenerContainer
+
+    2：将KafkaListenerEndpoint的相关属性赋值给ConcurrentMessageListenerContainer
+
+    3：调用endpoint.setupListenerContainer(instance, this.messageConverter);方法，获取BatchMessagingMessageListenerAdapter或者
+       RecordMessagingMessageListenerAdapter
+
+    4：调用messageListener.setHandlerMethod(configureListenerAdapter(messageListener));方法，将bean,method信息以HandleMethod方式注入到messageListener中
+
+    5：根据是否有retryTemplate参数，使用RetryingMessageListenerAdapter进行委托一下
+
+    6：根据是否有recordFilterStrategy参数，使用FilteringBatchMessageListenerAdapter，还是FilteringMessageListenerAdapter进行委托一下
+
+    7：将上述生成的MessageListener添加到ConcurrentMessageListenerContainer中
+
+    8：调用initializeContainer(instance, endpoint);方法初始容器的消费者数量
+
+
+KafkaListenerEndpointRegistry的start方法步骤：
+
+1：调用ConcurrentMessageListenerContainer的start方法，通过concurrency参数创建concurrency个KafkaMessageListenerContainer
+2：调用KafkaMessageListenerContainer的start方法创建ListenerConsumer（线程），
+3：ListenerConsumer根据原生api创建一个消费者，其run方法使用poll方法开始消费消息
