@@ -1,0 +1,7 @@
+rocketmq 刷盘分为同步刷盘，和异步刷盘，默认异步刷盘
+
+    同步刷盘就是数据必须要到commitlog中才能返回
+    异步刷盘就是数据只需要到内存就可以了
+
+有如下参数指定：flushDiskType=ASYNC_FLUSH，同步就是flushDiskType=SYNC_FLUSH
+

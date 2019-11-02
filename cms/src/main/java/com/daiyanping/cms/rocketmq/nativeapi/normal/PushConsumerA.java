@@ -27,7 +27,9 @@ public class PushConsumerA {
         consumer.registerMessageListener(new MessageListenerConcurrently() {
             @Override
             public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
+
                 System.out.printf("queueID:%d:%s:Messages:%s %n",  msgs.get(0).getQueueId(),Thread.currentThread().getName(), new String(msgs.get(0).getBody()));
+                System.out.println(msgs.get(0).getQueueOffset());
                 return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
             }
         });

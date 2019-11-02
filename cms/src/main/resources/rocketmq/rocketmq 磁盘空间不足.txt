@@ -1,0 +1,6 @@
+DiskSpaceCleanForciblyRatio 磁盘的空间强制删除文件水位，默认百分之85，超过后就会触发
+删除
+
+正常参数：diskMaxUsedSpaceRatio 默认75%  磁盘使用率小于这个参数，正常
+
+阻止消息的写入：磁盘使用率的参数 diskSpaceWarningLevelRatio 90%

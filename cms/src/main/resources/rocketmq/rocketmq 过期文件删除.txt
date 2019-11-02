@@ -1,0 +1,11 @@
+过期时间判断：文件的最后更新时间与当期时间的差值，默认差值是72小时
+    参数fileReservedTime=72指定
+
+过期删除策略：定时任务去做，默认10s去执行一次。
+两个参数配置处理：rocketmq 删除文件，不是一把嗦，而是一个个删除
+
+deleteWhen=04 配置那个时候去删除，默认凌晨4点
+deletePhsyicFilesInterval 删除物理文件，时间间隔，默认100ms
+destroyMapedFileIntervalForcibly 文件删除有可能被占用，一把会阻止一下，发生了上述情况
+                                 文件保留的最大时间（过了这个时间就被强制删除）
+

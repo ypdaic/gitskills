@@ -1,0 +1,1 @@
+index文件保存的key的hash索引
