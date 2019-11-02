@@ -1,0 +1,27 @@
+查询当前脏页比例：
+
+    select VARIABLE_VALUE into @a from global_status where VARIABLE_NAME = 'Innodb_buffer_pool_pages_dirty';
+    select VARIABLE_VALUE into @b from global_status where VARIABLE_NAME = 'Innodb_buffer_pool_pages_total';
+    select @a/@b;
+
+平时要多关注脏页比例，不要让它经常接近75%。
+
+查看系统设置的脏页比例上限：show GLOBAL VARIABLES like 'innodb_max_dirty_pages_pct'
+            默认 90%
+
+mysql 计算脏页逻辑：
+    InnoDB的刷盘速度就是要参考这两个因素：一个是脏页比例，一个是redo log写盘速度。
+
+    InnoDB会根据这两个因素先单独算出两个数字。
+
+    参数innodb_max_dirty_pages_pct是脏页比例上限，默认值是75%。InnoDB会根据当前的脏页比例（假设为M），算出一个范围在0到100之间的数字，计算这个数字的伪代码类似这样：
+
+    F1(M)
+    {
+      if M>=innodb_max_dirty_pages_pct then
+          return 100;
+      return 100*M/innodb_max_dirty_pages_pct;
+    }
+    InnoDB每次写入的日志都有一个序号，当前写入的序号跟checkpoint对应的序号之间的差值，我们假设为N。InnoDB会根据这个N算出一个范围在0到100之间的数字，这个计算公式可以记为F2(N)。F2(N)算法比较复杂，你只要知道N越大，算出来的值越大就好了。
+
+    然后，根据上述算得的F1(M)和F2(N)两个值，取其中较大的值记为R，之后引擎就可以按照innodb_io_capacity定义的能力乘以R%来控制刷脏页的速度。

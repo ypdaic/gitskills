@@ -1,0 +1,72 @@
+随机读：
+fio -filename=/opt/test -direct=1 -iodepth 1 -thread -rw=randrw -ioengine=psync -bs=16k -size=500M -numjobs=10 -runtime=10 -group_reporting -name=mytest
+
+
+说明：
+filename=/dev/sdb1 测试文件名称，通常选择需要测试的盘的data目录。
+direct=1 测试过程绕过机器自带的buffer。使测试结果更真实。
+rw=randwrite 测试随机写的I/O
+rw=randrw 测试随机写和读的I/O
+bs=16k 单次io的块文件大小为16k
+bsrange=512-2048 同上，提定数据块的大小范围
+size=500m 本次的测试文件大小为500m，以每次4k的io进行测试。
+numjobs=30 本次的测试线程为30.
+runtime=1000 测试时间为1000秒，如果不写则一直将5g文件分4k每次写完为止。
+ioengine=psync io引擎使用pync方式
+rwmixwrite=30 在混合读写的模式下，写占30%
+group_reporting 关于显示结果的，汇总每个进程的信息。
+此外
+lockmem=1g 只使用1g内存进行测试。
+zero_buffers 用0初始化系统buffer。
+nrfiles=8 每个进程生成文件的数量。
+
+
+结果：
+mytest: (g=0): rw=randrw, bs=(R) 16.0KiB-16.0KiB, (W) 16.0KiB-16.0KiB, (T) 16.0KiB-16.0KiB, ioengine=psync, iodepth=1
+...
+fio-3.16
+Starting 10 threads
+mytest: Laying out IO file (1 file / 500MiB)
+Jobs: 1 (f=1): [_(9),m(1)][11.0%][r=1334KiB/s,w=1117KiB/s][r=83,w=69 IOPS][eta 01m:29s]
+mytest: (groupid=0, jobs=10): err= 0: pid=10785: Sat Nov  2 14:38:54 2019
+  read: IOPS=106(读的iops), BW=1700KiB/s (1740kB/s)(16.6MiB/10016msec)
+    clat (usec): min=70, max=1674.3k, avg=83332.06, stdev=160480.52
+     lat (usec): min=70, max=1674.3k, avg=83332.55, stdev=160480.52
+    clat percentiles (usec):
+     |  1.00th=[     95],  5.00th=[    143], 10.00th=[    167],
+     | 20.00th=[    223], 30.00th=[    273], 40.00th=[    553],
+     | 50.00th=[  14353], 60.00th=[  28443], 70.00th=[  73925],
+     | 80.00th=[ 127402], 90.00th=[ 225444], 95.00th=[ 459277],
+     | 99.00th=[ 725615], 99.50th=[ 809501], 99.90th=[1149240],
+     | 99.95th=[1669333], 99.99th=[1669333]
+   bw (  KiB/s): min=  294, max= 5148, per=100.00%, avg=1756.00, stdev=141.12, samples=182
+   iops        : min=   10, max=  317, avg=103.03, stdev= 8.92, samples=182
+  write: IOPS=101（写的iops）, BW=1620KiB/s (1659kB/s)(15.8MiB/10016msec)
+    clat (usec): min=72, max=220022, avg=10934.17, stdev=22856.40
+     lat (usec): min=72, max=220022, avg=10935.27, stdev=22856.30
+    clat percentiles (usec):
+     |  1.00th=[   102],  5.00th=[   139], 10.00th=[   157], 20.00th=[   186],
+     | 30.00th=[   223], 40.00th=[   255], 50.00th=[   297], 60.00th=[   420],
+     | 70.00th=[ 12387], 80.00th=[ 15664], 90.00th=[ 25560], 95.00th=[ 58459],
+     | 99.00th=[109577], 99.50th=[135267], 99.90th=[202376], 99.95th=[219153],
+     | 99.99th=[219153]
+   bw (  KiB/s): min=  290, max= 5554, per=100.00%, avg=1971.74, stdev=149.53, samples=159
+   iops        : min=   10, max=  342, avg=116.68, stdev= 9.44, samples=159
+  lat (usec)   : 100=1.11%, 250=30.94%, 500=18.38%, 750=0.91%, 1000=0.19%
+  lat (msec)   : 2=0.10%, 4=0.14%, 10=3.56%, 20=16.60%, 50=5.87%
+  lat (msec)   : 100=8.90%, 250=8.23%, 500=2.98%, 750=1.59%, 1000=0.34%
+  lat (msec)   : 2000=0.14%
+  cpu          : usr=0.06%, sys=10.02%, ctx=1961, majf=0, minf=8
+  IO depths    : 1=100.0%, 2=0.0%, 4=0.0%, 8=0.0%, 16=0.0%, 32=0.0%, >=64=0.0%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     issued rwts: total=1064,1014,0,0 short=0,0,0,0 dropped=0,0,0,0
+     latency   : target=0, window=0, percentile=100.00%, depth=1
+
+Run status group 0 (all jobs):
+   READ: bw=1700KiB/s (1740kB/s), 1700KiB/s-1700KiB/s (1740kB/s-1740kB/s), io=16.6MiB (17.4MB), run=10016-10016msec
+  WRITE: bw=1620KiB/s (1659kB/s), 1620KiB/s-1620KiB/s (1659kB/s-1659kB/s), io=15.8MiB (16.6MB), run=10016-10016msec
+
+Disk stats (read/write):
+    dm-0: ios=1079/1014, merge=0/0, ticks=12216/3338, in_queue=15554, util=98.57%, aggrios=1079/1015, aggrmerge=0/0, aggrticks=12213/3338, aggrin_queue=15551, aggrutil=98.97%
+  sda: ios=1079/1015, merge=0/0, ticks=12213/3338, in_queue=15551, util=98.97%

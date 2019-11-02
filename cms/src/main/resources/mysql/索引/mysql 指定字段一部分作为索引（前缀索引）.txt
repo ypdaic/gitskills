@@ -1,0 +1,16 @@
+ alter table SUser add index index2(email(6));
+
+ 只取前6个字节作为索引
+
+ 当要给字符串创建前缀索引时，有什么方法能够确定我应该使用多长的前缀呢？
+
+ select
+   count(distinct left(email,4)）as L4,
+   count(distinct left(email,5)）as L5,
+   count(distinct left(email,6)）as L6,
+   count(distinct left(email,7)）as L7,
+ from SUser;
+
+ 使用前缀索引很可能会损失区分度，所以你需要预先设定一个可以接受的损失比例，比如5%。然后，在返回的L4~L7中，找出不小于 L * 95%的值，假设这里L6、L7都满足，你就可以选择前缀长度为6。
+
+ 注意点：使用前缀索引就用不上覆盖索引对查询性能的优化了

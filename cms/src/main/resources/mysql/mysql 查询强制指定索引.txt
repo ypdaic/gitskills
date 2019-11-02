@@ -1,0 +1,3 @@
+select * from t force index(a) where (a between 1 and 1000)  and (b between 50000 and 100000) order by b limit 1;
+
+force index(a)  表示强制使用a这个索引

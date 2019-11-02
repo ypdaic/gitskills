@@ -1,0 +1,3 @@
+insert ignore into friend(friend_1_id, friend_2_id) values(B,A);
+
+表示存在记录就忽略

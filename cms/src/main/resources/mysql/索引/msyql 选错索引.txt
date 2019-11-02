@@ -1,0 +1,45 @@
+CREATE TABLE `t` (
+  `id` int(11) NOT NULL,
+  `a` int(11) DEFAULT NULL,
+  `b` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `a` (`a`),
+  KEY `b` (`b`)
+) ENGINE=InnoDB；
+
+#存储过程插入100000行记录
+delimiter ;;
+create procedure idata()
+begin
+  declare i int;
+  set i=1;
+  while(i<=100000)do
+    insert into t values(i, i, i);
+    set i=i+1;
+  end while;
+end;;
+delimiter ;
+call idata();
+
+执行如下语句：
+    explain select * from t where (a between 1 and 1000) and (b between 50000 and 100000) order by b limit 1;
+    结果：
+        1	SIMPLE	t		range	a,b	b	5		49943	1	Using index condition; Using where
+    可以看到其选择了b这个索引，扫描了50000行，如果扫描a索引只需要扫描1000行
+    原因：优化器选择使用索引b，是因为它认为使用索引b可以避免排序（b本身是索引，已经是有序的了，如果选择索引b的话，不需要再做排序，只需要遍历），所以即使扫描行数多，也判定为代价更小。
+
+    修改方案：
+        1：强制使用a这个索引，但不常用
+            explain select * from t force index(a) where (a between 1 and 1000)  and (b between 50000 and 100000) order by b limit 1;
+            结果：
+                1	SIMPLE	t		range	a	a	5		1000	11.11	Using index condition; Using where; Using filesort
+        2：修改查询方式，使用order b,a limit 1（没有改变查询结果）
+            explain select * from t where (a between 1 and 1000)  and (b between 50000 and 100000) order by b,a limit 1
+            结果：
+                1	SIMPLE	t		range	a,b	a	5		1000	50	Using index condition; Using where; Using filesort
+            原因：order by b,a 这种写法，要求按照b,a排序，就意味着使用这两个索引都需要排序。因此，扫描行数成了影响决策的主要条件，于是此时优化器选了只需要扫描1000行的索引a。
+
+
+        3：删除索引b
+            如果这个索引真没存在的必要就将其删除，避免出现mysql选错索引
+

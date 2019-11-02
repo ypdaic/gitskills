@@ -1,0 +1,10 @@
+我们先来看一下崩溃恢复时的判断规则。
+
+如果redo log里面的事务是完整的，也就是已经有了commit标识，则直接提交；
+
+如果redo log里面的事务只有完整的prepare，则判断对应的事务binlog是否存在并完整：
+a. 如果是，则提交事务；
+b. 否则，回滚事务。
+
+statement格式的binlog，最后会有COMMIT；
+row格式的binlog，最后会有一个XID event。

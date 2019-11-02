@@ -1,0 +1,50 @@
+在MySQL数据库中，如果在insert语句后面带上ON DUPLICATE KEY UPDATE 子句，而要插入的行与表中现有记录的惟一索引或主键中产生重复值，那么就会发生旧行的更新；如果插入的行数据与现有表中记录的唯一索引或者主键不重复，则执行新纪录插入操作。
+
+比如有这样一张表：
+
+create table daily_hit_counter (
+
+day date not null,
+
+slot tinyint unsigned not null,
+
+cnt int unsigned not null,
+
+primary key(day, slot)
+
+) engine = InnoDB;
+
+daily_hit_counter 表的惟一索引是由 day+slot 两个字段组成。
+
+
+
+现有数据：
+
+day	slot	cnt
+2017-11-19	1	10
+2017-11-20	2	10
+
+1. 执行：
+
+insert into daily_hit_counter (day, slot, cnt) values ('2017-11-19', 1, 1) ON DUPLICATE KEY UPDATE cnt = cnt + 1;
+
+由于插入的数据中 day+slot 与现有的记录的唯一索引重复了，所以执行旧行的更新，执行之后，最终结果是这样的：
+
+day	slot	cnt
+2017-11-19	1	11
+2017-11-20	2	10
+
+2. 执行：
+
+insert into daily_hit_counter (day, slot, cnt) values ('2017-11-19', 2, 1) ON DUPLICATE KEY UPDATE cnt = cnt + 1;
+
+由于插入的数据中 day+slot 与现有的记录的唯一索引或者主键都没有重复了，所以执行新纪录插入，执行之后，最终结果是这样的：
+
+day	slot	cnt
+2017-11-19	1	11
+2017-11-19	2	1
+2017-11-20	2	10
+
+————————————————
+版权声明：本文为CSDN博主「plg17」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/plg17/article/details/78583692

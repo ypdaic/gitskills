@@ -1,0 +1,5 @@
+# Time: 2019-11-02T04:07:08.274365Z
+# User@Host: root[root] @  [192.168.140.1]  Id:    18
+# Query_time: 0.030791  Lock_time: 0.000432 Rows_sent: 10001  Rows_examined: 10001
+SET timestamp=1572667628;
+SELECT * from t where a BETWEEN 10000 and 20000;

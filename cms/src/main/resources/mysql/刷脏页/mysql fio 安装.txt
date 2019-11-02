@@ -1,0 +1,6 @@
+wet http://brick.kernel.dk/snaps/fio-3.16.tar.gz
+yum install libaio-devel
+tar -zxvf fio-3.16.tar.gz
+cd fio-3.16
+make
+make install
