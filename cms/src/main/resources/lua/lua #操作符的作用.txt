@@ -1,0 +1,5 @@
+在lua中，#一般是用于获取表的长度，即#tableTest就是tableTest的长度了。
+
+例：
+local expiredValues = redis.call('zrangebyscore', KEYS[2], 0, ARGV[1], 'limit', 0, ARGV[2]);
+if #expiredValues > 0 then
