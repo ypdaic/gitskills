@@ -13,11 +13,13 @@ public class SyncProducer {
     public static void main(String[] args) throws Exception {
         DefaultMQProducer producer = new DefaultMQProducer("sync");
         producer.setRetryTimesWhenSendFailed(2);
-        producer.setNamesrvAddr("192.168.140.129:9876");
+//        producer.setNamesrvAddr("192.168.140.129:9876");
+//        集群配置
+        producer.setNamesrvAddr("192.168.140.129:9877;192.168.140.129:9876");
 
         producer.start();
         for (int i = 0; i < 10; i++) {
-            Message msg = new Message("TopicTest" ,
+            Message msg = new Message("TopicTest2" ,
                     "TagB" ,
                     ("Hello RocketMQ " + i).getBytes(RemotingHelper.DEFAULT_CHARSET)
             );

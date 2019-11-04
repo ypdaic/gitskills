@@ -1,0 +1,38 @@
+listenPort
+这个主要是broker的服务端口号，作为对producer和consumer使用服务的端口号，默认为10911，可以通过配置文件中修改。
+配置文件中指定的话使用 listenPort 如broker-a.properties文件
+
+1
+2
+#修改broker的端口号为10919
+listenPort=10919
+
+------------------------------------------
+haListenPort
+haListenPort是haService中使用
+默认值为：listenPort + 1
+这个值是在BrokerStartup.java中设置的。
+
+
+//设置ha监听端口 listenPort + 1
+/**
+* 影响haservice中AcceptSocketService服务的端口号
+* 参考：
+* com.alibaba.rocketmq.store.ha.HAService 构造函数中
+*     this.acceptSocketService =
+   new AcceptSocketService(defaultMessageStore.getMessageStoreConfig().getHaListenPort());
+*/
+messageStoreConfig.setHaListenPort(nettyServerConfig.getListenPort() + 1);
+主要用于slave同master同步。
+
+fastListenPort
+
+----------------------------------
+主要是fastRemotingServer服务使用
+默认为：listenPort - 2
+
+/**
+ * listenPort - 2 默认 10909
+ */
+fastConfig.setListenPort(nettyServerConfig.getListenPort() - 2);
+this.fastRemotingServer = new NettyRemotingServer(fastConfig, this.clientHousekeepingService);

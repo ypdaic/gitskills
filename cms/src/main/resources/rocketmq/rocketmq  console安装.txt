@@ -1,0 +1,10 @@
+下载：https://codeload.github.com/apache/rocketmq-externals/zip/master
+
+
+下载完成之后，进入‘\rocketmq-console\src\main\resources’文件夹，打开‘application.properties’进行配置。
+
+修改server.port=8089,
+rocketmq.config.namesrvAddr=192.168.140.129:9876
+
+nameserver集群就是
+rocketmq.config.namesrvAddr=192.168.140.129:9876;192.168.140.129:9877;
