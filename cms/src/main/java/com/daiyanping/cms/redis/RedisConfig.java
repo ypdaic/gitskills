@@ -5,21 +5,19 @@ import com.daiyanping.cms.cache.RedisCacheManagerProxy;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.cache.CacheProperties;
 import org.springframework.boot.autoconfigure.data.redis.LettuceClientConfigurationBuilderCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.CacheManager;
-
-import org.springframework.cglib.core.SpringNamingPolicy;
-import org.springframework.cglib.proxy.Enhancer;
-import org.springframework.cglib.proxy.MethodInterceptor;
-
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.cache.transaction.TransactionAwareCacheManagerProxy;
-
+import org.springframework.cglib.core.SpringNamingPolicy;
+import org.springframework.cglib.proxy.Enhancer;
+import org.springframework.cglib.proxy.MethodInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -58,6 +56,7 @@ import static io.lettuce.core.ReadFrom.SLAVE_PREFERRED;
  * @Date 2019-04-15
  * @Version 0.1
  */
+@Slf4j
 @Configuration
 @EnableConfigurationProperties(CacheProperties.class)
 @ComponentScan("com.daiyanping.cms.redis")
@@ -230,6 +229,23 @@ public class RedisConfig {
                 clientConfigurationBuilder.readFrom(SLAVE_PREFERRED);
             }
         };
+    }
+
+    /**
+     * lua脚本
+     * 在应用程序上下文中配置DefaultRedisScript的单个实例是理想的，以避免在每次执行脚本时重新计算脚本的SHA1。
+     * @return
+     */
+    @Bean
+    public RedisScript<Boolean> retryCountCheckScript() {
+
+        ScriptSource scriptSource = new ResourceScriptSource(new ClassPathResource("lua/retryCountCheck.lua"));
+        try {
+            return RedisScript.of(scriptSource.getScriptAsString(), Boolean.class);
+        } catch (IOException e) {
+            log.error("lua 脚本加载失败", e);
+        }
+        return RedisScript.of("", Boolean.class);
     }
 
     @Autowired
