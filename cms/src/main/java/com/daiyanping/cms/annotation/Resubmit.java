@@ -17,7 +17,7 @@ import java.lang.annotation.*;
 @Documented
 public @interface Resubmit {
 
-    long delaySeconds() default  20l;
+    long resuInterval() default  20l;
 
     String key() default "";
 }

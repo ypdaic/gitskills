@@ -90,7 +90,7 @@ public class ResubmitAop {
         Method targetMethod = methodSignature.getMethod();
         Object[] arguments = joinPoint.getArgs();
         Resubmit resubmit = AnnotationUtils.findAnnotation(targetMethod, Resubmit.class);
-        long delaySeconds = resubmit.delaySeconds();
+        long delaySeconds = resubmit.resuInterval();
         taskScheduler.schedule(() -> {
             lockMap.remove(operationKey);
         }, new Date(System.currentTimeMillis() + delaySeconds * 1000l));
