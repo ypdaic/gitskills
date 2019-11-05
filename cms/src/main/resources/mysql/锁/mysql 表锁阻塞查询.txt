@@ -1,0 +1,11 @@
+先使用show processlist命令查看Waiting for table metadata lock的示意图
+    4	event_scheduler	localhost		        Daemon	        11378	    Waiting on empty queue
+    8	root	        192.168.140.1:52518		        Sleep	9060
+    9	root	        192.168.140.1:52520	    test	Sleep	466
+    10	root	        192.168.140.1:57273	    test	Sleep	579
+    12	root	        192.168.140.1:58353	    test	Query	560	        Waiting for table metadata lock	    SELECT * from t where id=1
+
+然后使用如下sql:
+SELECT * from sys.schema_table_lock_waits;
+
+其中 blocking_pid字段表示导致阻塞的线程pid，可以kill掉
