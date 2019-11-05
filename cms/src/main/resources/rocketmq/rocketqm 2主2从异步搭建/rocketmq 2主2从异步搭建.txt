@@ -1,0 +1,24 @@
+先搭建nameserver集群
+
+1：创建rocketmq_cluster目录
+2：拷贝rocketmq到rocketmq_cluster目录，一个为rocketmq_namesrv_a，一个rocketmq_namesrv_b
+3：在rocketmq_namesrv_a下，使用命令sed -i 's#${user.home}#/opt/rocketmq_cluster/rocketmq_namesrv_a#g' *.xml 修改日志路径
+4：在rocketmq_namesrv_a下,新增namesrv_a.properties 添加listenPort=9876
+5：在rocketmq_namesrv_a下，使用命令sed -i 's#${user.home}#/opt/rocketmq_cluster/rocketmq_namesrv_b#g' *.xml 修改日志路径
+6：在rocketmq_namesrv_a下,新增namesrv_b.properties 添加listenPort=9877
+
+搭建broker集群
+
+1：拷贝rocketmq到rocketmq_cluster目录，一个为rocketmq_broker_a_master，一个rocketmq_broker_b_master，一个为rocketmq_broker_a_slave，一个为rocketmq_broker_b_slave
+3：在rocketmq_broker_a_master下，使用命令sed -i 's#${user.home}#/opt/rocketmq_cluster/rocketmq_broker_a_master/logs#g' *.xml 修改日志路径
+4：在rocketmq_broker_a_master下,修改/opt/rocketmq_cluster/rocketmq_broker_a_master/conf/2m-2s-async
+   下的broker-a.properties
+5：在rocketmq_broker_b_master下，使用命令sed -i 's#${user.home}#/opt/rocketmq_cluster/rocketmq_broker_b_master/logs#g' *.xml 修改日志路径
+6：在rocketmq_broker_b_master下,修改/opt/rocketmq_cluster/rocketmq_broker_b_master/conf/2m-2s-async
+     下的broker-b.properties
+7：在rocketmq_broker_a_slave下，使用命令sed -i 's#${user.home}#/opt/rocketmq_cluster/rocketmq_broker_a_slave/logs#g' *.xml 修改日志路径
+8：在rocketmq_broker_a_slave下,修改/opt/rocketmq_cluster/rocketmq_broker_b_master/conf/2m-2s-async
+     下的broker-a-s.properties
+9：在rocketmq_broker_b_slave下，使用命令sed -i 's#${user.home}#/opt/rocketmq_cluster/rocketmq_broker_b_slave/logs#g' *.xml 修改日志路径
+10：在rocketmq_broker_b_slave下,修改/opt/rocketmq_cluster/rocketmq_broker_b_master/conf/2m-2s-async
+     下的broker-b-s.properties

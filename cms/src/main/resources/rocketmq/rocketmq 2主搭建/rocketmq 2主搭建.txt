@@ -13,6 +13,6 @@
 3：在rocketmq_broker_a_master下，使用命令sed -i 's#${user.home}#/opt/rocketmq_cluster/rocketmq_broker_a_master/logs#g' *.xml 修改日志路径
 4：在rocketmq_broker_a_master下,修改/opt/rocketmq_cluster/rocketmq_broker_a_master/conf/2m-noslave
    下的broker-a.properties
-5：在rocketmq_broker_a_master下，使用命令sed -i 's#${user.home}#/opt/rocketmq_cluster/rocketmq_broker_b_master/logs#g' *.xml 修改日志路径
-6：在rocketmq_broker_a_master下,修改/opt/rocketmq_cluster/rocketmq_broker_a_master/conf/2m-noslave
+5：在rocketmq_broker_b_master下，使用命令sed -i 's#${user.home}#/opt/rocketmq_cluster/rocketmq_broker_b_master/logs#g' *.xml 修改日志路径
+6：在rocketmq_broker_b_master下,修改/opt/rocketmq_cluster/rocketmq_broker_b_master/conf/2m-noslave
      下的broker-b.properties
