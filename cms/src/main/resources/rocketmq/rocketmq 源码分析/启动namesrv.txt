@@ -1,0 +1,4 @@
+1:添加环境变量
+	Environment variables: ROCKETMQ_HOME=D:\RocketMQ
+2:在D:\RocketMQ目录下创建conf目录，并将distribution包下conf目录目录下的文件拷贝到该目录下
+3:namesrv包下：NamesrvStartup.java
