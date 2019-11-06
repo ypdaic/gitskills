@@ -1,14 +1,17 @@
 local value = redis.call("get",KEYS[1]);
-if value == nil then
-    redis.call("incr");
-    redis.call("EXPIRE", ARGV[1]);
-    return 1;
+if value == false then
+    redis.call("incr", KEYS[1]);
+    redis.call("EXPIRE", KEYS[1], ARGV[1]);
+    return true;
 else
-    if value < 10 then
-        redis.call("incr");
-        redis.call("EXPIRE", ARGV[1]);
-        return 1;
+    local currentCount = tonumber(value);
+    local checkCount = tonumber(ARGV[2]);
+    if currentCount < checkCount then
+        local expire = redis.call("ttl", KEYS[1]);
+        redis.call("incr", KEYS[1]);
+        redis.call("EXPIRE", KEYS[1], expire);
+        return true;
     else
-        return 0
+        return false;
     end;
 end;
