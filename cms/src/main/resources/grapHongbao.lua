@@ -1,12 +1,15 @@
-local value = redis.call("SISMEMBER",KEYS[2], ARGV[1]);
+local value = redis.call('sismember',KEYS[2], ARGV[1]);
 if value == 1 then
-    return false;
+    return 'GRAB_REPEAT';
 else
-    local hongbao = redis.call("rpop", KEYS[2]);
-    local hongbaoJson = cjson.decode(hongbao);
-    hongbaoJson['userID'] = ARGV[2];
-
-    redis.call("zsadd", KEY[3], ARGV[3], cjson.encode(hongbaoJson));
-    redis.call("sadd", KEY[2], ARGV[1]);
-    return true;
+    local hongBao = redis.call('rpop', KEYS[1]);
+    if hongBao then
+        local hongbaoJson = cjson.decode(hongBao);
+        hongbaoJson['userId'] = ARGV[2];
+        redis.call('zadd', KEYS[3], ARGV[3], cjson.encode(hongbaoJson));
+        redis.call('sadd', KEYS[2], ARGV[1]);
+        return 'GRAB_SUCCESS';
+    else
+        return 'GRAB_FAIL';
+    end;
 end;
