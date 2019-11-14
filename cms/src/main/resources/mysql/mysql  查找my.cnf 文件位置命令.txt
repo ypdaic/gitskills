@@ -1,0 +1,1 @@
+mysql --help | grep 'Default options' -A 1
