@@ -16,7 +16,7 @@ public interface IArticleService {
      * @param user
      * @return
      */
-    Article publishArticle(User user);
+    Article publishArticle(User user, Article article);
 
     /**
      * 投票
@@ -29,11 +29,11 @@ public interface IArticleService {
      * 根据投票时间查询文章
      * @return
      */
-    List<Article> queryArticlesForTime();
+    List<Article> queryArticlesForTime(int page);
 
     /**
      * 根据投票数查询文章
      * @return
      */
-    List<Article> queryArticlesForVoteNumbers();
+    List<Article> queryArticlesForVoteNumbers(int page);
 }

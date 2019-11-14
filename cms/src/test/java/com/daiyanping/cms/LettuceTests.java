@@ -1,9 +1,6 @@
 package com.daiyanping.cms;
 
-import io.lettuce.core.ReadFrom;
-import io.lettuce.core.RedisClient;
-import io.lettuce.core.RedisFuture;
-import io.lettuce.core.RedisURI;
+import io.lettuce.core.*;
 import io.lettuce.core.api.async.RedisAsyncCommands;
 import io.lettuce.core.codec.Utf8StringCodec;
 import io.lettuce.core.masterslave.MasterSlave;
@@ -43,6 +40,48 @@ public class LettuceTests {
             new Thread(new RedisSet()).start();
         }
         Thread.sleep(1000 * 10);
+    }
+
+    /**
+     * 没有并发问题，Lettuce是线程安全的
+     * @throws InterruptedException
+     */
+    public static void main(String[] args) throws InterruptedException, ExecutionException {
+        RedisAsyncCommands<String, String> async = redisClient.connect().async();
+
+        new Thread(() -> {
+            System.out.println("--------阻塞开始执行-----------");
+            RedisFuture<KeyValue<String, String>> test = async.brpop(0, "test_brpop");
+            try {
+                KeyValue<String, String> stringStringKeyValue = test.get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        }).start();
+
+        new Thread(() -> {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println("--------开始执行-----------");
+            async.set("test", "test");
+            RedisFuture<String> test1 = async.get("test");
+            try {
+                System.out.println("-------------" + test1.get() + "-----------------");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        }).start();
+
+
+
+
     }
 
     /**
