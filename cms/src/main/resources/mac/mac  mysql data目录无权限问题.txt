@@ -1,0 +1,6 @@
+解决方案：
+    sudo chmod -R a+rwx /usr/local/mysql/data
+
+
+    参考地址：
+    https://blog.csdn.net/liwu556677/article/details/92820622
