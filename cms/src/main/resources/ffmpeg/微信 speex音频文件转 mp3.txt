@@ -1,0 +1,22 @@
+1: 从微信服务器下载音频文件
+2: 将文件转成mav格式 https://github.com/ppninja/wechat-speex-declib
+
+   Install speex
+        download speex source code, https://downloads.xiph.org/releases/speex/speex-1.2.0.tar.gz
+
+        tar xzvf speex-1.2.0.tar.gz
+
+        cd speex-1.2.0 && ./configure && make && make install
+
+   Install decoder
+       git clone https://github.com/gamelife1314/wechat-speex-declib.git
+
+       cd wechat-speex-declib && make && cp ./bin/speex_decode /usr/local/bin/speex2wav
+
+       speex2wav test.speex test.wav
+
+3: 使用ffmpeg将wav转成mp3
+    下载ffmpeg
+        https://johnvansickle.com/ffmpeg/
+
+    命令：ffmpeg -i test.wav test1.mp3
