@@ -1,0 +1,96 @@
+1：使用 show variables like 'log_%';
+     查看binlog的存储路径
+     log_bin	                                 ON                                  #binlog是开启，ON表示开启，OFF表示关闭
+     log_bin_basename	                         /usr/local/mysql/data/binlog        #binlog文件存储的基础名称
+     log_bin_index	                             /usr/local/mysql/data/binlog.index  #binlog索引文件存储路径
+     log_bin_trust_function_creators	         OFF
+     log_bin_use_v1_row_events	                 OFF
+     log_error	                                 ./daiyanpingdeiMac.local.err        #error日志存储路径
+     log_error_services	log_filter_internal;     log_sink_internal
+     log_error_suppression_list
+     log_error_verbosity	                      2
+     log_output	FILE
+     log_queries_not_using_indexes	OFF
+     log_slave_updates	ON
+     log_slow_admin_statements	OFF
+     log_slow_slave_statements	OFF
+     log_statements_unsafe_for_binlog	ON
+     log_throttle_queries_not_using_indexes	0
+     log_timestamps	UTC
+
+2：修改binlog存储格式
+    set  binlog_format='statement'
+    set  binlog_format='row'
+    set  binlog_format='mixed'
+
+3：先使用如下命令查看有有几个binlog文件
+     show master logs; 或者 show binary logs;
+
+     binlog.000030	7129
+     binlog.000031	4485
+
+4：查看binlog中记录的详情
+     show binlog events in 'binlog.000031';
+
+     设置binlog_format为statement时，查看结果
+
+        binlog.000031	4485	Anonymous_Gtid	1	4560	SET @@SESSION.GTID_NEXT= 'ANONYMOUS'
+        binlog.000031	4560	Query	1	4652	BEGIN
+        binlog.000031	4652	Query	1	4813	use `test`; delete from t /*comment*/  where a>=4 and t_modified<='2018-11-10' limit 1
+        binlog.000031	4813	Xid	1	4844	COMMIT /* xid=228 */
+
+        可以看到statement直接记录的sql语句
+
+        使用statement时存在的问题
+            由于statement格式下，记录到binlog里的是语句原文，因此可能会出现这样一种情况：在主库执行这条SQL语句的时候，用的是索引a；而在备库执行这条SQL语句的时候，却使用了索引t_modified。因此，MySQL认为这样写是有风险的。
+            可以使用 show WARNINGS; 查询警告详情
+
+     设置binlog_format为row时，查看结果
+
+        binlog.000031	11785	Anonymous_Gtid	1	11860	SET @@SESSION.GTID_NEXT= 'ANONYMOUS'
+        binlog.000031	11860	Query	1	11945	BEGIN
+        binlog.000031	11945	Table_map	1	11995	table_id: 80 (test.t)
+        binlog.000031	11995	Delete_rows	1	12043	table_id: 80 flags: STMT_END_F
+        binlog.000031	12043	Xid	1	12074	COMMIT /* xid=359 */
+
+        可以看到row格式下，我们看不到详情，需要使用mysql bin目录下的mysqlbinlog解析该文件，命令如下
+
+        mysqlbinlog  -vv /usr/local/mysql/data/binlog/binlog.000031 --start-position=11785;
+
+        结果如下：只关注BEGIN部分
+            BEGIN
+            /*!*/;
+            # at 11945
+            #191115 11:38:31 server id 1  end_log_pos 11995 CRC32 0xb050da91 	Table_map: `test`.`t` mapped to number 80
+            # at 11995
+            #191115 11:38:31 server id 1  end_log_pos 12043 CRC32 0x8ce0cf1f 	Delete_rows: table id 80 flags: STMT_END_F
+
+            BINLOG '
+            tx3OXRMBAAAAMgAAANsuAAAAAFAAAAAAAAEABHRlc3QAAXQAAwMDEQEAAgEBAJHaULA=
+            tx3OXSABAAAAMAAAAAsvAAAAAFAAAAAAAAEAAgAD/wAEAAAABAAAAFvlrwAfz+CM
+            '/*!*/;
+            ### DELETE FROM `test`.`t`
+            ### WHERE
+            ###   @1=4 /* INT meta=0 nullable=0 is_null=0 */
+            ###   @2=4 /* INT meta=0 nullable=1 is_null=0 */
+            ###   @3=1541779200 /* TIMESTAMP(0) meta=0 nullable=0 is_null=0 */
+            # at 12043
+            #191115 11:38:31 server id 1  end_log_pos 12074 CRC32 0x8d3a6c50 	Xid = 359
+            COMMIT/*!*/;
+
+            server id 1，表示这个事务是在server_id=1的这个库上执行的。
+
+            每个event都有CRC32的值，这是因为我把参数binlog_checksum设置成了CRC32。
+
+            Table_map event跟在图5中看到的相同，显示了接下来要打开的表，map到数字226。现在我们这条SQL语句只操作了一张表，如果要操作多张表呢？每个表都有一个对应的Table_map event、都会map到一个单独的数字，用于区分对不同表的操作。
+            我们在mysqlbinlog的命令中，使用了-vv参数是为了把内容都解析出来，所以从结果里面可以看到各个字段的值（比如，@1=4、 @2=4这些值）。
+            binlog_row_image的默认配置是FULL，因此Delete_event里面，包含了删掉的行的所有字段的值。如果把binlog_row_image设置为MINIMAL，则只会记录必要的信息，在这个例子里，就是只会记录id=4这个信息。
+            最后的Xid event，用于表示事务被正确地提交了。
+            你可以看到，当binlog_format使用row格式的时候，binlog里面记录了真实删除行的主键id，这样binlog传到备库去的时候，就肯定会删除id=4的行，不会有主备删除不同行的问题。
+
+     设置binlog_format为mixed时
+
+        因为有些statement格式的binlog可能会导致主备不一致，所以要使用row格式。
+        但row格式的缺点是，很占空间。比如你用一个delete语句删掉10万行数据，用statement的话就是一个SQL语句被记录到binlog中，占用几十个字节的空间。但如果用row格式的binlog，就要把这10万条记录都写到binlog中。这样做，不仅会占用更大的空间，同时写binlog也要耗费IO资源，影响执行速度。
+        所以，MySQL就取了个折中方案，也就是有了mixed格式的binlog。mixed格式的意思是，MySQL自己会判断这条SQL语句是否可能引起主备不一致，如果有可能，就用row格式，否则就用statement格式。
+
