@@ -8,6 +8,13 @@
 
         cd speex-1.2.0 && ./configure && make && make install
 
+        二、配置path到/usr/lib
+
+        因为安装的speex生成的可执行文件默认在/usr/local/lib/下 但是默认的path依赖是usr/lib/下，所以需要配置etc/bashrc文件最后一行加一行：export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
+        ————————————————
+        版权声明：本文为CSDN博主「三片叶子贰」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。
+        原文链接：https://blog.csdn.net/sanshipianyezi/article/details/78018524
+
    Install decoder
        git clone https://github.com/gamelife1314/wechat-speex-declib.git
 
