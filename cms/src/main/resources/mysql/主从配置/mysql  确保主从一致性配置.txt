@@ -1,0 +1,22 @@
+1：什么是semi sync
+
+    在Semisynchronous Replication模式下,在主库上提交一个事务/event，它会等待至少一个slave通知主库，slave 已经接收到传递过来的events并写入relay log,才返回给回话层写入成功，或者直到传送日志发生超时
+
+2：使用semi sync 性能下降问题
+
+    针对性能的下降问题，5.7版本中MySQL对此做了极大的改善，增加了ack thread 和AFTER_COMMIT 模式。
+
+3：ACK thread
+
+    在增加ACK thread 之后，主库提交事务之后，当前会话可以进行处理其他请求，由ack thread 来负责slave发送回来的确认，极大的提高主库的写入性能。
+
+4：如何确保无数据丢失
+
+    5.6 版本的默认是AFTER_COMMIT 模式
+    AFTER_COMMIT:某个会话在主库提交事务，主库将提交的事务持久化到存储引擎和binlog并且同步给slave，主库等待slave将接收的持久化到relay-log，并返回确认信息给主库，一旦主库收到从库的信息就返回OK给客户端。在此期间会话是不能进行下一步操作的。
+
+    AFTER_SYNC: 5.7 开发了新的模式，会话提在主库上提交事务,主库会记录binlog 并且同步给slave ，等待事务在slave落盘记录到relay-log中并返回ack信息。
+    特别强调此时事务还未commit，故其他会话是看不到修改的记录，这点和after_commited 不一样。一旦主库收到从库的信息，主库就提交该事务并且返回OK给客户端。
+
+
+5：参考http://blog.itpub.net/22664653/viewspace-2133818

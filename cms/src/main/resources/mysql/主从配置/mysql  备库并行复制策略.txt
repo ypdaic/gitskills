@@ -67,3 +67,5 @@
 
 同时存在slave_parallel_type=database，而binlog_transaction_dependency_tracking=commit_order，这2个参数会不会冲突呢？如果会以哪个策略为准呢？
 那就是以slave_parallel_type=database为准了
+
+worker线程数由slave_parallel_workers指定

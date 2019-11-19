@@ -1,0 +1,22 @@
+DROP TABLE IF EXISTS `t`;
+CREATE TABLE `t` (
+  `id` int(11) NOT NULL,
+  `a` int(11) DEFAULT NULL,
+  `t_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `a` (`a`),
+  KEY `t_modified`(`t_modified`)
+) ENGINE=InnoDB;
+
+insert into t values(1,1,'2018-11-13');
+insert into t values(2,2,'2018-11-12');
+insert into t values(3,3,'2018-11-11');
+insert into t values(4,4,'2018-11-10');
+insert into t values(5,5,'2018-11-09');
+
+BEGIN;
+delete from t LIMIT 5;
+
+如果加limit 5; 新开的会话执行insert into t values(6,6,'2018-11-09');可以执行成功
+
+如果不加limit5; 新开的会话执行任何的增删改都会被阻塞，原因是因为，加了limit 5后，不会存在一个5~无穷大的next-key，LOCK_DATA为  supremum pseudo-record
