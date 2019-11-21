@@ -33,17 +33,17 @@ public class CodeGenerator {
 
     private final static String PROJECT_PATH = "/Users/daiyanping/code/yyc-cms";
 
-    private final static String MODULE_NAME = "cms";
+    private final static String MODULE_NAME = "yyc";
 
     private final static String PARTENT_PATH = "com.sungo.management.server";
 
-    private final static String DATABASE_URL = "jdbc:mysql://192.168.0.12:3306/yyc_cms_dev";
+    private final static String DATABASE_URL = "jdbc:mysql://192.168.1.12:3306/yyc_wx";
 
     private final static String USERNAME = "root";
 
     private final static String PASSWORD = "123456";
 
-    private final static String MAPPERXML_PATH = "/src/main/resources/sqlMapperXml/css/";
+    private final static String MAPPERXML_PATH = "/src/main/resources/sqlMapperXml/yyc/";
 
     /**
      * <p>
@@ -214,7 +214,7 @@ public class CodeGenerator {
         // 需要生成的表的字段名的策略  此处为下滑线分隔 （具体给什么参数以数据库为准）
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
         // 需要生成的表的表名
-        strategy.setInclude(new String[]{"material"});
+        strategy.setInclude(new String[]{"medassist_medicine"});
         // 需要排除生成的表的表名
 //        strategy.setExclude(new String[]{"test"});
         // 设置实体类的父类 默认Model
