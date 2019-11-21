@@ -1,14 +1,11 @@
 package com.daiyanping.cms.service.impl;
 
 import com.daiyanping.cms.DB.DB;
-import com.daiyanping.cms.DB.DBTypeEnum;
-import com.daiyanping.cms.dao.UserDao;
+import com.daiyanping.cms.dao2.UserDao2;
 import com.daiyanping.cms.entity.User;
 import com.daiyanping.cms.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -26,7 +23,7 @@ import static com.daiyanping.cms.DB.DBTypeEnum.TEST2;
 public class UserServiceImpl2 implements IUserService {
 
     @Autowired
-    private UserDao userDao;
+    private UserDao2 userDao;
 
     @Override
     public List<User> getAll() {
@@ -57,9 +54,9 @@ public class UserServiceImpl2 implements IUserService {
     }
 
     @Override
-    @Transactional
+//    @Transactional
     public void addUser(User user) {
         userDao.addUser(user);
-        int a = 1 /0;
+//        int a = 1 /0;
     }
 }

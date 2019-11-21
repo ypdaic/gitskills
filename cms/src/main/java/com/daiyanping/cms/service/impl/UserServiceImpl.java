@@ -1,6 +1,5 @@
 package com.daiyanping.cms.service.impl;
 
-import com.daiyanping.cms.DB.AopProxyContext;
 import com.daiyanping.cms.DB.DB;
 import com.daiyanping.cms.DB.DBTypeEnum;
 import com.daiyanping.cms.dao.UserDao;
@@ -8,14 +7,9 @@ import com.daiyanping.cms.entity.User;
 import com.daiyanping.cms.service.IUserService;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.support.SqlSessionDaoSupport;
-import org.springframework.aop.framework.AopContext;
-import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,9 +61,9 @@ public class UserServiceImpl extends SqlSessionDaoSupport implements IUserServic
     }
 
     @Override
-    @Transactional
+//    @Transactional
     public void addUser(User user) {
-        userDao.addUser(user);
+         userDao.addUser(user);
     }
 
     /**

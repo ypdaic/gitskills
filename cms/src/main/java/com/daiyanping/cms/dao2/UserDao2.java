@@ -1,4 +1,4 @@
-package com.daiyanping.cms.dao;
+package com.daiyanping.cms.dao2;
 
 import com.daiyanping.cms.entity.User;
 import org.apache.ibatis.annotations.Insert;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public interface UserDao {
+public interface UserDao2 {
 
 	@Select("select * from user")
 	List<User> getAllUser();

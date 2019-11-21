@@ -1,11 +1,25 @@
 package com.daiyanping.cms.service.impl;
 
+import com.daiyanping.cms.DB.DB;
+import com.daiyanping.cms.DB.DBTypeEnum;
 import com.daiyanping.cms.entity.User;
 import com.daiyanping.cms.service.IUserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCallback;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service("service3")
+@DB(DB = DBTypeEnum.TEST)
 public class UserServiceImpl3 implements IUserService {
+
+	@Autowired
+	@Qualifier("jdbcTemplate")
+	JdbcTemplate jdbcTemplate;
+
 	@Override
 	public List<User> getAll() {
 		return null;
@@ -45,6 +59,13 @@ public class UserServiceImpl3 implements IUserService {
 
 	@Override
 	public void addUser(User user) {
+		jdbcTemplate.execute("insert into user (id,name,password,age) values (?,?,?,?)", (PreparedStatementCallback<Object>) (ps) -> {
+			ps.setObject(1, user.getId());
+			ps.setObject(2, user.getName());
+			ps.setObject(3, user.getPassword());
+			ps.setObject(4, user.getAge());
 
+			return ps.execute();
+		});
 	}
 }
