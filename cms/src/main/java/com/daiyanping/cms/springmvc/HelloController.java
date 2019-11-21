@@ -6,6 +6,7 @@ import com.daiyanping.cms.service.IUserService;
 import com.daiyanping.cms.vo.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.concurrent.ListenableFuture;
@@ -17,8 +18,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
+
+import static java.util.Calendar.YEAR;
 
 @RequestMapping("/hello")
 @RestController
@@ -215,6 +220,21 @@ public class HelloController {
 		userService.updateById(user);
 		userService.getUserById("1");
 
+	}
+
+	@Scheduled(cron = "0 */1 * * * ?")
+	public void test() {
+		Calendar calendar = Calendar.getInstance();
+		int year = calendar.get(YEAR);
+		int month = calendar.get(Calendar.MONTH) + 1;  // MONTH从0开始算1月
+		int day = calendar.get(Calendar.DAY_OF_MONTH);
+		int hour = calendar.get(Calendar.HOUR_OF_DAY);
+		int minute = calendar.get(Calendar.MINUTE);
+
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+		Date time = calendar.getTime();
+		System.out.println(time);
 	}
 
 }
