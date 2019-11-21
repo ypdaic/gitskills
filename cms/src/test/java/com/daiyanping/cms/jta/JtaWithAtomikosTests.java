@@ -1,9 +1,6 @@
-package com.daiyanping.cms;
+package com.daiyanping.cms.jta;
 
 import com.daiyanping.cms.entity.User;
-import com.daiyanping.cms.jta.DataSourceConfig;
-import com.daiyanping.cms.jta.JtaTransactionConfig;
-import com.daiyanping.cms.jta.JtaTransactionConfig2;
 import com.daiyanping.cms.service.IUserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,7 +21,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
- * @ClassName JtaTests
+ * @ClassName JtaWithAtomikosTests
  * @Description TODO
  * @Author daiyanping
  * @Date 2019-06-04
@@ -32,95 +29,26 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@ContextConfiguration(classes = {DataSourceConfig.class, JtaTransactionConfig2.class, JtaTransactionConfig.class})
+@ContextConfiguration(classes = {JtaTransactionConfig3.class})
 //开启自动配置，排除springjdbc自动配置
 @EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class, RedissonAutoConfiguration.class, RedisAutoConfiguration.class})
 //开启缓存 如果想要支持事物，缓存必须比事物后加载，这就是设置order，缓存的大于事物的order，这个order会用于后续advisors的排序，所以要想支持事物，缓存的调用链必须在事物的调用链中
 //否则事物都结束了，即使缓存开启了事物支持，也是无效的
 //@EnableCaching(order = 2)
 @EnableTransactionManagement
-public class JtaTests {
+public class JtaWithAtomikosTests {
 
     //@Qualifier注解用于存在多个相同类型的bean时，注入指定名称的bean
     @Autowired
-    @Qualifier("service1")
-    private IUserService userService;
+    @Qualifier("service5")
+    private IUserService userService5;
 
     @Autowired
-    @Qualifier("service2")
-    private IUserService userService2;
-
-    //@Qualifier注解用于存在多个相同类型的bean时，注入指定名称的bean
-    @Autowired
-    @Qualifier("service3")
-    private IUserService userService3;
-
-    @Autowired
-    @Qualifier("service4")
-    private IUserService userService4;
+    @Qualifier("service6")
+    private IUserService userService6;
 
     @Autowired
     TransactionTemplate transactionTemplate;
-
-
-
-
-    /**
-     * 验证动态数据源的使用
-     */
-    @Test
-    public void test() {
-        User userById = userService.getUserById("1");
-        System.out.println(userById);
-
-    }
-
-    /**
-     *
-     */
-    @Test
-    @Transactional
-    public void test2() {
-        User user = new User();
-        user.setAge(80);
-        user.setId(1);
-        user.setName("jt21");
-        Thread thread1 = new Thread(() -> {
-            userService.updateById(user);
-        });
-        Thread thread2 = new Thread(() -> {
-            userService.updateByName(user);
-    });
-        thread1.start();
-        thread2.start();
-        try {
-            Thread.sleep(1000 * 10);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    /**
-     * mybatis-spring 不支持jta
-     */
-    @Test
-    @Transactional
-//    @Rollback(value = false)
-    public void test3() {
-        User user = new User();
-        user.setAge(80);
-        user.setId(78);
-        user.setPassword("dsfsdf");
-        user.setName("jt21");
-
-        userService.addUser(user);
-
-
-        userService2.addUser(user);
-
-
-    }
 
     /**
      * jdbcTemplate jta支持
@@ -128,7 +56,7 @@ public class JtaTests {
     @Test
     @Transactional
     @Rollback(value = false)
-    public void test4() {
+    public void test5() {
         User user = new User();
         user.setAge(80);
         user.setId(78);
@@ -140,8 +68,8 @@ public class JtaTests {
 
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
-                userService3.addUser(user);
-                userService4.addUser(user);
+                userService5.addUser(user);
+                userService6.addUser(user);
             }
         });
 
