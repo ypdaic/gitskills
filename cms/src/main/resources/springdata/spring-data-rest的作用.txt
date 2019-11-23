@@ -1,0 +1,22 @@
+Spring Data REST 通过构建在 Spring Data Repositories 之上，自动将其导出为 REST 资源的 API，
+减少了大量重复代码和无聊的样板代码。它利用超媒体来允许客户端查找存储库暴露的功能，
+并将这些资源自动集成到相关的超媒体功能中。
+
+Spring Data REST 本身就是一个 Spring MVC 应用程序，
+它的设计方式应该是尽可能少的集成到现有的 Spring MVC 应用程序中。
+现有的（或将来的）服务层可以与 Spring Data REST 一起运行，只有较小的考虑。
+
+不用我们自己写controller成代码
+
+依赖：
+
+<!--data-rest 结合data-jpa使用-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-rest</artifactId>
+		</dependency>
+		<!--spring data-jpa 支持-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>

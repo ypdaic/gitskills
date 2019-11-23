@@ -36,7 +36,6 @@ public class SpringMvcConfig implements WebMvcConfigurer {
 
 	@Bean
 	RestTemplate restTemplate(RestTemplateBuilder builder) {
-		builder.requestFactory()
 		RestTemplate restTemplate = builder.build();
 		return restTemplate;
 	}
