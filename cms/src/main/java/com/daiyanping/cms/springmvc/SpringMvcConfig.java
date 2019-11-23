@@ -1,11 +1,13 @@
 package com.daiyanping.cms.springmvc;
 
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.RegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -31,6 +33,13 @@ import javax.servlet.Filter;
  */
 //@ImportResource("other.xml")
 public class SpringMvcConfig implements WebMvcConfigurer {
+
+	@Bean
+	RestTemplate restTemplate(RestTemplateBuilder builder) {
+		builder.requestFactory()
+		RestTemplate restTemplate = builder.build();
+		return restTemplate;
+	}
 	@Override
 	public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
 //		// 设置callable异步任务拦截器

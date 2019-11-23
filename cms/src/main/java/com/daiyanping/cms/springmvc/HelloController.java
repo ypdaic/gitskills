@@ -6,20 +6,27 @@ import com.daiyanping.cms.service.IUserService;
 import com.daiyanping.cms.vo.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.context.request.async.WebAsyncTask;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 
@@ -28,6 +35,9 @@ import static java.util.Calendar.YEAR;
 @RequestMapping("/hello")
 @RestController
 public class HelloController {
+
+	@Autowired
+	RestTemplate restTemplate;
 
 	@Autowired
 	ThreadPoolTaskExecutor taskExecutor;
@@ -219,6 +229,37 @@ public class HelloController {
 		user.setName("jta");
 		userService.updateById(user);
 		userService.getUserById("1");
+
+	}
+
+	/**
+	 * rest 测试
+	 */
+	@PostMapping("/restTest")
+	@Transactional
+	public void restTest() {
+		URI say = UriComponentsBuilder.fromUriString("http://localhost:8080//hello/{path}")
+				.build("say");
+
+		String forObject = restTemplate.getForObject(say, String.class);
+		System.out.println(forObject);
+
+
+	}
+
+	/**
+	 * rest 测试
+	 */
+	@PostMapping("/restTest2")
+	@Transactional
+	public void restTest2() {
+		URI say = UriComponentsBuilder.fromUriString("http://localhost:8080//hello/{path}")
+				.build("say");
+
+		ParameterizedTypeReference<List<User>> listParameterizedTypeReference = new ParameterizedTypeReference<List<User>>(){};
+		ResponseEntity<List<User>> exchange = restTemplate.exchange(say, HttpMethod.GET, null, listParameterizedTypeReference);
+		System.out.println(exchange.getBody());
+
 
 	}
 
