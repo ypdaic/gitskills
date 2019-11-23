@@ -1,0 +1,24 @@
+#启动: http://a.com:8090/index
+server:
+  port: 8090
+  compression:
+    enabled: true
+  connection-timeout: 3000
+spring:
+  redis:
+      host: 192.168.111.128
+      port: 6379
+
+  session:
+    #指定redis实现spring session
+    store-type: redis
+    timeout: 3600
+    redis:
+      # Sessions 刷新模式
+      flush-mode: on_save
+      # 用于存储会话的密钥的命名空间
+      namespace: spring:session
+
+
+
+
