@@ -1,0 +1,14 @@
+#启动: http://a.com:8090/index
+server:
+  port: 8090
+  compression:
+    enabled: true
+  connection-timeout: 3000
+spring:
+  redis:
+      host: 192.168.111.128
+      port: 6379
+
+
+
+
