@@ -1,0 +1,11 @@
+ClientHttpRequestInterceptor  的作用在于在我执行weg请求之前做前置处理，比如
+
+BasicAuthorizationInterceptor就是在请求头上加如下逻辑：
+
+String token = Base64Utils.encodeToString(
+				(this.username + ":" + this.password).getBytes(StandardCharsets.UTF_8));
+		request.getHeaders().add("Authorization", "Basic " + token);
+
+LoadBalancerInterceptor  则是ribbon 提供实现负载均衡的作用，然后使用RibbonClientHttpRequestFactory创建
+
+具体的请求
