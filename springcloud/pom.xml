@@ -27,6 +27,7 @@
         <module>springcloud-ha-config</module>
         <module>springcloud-ha-config2</module>
         <module>springcloud-config-bus</module>
+        <module>springcloud-zookeeper</module>
     </modules>
 
     <groupId>com.daiyanping</groupId>
