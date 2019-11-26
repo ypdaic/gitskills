@@ -1,0 +1,99 @@
+使用 @EnableFeignClients 注解开启feign功能，下面就看@EnableFeignClients 做了什么
+
+    使用Import注解导入了FeignClientsRegistrar
+    @Import(FeignClientsRegistrar.class)
+
+    FeignClientsRegistrar的作用就是查找应用的Configuration类的注解上是否有@EnableFeignClients注解，如果有就获取
+    basePackageClasses,basePackages,clients的信息，也就是我们使用了@FeignClient注解 类的包路径，然后解析每个类，
+    获取@FeignClient的注解信息，然后通过这些信息，创建一个FeignClientFactoryBean的BeanDefinitionHolder注入到spring容器中，后续
+    自动注入的Feign 接口实现都是通过FeignClientFactoryBean创建的
+
+    关键代码：
+        private void registerFeignClient(BeanDefinitionRegistry registry,
+        			AnnotationMetadata annotationMetadata, Map<String, Object> attributes) {
+            String className = annotationMetadata.getClassName();
+            BeanDefinitionBuilder definition = BeanDefinitionBuilder
+                    .genericBeanDefinition(FeignClientFactoryBean.class);
+            validate(attributes);
+            definition.addPropertyValue("url", getUrl(attributes));
+            definition.addPropertyValue("path", getPath(attributes));
+            String name = getName(attributes);
+            definition.addPropertyValue("name", name);
+            String contextId = getContextId(attributes);
+            definition.addPropertyValue("contextId", contextId);
+            definition.addPropertyValue("type", className);
+            definition.addPropertyValue("decode404", attributes.get("decode404"));
+            definition.addPropertyValue("fallback", attributes.get("fallback"));
+            definition.addPropertyValue("fallbackFactory", attributes.get("fallbackFactory"));
+            definition.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_TYPE);
+
+            String alias = contextId + "FeignClient";
+            AbstractBeanDefinition beanDefinition = definition.getBeanDefinition();
+
+            boolean primary = (Boolean) attributes.get("primary"); // has a default, won't be
+                                                                    // null
+
+            beanDefinition.setPrimary(primary);
+
+            String qualifier = getQualifier(attributes);
+            if (StringUtils.hasText(qualifier)) {
+                alias = qualifier;
+            }
+
+            BeanDefinitionHolder holder = new BeanDefinitionHolder(beanDefinition, className,
+                    new String[] { alias });
+            BeanDefinitionReaderUtils.registerBeanDefinition(holder, registry);
+        }
+
+
+
+    FeignClientFactoryBean创建代理的过程：
+
+        由于FeignClientFactoryBean实现了FactoryBean，我们就从getObject入手
+
+        @Override
+        public Object getObject() throws Exception {
+            return getTarget();
+        }
+
+        /**
+         * @param <T> the target type of the Feign client
+         * @return a {@link Feign} client created with the specified data and the context
+         * information
+         */
+        <T> T getTarget() {
+            // 获取FeignContext的子容器，该子容器就一个配置类FeignClientsConfiguration，是FeignContext构造器中默认指定的
+            // FeignClientsConfiguration提供了编解码器，Builder等等，Builder 包含我们的配置参数
+            FeignContext context = this.applicationContext.getBean(FeignContext.class);
+            Feign.Builder builder = feign(context);
+
+            if (!StringUtils.hasText(this.url)) {
+                if (!this.name.startsWith("http")) {
+                    this.url = "http://" + this.name;
+                }
+                else {
+                    this.url = this.name;
+                }
+                this.url += cleanPath();
+                // 获取代理类的关键，使用jdk动态代理创建
+                return (T) loadBalance(builder, context,
+                        new HardCodedTarget<>(this.type, this.name, this.url));
+            }
+            if (StringUtils.hasText(this.url) && !this.url.startsWith("http")) {
+                this.url = "http://" + this.url;
+            }
+            String url = this.url + cleanPath();
+            Client client = getOptional(context, Client.class);
+            if (client != null) {
+                if (client instanceof LoadBalancerFeignClient) {
+                    // not load balancing because we have a url,
+                    // but ribbon is on the classpath, so unwrap
+                    client = ((LoadBalancerFeignClient) client).getDelegate();
+                }
+                builder.client(client);
+            }
+            Targeter targeter = get(context, Targeter.class);
+            // 获取代理类的关键，使用jdk动态代理创建
+            return (T) targeter.target(this, builder, context,
+                    new HardCodedTarget<>(this.type, this.name, url));
+        }
