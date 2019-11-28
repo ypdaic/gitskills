@@ -13,6 +13,8 @@ spring:
  cloud:
    zookeeper:
      connect-string: localhost:2182
+     discovery:
+       prefer-ip-address: true #注册信息的address使用ip
 
  application:
    name: zookeeper-test

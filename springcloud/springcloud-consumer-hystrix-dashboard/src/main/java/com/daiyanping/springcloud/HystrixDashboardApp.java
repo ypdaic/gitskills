@@ -6,7 +6,15 @@ import org.springframework.cloud.netflix.hystrix.dashboard.EnableHystrixDashboar
 
 /**
  * @ClassName HystrixDashboardApp
- * @Description TODO
+ * @Description 使用HystrixDashboard对服务进行监控
+ *
+ *          进入到http://localhost:9090/hystrix/   页面
+ *
+ *          填写被监控的服务集群信息，如
+ *
+ *          http://localhost:9000/turbine.stream?cluster=customer-service
+ *
+ *          需要监控服务开启endpoint
  * @Author daiyanping
  * @Date 2019-09-12
  * @Version 0.1
