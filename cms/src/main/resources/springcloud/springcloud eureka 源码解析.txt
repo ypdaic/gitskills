@@ -1,0 +1,23 @@
+提供FeignContextBeanPostProcessor，TraceFeignObjectWrapper
+
+使用TraceFeignContext，对FeignContext进行日志增强
+
+TraceFeignObjectWrapper 的wrap 对Client实例进行增强
+Object wrap(Object bean) {
+		if (bean instanceof Client && !(bean instanceof TracingFeignClient)) {
+			if (ribbonPresent && bean instanceof LoadBalancerFeignClient
+					&& !(bean instanceof TraceLoadBalancerFeignClient)) {
+				LoadBalancerFeignClient client = ((LoadBalancerFeignClient) bean);
+				return new TraceLoadBalancerFeignClient(
+						(Client) new TraceFeignObjectWrapper(this.beanFactory)
+								.wrap(client.getDelegate()),
+						factory(), (SpringClientFactory) clientFactory(),
+						this.beanFactory);
+			}
+			else if (ribbonPresent && bean instanceof TraceLoadBalancerFeignClient) {
+				return bean;
+			}
+			return new LazyTracingFeignClient(this.beanFactory, (Client) bean);
+		}
+		return bean;
+	}
