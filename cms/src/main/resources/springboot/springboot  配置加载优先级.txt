@@ -1,0 +1,7 @@
+以yml为例：
+    应用名-profile.yml
+    应用名.yml
+    application-profile.yml
+    application.yml
+
+    优先级从上到下

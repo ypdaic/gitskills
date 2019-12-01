@@ -1,0 +1,20 @@
+首先通过spring.cloud.context  模块的spring.factories 文件配置了如下4个config
+
+org.springframework.cloud.bootstrap.BootstrapConfiguration=\
+org.springframework.cloud.bootstrap.config.PropertySourceBootstrapConfiguration,\
+org.springframework.cloud.bootstrap.encrypt.EncryptionBootstrapConfiguration,\
+org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration,\
+org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration
+
+PropertySourceBootstrapConfiguration  就是用来从配置中心获取配置的
+
+PropertySourceBootstrapConfiguration获取配置就是通过PropertySourceLocator的实现类获取
+
+PropertySourceLocator的实现类对于不同的配置中心有不同的实现
+
+具体的实现如下：
+NacosPropertySourceLocator (org.springframework.cloud.alibaba.nacos.client)
+EnvironmentRepositoryPropertySourceLocator (org.springframework.cloud.config.server.environment)
+ZookeeperPropertySourceLocator (org.springframework.cloud.zookeeper.config)
+ConsulPropertySourceLocator (org.springframework.cloud.consul.config)
+ConfigServicePropertySourceLocator (org.springframework.cloud.config.client)
