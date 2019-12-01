@@ -1,0 +1,22 @@
+官网下载安装介质：https://www.mongodb.com/download-center，选择适当的版本，
+这 里以 linux 版本 mongodb-linux-x86_64-4.0.4 为例；
+https://www.mongodb.org/dl/linux/x86_64
+
+tar zxvf mongodb-linux-x86_64-4.0.4.tgz
+mv mongodb-linux-x86_64-4.0.4 mongodb
+mkdir -p mongodb/{data/db,log,conf}
+vi mongodb/conf/mgdb.conf
+
+在mgdb.conf中配置如下配置
+storage:
+	dbPath: "/opt/mongodb/data/db"
+systemLog:
+	destination: file
+	path: "/opt/mongodb/log/mongodb.log"
+net:
+	bindIp: 0.0.0.0
+	port: 27017
+processManagement:
+	fork: true
+setParameter:
+	enableLocalhostAuthBypass: false
