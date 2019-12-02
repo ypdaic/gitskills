@@ -1,0 +1,26 @@
+vi /usr/lib/systemd/system/mongodb.service
+输入如下内容:
+[Unit]
+Description=mongodb
+After=network.target remote-fs.target nss-lookup.target
+
+[Service]
+Type=forking
+RuntimeDirectory=mongodb
+PIDFile=/opt/mongodb/data/db/mongod.lock
+ExecStart=/opt/mongodb/bin/mongod --config /soft/mongodb/conf/mgdb.conf
+ExecStop=/opt/mongodb/bin/mongod --shutdown --config /soft/mongodb/conf/mgdb.conf
+PrivateTmp=true
+
+[Install] WantedBy=multi-user.target
+
+保存后执行如下命令：
+systemctl daemon-reload
+systemctl start mongodb
+systemctl enable mongodb
+
+启动 mongodb
+
+service mongodb stop
+service mongodb start
+

@@ -9,14 +9,25 @@ vi mongodb/conf/mgdb.conf
 
 在mgdb.conf中配置如下配置
 storage:
-	dbPath: "/opt/mongodb/data/db"
+	dbPath: "/opt/mongodb/data/db" #数据存放目录
 systemLog:
 	destination: file
-	path: "/opt/mongodb/log/mongodb.log"
+	path: "/opt/mongodb/log/mongodb.log" #日志存放目录
 net:
 	bindIp: 0.0.0.0
 	port: 27017
 processManagement:
-	fork: true
+	fork: true #以守护进程的方式启动
 setParameter:
-	enableLocalhostAuthBypass: false
+	enableLocalhostAuthBypass: false #是否需要验证权限
+
+配置环境变量：
+
+vi /etc/profile
+    export MONGODB_HOME=/soft/mongodb export
+    PATH=$PATH:$MONGODB_HOME/bin
+source /etc/profile
+
+启动：
+
+    ./mongod -f ../conf/mgdb.conf
