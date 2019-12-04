@@ -8,8 +8,6 @@
 
 删除数据库
 
-    db.test.drop() #删除test数据库
-
     db.dropDatabase() #在使用了use 命令后可以使用这个命令进行删除
 
 查看集合

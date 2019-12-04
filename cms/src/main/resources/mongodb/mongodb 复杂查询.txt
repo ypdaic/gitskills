@@ -1,0 +1,113 @@
+1：查询指定字段
+
+    只查询username,age字段
+    db.users.find({"$and":[{"username":"cang"},{"age":20}]},{"username":1,"age":1}).pretty()
+
+    查询除了username,age的其他字段
+    db.users.find({"$and":[{"username":"cang"},{"age":20}]},{"username":0,"age":0}).pretty()
+
+    注意不能一个是1，一个是0，必须要相同，要么是1，要么是0
+
+2：查询选择器
+    $eq  等于
+    $lt  小于
+    $gt  大于
+    $lte 小于等于
+    $gte 大于等于
+    $in  判断元素是否在指定集合内
+
+        db.users.find({"username":{"$in":["lison", "mark", "james"]}}).pretty()
+
+    $all 判断数组中是否包含几个元素，无关顺序
+    $nin 判断元素是否不在指定集合内
+    $ne  不等于
+    $not 不匹配结果
+
+        查询高度小于1.77，包括不含有高度的字段
+        db.users.find({"lenght":{"$not":{"$gte":1.77}}}).pretty()
+
+    $or  有一个匹配条件成立
+
+        db.users.find({$or:[{username:"lison"},{username:"james"},{username:"mark"}]})
+
+    $and 所有条件都必须成立
+    $exists 判断元素是否存在
+
+        判断文档有没有关心的字段
+        db.users.find({"lenght":{"$exists":true}}).pretty()
+
+    $regex  正则表达式匹配
+
+ 3：排序
+
+    1：升序 -1：降序
+    db.users.find().sort({"username":1}).pretty()
+
+ 4：分页
+
+    skip(n)：跳过 n 条数据
+    limit(n)：限制 n 条数据
+    e.g： db.users.find().sort({"username":1}).limit(2).skip(2)
+
+ 5：数组查询
+
+    数组单元素查询
+
+        查询数组中包含"蜘蛛侠"
+        db.users.find({"favorites.movies":"蜘蛛侠"})
+
+
+    数组精确查找
+
+        查询数组等于[ "杀破狼2", "战狼", "雷神1" ]的文档，严格按照数量、顺序；
+        db.users.find({"favorites.movies":[ "杀破狼2", "战狼", "雷神1" ]},{"favorites.movies":1})
+
+
+    数组多元素查询
+
+        查询数组包含["雷神1", "战狼" ]的文档，跟顺序无关，跟数量有关
+        db.users.find({"favorites.movies":{"$all":[ "雷神1", "战狼" ]}},{"favorites.movies":1})
+
+        查询数组包含["雷神 1", "战狼" ]中任意一个的文档，跟顺序无关，跟数量无关
+        db.users.find({"favorites.movies":{"$in":[ "雷神 1", "战狼" ]}},{"favorites.movies":1})
+
+    查询数组中第一个为"杀破狼 2"的文档
+
+        db.users.find({"favorites.movies.0":"杀破狼 2"},{"favorites.movies":1})
+
+    返回数组子集
+
+        db.users.find({},{"favorites.movies":{"$slice":[1,2]},"favorites":1})
+        $slice 可以取两个元素数组,分别表示跳过和限制的条数；
+        对比 db.users.find({},{"favorites":1})
+
+ 6：对象数组查询
+
+    db.users.drop();
+    var user1 = { "username" : "lison", "country" : "china", "address" : { "aCode" : "411000", "add" : "长沙" },"favorites" : { "movies" : ["妇联 4","杀破狼 2","战狼","雷神 1","神奇动物在哪里"], "cites" : ["长沙","深圳","上海"] },"age" : 18, "salary":NumberDecimal("18889.09"), "lenght" :1.79, "comments" : [ { "author" : "lison1", "content" : "lison 评论 1", "commentTime" : ISODate("2017-01-06T00:00:00") },{ "author" : "lison2", "content" : "lison 评论 2", "commentTime" : ISODate("2017-02-06T00:00:00") },{ "author" : "lison3", "content" : "lison 评论 3", "commentTime" : ISODate("2017-03-06T00:00:00") },{ "author" : "lison4", "content" : "lison 评论 4", "commentTime" : ISODate("2017-04-06T00:00:00") },{"author" : "lison5", "content" : "lison 是苍老师的小迷弟", "commentTime" : ISODate("2017-05-06T00:00:00") },{ "author" : "lison6", "content" : "lison 评论 6", "commentTime" : ISODate("2017-06-06T00:00:00") },{ "author" : "lison7", "content" : "lison 评论 7", "commentTime" : ISODate("2017-07-06T00:00:00") },{ "author" : "lison8", "content" : "lison 评论 8", "commentTime" : ISODate("2017-08-06T00:00:00") },{ "author" : "lison9", "content" : "lison 评论 9", "commentTime" : ISODate("2017-09-06T00:00:00") } ] };
+    var user2 = { "username" : "james", "country" : "English", "address" : { "aCode" : "311000", "add" : "地址" },"favorites" : { "movies" : ["复仇者联盟","战狼","雷神 1"], "cites" : ["西安","东京","上海"] },"age" : 24, "salary":NumberDecimal("7889.09"), "lenght" :1.35, "comments" : [ { "author" : "lison1","content" : "lison 评论 1", "commentTime" : ISODate("2017-10-06T00:00:00") },{ "author" : "lison6", "content" : "lison 评论 6", "commentTime" : ISODate("2017-11-06T05:26:18") },{ "author" : "lison12", "content" : "lison 评论 12", "commentTime" : ISODate("2017-11-06T00:00:00") } ] };
+    var user3 ={"username" : "deer", "country" : "japan", "address" : { "aCode" : "411000", "add" : "长沙" },"favorites" : { "movies" : ["肉蒲团","一路向西","倩女幽魂"], "cites" : ["东莞","深圳","东京"] },"age" : 22, "salary":NumberDecimal("6666.66"), "lenght" :1.85, "comments" : [ { "author" : "lison1", "content" : "lison 评论 1", "commentTime" : ISODate("2017-10-06T00:00:00") },{ "author" : "lison22", "content" : "lison 评论 6", "commentTime" : ISODate("2017-11-06T00:00:00") },{ "author" : "lison16", "content" : "lison 评论 12", "commentTime" : ISODate("2017-11-06T00:00:00")} ] };
+    var user4 = { "username" : "mark", "country" : "USA", "address" : { "aCode" : "411000", "add" : "长沙" },"favorites" : { "movies" : ["蜘蛛侠","钢铁侠","蝙蝠侠"], "cites" : ["青岛","东莞","上海"] },"age" : 20, "salary":NumberDecimal("6398.22"), "lenght" :1.77 };var user5 = { "username" : "peter", "country" : "UK", "address" : { "aCode" : "411000", "add" : "TEST" },"favorites" : { "movies" : ["蜘蛛侠","钢铁侠","蝙蝠侠"], "cites" : ["青岛","东莞","上海"] }, "salary":NumberDecimal("1969.88") };db.users.insert(user1); db.users.insert(user2); db.users.insert(user3); db.users.insert(user4); db.users.insert(user5);
+    db.users.insert(user1);
+    db.users.insert(user2);
+    db.users.insert(user3);
+    db.users.insert(user4);
+    db.users.insert(user5);
+
+    单元素查询
+
+        备注：对象数组精确查找
+        db.users.find({"comments":{ "author" : "lison6", "content" : "lison 评 论 6","commentTime" : ISODate("2017-06-06T00:00:00Z")}})
+
+    查找 lison1 或者 lison12 评论过的 user （$in 查找符）
+
+        db.users.find({"comments.author":{"$in":["lison1","lison12"]}}).pretty()
+
+    查找 lison1 和 lison12 都评论过的 user
+
+        备注：跟数量有关，跟顺序无关；
+        db.users.find({"comments.author":{"$all":["lison12","lison1"]}}).pretty()
+
+    查找 lison5 评语为包含"苍老师"关键字的 user（$elemMatch 查找符）
+
+        db.users.find({"comments":{"$elemMatch":{"author" : "lison5", "content" : { "$regex" : ".*苍老师.*"}}}}) .pretty()
