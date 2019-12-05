@@ -1,0 +1,13 @@
+替换更新
+
+    #将名称为lison的对象更新的只有一个属性country
+    db.users.update({"username":"lison"},{"country":"USA"})
+
+    结果：{ "_id" : ObjectId("5de91bff24c9c5a875a0e6d4"), "country" : "USA" }
+
+操作符更新 （推荐使用）
+ 性能更好
+ 原子性操作
+
+    #仅仅是更新country这一个属性
+    db.users.update({"username":"james"},{"$set":{"country":"USA"}})

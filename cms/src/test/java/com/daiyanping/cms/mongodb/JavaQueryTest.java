@@ -17,6 +17,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.mongodb.*;
 import org.bson.BSON;
 import org.bson.BsonDocument;
 import org.bson.Document;
@@ -36,11 +37,6 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.mongodb.Block;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientOptions;
-import com.mongodb.ServerAddress;
-import com.mongodb.WriteConcern;
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
@@ -73,7 +69,7 @@ public class JavaQueryTest {
 	public void init() {
 		db = client.getDatabase("lison");
 		collection = db.getCollection("users");
-		orderCollection = db.getCollection("ordersTest");
+		orderCollection = db.getCollection("orders");
 	}
 
 	// -----------------------------操作符使用实例------------------------------------------
@@ -273,6 +269,72 @@ public class JavaQueryTest {
 		System.out.println(ret.size());
 		ret.removeAll(ret);
 
+	}
+
+	/**
+	 *  db.orders.aggregate([
+	 {"$match":{ "orderTime" : { "$lt" : new Date("2015-04-03T16:00:00.000Z")}}},
+	 {"$group":{"_id":{"useCode":"$useCode","month":{"$month":"$orderTime"}},"total":{"$sum":"$price"}}},
+	 {"$sort":{"_id":1}}
+	 ])
+	 */
+	@Test
+	public void aggretionTest1() throws Exception {
+		Block<Document> printBlock = new Block<Document>() {
+			@Override
+			public void apply(Document t) {
+				logger.info("\n\n\n---------------------\n\n\n");
+				System.out.println(t.toJson());
+				logger.info("\n\n\n---------------------\n\n\n");
+			}
+		};
+
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		Date commentDate = formatter.parse("2015-04-03 08:00:00");
+
+		DBObject groupFileds=new BasicDBObject();
+		groupFileds.put("useCode","$useCode");
+		groupFileds.put("month",eq("$month","$orderTime"));
+
+
+		List<Bson> aggregates = new ArrayList<Bson>();
+		aggregates.add(match(lt("orderTime",commentDate)));
+		aggregates.add(group(groupFileds, Accumulators.sum("sum", "$price")));
+		aggregates.add(sort(eq("_id",1)));
+		AggregateIterable<Document> aggregate = orderCollection
+				.aggregate(aggregates);
+		aggregate.forEach(printBlock);
+	}
+
+
+	/**
+	 *
+	 db.orders.aggregate([{"$match":{ "orderTime" : { "$lt" : new Date("2015-04-03T16:00:00.000Z")}}},
+	 {"$unwind":"$Auditors"},
+	 {"$group":{"_id":{"Auditors":"$Auditors"},"total":{"$sum":"$price"}}},
+	 {"$sort":{"_id":1}}])
+	 */
+	@Test
+	public void aggretionTest2() throws Exception {
+		Block<Document> printBlock = new Block<Document>() {
+			@Override
+			public void apply(Document t) {
+				logger.info("---------------------");
+				System.out.println(t.toJson());
+				logger.info("---------------------");
+			}
+		};
+
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		Date commentDate = formatter.parse("2015-04-03 08:00:00");
+		List<Bson> aggregates = new ArrayList<Bson>();
+		aggregates.add(match(lt("orderTime",commentDate)));
+		aggregates.add(unwind("$Auditors"));
+		aggregates.add(group("$Auditors", Accumulators.sum("sum", "$price")));
+		aggregates.add(sort(eq("_id",1)));
+		AggregateIterable<Document> aggregate = orderCollection
+				.aggregate(aggregates);
+		aggregate.forEach(printBlock);
 	}
 	
 

@@ -1,6 +1,7 @@
 package com.daiyanping.cms.mongodb.nativeapi.entity;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -25,7 +26,34 @@ public class User {
 
 	private float lenght;
 
+//	public List<Comment> getComments() {
+//		return comments;
+//	}
+//
+//	public void setComments(List<Comment> comments) {
+//		this.comments = comments;
+//	}
 
+//	public String getComments() {
+//		return comments;
+//	}
+//
+//	public void setComments(String comments) {
+//		this.comments = comments;
+//	}
+
+	/**
+	 * 存在映射不能这样直接使用
+	 */
+//	private List<Comment> comments;
+
+
+//	private String comments;
+
+	/**
+	 * 这样使用就没问题了
+	 */
+	private Comments comments;
 
 
 	public String getUsername() {
@@ -78,17 +106,18 @@ public class User {
 	}
 
 
-//	public List<Comment> getComments() {
-//		return comments;
-//	}
-//	public void setComments(List<Comment> comments) {
-//		this.comments = comments;
-//	}
+	public Comments getComments() {
+		return comments;
+	}
+	public void setComments(Comments comments) {
+		this.comments = comments;
+	}
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", username=" + username + ", country="
 				+ country + ", address=" + address + ", favorites=" + favorites
-				+ ", age=" + age + ", salary=" + salary + ", lenght=" + lenght +"]";
+				+ ", age=" + age + ", salary=" + salary + ", lenght=" + lenght +
+				", comments=" + comments + "]";
 	}
 
 

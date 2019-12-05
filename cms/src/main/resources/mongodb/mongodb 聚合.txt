@@ -1,0 +1,56 @@
+
+常用的管道操作
+    $project：投影，指定输出文档中的字段；
+    $match：用于过滤数据，只输出符合条件的文档。$match 使用 MongoDB 的标准查询操作
+    $limit：用来限制 MongoDB 聚合管道返回的文档数。
+    $skip：在聚合管道中跳过指定数量的文档，并返回余下的文档。
+    $unwind：将文档中的某一个数组类型字段拆分成多条，每条包含数组中的一个值。
+    $group：将集合中的文档分组，可用于统计结果。
+    $sort：将输入文档排序后输出
+
+$group 操作符
+     $group：可以分组的数据执行如下的表达式计算：
+    $sum：计算总和。
+    $avg：计算平均值。
+    $min：根据分组，获取集合中所有文档对应值得最小值。
+    $max：根据分组，获取集合中所有文档对应值得最大值。
+
+查询 2015 年 4 月 3 号之前，每个用户每个月消费的总金额，并按用户名进行排序：
+db.orders.aggregate([ {"$match":{ "orderTime" : { "$lt" : new Date("2015-04-03T16:00:00.000Z")}}}, {"$group":{"_id":{"useCode":"$useCode","month":{"$month":"$orderTime"}},"total":{"$sum":"$price"}}}, {"$sort":{"_id":1}} ])
+
+结果：
+
+    { "_id" : { "useCode" : "AV", "month" : 1 }, "total" : 0 }
+    { "_id" : { "useCode" : "AV", "month" : 2 }, "total" : 0 }
+    { "_id" : { "useCode" : "AV", "month" : 3 }, "total" : 0 }
+    { "_id" : { "useCode" : "AV", "month" : 4 }, "total" : 0 }
+    { "_id" : { "useCode" : "AV", "month" : 12 }, "total" : 0 }
+    { "_id" : { "useCode" : "allen", "month" : 1 }, "total" : 0 }
+    { "_id" : { "useCode" : "allen", "month" : 2 }, "total" : 0 }
+    { "_id" : { "useCode" : "allen", "month" : 3 }, "total" : 0 }
+    { "_id" : { "useCode" : "allen", "month" : 4 }, "total" : 0 }
+    { "_id" : { "useCode" : "allen", "month" : 12 }, "total" : 0 }
+    { "_id" : { "useCode" : "deer", "month" : 1 }, "total" : 0 }
+    { "_id" : { "useCode" : "deer", "month" : 2 }, "total" : 0 }
+    { "_id" : { "useCode" : "deer", "month" : 3 }, "total" : 0 }
+    { "_id" : { "useCode" : "deer", "month" : 4 }, "total" : 0 }
+    { "_id" : { "useCode" : "deer", "month" : 12 }, "total" : 0 }
+    { "_id" : { "useCode" : "james", "month" : 1 }, "total" : 0 }
+    { "_id" : { "useCode" : "james", "month" : 2 }, "total" : 0 }
+    { "_id" : { "useCode" : "james", "month" : 3 }, "total" : 0 }
+    { "_id" : { "useCode" : "james", "month" : 4 }, "total" : 0 }
+    { "_id" : { "useCode" : "james", "month" : 12 }, "total" : 0 }
+
+
+查询 2015 年 4 月 3 号之前，每个审核员分别审批的订单总金额，按审核员名称进行排序：
+
+db.orders.aggregate([{"$match":{ "orderTime" : { "$lt" : new Date("2015-04-03T16:00:00.000Z")}}}, {"$unwind":"$Auditors"},
+{"$group":{"_id":{"Auditors":"$Auditors"},"total":{"$sum":"$price"}}}, {"$sort":{"_id":1}}])
+
+结果：
+
+    { "_id" : { "Auditors" : "auditor1" }, "total" : NumberDecimal("26809700.46") }
+    { "_id" : { "Auditors" : "auditor2" }, "total" : NumberDecimal("27029289.10") }
+    { "_id" : { "Auditors" : "auditor3" }, "total" : NumberDecimal("26772101.15") }
+    { "_id" : { "Auditors" : "auditor4" }, "total" : NumberDecimal("26757916.21") }
+    { "_id" : { "Auditors" : "auditor5" }, "total" : NumberDecimal("26315130.60") }

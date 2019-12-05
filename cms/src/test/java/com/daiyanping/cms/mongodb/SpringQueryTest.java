@@ -27,6 +27,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.aggregation.DateOperators;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -247,6 +248,58 @@ public class SpringQueryTest {
 		Query query = query(where("comments").elemMatch(andOperator));
 		List<User> find = tempelate.find(query, User.class);
 		printUsers(find);
+	}
+
+	/**
+	 *  db.orders.aggregate([
+	 {"$match":{ "orderTime" : { "$lt" : new Date("2015-04-03T16:00:00.000Z")}}},
+	 {"$group":{"_id":{"useCode":"$useCode","month":{"$month":"$orderTime"}},"total":{"$sum":"$price"}}},
+	 {"$sort":{"_id":1}}
+	 ])
+	 */
+	@Test
+	public void aggretionTest1() throws Exception {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		Date commentDate = formatter.parse("2015-04-04 00:00:00");
+		Aggregation aggs =  newAggregation(
+				match(where("orderTime").lt(commentDate)),
+
+				//获取month需要这样操作
+				project("useCode","price","orderTime").and(DateOperators.DateToString.dateOf("orderTime").toString("%m")).as("month"),
+				group("useCode","month").sum("price").as("total"),
+				sort(Sort.by(Direction.ASC,"_id"))
+		);
+
+		AggregationResults<Object> aggregate = tempelate.aggregate(aggs, "orders",	Object.class);
+		List<Object> mappedResults = aggregate.getMappedResults();
+		System.out.println(mappedResults);
+
+	}
+
+
+	/**
+	 *
+	 db.orders.aggregate([{"$match":{ "orderTime" : { "$lt" : new Date("2015-04-03T16:00:00.000Z")}}},
+	 {"$unwind":"$Auditors"},
+	 {"$group":{"_id":{"Auditors":"$Auditors"},"total":{"$sum":"$price"}}},
+	 {"$sort":{"_id":1}}])
+	 */
+	@Test
+	public void aggretionTest2() throws Exception {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		Date commentDate = formatter.parse("2015-04-04 00:00:00");
+		Aggregation aggs =  newAggregation(
+				match(where("orderTime").lt(commentDate)),
+				unwind("Auditors"),
+				group("Auditors").sum("price").as("total"),
+				sort(Sort.by(Direction.ASC,"_id"))
+		);
+
+		AggregationResults<Object> aggregate = tempelate.aggregate(aggs, "orders",	Object.class);
+		List<Object> mappedResults = aggregate.getMappedResults();
+		System.out.println(mappedResults);
+
+
 	}
 
 }
