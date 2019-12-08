@@ -1,0 +1,6 @@
+
+#创建一个boss用户，权限是userAdminAnyDatabase，只对admin库生效
+db.createUser({'user':'boss', 'pwd':'boss', 'roles':[{'role':'userAdminAnyDatabase', 'db':'admin'}]})
+
+#创建一个lison用户，权限是readWrite，只对lison库生效
+db.createUser({'user':'lison','pwd':'lison','roles':[{'role':'readWrite','db':'lison'}]})

@@ -6,6 +6,7 @@ import com.daiyanping.cms.mongodb.nativeapi.entity.User;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.ServerAddress;
+import com.mongodb.WriteConcern;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -56,7 +57,8 @@ public class QuickStartJavaPojoTest {
     	
     	//把编解码器注册中心放入MongoClientOptions
     	//MongoClientOptions相当于连接池的配置信息
-    	MongoClientOptions build = MongoClientOptions.builder().
+		// 配置写策略
+    	MongoClientOptions build = MongoClientOptions.builder().writeConcern(WriteConcern.ACKNOWLEDGED).
     			codecRegistry(registry).build();
 
 

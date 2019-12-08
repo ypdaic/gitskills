@@ -1,0 +1,18 @@
+写策略解析
+
+//需要等待返回结果
+db.users.updateMany({"username":"lison"},{"$unset":{"country":"","age":""}},{writeConcern: {w:1, j: true, wtimeout: 5000 }})
+
+//不需要等待返回结果 db.users.updateMany({"username":"lison"},{"$unset":{"country":"","age":""}},{writeConcern: {w:0, j: true, wtimeout: 5000 }})
+
+
+写策略配置：{ w: <value>, j: <boolean>, wtimeout: <number> }
+
+ w: 数据写入到 number 个节点才向用客户端确认
+     {w: 0} 对客户端的写入不需要发送任何确认，适用于性能要求高，但不关注正确性的场 景
+     {w: 1} 默认的 writeConcern，数据写入到 Primary 就向客户端发送确认
+     {w: “majority”} 数据写入到副本集大多数成员后向客户端发送确认，适用于对数据安全 性要求比较高的场景，该选项会降低写入性能
+
+ j: 写入操作的 journal 持久化后才向客户端确认 默认为{j: false}，如果要求写入持久化了才向客户端确认，则指定该选项为 true
+
+ wtimeout: 写入超时时间，仅 w 的值大于 1 时有效。 当指定{w: }时，数据需要成功写入 number 个节点才算成功，如果写入过程中有节点故障， 可能导致这个条件一直不能满足，从而一直不能向客户端发送确认结果，针对这种情况，客 户端可设置 wtimeout 选项来指定超时时间，当写入过程持续超过该时间仍未结束，则认为 写入失败。
