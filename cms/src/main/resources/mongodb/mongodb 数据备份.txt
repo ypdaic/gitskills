@@ -1,0 +1,19 @@
+数据备份  mongodump
+    ./mongodump -h localhost:27022 -d lison -o /opt/mongodb/backup
+      -h :指定ip和端口； -d :备份的数据库名称 ； -o:指定备份的路径
+       其本质为：执行查询，然后写入文件；
+数据恢复  mongorestore
+./mongorestore -h localhost:27017  -d lison /opt/mongodb/backup/lison --drop
+     --drop 已存在lison库则删除原数据库，去掉--drop则是合并
+数据导出  mongoexport（针对集合）
+./mongoexport -h localhost:27022 -d lison -c users -f id,username,age,salary --type=csv -o /usr/local/mongodb/mongodb-linux-x86_64-3.4.18/backup/users.csv
+
+./mongoexport -h localhost:27017 -d lison -c users -f id,username,age,salary --type=json -o /opt/mongodb/backup/users.json
+
+-c :指定导出的集合； -f :要导出的字段； --type：导出的文件格式类型[csv,json]
+
+
+数据导入  mongoimport（针对集合）
+./mongoimport -h localhost:27022 -d lison -c users /usr/local/mongodb/mongodb-linux-x86_64-3.4.18/backup/users.csv --upsert
+   --upsert  表示更新现有数据，如果不适用—upsert,则导入时已经存在的文档会报id重复，数据不再插入，也可以使用—drop删除原有数据
+

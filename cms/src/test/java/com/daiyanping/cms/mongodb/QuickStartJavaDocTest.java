@@ -51,7 +51,7 @@ public class QuickStartJavaDocTest {
 	@Test
 	public void insertDemo() {
 		Document doc1 = new Document();
-		doc1.append("username", "cang");
+		doc1.append("username", "lison");
 		doc1.append("country", "USA");
 		doc1.append("age", 20);
 		doc1.append("lenght", 1.77f);

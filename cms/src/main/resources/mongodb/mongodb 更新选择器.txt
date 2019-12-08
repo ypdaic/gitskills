@@ -1,0 +1,142 @@
+
+操作符：
+
+        $inc  指定值加n
+        $set  更新指定字段
+        $unset 将指定字段删除
+        $rename 更新字段名称
+
+数组操作符：
+
+        $       定位到某一个元素
+        $push   添加到某一个元素
+        $addToSet 添加值到数组中，有重复则不出来
+        $pop     删除数组第一个或者最后一个
+        $pull    从数组中删除匹配查询条件的值
+        $pullAll 从数组中删除多个值
+
+
+数组运算修饰符：
+
+        $each    与$push和$addToSet等一起使用来操作多个值
+        $slice   与$push和$each一起使用来操作用来缩小更新后数组的大小
+        $sort    与$push，$each，$slice一起使用来对数组进行排序
+
+
+实例：
+
+    $unset：
+
+        #删除国籍和年龄字段
+        db.users.updateMany({"username":"lison"},{"$unset":{"country":"","age":""}})
+
+    $rename：
+
+        #将字段lenght改为height，username改为name
+        db.users.updateMany({"username":"lison"},{"$rename":{"lenght":"height", "username":"name"}})
+
+    $each:
+
+        #往movies字段中添加数组中的每个元素，如果不使用$each，就是将整个数组添加
+
+        db.users.updateMany({ "username" : "james"}, { "$addToSet" : { "favorites.movies" : [ "小电影 2 " , "小电影 3"]}})
+
+        db.users.updateMany({ "username" : "james"}, { "$addToSet" : { "favorites.movies" : { "$each" : [ "小电影 2 " , "小电影 3"]}}})
+
+        结果如下：
+        "favorites" : {
+        		"movies" : [
+        			"复仇者联盟",
+        			"战狼",
+        			"雷神 1",
+        			[                 #不使用$each的结果
+        				"小电影 2 ",
+        				"小电影 3"
+        			],
+        			"小电影 2 ",       #使用$each的结果
+        			"小电影 3"
+        		],
+        		"cites" : [
+        			"西安",
+        			"东京",
+        			"上海"
+        		]
+        	}
+
+    $pull:
+
+        #删除数组中匹配条件的元素
+        db.users.updateMany({ "username" : "james"}, { "$pull" : { "favorites.movies" : [ "小电影 2 " , "小 电影 3"]}})
+
+        结果如下：
+            "favorites" : {
+            		"movies" : [
+            			"复仇者联盟",
+            			"战狼",
+            			"雷神 1",
+            			"小电影 2 ",
+            			"小电影 3"
+            		],
+            		"cites" : [
+            			"西安",
+            			"东京",
+            			"上海"
+            		]
+            	}
+    #pullAll:
+
+        #删除数组中的多个值
+        db.users.updateMany({ "username" : "james"}, { "$pullAll" : { "favorites.movies" : [ "小电影 2 " , " 小电影 3"]}})
+
+    $push:
+
+        给 james 老师增加一条评论（$push,默认放在数组最后）
+        db.users.updateOne({"username":"james"},{"$push":{"comments":{"author":"lison23","content": "ydddyyytttt","commentTime":ISODate("2019-01-06T00:00:00")}}})
+
+        给 james 老师批量新增两条评论（$push,$each）
+        db.users.updateOne({"username":"james"}, {"$push":{"comments": {"$each":[{"author":"lison22","content":"yyyytttt","commentTime":ISODate("2019-07-06T00:00: 00")}, {"author":"lison23","content":"ydddyyytttt","commentTime":ISODate("2019-06-06T00:00:00")}]}} })
+
+        给 james 老师批量新增两条评论并对数组进行排序（$push,$each,$sort）
+        db.users.updateOne(
+            {
+                "username":"james"
+            },
+            {
+                "$push":
+                    {
+                        "comments":
+                            {
+                                "$each":
+                                    [
+                                        {
+                                            "author":"lison22",
+                                            "content":"yyyytttt",
+                                            "commentTime":ISODate("2019-04-06T00:00: 00")
+                                        },
+                                        {
+                                            "author":"lison23",
+                                            "content":"ydddyyytttt",
+                                            "commentTime":ISODate("2019-05-06T00:00:00")
+                                        }
+                                    ],
+                                $sort:
+                                    {
+                                        "commentTime":-1
+                                    }
+                            }
+                    }
+             })
+
+    删除对象数组中的元素
+
+        删除 lison22 对 james 的所有评论 （批量删除）
+        db.users.update({"username":"james"}, {"$pull":{"comments":{"author":"lison22"}}})
+
+        删除 lison5 对 lison 评语为"lison 是苍老师的小迷弟"的评论
+        db.users.update({"username":"lison"}, {"$pull":{"comments":{"author":"lison5", "content":"lison 是苍老师的小迷弟"}}})
+
+    $:
+        含义：精确修改某人某一条精确的评论，如果有多个符合条件的数据，则修改第一条数据。 无法批量修改数组元素，也无法对数组元素做批量更新
+        db.users.updateMany({"username":"james","comments.author":"lison23"}, {"$set":{"comments.$.content":"xxoo", "comments.$.author":"lison10" }})
+
+

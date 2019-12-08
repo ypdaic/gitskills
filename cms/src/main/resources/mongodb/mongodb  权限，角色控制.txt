@@ -1,0 +1,24 @@
+角色类型	                                        类型说明	                    角色名称  	说明
+数据库一般角色（Database User Roles）            每个数据库都包含的一般角色；	read	    提供读取所有非系统集合和部分系统集合的数据的能力，系统集合包括：system.indexes，system.js和system.namespaces集合。
+                                                                            readWrite	提供read角色的所有权限以及修改所有非系统集合和system.js集合上的数据的能力。
+数据库管理角色（Database Administration Roles）	每个数据库都包含的数据库管理角色；	dbAdmin	提供执行管理任务的能力，如与模式相关的任务，索引，收集统计信息。 此角色不授予用户和角色管理的权限。
+                                                                                userAdmin 提供在当前数据库上创建和修改角色和用户的能力。
+                                                                                dbOwner	  提供对数据库执行任何管理操作的能力。 此角色结合了readWrite，dbAdmin和userAdmin角色授予的权限。
+
+
+集群管理角色（Cluster Administration Roles）  	在admin数据库创建，用于管理整个数据库集群系统而不是特定数据库的角色。 这些角色包括但不限于副本集和分片群集管理功能。	clusterManager	在集群上提供管理和监视操作。 具有此角色的用户可以分别访问在分片和复制中使用的config和local数据库。
+clusterMonitor	为监控工具（如MongoDB Cloud Manager和Ops Manager监控代理）提供只读访问权限。
+hostManager	    提供监视和管理服务器的能力。
+clusterAdmin	提供权限最高的群集管理访问。 此角色结合了由clusterManager，clusterMonitor和hostManager角色授予的权限。 此外，该角色还提供了dropDatabase操作。
+
+
+备份和恢复角色（Backup and Restoration Roles）	在admin数据库创建，用于专门的备份和恢复的角色
+                                                                          backup	提供备份数据所需的权限。 此角色提供足够的权限来使用MongoDB Cloud Manager备份代理，Ops Manager备份代理或使用mongodump。
+                                                                          restore	提供使用mongorestore恢复数据所需的权限
+全数据库角色（All-Database Roles）	在admin数据库创建，适用于除mongod实例中的local和config之外的所有数据库：
+                                                                          readAnyDatabase	提供与读取相同的只读权限，除了适用于群集中除本地和配置数据库以外的所有权限。 该角色还提供了整个集群上的listDatabases操作。
+                                                                          readWriteAnyDatabase	提供与readWrite相同的读取和写入权限，除了它适用于群集中除本地和配置数据库以外的所有数据。 该角色还提供了整个集群上的listDatabases操作。
+                                                                          userAdminAnyDatabase	提供与userAdmin相同的用户管理操作访问权限，除了适用于群集中除本地数据库和配置数据库外的所有数据。
+                                                                          dbAdminAnyDatabase	提供与dbAdmin相同的数据库管理操作访问权限，除了它适用于除集群中的本地数据库和配置数据库以外的所有数据库管理操作。 该角色还提供了整个集群上的listDatabases操作。
+超级角色（Superuser Roles）	所有资源的完整权限
+	                                                                      root	提供对readWriteAnyDatabase，dbAdminAnyDatabase，userAdminAnyDatabase，clusterAdmin，还原和备份相结合的操作和所有资源的访问。

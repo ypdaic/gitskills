@@ -1,0 +1,5 @@
+第一种方式
+     use admin
+     db.shutdownServer()
+第二种方式
+    mongod --shutdown -f mongodb.conf （service mongodb start）

@@ -1,0 +1,22 @@
+db.fam.drop();
+var doc1 = { _id : 1, name : 'morris1', age : 18};
+db.fam.insert(doc1);
+var doc2 = { _id : 2, name : 'morris2', age : 18};
+db.fam.insert(doc2);
+var doc3 = { _id : 3, name : 'morris1', age : 18};
+db.fam.insert(doc3);
+
+var ret1 = db.fam.update({"name":"morris1"},{"$inc":{"age":1}})
+
+printjson(ret1);
+   结果：
+
+        { "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 }
+
+
+var ret2 = db.fam.findAndModify({ query:{name:'morris1'}, update:{$inc:{age:1}}, 'new':true });
+
+pintjson(ret2)
+    结果：
+
+        { "_id" : 1, "name" : "morris1", "age" : 20 }

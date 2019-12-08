@@ -22,3 +22,14 @@
 
     db.test.drop() #删除test集合
 
+
+show dbs ：显示数据库列表
+show collections ：显示集合列表
+db : 显示当前数据库
+db.stats() ：显示数据库信息
+db.serverStatus() ： 查看服务器状态
+db.dropDatabase()：删除数据库
+db.help()，db.collection.help()：内置帮助，显示各种方法的说明；
+db.users.find().size()：获取查询集合的数量；
+db.users.drop()：删除集合；
+

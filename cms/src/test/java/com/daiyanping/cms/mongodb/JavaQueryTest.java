@@ -336,7 +336,81 @@ public class JavaQueryTest {
 				.aggregate(aggregates);
 		aggregate.forEach(printBlock);
 	}
-	
+
+	@Test
+	// 新增评论时，使用$sort运算符进行排序，插入评论后，再按照评论时间降序排序
+	public void demoStep1() {
+		Bson filter = eq("username", "lison");
+		Document comment = new Document().append("author", "cang")
+				.append("content", "lison是我的粉丝")
+				.append("commentTime", new Date());
+		// $sort: {"commentTime":-1}
+		Document sortDoc = new Document().append("commentTime", -1);
+		PushOptions sortDocument = new PushOptions().sortDocument(sortDoc);
+		// $each
+		Bson pushEach = Updates.pushEach("comments", Arrays.asList(comment),
+				sortDocument);
+
+		UpdateResult updateOne = collection.updateOne(filter, pushEach);
+		System.out.println(updateOne.getModifiedCount());
+	}
+
+	@Test
+	// 查看人员时加载最新的三条评论；
+	// db.users.find({"username":"lison"},{"comments":{"$slice":[0,3]}}).pretty()
+	public void demoStep2() {
+		FindIterable<Document> find = collection.find(eq("username", "lison"))
+				.projection(slice("comments", 0, 3));
+		printOperation(find);
+	}
+
+
+	@Test
+	// 点击评论的下一页按钮，新加载三条评论
+	// db.users.find({"username":"lison"},{"comments":{"$slice":[3,3]},"$id":1}).pretty();
+	public void demoStep3() {
+		// {"username":"lison"}
+		Bson filter = eq("username", "lison");
+		// "$slice":[3,3]
+		Bson slice = slice("comments", 3, 3);
+		// "$id":1
+		Bson includeID = include("id");
+
+		// {"comments":{"$slice":[3,3]},"$id":1})
+		Bson projection = fields(slice, includeID);
+
+		FindIterable<Document> find = collection.find(filter).projection(
+				projection);
+		printOperation(find);
+	}
+
+	@Test
+	/**
+	 * db.users.aggregate([{"$match":{"username":"lison"}},
+	 {"$unwind":"$comments"},
+	 {$sort:{"comments.commentTime":-1}},
+	 {"$project":{"comments":1}},
+	 {"$skip":6},
+	 {"$limit":3}])
+	 */
+	// 如果有多种排序需求怎么处理,使用聚合
+	public void demoStep4() {
+		final List<Document> ret = new ArrayList<Document>();
+		Block<Document> printBlock = getBlock(ret);
+		List<Bson> aggregates = new ArrayList<Bson>();
+
+		aggregates.add(match(eq("username", "lison")));
+		aggregates.add(unwind("$comments"));
+		aggregates.add(sort(orderBy(ascending("comments.commentTime"))));
+		aggregates.add(project(fields(include("comments"))));
+		aggregates.add(skip(0));
+		aggregates.add(limit(3));
+
+		AggregateIterable<Document> aggregate = collection
+				.aggregate(aggregates);
+
+		printOperation(ret, printBlock, aggregate);
+	}
 
 
 
