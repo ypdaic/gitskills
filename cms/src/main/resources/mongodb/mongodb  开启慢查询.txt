@@ -1,0 +1,98 @@
+开启内置的查询分析器,记录读写操作效率:
+            db.setProfilingLevel(n,{m}),n的取值可选0,1,2；
+0是默认值表示不记录；
+1表示记录慢速操作,如果值为1,m必须赋值单位为ms,用于定义慢速查询时间的阈值；
+2表示记录所有的读写操作；
+         例如:db.setProfilingLevel(1,300)
+
+执行查询：
+
+    db.orders.find({"useCode":"james","orderTime":{"$lt":new Date("2015-04-03T16:00:00.000Z")}})
+
+
+查询监控结果
+
+    监控结果保存在一个特殊的盖子集合 system.profile 里,
+    这个集合分配了 128kb 的空间,要确保 监控分析数据不会消耗太多的系统性资源；
+    盖子集合维护了自然的插入顺序,可以使用 $natural 操作符进行排序,
+    如:db.system.profile.find().sort({'$natural':-1}).limit(5)
+
+    结果：
+
+        {
+        	"op" : "query",
+        	"ns" : "lison.orders",
+        	"command" : {
+        		"find" : "orders",
+        		"filter" : {
+        			"useCode" : "james",
+        			"orderTime" : {
+        				"$lt" : ISODate("2015-04-03T16:00:00Z")
+        			}
+        		},
+        		"lsid" : {
+        			"id" : UUID("78fe7bfc-4424-4e12-936f-be7b76a8b1cf")
+        		},
+        		"$db" : "lison"
+        	},
+        	"cursorid" : 28651336969,
+        	"keysExamined" : 0,
+        	"docsExamined" : 11702,
+        	"numYield" : 91,
+        	"nreturned" : 101,
+        	"locks" : {
+        		"Global" : {
+        			"acquireCount" : {
+        				"r" : NumberLong(92)
+        			}
+        		},
+        		"Database" : {
+        			"acquireCount" : {
+        				"r" : NumberLong(92)
+        			}
+        		},
+        		"Collection" : {
+        			"acquireCount" : {
+        				"r" : NumberLong(92)
+        			}
+        		}
+        	},
+        	"responseLength" : 26836,
+        	"protocol" : "op_msg",
+        	"millis" : 349,
+        	"planSummary" : "COLLSCAN",
+        	"execStats" : {
+        		"stage" : "COLLSCAN",
+        		"filter" : {
+        			"$and" : [
+        				{
+        					"useCode" : {
+        						"$eq" : "james"
+        					}
+        				},
+        				{
+        					"orderTime" : {
+        						"$lt" : ISODate("2015-04-03T16:00:00Z")
+        					}
+        				}
+        			]
+        		},
+        		"nReturned" : 101,
+        		"executionTimeMillisEstimate" : 11,
+        		"works" : 11703,
+        		"advanced" : 101,
+        		"needTime" : 11602,
+        		"needYield" : 0,
+        		"saveState" : 92,
+        		"restoreState" : 91,
+        		"isEOF" : 0,
+        		"invalidates" : 0,
+        		"direction" : "forward",
+        		"docsExamined" : 11702
+        	},
+        	"ts" : ISODate("2019-12-09T14:03:20.341Z"),
+        	"client" : "127.0.0.1",
+        	"appName" : "MongoDB Shell",
+        	"allUsers" : [ ],
+        	"user" : ""
+        }

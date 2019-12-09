@@ -6,44 +6,22 @@ var user3 ={"username" : "deer", "country" : "japan", "address" : { "aCode" : "4
 var user4 = { "username" : "mark", "country" : "USA", "address" : { "aCode" : "411000", "add" : "长沙" },"favorites" : { "movies" : ["蜘蛛侠","钢铁侠","蝙蝠侠"], "cites" : ["青岛","东莞","上海"] },"age" : 20, "salary":NumberDecimal("6398.22"), "lenght" :1.77 };
 var user5 = { "username" : "peter", "country" : "UK", "address" : { "aCode" : "411000", "add" : "TEST" },"favorites" : { "movies" : ["蜘蛛侠","钢铁侠","蝙蝠侠"], "cites" : ["青岛","东莞","上海"] }, "age" : 21, "salary":NumberDecimal("1969.88") };
 
-#插入文档
 db.users.insert(user1);
 db.users.insert(user2);
 db.users.insert(user3);
 db.users.insert(user4);
 db.users.insert(user5);
 
-#查询
+ db.users.createIndex({username:1,age:-1})  #创建索引
 
-    1：查询喜欢的城市包含东莞和东京的 user
+ db.users.find().sort({username:1,age:-1}).explain("executionStats") #可以使用到索引
 
-        db.users.find({ "favorites.cites" : { "$all" : [ "东莞" , "东京"]}}).pretty()
+ db.users.find().sort({username:1,age:1}).explain("executionStats")  #可以使用到索引
 
-    2：查询国籍为英国或者美国，名字中包含 s 的 user
+ db.users.find().sort({username:-1,age:1}).explain("executionStats") #使用不到索引
 
-        db.users.find({ "$and" : [ { "username" : { "$regex" : ".*s.*"}} , { "$or" : [ { "country" : "English"} , { "country" : "USA"}]}]}).pretty()
+ db.users.find().sort({age:-1,username:1}).explain("executionStats") #使用不到索引
 
-#修改
 
-    1：把 lison 的年龄修改为 6 岁
 
-        db.users.updateMany({ "username" : "lison"},{ "$set" : { "age" : 6}})
 
-    2：思考，又过了一年，lison 年龄又涨了一岁
-
-        var age = db.users.find({"username": "lison"})[0].age
-        db.users.updateMany({ "username" : "lison"},{ "$set" : { "age" : age + 1}})
-
-    3: 喜欢的城市包含东莞的人，给他喜欢的电影加入"小电影 2""小电影 3"
-
-        db.users.updateMany({ "favorites.cites" : " 东 莞 "}, { "$addToSet" : { "favorites.movies" : { "$each" : [ "小电影 2 " , "小电影 3"]}}},true)
-
-#删除
-
-    1：删除名字为 lison 的 user
-
-        db.users.deleteMany({ "username" : "lison"} )
-
-    2：删除年龄大于 8 小于 25 的 user
-
-        db.users.deleteMany({"$and" : [ {"age" : {"$gt": 8}} , {"age" : {"$lt" : 25}}]})

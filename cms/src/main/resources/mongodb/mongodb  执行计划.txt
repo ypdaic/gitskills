@@ -1,0 +1,405 @@
+使用explain分析慢速查询
+
+     例如：db.orders.find({'price':{'$lt':2000}}).explain('executionStats')
+
+     explain的入参可选值为:
+
+        "queryPlanner"  是默认值,表示仅仅展示执行计划信息；
+        "executionStats"    表示展示执行计划信息同时展示被选中的执行计划的执行情况信息；
+        "allPlansExecution"    表示展示执行计划信息,并展示被选中的执行计划的执行情况信息,还展示备选的执行计划的执行情况信息；
+
+
+db.orders.find({"useCode":"james","orderTime":{"$lt":new Date("2015-04-03T16:00:00.000Z")}}).explain('executionStats')
+
+结果：
+
+
+
+    {
+    	"queryPlanner" : {       #queryPlanner表示执行计划描述
+    		"plannerVersion" : 1,
+    		"namespace" : "lison.orders",
+    		"indexFilterSet" : false,
+    		"parsedQuery" : {
+    			"$and" : [
+    				{
+    					"useCode" : {
+    						"$eq" : "james"
+    					}
+    				},
+    				{
+    					"orderTime" : {
+    						"$lt" : ISODate("2015-04-03T16:00:00Z")
+    					}
+    				}
+    			]
+    		},
+    		"winningPlan" : {     #winningPlan表示被选中的执行计划
+    			"stage" : "COLLSCAN",  #可选项:COLLSCAN 没有走索引；IXSCAN使用了索引
+    			"filter" : {
+    				"$and" : [
+    					{
+    						"useCode" : {
+    							"$eq" : "james"
+    						}
+    					},
+    					{
+    						"orderTime" : {
+    							"$lt" : ISODate("2015-04-03T16:00:00Z")
+    						}
+    					}
+    				]
+    			},
+    			"direction" : "forward"
+    		},
+    		"rejectedPlans" : [ ]  #rejectedPlans表示候选的执行计划
+    	},
+    	"executionStats" : {       #executionStats表示执行情况描述
+    		"executionSuccess" : true,
+    		"nReturned" : 828,              #最终匹配的个数
+    		"executionTimeMillis" : 583,    #执行时间ms
+    		"totalKeysExamined" : 0,        #检查的索引键值个数
+    		"totalDocsExamined" : 100000,   #当前扫描的文档个数
+    		"executionStages" : {
+    			"stage" : "COLLSCAN",
+    			"filter" : {
+    				"$and" : [
+    					{
+    						"useCode" : {
+    							"$eq" : "james"
+    						}
+    					},
+    					{
+    						"orderTime" : {
+    							"$lt" : ISODate("2015-04-03T16:00:00Z")
+    						}
+    					}
+    				]
+    			},
+    			"nReturned" : 828,
+    			"executionTimeMillisEstimate" : 504,
+    			"works" : 100002,
+    			"advanced" : 828,
+    			"needTime" : 99173,
+    			"needYield" : 0,
+    			"saveState" : 798,
+    			"restoreState" : 798,
+    			"isEOF" : 1,
+    			"invalidates" : 0,
+    			"direction" : "forward",
+    			"docsExamined" : 100000
+    		}
+    	},
+    	"serverInfo" : {
+    		"host" : "localhost.localdomain",
+    		"port" : 27017,
+    		"version" : "4.0.4",
+    		"gitVersion" : "f288a3bdf201007f3693c58e140056adf8b04839"
+    	},
+    	"ok" : 1
+    }
+
+
+优化目标 Tips:
+
+    根据需求建立索引
+    每个查询都要使用索引以提高查询效率, winningPlan. stage 必须为IXSCAN ；
+    追求totalDocsExamined = nReturned
+
+
+    添加索引：db.orders.createIndex({"useCode":-1});
+
+    结果：
+
+
+        {
+        	"queryPlanner" : {
+        		"plannerVersion" : 1,
+        		"namespace" : "lison.orders",
+        		"indexFilterSet" : false,
+        		"parsedQuery" : {
+        			"$and" : [
+        				{
+        					"useCode" : {
+        						"$eq" : "james"
+        					}
+        				},
+        				{
+        					"orderTime" : {
+        						"$lt" : ISODate("2015-04-03T16:00:00Z")
+        					}
+        				}
+        			]
+        		},
+        		"winningPlan" : {
+        			"stage" : "FETCH",
+        			"filter" : {
+        				"orderTime" : {
+        					"$lt" : ISODate("2015-04-03T16:00:00Z")
+        				}
+        			},
+        			"inputStage" : {
+        				"stage" : "IXSCAN",
+        				"keyPattern" : {
+        					"useCode" : -1
+        				},
+        				"indexName" : "useCode_-1",
+        				"isMultiKey" : false,
+        				"multiKeyPaths" : {
+        					"useCode" : [ ]
+        				},
+        				"isUnique" : false,
+        				"isSparse" : false,
+        				"isPartial" : false,
+        				"indexVersion" : 2,
+        				"direction" : "forward",
+        				"indexBounds" : {
+        					"useCode" : [
+        						"[\"james\", \"james\"]"
+        					]
+        				}
+        			}
+        		},
+        		"rejectedPlans" : [ ]
+        	},
+        	"executionStats" : {
+        		"executionSuccess" : true,
+        		"nReturned" : 828,
+        		"executionTimeMillis" : 63,
+        		"totalKeysExamined" : 9200,
+        		"totalDocsExamined" : 9200,
+        		"executionStages" : {
+        			"stage" : "FETCH",
+        			"filter" : {
+        				"orderTime" : {
+        					"$lt" : ISODate("2015-04-03T16:00:00Z")
+        				}
+        			},
+        			"nReturned" : 828,
+        			"executionTimeMillisEstimate" : 53,
+        			"works" : 9201,
+        			"advanced" : 828,
+        			"needTime" : 8372,
+        			"needYield" : 0,
+        			"saveState" : 73,
+        			"restoreState" : 73,
+        			"isEOF" : 1,
+        			"invalidates" : 0,
+        			"docsExamined" : 9200,
+        			"alreadyHasObj" : 0,
+        			"inputStage" : {
+        				"stage" : "IXSCAN",
+        				"nReturned" : 9200,
+        				"executionTimeMillisEstimate" : 21,
+        				"works" : 9201,
+        				"advanced" : 9200,
+        				"needTime" : 0,
+        				"needYield" : 0,
+        				"saveState" : 73,
+        				"restoreState" : 73,
+        				"isEOF" : 1,
+        				"invalidates" : 0,
+        				"keyPattern" : {
+        					"useCode" : -1
+        				},
+        				"indexName" : "useCode_-1",
+        				"isMultiKey" : false,
+        				"multiKeyPaths" : {
+        					"useCode" : [ ]
+        				},
+        				"isUnique" : false,
+        				"isSparse" : false,
+        				"isPartial" : false,
+        				"indexVersion" : 2,
+        				"direction" : "forward",
+        				"indexBounds" : {
+        					"useCode" : [
+        						"[\"james\", \"james\"]"
+        					]
+        				},
+        				"keysExamined" : 9200,
+        				"seeks" : 1,
+        				"dupsTested" : 0,
+        				"dupsDropped" : 0,
+        				"seenInvalidated" : 0
+        			}
+        		}
+        	},
+        	"serverInfo" : {
+        		"host" : "localhost.localdomain",
+        		"port" : 27017,
+        		"version" : "4.0.4",
+        		"gitVersion" : "f288a3bdf201007f3693c58e140056adf8b04839"
+        	},
+        	"ok" : 1
+        }
+
+    可以看到已经使用了useCode_-1这个索引，并且扫描行数缩短至9200行了，查询时间缩短至63毫秒
+
+    再次添加复合索引
+
+    db.orders.createIndex({"useCode":-1,"orderTime":-1});
+
+    结果：
+
+        {
+        	"queryPlanner" : {
+        		"plannerVersion" : 1,
+        		"namespace" : "lison.orders",
+        		"indexFilterSet" : false,
+        		"parsedQuery" : {
+        			"$and" : [
+        				{
+        					"useCode" : {
+        						"$eq" : "james"
+        					}
+        				},
+        				{
+        					"orderTime" : {
+        						"$lt" : ISODate("2015-04-03T16:00:00Z")
+        					}
+        				}
+        			]
+        		},
+        		"winningPlan" : {
+        			"stage" : "FETCH",
+        			"inputStage" : {
+        				"stage" : "IXSCAN",
+        				"keyPattern" : {
+        					"useCode" : -1,
+        					"orderTime" : -1
+        				},
+        				"indexName" : "useCode_-1_orderTime_-1",
+        				"isMultiKey" : false,
+        				"multiKeyPaths" : {
+        					"useCode" : [ ],
+        					"orderTime" : [ ]
+        				},
+        				"isUnique" : false,
+        				"isSparse" : false,
+        				"isPartial" : false,
+        				"indexVersion" : 2,
+        				"direction" : "forward",
+        				"indexBounds" : {
+        					"useCode" : [
+        						"[\"james\", \"james\"]"
+        					],
+        					"orderTime" : [
+        						"(new Date(1428076800000), true)"
+        					]
+        				}
+        			}
+        		},
+        		"rejectedPlans" : [
+        			{
+        				"stage" : "FETCH",
+        				"filter" : {
+        					"orderTime" : {
+        						"$lt" : ISODate("2015-04-03T16:00:00Z")
+        					}
+        				},
+        				"inputStage" : {
+        					"stage" : "IXSCAN",
+        					"keyPattern" : {
+        						"useCode" : -1
+        					},
+        					"indexName" : "useCode_-1",
+        					"isMultiKey" : false,
+        					"multiKeyPaths" : {
+        						"useCode" : [ ]
+        					},
+        					"isUnique" : false,
+        					"isSparse" : false,
+        					"isPartial" : false,
+        					"indexVersion" : 2,
+        					"direction" : "forward",
+        					"indexBounds" : {
+        						"useCode" : [
+        							"[\"james\", \"james\"]"
+        						]
+        					}
+        				}
+        			}
+        		]
+        	},
+        	"executionStats" : {
+        		"executionSuccess" : true,
+        		"nReturned" : 828,
+        		"executionTimeMillis" : 6,
+        		"totalKeysExamined" : 828,
+        		"totalDocsExamined" : 828,
+        		"executionStages" : {
+        			"stage" : "FETCH",
+        			"nReturned" : 828,
+        			"executionTimeMillisEstimate" : 0,
+        			"works" : 829,
+        			"advanced" : 828,
+        			"needTime" : 0,
+        			"needYield" : 0,
+        			"saveState" : 8,
+        			"restoreState" : 8,
+        			"isEOF" : 1,
+        			"invalidates" : 0,
+        			"docsExamined" : 828,
+        			"alreadyHasObj" : 0,
+        			"inputStage" : {
+        				"stage" : "IXSCAN",
+        				"nReturned" : 828,
+        				"executionTimeMillisEstimate" : 0,
+        				"works" : 829,
+        				"advanced" : 828,
+        				"needTime" : 0,
+        				"needYield" : 0,
+        				"saveState" : 8,
+        				"restoreState" : 8,
+        				"isEOF" : 1,
+        				"invalidates" : 0,
+        				"keyPattern" : {
+        					"useCode" : -1,
+        					"orderTime" : -1
+        				},
+        				"indexName" : "useCode_-1_orderTime_-1",
+        				"isMultiKey" : false,
+        				"multiKeyPaths" : {
+        					"useCode" : [ ],
+        					"orderTime" : [ ]
+        				},
+        				"isUnique" : false,
+        				"isSparse" : false,
+        				"isPartial" : false,
+        				"indexVersion" : 2,
+        				"direction" : "forward",
+        				"indexBounds" : {
+        					"useCode" : [
+        						"[\"james\", \"james\"]"
+        					],
+        					"orderTime" : [
+        						"(new Date(1428076800000), true)"
+        					]
+        				},
+        				"keysExamined" : 828,
+        				"seeks" : 1,
+        				"dupsTested" : 0,
+        				"dupsDropped" : 0,
+        				"seenInvalidated" : 0
+        			}
+        		}
+        	},
+        	"serverInfo" : {
+        		"host" : "localhost.localdomain",
+        		"port" : 27017,
+        		"version" : "4.0.4",
+        		"gitVersion" : "f288a3bdf201007f3693c58e140056adf8b04839"
+        	},
+        	"ok" : 1
+        }
+
+        可以看到已经使用了useCode_-1_orderTime_-1这个索引，并且扫描行数缩短至828行了，查询时间缩短至6毫秒
+
+
+
+
+
+
+
+
