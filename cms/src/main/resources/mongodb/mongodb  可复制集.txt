@@ -1,0 +1,116 @@
+可复制集是跨多个MongDB服务器（节点）分布和维护数据的方法。
+mongoDB可以把数据从一个节点复制到其他节点并在修改时进行同步,集群中的节点配置为自动同步数据；
+旧方法叫做主从复制,mongoDB 3.0以后推荐使用可复制集；
+
+为什么要用可复制集？它有什么重要性？
+
+    避免数据丢失,保障数据安全,提高系统安全性；
+       （最少3节点,最大50节点）
+    自动化灾备机制,主节点宕机后通过选举产生新主机；提高系统健壮性；
+       （7个选举节点上限）
+    读写分离,负载均衡,提高系统性能；
+    生产环境推荐的部署模式；
+
+复制集集群搭建：
+
+    mkdir mongodbha #创建集群目录
+    cd mongodbha
+    mkdir node1     #创建节点1
+    mkdir node2     #创建节点2
+    mkdir node3     #创建节点3
+
+    cd node1
+    mkdir db        #创建db目录
+    mkdir logs      #创建日志目录
+    touch mgdb.conf #创建配置文件
+
+    node2,node3同样的操作
+
+    node1的mgdb.conf的内容
+
+        replication:
+            replSetName: configRS #集群名称
+            oplogSizeMB: 50 #oplog 集合大小
+        storage:
+            dbPath: "/opt/mongoha/node1/db"
+        systemLog:
+            destination: file
+            path: "/opt/mongoha/node1/logs/mongodb.log"
+
+        net:
+            port: 27017
+            bindIp: 127.0.0.1,192.168.111.128
+        processManagement:
+            fork: true
+        setParameter:
+            enableLocalhostAuthBypass: false
+
+    node2的mgdb.conf的内容
+
+        replication:
+            replSetName: configRS #集群名称
+            oplogSizeMB: 50 #oplog 集合大小
+        storage:
+            dbPath: "/opt/mongoha/node2/db"
+        systemLog:
+            destination: file
+            path: "/opt/mongoha/node2/logs/mongodb.log"
+
+        net:
+            port: 27018
+            bindIp: 127.0.0.1,192.168.111.128
+        processManagement:
+            fork: true
+        setParameter:
+            enableLocalhostAuthBypass: false
+
+    node3的mgdb.conf的内容
+
+        replication:
+            replSetName: configRS #集群名称
+            oplogSizeMB: 50 #oplog 集合大小
+        storage:
+            dbPath: "/opt/mongoha/node3/db"
+        systemLog:
+            destination: file
+            path: "/opt/mongoha/node3/logs/mongodb.log"
+
+        net:
+            port: 27019
+            bindIp: 127.0.0.1,192.168.111.128
+        processManagement:
+            fork: true
+        setParameter:
+            enableLocalhostAuthBypass: false
+
+
+    启动这3个节点：
+
+        /opt/mongodb/bin/mongod --config /opt/mongoha/node1/mgdb.conf
+        /opt/mongodb/bin/mongod --config /opt/mongoha/node2/mgdb.conf
+        /opt/mongodb/bin/mongod --config /opt/mongoha/node3/mgdb.conf
+
+    配置主节点(使用node1作为主节点)：
+
+        mongo --port 27017
+
+        use admin  #切换到admin数据库
+
+        #复制集初始化,在主节点上执行,ip禁止使用localhost， #_id需要和配置文件中的相同
+        rs.initiate({
+              _id: "configRS",
+              version: 1,
+              members: [{ _id: 0, host : "192.168.111.128:27017" }]});
+
+        rs.add("192.168.111.128:27018");//有几个节点就执行几次方法
+        rs.add("192.168.111.128:27019");//有几个节点就执行几次方法
+
+    在从节点上查询数据方法：
+
+        只能在主节点查询数据,但如果想在副节点查询到数据需运行rs.slaveOk();
+
+
+    mongodb自动选主原则：过半原则，大多数集群存活的情况才会有主，否则全部变从节点
+
+
+

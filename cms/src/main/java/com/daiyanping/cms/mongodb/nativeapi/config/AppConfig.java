@@ -22,23 +22,51 @@ public class AppConfig {
   /*
    * Use the standard Mongo driver API to create a com.mongodb.MongoClient instance.
    */
+//	@Bean(name="mongo")
+//   public MongoClient mongoClient() {
+//
+////		MongoCredential createCredential =
+////				MongoCredential.createCredential("lison", "lison", "lison".toCharArray());
+//
+//		WriteConcern wc = WriteConcern.W1.withJournal(true);
+//		MongoClientOptions mco = MongoClientOptions.builder()
+//				.writeConcern(wc)
+//				.connectionsPerHost(100)
+//				.readPreference(ReadPreference.secondary())
+//				.threadsAllowedToBlockForConnectionMultiplier(5)
+//				.maxWaitTime(120000).connectTimeout(10000).build();
+//		List<ServerAddress> asList = Arrays.asList(
+//				new ServerAddress("192.168.244.123", 27017));
+//
+//	   MongoClient client = new MongoClient(asList, mco);
+//       return client;
+//   }
+
 	@Bean(name="mongo")
-   public MongoClient mongoClient() {
-	   
-//		MongoCredential createCredential = 
+	public MongoClient mongoClient() {
+
+//		MongoCredential createCredential =
 //				MongoCredential.createCredential("lison", "lison", "lison".toCharArray());
-		
+
 		WriteConcern wc = WriteConcern.W1.withJournal(true);
 		MongoClientOptions mco = MongoClientOptions.builder()
 				.writeConcern(wc)
 				.connectionsPerHost(100)
+//				配置从 从节点读取数据
 				.readPreference(ReadPreference.secondary())
 				.threadsAllowedToBlockForConnectionMultiplier(5)
+				.readPreference(ReadPreference.secondaryPreferred())
 				.maxWaitTime(120000).connectTimeout(10000).build();
-		List<ServerAddress> asList = Arrays.asList(
-				new ServerAddress("192.168.244.123", 27017));
+				List<ServerAddress> asList = Arrays.asList(
+                new ServerAddress("192.168.111.128", 27018),
+                new ServerAddress("192.168.111.128", 27017),
+                new ServerAddress("192.168.111.128", 27019));
 
-	   MongoClient client = new MongoClient(asList, mco);
-       return client;
-   }
+//		List<ServerAddress> asList = Arrays.asList(
+//				new ServerAddress("192.168.244.123", 27031));
+
+
+		MongoClient client = new MongoClient(asList, mco);
+		return client;
+	}
 }

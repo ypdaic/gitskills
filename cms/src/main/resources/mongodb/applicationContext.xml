@@ -27,13 +27,17 @@
     <!--</mongo:mongo-client>-->
 
     <!--带用户认证-->
-    <mongo:mongo-client id="mongo" host="192.168.111.128" port="27017" credentials="lison:lison@lison">
-        <mongo:client-options
-        write-concern="ACKNOWLEDGED"
-        threads-allowed-to-block-for-connection-multiplier="5"
-        max-wait-time="1200"
-        connect-timeout="1000"/>
-    </mongo:mongo-client>
+    <!--<mongo:mongo-client id="mongo" host="192.168.111.128" port="27017" credentials="lison:lison@lison">-->
+        <!--<mongo:client-options-->
+        <!--write-concern="ACKNOWLEDGED"-->
+        <!--threads-allowed-to-block-for-connection-multiplier="5"-->
+        <!--max-wait-time="1200"-->
+        <!--connect-timeout="1000"/>-->
+    <!--</mongo:mongo-client>-->
+    <!--集群配置-->
+    <!--<mongo:mongo-client id="mongo"-->
+            <!--replica-set="192.168.111.128:27017,192.168.111.128:27018,192.168.111.128:27019">-->
+    <!--</mongo:mongo-client>-->
 
     <!-- mongodb数据库工厂配置 -->
     <mongo:db-factory dbname="lison" mongo-ref="mongo" />

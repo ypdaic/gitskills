@@ -62,9 +62,14 @@ public class QuickStartJavaPojoTest {
     			codecRegistry(registry).build();
 
 
-    	ServerAddress serverAddress = new ServerAddress("192.168.111.128", 27017);
+//    	ServerAddress serverAddress = new ServerAddress("192.168.111.128", 27017);
 
-		client = new MongoClient(serverAddress, build);
+//		集群配置
+		List<ServerAddress> asList = Arrays.asList(
+				new ServerAddress("192.168.111.128", 27018),
+				new ServerAddress("192.168.111.128", 27017),
+				new ServerAddress("192.168.111.128", 27019));
+		client = new MongoClient(asList, build);
 		db =client.getDatabase("lison");
 		doc = db.getCollection("users",User.class);
     }
