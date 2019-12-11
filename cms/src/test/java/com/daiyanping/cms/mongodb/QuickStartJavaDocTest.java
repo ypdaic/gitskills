@@ -1,6 +1,7 @@
 package com.daiyanping.cms.mongodb;
 
 import com.mongodb.MongoClient;
+import com.mongodb.ServerAddress;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
@@ -37,12 +38,13 @@ public class QuickStartJavaDocTest {
 
 	@Before
 	public void init() {
-		client = new MongoClient("192.168.111.128", 27017);
-/*		List<ServerAddress> asList = Arrays.asList(
-				new ServerAddress("192.168.244.123", 27018),
-				new ServerAddress("192.168.244.123", 27017),
-				new ServerAddress("192.168.244.123", 27019));
-		client = new MongoClient(asList);*/
+//		client = new MongoClient("192.168.111.128", 27017);
+		// 可复制集 集群，事务需要集群支持
+		List<ServerAddress> asList = Arrays.asList(
+				new ServerAddress("192.168.111.128", 27018),
+				new ServerAddress("192.168.111.128", 27017),
+				new ServerAddress("192.168.111.128", 27019));
+		client = new MongoClient(asList);
 		/*client = new MongoClient("192.168.244.123", 27031);*/
 		db = client.getDatabase("lison");
 		doc = db.getCollection("users");

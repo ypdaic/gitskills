@@ -20,7 +20,7 @@ import com.mongodb.WriteConcern;
 public class AppConfig {
 
   /*
-   * Use the standard Mongo driver API to create a com.mongodb.MongoClient instance.
+   * 单机版配置
    */
 //	@Bean(name="mongo")
 //   public MongoClient mongoClient() {
@@ -42,6 +42,42 @@ public class AppConfig {
 //       return client;
 //   }
 
+//	/**
+//	 * 可复制集配置
+//	 * @return
+//	 */
+//	@Bean(name="mongo")
+//	public MongoClient mongoClient() {
+//
+////		MongoCredential createCredential =
+////				MongoCredential.createCredential("lison", "lison", "lison".toCharArray());
+//
+//		WriteConcern wc = WriteConcern.W1.withJournal(true);
+//		MongoClientOptions mco = MongoClientOptions.builder()
+//				.writeConcern(wc)
+//				.connectionsPerHost(100)
+////				配置从 从节点读取数据
+//				.readPreference(ReadPreference.secondary())
+//				.threadsAllowedToBlockForConnectionMultiplier(5)
+//				.readPreference(ReadPreference.secondaryPreferred())
+//				.maxWaitTime(120000).connectTimeout(10000).build();
+//				List<ServerAddress> asList = Arrays.asList(
+//                new ServerAddress("192.168.111.128", 27018),
+//                new ServerAddress("192.168.111.128", 27017),
+//                new ServerAddress("192.168.111.128", 27019));
+//
+////		List<ServerAddress> asList = Arrays.asList(
+////				new ServerAddress("192.168.244.123", 27031));
+//
+//
+//		MongoClient client = new MongoClient(asList, mco);
+//		return client;
+//	}
+
+	/**
+	 * 分片配置
+	 * @return
+	 */
 	@Bean(name="mongo")
 	public MongoClient mongoClient() {
 
@@ -57,13 +93,10 @@ public class AppConfig {
 				.threadsAllowedToBlockForConnectionMultiplier(5)
 				.readPreference(ReadPreference.secondaryPreferred())
 				.maxWaitTime(120000).connectTimeout(10000).build();
-				List<ServerAddress> asList = Arrays.asList(
-                new ServerAddress("192.168.111.128", 27018),
-                new ServerAddress("192.168.111.128", 27017),
-                new ServerAddress("192.168.111.128", 27019));
 
-//		List<ServerAddress> asList = Arrays.asList(
-//				new ServerAddress("192.168.244.123", 27031));
+		// 配置路由服务器
+		List<ServerAddress> asList = Arrays.asList(
+				new ServerAddress("192.168.111.128", 27029));
 
 
 		MongoClient client = new MongoClient(asList, mco);

@@ -1,0 +1,276 @@
+分片集群搭建：
+
+    mkdir mongosplit #创建集群目录
+    cd mongosplit
+    mkdir node27023    #创建节点1
+    mkdir node27024     #创建节点2   分片1
+
+    mkdir node27025    #创建节点3
+    mkdir node27026     #创建节点4   分片2
+
+    cd node27023
+    mkdir db        #创建db目录
+    mkdir logs      #创建日志目录
+    touch mgdb.conf #创建配置文件
+
+    node27023,node27024,node27025,node27026同样的操作
+
+    node27023的mgdb.conf的内容
+
+        replication:
+            replSetName: configRS #集群名称
+            oplogSizeMB: 50 #oplog 集合大小
+        storage:
+            dbPath: "/opt/mongosplit/node27023/db"
+        systemLog:
+            destination: file
+            path: "/opt/mongosplit/node27023/logs/mongodb.log"
+
+        net:
+            port: 27023
+            bindIp: 127.0.0.1,192.168.111.128
+        processManagement:
+            fork: true
+        setParameter:
+            enableLocalhostAuthBypass: false
+
+        sharding:
+            clusterRole: shardsvr
+
+    node27024的mgdb.conf的内容
+
+        replication:
+            replSetName: configRS #集群名称
+            oplogSizeMB: 50 #oplog 集合大小
+        storage:
+            dbPath: "/opt/mongosplit/node27024/db"
+        systemLog:
+            destination: file
+            path: "/opt/mongosplit/node27024/logs/mongodb.log"
+
+        net:
+            port: 27024
+            bindIp: 127.0.0.1,192.168.111.128
+        processManagement:
+            fork: true
+        setParameter:
+            enableLocalhostAuthBypass: false
+
+        sharding:
+            clusterRole: shardsvr
+
+    node27025的mgdb.conf的内容
+
+        replication:
+            replSetName: configRS2 #集群名称
+            oplogSizeMB: 50 #oplog 集合大小
+        storage:
+            dbPath: "/opt/mongosplit/node27025/db"
+        systemLog:
+            destination: file
+            path: "/opt/mongosplit/node27025/logs/mongodb.log"
+
+        net:
+            port: 27025
+            bindIp: 127.0.0.1,192.168.111.128
+        processManagement:
+            fork: true
+        setParameter:
+            enableLocalhostAuthBypass: false
+
+        sharding:
+            clusterRole: shardsvr
+
+    node27026的mgdb.conf的内容
+
+        replication:
+            replSetName: configRS2 #集群名称
+            oplogSizeMB: 50 #oplog 集合大小
+        storage:
+            dbPath: "/opt/mongosplit/node27026/db"
+        systemLog:
+            destination: file
+            path: "/opt/mongosplit/node27026/logs/mongodb.log"
+
+        net:
+            port: 27026
+            bindIp: 127.0.0.1,192.168.111.128
+        processManagement:
+            fork: true
+        setParameter:
+            enableLocalhostAuthBypass: false
+
+        sharding:
+            clusterRole: shardsvr
+
+
+    启动这4个节点：
+
+        /opt/mongodb/bin/mongod --config /opt/mongosplit/node27023/mgdb.conf
+        /opt/mongodb/bin/mongod --config /opt/mongosplit/node27024/mgdb.conf
+        /opt/mongodb/bin/mongod --config /opt/mongosplit/node27025/mgdb.conf
+        /opt/mongodb/bin/mongod --config /opt/mongosplit/node27026/mgdb.conf
+
+    配置分片1主节点(使用node27023作为主节点)：
+
+        mongo --port 27023
+
+        use admin  #切换到admin数据库
+
+        #复制集初始化,在主节点上执行,ip禁止使用localhost， #_id需要和配置文件中的相同
+        rs.initiate({
+              _id: "configRS",
+              version: 1,
+              members: [{ _id: 0, host : "192.168.111.128:27023" }]});
+
+        rs.add("192.168.111.128:27024");//有几个节点就执行几次方法
+
+    配置分片2主节点(使用node27025作为主节点)：
+
+            mongo --port 27025
+
+            use admin  #切换到admin数据库
+
+            #复制集初始化,在主节点上执行,ip禁止使用localhost， #_id需要和配置文件中的相同
+            rs.initiate({
+                  _id: "configRS2",
+                  version: 1,
+                  members: [{ _id: 0, host : "192.168.111.128:27025" }]});
+
+            rs.add("192.168.111.128:27026");//有几个节点就执行几次方法
+
+
+config  服务器配置
+
+        mkdir node27027    #创建节点1
+        mkdir node27028     #创建节点2   创建配置服务器集群
+
+        cd node27027
+        mkdir db        #创建db目录
+        mkdir logs      #创建日志目录
+        touch mgdb.conf #创建配置文件
+
+        node27028同样的操作
+
+        node27027的mgdb.conf的内容
+
+            replication:
+                replSetName: editRS #集群名称
+                oplogSizeMB: 50 #oplog 集合大小
+            storage:
+                dbPath: "/opt/mongosplit/node27027/db"
+            systemLog:
+                destination: file
+                path: "/opt/mongosplit/node27027/logs/mongodb.log"
+
+            net:
+                port: 27027
+                bindIp: 127.0.0.1,192.168.111.128
+            processManagement:
+                fork: true
+            setParameter:
+                enableLocalhostAuthBypass: false
+
+            sharding:
+                clusterRole: configsvr
+
+        node27028的mgdb.conf的内容
+
+            replication:
+                replSetName: editRS #集群名称
+                oplogSizeMB: 50 #oplog 集合大小
+            storage:
+                dbPath: "/opt/mongosplit/node27028/db"
+            systemLog:
+                destination: file
+                path: "/opt/mongosplit/node27028/logs/mongodb.log"
+
+            net:
+                port: 27028
+                bindIp: 127.0.0.1,192.168.111.128
+            processManagement:
+                fork: true
+            setParameter:
+                enableLocalhostAuthBypass: false
+
+            sharding:
+                clusterRole: configsvr
+
+
+
+
+        启动这2个节点：
+
+            /opt/mongodb/bin/mongod --config /opt/mongosplit/node27027/mgdb.conf
+            /opt/mongodb/bin/mongod --config /opt/mongosplit/node27028/mgdb.conf
+
+
+        配置配置服务主节点(使用node27027作为主节点)：
+
+            mongo --port 27027
+
+            use admin  #切换到admin数据库
+
+            #复制集初始化,在主节点上执行,ip禁止使用localhost， #_id需要和配置文件中的相同
+            rs.initiate({
+                  _id: "editRS",
+                  version: 1,
+                  members: [{ _id: 0, host : "192.168.111.128:27027" }]});
+
+            rs.add("192.168.111.128:27028");//有几个节点就执行几次方法
+
+
+路由  服务器配置
+
+        mkdir node27029    #创建节点1
+
+
+        cd node27029
+        mkdir db        #创建db目录
+        mkdir logs      #创建日志目录
+        touch mgdb.conf #创建配置文件
+
+        node27029的mgdb.conf的内容
+
+            systemLog:
+                destination: file
+                path: "/opt/mongosplit/node27029/logs/mongodb.log"
+
+            net:
+                port: 27029
+                bindIp: 127.0.0.1,192.168.111.128
+            processManagement:
+                fork: true
+            setParameter:
+                enableLocalhostAuthBypass: false
+
+            sharding:
+                configDB: editRS/192.168.111.128:27027,192.168.111.128:27028
+
+
+        启动这个节点：
+
+            /opt/mongodb/bin/mongos --config /opt/mongosplit/node27029/mgdb.conf
+
+
+        配置路由：
+
+            mongo --port 27029
+
+            sh.addShard("configRS2/192.168.111.128:27025,192.168.111.128:27026");
+            sh.addShard("configRS/192.168.111.128:27023,192.168.111.128:27024");
+
+
+        启用分片：
+
+            对lison据库启用分片：
+                sh.enableSharding("lison")
+
+             对 ordersTest 集合进行分片，分片键为
+
+                sh.shardCollection("lison.orders",{"useCode":"hashed"});
+             删除分片 db.runCommand( { removeShard: "xxx" } )
+             sh.status()
+
+
+        数据查看：直接在路由服务器上查看

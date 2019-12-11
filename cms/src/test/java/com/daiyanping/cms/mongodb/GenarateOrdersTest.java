@@ -36,7 +36,7 @@ public class GenarateOrdersTest {
 		String[] auditors = new String[] { "auditor1","auditor2","auditor3","auditor4","auditor5"};
 		List<Order> list = new ArrayList<Order>();
 		Random rand = new Random();
-		for (int i = 0; i < 100000; i++) {
+		for (int i = 0; i < 1000; i++) {
 			Order order = new Order();
 			int num = rand.nextInt(11);
 			order.setUseCode(userCodes[num]);

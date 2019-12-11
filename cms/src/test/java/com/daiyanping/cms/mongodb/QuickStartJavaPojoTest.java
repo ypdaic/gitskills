@@ -64,7 +64,7 @@ public class QuickStartJavaPojoTest {
 
 //    	ServerAddress serverAddress = new ServerAddress("192.168.111.128", 27017);
 
-//		集群配置
+//		可复制集 集群配置
 		List<ServerAddress> asList = Arrays.asList(
 				new ServerAddress("192.168.111.128", 27018),
 				new ServerAddress("192.168.111.128", 27017),
