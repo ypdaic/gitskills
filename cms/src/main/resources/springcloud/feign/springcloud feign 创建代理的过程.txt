@@ -97,3 +97,6 @@
             return (T) targeter.target(this, builder, context,
                     new HardCodedTarget<>(this.type, this.name, url));
         }
+
+
+    FeignContext 会为每个@FeignClient注解都创建一个子AplicationContext
