@@ -1,0 +1,26 @@
+通过feign发起请求，最先通过LoadBalancerFeignClient进行处理
+
+//LoadBalancerFeignClient通过该方法获取一个FeignLoadBalancer，并缓存起来
+private FeignLoadBalancer lbClient(String clientName) {
+		return this.lbClientFactory.create(clientName);
+	}
+
+使用的CachingSpringLoadBalancerFactory创建FeignLoadBalancer并缓存起来
+
+// 如下代码通过SpringClientfactory获取Ribbon的子上下文，并从中获取ILoadBalancer，就是这个后续用来进行负载均衡
+public FeignLoadBalancer create(String clientName) {
+		FeignLoadBalancer client = this.cache.get(clientName);
+		if (client != null) {
+			return client;
+		}
+		IClientConfig config = this.factory.getClientConfig(clientName);
+		ILoadBalancer lb = this.factory.getLoadBalancer(clientName);
+		ServerIntrospector serverIntrospector = this.factory.getInstance(clientName,
+				ServerIntrospector.class);
+		client = this.loadBalancedRetryFactory != null
+				? new RetryableFeignLoadBalancer(lb, config, serverIntrospector,
+						this.loadBalancedRetryFactory)
+				: new FeignLoadBalancer(lb, config, serverIntrospector);
+		this.cache.put(clientName, client);
+		return client;
+	}

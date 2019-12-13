@@ -1,0 +1,1 @@
+FeignContext的作用：为每个@FeignClient注解创建一个子上下文，并加载FeignClientsConfiguration.class配置类和@FeignClient中的配置类
