@@ -1,0 +1,4 @@
+@Bean 注解创建bean时，实际就是使用了BeanDefinition的factory-method，factory-bean
+来创建bean的
+
+其对应的BeanDefinition是ConfigurationClassBeanDefinition

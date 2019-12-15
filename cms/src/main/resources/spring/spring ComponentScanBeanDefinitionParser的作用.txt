@@ -1,0 +1,3 @@
+ComponentScanBeanDefinitionParser就是用来解析context:component-scan标签，然后根据扫包，根据我们的
+注解生成BeanDefinition
+

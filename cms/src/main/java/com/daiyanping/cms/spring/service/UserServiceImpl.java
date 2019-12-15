@@ -1,6 +1,6 @@
 package com.daiyanping.cms.spring.service;
 
-import com.xiangxue.jack.bean.Student;
+import com.daiyanping.cms.spring.bean.Student;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,0 +1,1 @@
+CommonAnnotationBeanPostProcessor用来处理@PostConstruct，@PreDestroy，@Resource，@WebServiceRef，@WebServiceClient注解

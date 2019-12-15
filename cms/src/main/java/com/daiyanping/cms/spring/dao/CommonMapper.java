@@ -1,6 +1,6 @@
 package com.daiyanping.cms.spring.dao;
 
-import com.xiangxue.jack.pojo.*;
+import com.daiyanping.cms.spring.pojo.*;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

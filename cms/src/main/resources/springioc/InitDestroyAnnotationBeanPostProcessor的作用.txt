@@ -1,0 +1,3 @@
+InitDestroyAnnotationBeanPostProcessor用于处理，CommonAnnotationBeanPostProcessor缓存的
+
+@PostConstruct，@PreDestroy注解对应的方法的调用
