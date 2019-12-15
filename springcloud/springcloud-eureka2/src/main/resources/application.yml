@@ -1,7 +1,7 @@
 server:
   port: 8090
   servlet:
-    context-path: /@project.name@
+    context-path: /
 spring:
  profiles:
    active: @env@
@@ -25,4 +25,4 @@ eureka:
       #defaultZone: http://admin:enjoy@localhost:7001/eureka
 
       # 高可用配置
-      defaultZone: http://admin:test1234@eureka1:8087/springcloud-eureka/eureka,http://admin:test1234@eureka2:8090/springcloud-eureka2/eureka
+      defaultZone: http://admin:test1234@eureka1:8087/eureka,http://admin:test1234@eureka2:8090/eureka

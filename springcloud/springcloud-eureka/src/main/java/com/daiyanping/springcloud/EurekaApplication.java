@@ -23,6 +23,10 @@ public class EurekaApplication {
         SpringApplication.run(EurekaApplication.class, args);
     }
 
+    /**
+     * 新版的Spring security 会默认开启防csrf攻击
+     * 我们需要排除eureka注册路径
+     */
     @EnableWebSecurity
     static class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
