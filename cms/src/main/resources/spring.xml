@@ -1,32 +1,87 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<beans
-        xmlns="http://www.springframework.org/schema/beans"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns:context="http://www.springframework.org/schema/context"
-        xmlns:tx="http://www.springframework.org/schema/tx"
-        xmlns:aop="http://www.springframework.org/schema/aop"
-        xsi:schemaLocation="
-http://www.springframework.org/schema/beans
-http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-http://www.springframework.org/schema/context
-http://www.springframework.org/schema/context/spring-context-3.0.xsd
-http://www.springframework.org/schema/tx
-http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
-http://www.springframework.org/schema/aop
-http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:jack="http://www.xiangxueedu.com/schema/mytags"
+       xsi:schemaLocation="
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+    http://www.xiangxueedu.com/schema/mytags
+    http://www.xiangxueedu.com/schema/mytags.xsd"
+       default-lazy-init="false">
 
-">
+        <!--<import resource="spring-jdbc.xml"/>-->
+        <context:component-scan base-package="com.daiyanping.cms.spring"/>
 
-        <!-- 启用spring mvc 注解 -->
-<context:annotation-config />
+        <!--这两个beanDefinition会在实例化过程中合并成一个-->
+        <bean id="parent" class="com.daiyanping.cms.spring.bean.Parent" abstract="true">
+                <property name="username" value="parent name"/>
+        </bean>
+        <bean id="son" class="com.daiyanping.cms.spring.bean.Son" parent="parent">
+                <!--<property name="username" value="son name"/>-->
+                <property name="age" value="18"/>
+        </bean>
 
-        <!-- 设置使用注解的类所在的jar包 -->
-<context:component-scan base-package="com.daiyanping.cms"></context:component-scan>
+        <bean class="com.daiyanping.cms.spring.service.AccountServiceImpl" id="accountService"
+              autowire-candidate="false" scope="singleton" primary="true"/>
 
-        <!--&lt;!&ndash; 完成请求和注解POJO的映射 &ndash;&gt;-->
-<!--<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />-->
-        <!--　　<bean id="sessionFactory" class="org.springframework.m">-->
-        <!--&lt;!&ndash; 对转向页面的路径解析。prefix：前缀， suffix：后缀 &ndash;&gt;-->
-<!--<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" prefix:="/jsp/" p:suffix=".jsp" />-->
-       <context:property-placeholder location="application.yml"></context:property-placeholder>
-        </beans>
+        <bean class="com.daiyanping.cms.spring.bean.FactoryBean" id="factoryBean">
+                <description>com.xiangxue.jack.bean.FactoryBean</description>
+                <meta key="key1" value="value1"/>
+        </bean>
+
+        <!--init-method="initMehtod" destroy-method="destroyMethod"-->
+        <bean class="com.daiyanping.cms.spring.bean.PropertyClass" id="propertyClass"
+
+              factory-bean="factoryBean" factory-method="factoryMethod" destroy-method="destroyMethod" init-method="initMehtod"
+        />
+
+        <bean id="woman" class="com.daiyanping.cms.spring.bean.Woman" lazy-init="false"></bean>
+
+
+        <bean id="people" class="com.daiyanping.cms.spring.bean.ShowSixClass">
+                <lookup-method name="getPeople" bean="woman"></lookup-method>
+        </bean>
+
+
+        <bean id="replaceClass" class="com.daiyanping.cms.spring.bean.ReplaceClass" lazy-init="false"/>
+        <bean id="originClass" class="com.daiyanping.cms.spring.bean.OriginClass">
+                <replaced-method name="method" replacer="replaceClass">
+                        <!--方法可能出现重载的情况，要根据类型和方法名找方法-->
+                        <arg-type match="java.lang.String"/>
+                </replaced-method>
+        </bean>
+
+
+        <bean class="com.daiyanping.cms.spring.bean.ConstructorArgBean" id="constructorArgBean">
+                <constructor-arg name="username" value="Jack" index="0" type="java.lang.String"/>
+                <constructor-arg name="password" value="123" index="1" type="java.lang.String"/>
+        </bean>
+
+        <!--@Value()-->
+        <bean class="com.daiyanping.cms.spring.bean.PropertyBean" id="propertyBean">
+                <property name="username" value="Jack"/>
+                <property name="password" value="123"/>
+                <!--<aop:scoped-proxy/>-->
+        </bean>
+
+        <bean class="com.daiyanping.cms.spring.bean.DecoratorBean" id="decoratorBean"
+              p:username="Jack" p:password="123" c:age="12" c:sex="1"/>
+
+        <!--自定义标签-->
+        <jack:redis id="redis" ip="192.168.88.139" port="6379"/>
+
+        <!--TargetSource接口-->
+        <bean class="com.daiyanping.cms.spring.targetSource.Girl" id="girl">
+                <meta key="girlProxy" value="true"/>
+        </bean>
+
+        <bean id="businessObject" class="org.springframework.aop.framework.ProxyFactoryBean">
+        </bean>
+</beans>

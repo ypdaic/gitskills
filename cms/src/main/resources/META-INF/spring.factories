@@ -1,3 +1,6 @@
 # Environment Post Processors
 org.springframework.boot.env.EnvironmentPostProcessor=\
 com.daiyanping.cms.springioc.propertySource.MyEnvironmentPostProcessor
+
+org.springframework.context.ApplicationContextInitializer=\
+com.zhuguang.jack.applicationContextInitializer.MyApplicationContextInitializer

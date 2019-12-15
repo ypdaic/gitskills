@@ -1,0 +1,16 @@
+1：调用   AbstractApplicationContext.refresh()方法
+
+2：调用   AbstractApplicationContext.obtainFreshBeanFactory()方法
+
+         该方法会调用refreshBeanFactory()方法，该方法有两个抽象基类的实现
+         一个是AbstractRefreshableApplicationContext，一个是
+         GenericApplicationContext，而ClassPathXmlApplicationContext
+         是AbstractRefreshableApplicationContext的子类，其子类都要实现
+         loadBeanDefinitions()方法，最终通过委托的形式交给XmlBeanDefinitionReader去
+         加载配置文件，也就是XmlBeanDefinitionReader，XmlBeanDefinitionReader又
+         委托给BeanDefinitionDocumentReader从Document中加载我们的bean信息，也就是
+         DefaultBeanDefinitionDocumentReader去加载，它有委托BeanDefinitionParserDelegate
+         这个类去解析每个标签，并创建BeanDefinition
+
+
+

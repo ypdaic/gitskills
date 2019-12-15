@@ -1,0 +1,61 @@
+<!--这两个beanDefinition会在实例化过程中合并成一个，
+且parent这个bean不会去实例化，并且parent,son并没有真正的继承关系-->
+<bean id="parent" class="com.xiangxue.jack.bean.Parent" abstract="true">
+    <property name="username" value="parent name"/>
+</bean>
+<bean id="son" class="com.xiangxue.jack.bean.Son" parent="parent">
+    <!--<property name="username" value="son name"/>-->
+    <property name="age" value="18"/>
+</bean>
+
+<!--autowire-candidate=false 表示其他类在自动注入这个类时，不要注入这个类
+    scope=singleton表示是单例的，primary=true表示自动注入是优先考虑我-->
+<bean class="com.xiangxue.jack.service.AccountServiceImpl" id="accountService"
+    autowire-candidate="false" scope="singleton" primary="true"/>
+
+
+<!--init-method="initMehtod" bean实例化后调用的方法，destroy-method="destroyMethod"
+    bean销毁后调用的方法，factory-bean指定该bean有这个工厂bean创建，factory-method
+    指定具体由工厂bean的那个方法创建这个bean-->
+    <bean class="com.xiangxue.jack.bean.PropertyClass" id="propertyClass"
+    factory-bean="factoryBean" factory-method="factoryMethod"/>
+
+ <!--meta 标签用于保存BeanDefinition的元数据信息，一般用不到-->
+<bean class="com.xiangxue.jack.bean.FactoryBean" id="factoryBean">
+        <description>com.xiangxue.jack.bean.FactoryBean</description>
+        <meta key="key1" value="value1"/>
+    </bean>
+
+ <!--lookup-method表示其name属性指定的方法的方法值由bean属性提供，并且最终生成的people
+     是一个代理-->
+<bean id="people" class="com.xiangxue.jack.bean.ShowSixClass">
+    <lookup-method name="getPeople" bean="woman"></lookup-method>
+</bean>
+
+<!--replaced-method表示bean的某个方法被另外一个bean的方法替代
+    下面就表示OriginClass的method方法被ReplaceClass替代，ReplaceClass
+    必须实现MethodReplacer接口-->
+<bean id="replaceClass" class="com.xiangxue.jack.bean.ReplaceClass" lazy-init="false"/>
+<bean id="originClass" class="com.xiangxue.jack.bean.OriginClass">
+    <replaced-method name="method" replacer="replaceClass">
+        <!--方法可能出现重载的情况，要根据类型和方法名找方法-->
+        <arg-type match="java.lang.String"/>
+    </replaced-method>
+</bean>
+
+<!--使用指定的构造器初始化bean-->
+<bean class="com.xiangxue.jack.bean.ConstructorArgBean" id="constructorArgBean">
+    <constructor-arg name="username" value="Jack" index="0" type="java.lang.String"/>
+    <constructor-arg name="password" value="123" index="1" type="java.lang.String"/>
+</bean>
+
+<!--@Value()  property标签给属性设值-->
+<bean class="com.xiangxue.jack.bean.PropertyBean" id="propertyBean">
+    <property name="username" value="Jack"/>
+    <property name="password" value="123"/>
+    <!--<aop:scoped-proxy/>-->
+</bean>
+
+<!--bean的属性注入，通过p:的前缀标签进行属性注入，c:标签进行构造函数注入-->
+<bean class="com.xiangxue.jack.bean.DecoratorBean" id="decoratorBean"
+p:username="Jack" p:password="123" c:age="12" c:sex="1"/>

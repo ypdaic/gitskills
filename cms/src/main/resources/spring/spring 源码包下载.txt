@@ -1,0 +1,8 @@
+1：git clone --branch v5.1.3.RELEASE https://gitee.com/Z201/spring-framework.git
+
+2：使用gradle命令编译源码
+
+    在源码路径执行如下命令：
+
+    gradlew :spring-oxm:compileTestJava
+

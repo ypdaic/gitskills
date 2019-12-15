@@ -314,6 +314,11 @@ public class ServerApplicationTests {
 		int sdfsdf = Arrays.binarySearch(new String[]{"确认", "待确认"}, "待确认");
 	}
 
+	@Test
+	public void test12() {
+		ClassPathXmlApplicationContext classPathXmlApplicationContext = new ClassPathXmlApplicationContext("spring.xml");
+		classPathXmlApplicationContext.refresh();
+	}
 
 
 
