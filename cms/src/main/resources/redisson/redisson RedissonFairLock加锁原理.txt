@@ -1,0 +1,29 @@
+while true do
+    local firstThreadId2 = redis.call('lindex', KEYS[2], 0);  #查看队列redisson_lock_queue:{key} 的第一个元素是否存在
+    if firstThreadId2 == false then                           #不存在直接跳出循环
+        break;
+    end;
+    local timeout = tonumber(redis.call('zscore', KEYS[3], firstThreadId2));  获取redisson_lock_timeout:{key}，zset中redisson_lock_queue:{key}第一个的过期时间
+    if timeout <= tonumber(ARGV[3]) then    #到期了
+        redis.call('zrem', KEYS[3], firstThreadId2);   #从zset中删除
+        redis.call('lpop', KEYS[2]);                   #从list中移除
+    else
+        break;
+    end;
+end;
+
+
+if (redis.call('exists', KEYS[1]) == 0) and ((redis.call('exists', KEYS[2]) == 0)
+    or (redis.call('lindex', KEYS[2], 0) == ARGV[2])) then
+    redis.call('lpop', KEYS[2]);
+    redis.call('zrem', KEYS[3], ARGV[2]);
+    redis.call('hset', KEYS[1], ARGV[2], 1);
+    redis.call('pexpire', KEYS[1], ARGV[1]);
+    return nil;
+end;
+if (redis.call('hexists', KEYS[1], ARGV[2]) == 1) then
+    redis.call('hincrby', KEYS[1], ARGV[2], 1);
+    redis.call('pexpire', KEYS[1], ARGV[1]);
+    return nil;
+end;
+return 1

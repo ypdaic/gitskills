@@ -1,0 +1,30 @@
+加锁原理：
+
+if (redis.call('exists', KEYS[1]) == 0) then  #判断资源key是否存在
+  redis.call('hset', KEYS[1], ARGV[2], 1);    #不存在则以该资源key创建一个hash，并以随机id:线程id为filed,1为value
+  redis.call('pexpire', KEYS[1], ARGV[1]);    #设置该key的过期时间
+  return nil;
+end
+if (redis.call('hexists', KEYS[1], ARGV[2]) == 1) then  #如果key存在，并且随机id:线程id为filed也存在
+  redis.call('hincrby', KEYS[1], ARGV[2], 1);           #其value自增1，实现可重入
+  redis.call('pexpire', KEYS[1], ARGV[1]);              #设置该key的过期时间
+  return nil;
+end;
+return redis.call('pttl', KEYS[1]);                 #返回该key的过期时间
+
+
+
+解锁原理：
+if (redis.call('hexists', KEYS[1], ARGV[3]) == 0) then   #判断key存在，并且随机id:线程id为filed也存在
+    return nil;
+end;
+local counter = redis.call('hincrby', KEYS[1], ARGV[3], -1);  #其value减一
+if (counter > 0) then                                         #其value大于0，重新设置过期时间
+    redis.call('pexpire', KEYS[1], ARGV[2]);
+    return 0;
+else
+    redis.call('del', KEYS[1]);                               #其value小于等于0，删除该key
+    redis.call('publish', KEYS[2], ARGV[1]);                  #向redisson_lock__channel:{key}频道发送解锁事件
+    return 1;
+end;
+return nil;
