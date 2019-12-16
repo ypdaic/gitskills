@@ -35,11 +35,12 @@ public class RestConfig {
     }
 
     /**
-     * 随机路由，此处配置的是全局的，所有的服务都是使用该规则
+     * 随机路由，此处配置的是全局的，所有的服务都是使用该规则,虽然在RibbonClientConfiguration
+     * 自动配置了IRule，但是会去父容器中查找是否存在，如果不存在才会自动注入
      * @return
      */
-//    @Bean
-//    public IRule ribbonRule() { // 其中IRule就是所有规则的标准
-//        return new com.netflix.loadbalancer.RandomRule(); // 随机的访问策略
-//    }
+    @Bean
+    public IRule ribbonRule() { // 其中IRule就是所有规则的标准
+        return new com.netflix.loadbalancer.RandomRule(); // 随机的访问策略
+    }
 }

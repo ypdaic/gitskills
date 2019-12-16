@@ -1,7 +1,6 @@
 package com.daiyanping.cms.validator;
 
-import sungo.manager.annotation.IdCard;
-import sungo.util.ValidateUtil;
+import com.daiyanping.cms.annotation.IdCard;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -16,6 +15,7 @@ import javax.validation.ConstraintValidatorContext;
 public class IdCardValidator implements ConstraintValidator<IdCard, Object> {
     @Override
     public boolean isValid(Object value, ConstraintValidatorContext context) {
-        return ValidateUtil.isIDNumber(value.toString());
+//        return ValidateUtil.isIDNumber(value.toString());
+        return false;
     }
 }

@@ -1,10 +1,10 @@
 server:
   port: 8092
   servlet:
-    context-path: /@project.name@
+    context-path: /
 spring:
  profiles:
-   active: @env@
+   active: '@env@'
 
 ribbon:
   eureka:

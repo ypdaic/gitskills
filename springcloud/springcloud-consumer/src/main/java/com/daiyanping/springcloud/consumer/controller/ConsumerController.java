@@ -20,7 +20,7 @@ public class ConsumerController {
     public static final String PRODUCT_LIST_URL="http://localhost:8080/prodcut/list/";
     public static final String PRODUCT_ADD_URL = "http://localhost:8080/prodcut/add/";
 
-    public static final String MICROSERVICE_PRODUCT_GET_URL = "http://SPRINGCLOUD-PROVIDER/springcloud-provider/product/getProduct";
+    public static final String MICROSERVICE_PRODUCT_GET_URL = "http://SPRINGCLOUD-PROVIDER/product/getProduct";
 
     @Autowired
     RestTemplate restTemplate;

@@ -40,13 +40,14 @@ public class ConsumerController {
     @GetMapping("/getProduct")
     public Product getProduct() {
 //        Product product = restTemplate.postForObject(PRODUCT_GET_URL, null, Product.class);
+        // 手动选择服务器
         ServiceInstance serviceInstance = this.loadBalancerClient.choose(PRODUCT_TOPIC);
         System.out.println(
                 "【*** ServiceInstance ***】host = " + serviceInstance.getHost()
                         + "、port = " + serviceInstance.getPort()
                         + "、serviceId = " + serviceInstance.getServiceId());
 
-        URI uri = URI.create(String.format("http://%s:%s/prodcut/getProduct/" ,
+        URI uri = URI.create(String.format("http://%s:%s/product/getProduct/" ,
                 serviceInstance.getHost(), serviceInstance.getPort()));
 
         Product product = restTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<Object>(null, httpHeaders), Product.class).getBody();

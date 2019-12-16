@@ -1,14 +1,18 @@
 server:
   port: 8086
   servlet:
-    context-path: /@project.name@
+    context-path: /
 spring:
  profiles:
-   active: @env@
+   active: '@env@'
 
 eureka:
   client:
     register-with-eureka: false
     service-url:
-      defaultZone: http://admin:test1234@eureka1:8087/springcloud-eureka/eureka,http://admin:test1234@eureka2:8090/springcloud-eureka2/eureka
+      defaultZone: http://admin:test1234@eureka1:8087/eureka,http://admin:test1234@eureka2:8090/eureka
+ribbon:
+  eager-load: #配置饥饿加载，也就是启动时就去初始化ribbonClient，否则是在调用时才初始化。代码做了同步处理NamedContextFactory 99行
+    enabled: false
+    clients: springcloud-provider
 
