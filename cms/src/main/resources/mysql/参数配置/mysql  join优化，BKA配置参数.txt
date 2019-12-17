@@ -1,0 +1,15 @@
+我们就能理解MySQL在5.6版本后开始引入的Batched Key Acess(BKA)算法了。这个BKA算法，其实就是对NLJ算法的优化。
+
+NLJ算法执行的逻辑是：从驱动表t1，一行行地取出a的值，再到被驱动表t2去做join。也就是说，对于表t2来说，每次都是匹配一个值。这时，MRR的优势就用不上了。
+
+那怎么才能一次性地多传些值给表t2呢？方法就是，从表t1里一次性地多拿些行出来，一起传给表t2。
+
+既然如此，我们就把表t1的数据取出来一部分，先放到一个临时内存。这个临时内存不是别人，就是join_buffer。
+
+通过上一篇文章，我们知道join_buffer 在BNL算法里的作用，是暂存驱动表的数据。但是在NLJ算法里并没有用。那么，我们刚好就可以复用join_buffer到BKA算法中。
+
+如果要使用BKA优化算法的话，你需要在执行SQL语句之前，先设置
+
+set optimizer_switch='mrr=on,mrr_cost_based=off,batched_key_access=on';
+
+其中，前两个参数的作用是要启用MRR。这么做的原因是，BKA算法的优化要依赖于MRR。

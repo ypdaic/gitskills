@@ -1,0 +1,18 @@
+建表语法是create temporary table …。例:create temporary table temp_t like t1;
+
+一个临时表只能被创建它的session访问，对其他线程不可见。所以，图中session A创建的临时表t，对于session B就是不可见的。
+
+临时表可以与普通表同名。
+
+session A内有同名的临时表和普通表的时候，show create语句，以及增删改查语句访问的是临时表。
+
+show tables命令不显示临时表。
+
+由于临时表只能被创建它的session访问，所以在这个session结束的时候，会自动删除临时表。
+
+临时表的应用场景：在分库分表查询时，如果一条sql语句不能直接定位到某个库去查询，而是需要查询所有的库，
+               我们就可以在某个库上创建一个临时表，然后在临时表中插入所有分库查询的结果，然后对
+               临时表操作，比如排序等等。
+
+
+如果当前的binlog_format=row，那么跟临时表有关的语句，就不会记录到binlog里。也就是说，只在binlog_format=statment/mixed 的时候，binlog中才会记录临时表的操作。

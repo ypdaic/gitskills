@@ -1,0 +1,31 @@
+1: select 1判断
+
+2:查表判断
+
+        在系统库（mysql库）里创建一个表，比如命名为health_check，里面只放一行数据，然后定期执行：
+        select * from mysql.health_check;
+
+3：更新判断
+
+
+        update mysql.health_check set t_modified=now();
+
+        为了让主备之间的更新不产生冲突，我们可以在mysql.health_check表上存入多行数据，并用A、B的server_id做主键。
+
+        /* 检测命令 */
+        insert into mysql.health_check(id, t_modified) values (@@server_id, now()) on duplicate key update t_modified=now();
+
+4；内部统计
+
+
+    打开redo log的时间监控，你可以执行这个语句：
+    update setup_instruments set ENABLED='YES', Timed='YES' where name like '%wait/io/file/innodb/innodb_log_file%';
+
+    执行检查语句:
+    select event_name,MAX_TIMER_WAIT  FROM performance_schema.file_summary_by_event_name where event_name in ('wait/io/file/innodb/innodb_log_file','wait/io/file/sql/binlog') and MAX_TIMER_WAIT>200*1000000000;
+
+    发现异常后，取到你需要的信息，再通过下面这条语句：
+
+        truncate table performance_schema.file_summary_by_event_name;
+
+        把之前的统计信息清空。这样如果后面的监控中，再次出现这个异常，就可以加入监控累积值了。

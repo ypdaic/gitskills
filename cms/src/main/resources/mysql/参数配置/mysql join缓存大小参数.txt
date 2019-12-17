@@ -1,0 +1,1 @@
+join_buffer的大小是由参数join_buffer_size设定的，默认值是256k
