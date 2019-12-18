@@ -1,0 +1,25 @@
+当不存在DiscoveryClient时，就自动注入NoopDiscoveryClient
+
+// 提供一个空的服务发现功能
+@Deprecated
+public class NoopDiscoveryClient implements DiscoveryClient {
+
+	public NoopDiscoveryClient(ServiceInstance instance) {
+	}
+
+	@Override
+	public String description() {
+		return "Spring Cloud No-op DiscoveryClient";
+	}
+
+	@Override
+	public List<ServiceInstance> getInstances(String serviceId) {
+		return Collections.emptyList();
+	}
+
+	@Override
+	public List<String> getServices() {
+		return Collections.emptyList();
+	}
+
+}

@@ -1,0 +1,20 @@
+收集spring-security提供的过滤器，并使用VirtualFilterChain依次调用这些过滤器，
+
+spring-security 默认提供这些过滤器：
+
+    WebAsyncManagerIntegrationFilter
+    SecurityContextPersistenceFilter
+    HeaderWriterFilter
+    LogoutFilter
+    UsernamePasswordAuthenticationFilter
+    DefaultLoginPageGeneratingFilter
+    DefaultLogoutPageGeneratingFilter
+    BasicAuthenticationFilter
+    RequestCacheAwareFilter
+    SecurityContextHolderAwareRequestFilter
+    AnonymousAuthenticationFilter
+    SessionManagementFilter
+    ExceptionTranslationFilter
+
+
+最后使用tomcat的的FilterChain继续进行其他过滤器的调用

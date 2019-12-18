@@ -1,0 +1,16 @@
+当spring.cloud.httpclientfactories.apache.enabled=true时就提供基于Apache的
+
+    ApacheHttpClientConnectionManagerFactory
+    ApacheHttpClientFactory
+    HttpClientBuilder
+
+
+
+当spring.cloud.httpclientfactories.ok.enabled=true时就提供基于OkHttpClient的
+
+    OkHttpClientConnectionPoolFactory
+    OkHttpClientFactory
+    OkHttpClient.Builder
+
+
+以上的组件，在ribbon,feign,zuul 都要使用

@@ -1,0 +1,3 @@
+当存在LoadBalancerClient时，对加有@LoadBalanced的RestTemplate进行增强，也就是添加负载均衡请求拦截器
+
+LoadBalancerInterceptor
