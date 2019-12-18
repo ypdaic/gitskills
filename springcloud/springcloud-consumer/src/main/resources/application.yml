@@ -11,8 +11,8 @@ eureka:
     register-with-eureka: false
     service-url:
       defaultZone: http://admin:test1234@eureka1:8087/eureka,http://admin:test1234@eureka2:8090/eureka
-ribbon:
-  eager-load: #配置饥饿加载，也就是启动时就去初始化ribbonClient，否则是在调用时才初始化。代码做了同步处理NamedContextFactory 99行
-    enabled: false
-    clients: springcloud-provider
+#ribbon:
+#  eager-load: #配置饥饿加载，也就是启动时就去初始化ribbonClient，否则是在调用时才初始化。代码做了同步处理NamedContextFactory 99行
+#    enabled: false
+#    clients: springcloud-provider
 

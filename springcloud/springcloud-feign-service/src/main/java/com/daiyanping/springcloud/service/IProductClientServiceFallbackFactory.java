@@ -22,6 +22,21 @@ public class IProductClientServiceFallbackFactory implements FallbackFactory<IPr
                 product.setProductDesc("feign-hystrixDesc");
                 return  product;
             }
+
+            @Override
+            public Product getProduct2(Product product) {
+                return null;
+            }
+
+            @Override
+            public Product get0(Product product) {
+                return null;
+            }
+
+            @Override
+            public Product get1(Long id, String username) {
+                return null;
+            }
         };
     }
 }

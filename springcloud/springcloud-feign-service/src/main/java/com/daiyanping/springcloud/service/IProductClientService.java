@@ -3,10 +3,8 @@ package com.daiyanping.springcloud.service;
 import com.daiyanping.springcloud.FeignClientConfig;
 import com.daiyanping.springcloud.Product;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.Mapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.cloud.openfeign.SpringQueryMap;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @ClassName IProductClientService
@@ -18,6 +16,31 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @FeignClient(name = "SPRINGCLOUD-PROVIDER",configuration = FeignClientConfig.class, fallbackFactory = IProductClientServiceFallbackFactory.class)
 public interface IProductClientService {
 
-    @PostMapping("/springcloud-provider/product/getProduct")
+    @PostMapping("/product/getProduct")
     Product getProduct();
+
+    /**
+     * post请求支持多参数情况
+     * @param product
+     * @return
+     */
+    @PostMapping(value = "/post")
+    Product getProduct2(@RequestBody Product product);
+
+    /**
+     * get请求支持多参数情况
+     * @param product
+     * @return
+     */
+    @GetMapping("/get")
+    public Product get0(@SpringQueryMap Product product);
+
+    /**
+     * get请求支持多参数情况
+     * @param id
+     * @param username
+     * @return
+     */
+    @GetMapping(value = "/get")
+    public Product get1(@RequestParam("id") Long id, @RequestParam("username") String username);
 }

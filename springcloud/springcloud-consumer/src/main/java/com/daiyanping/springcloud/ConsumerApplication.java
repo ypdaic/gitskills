@@ -9,7 +9,7 @@ import org.springframework.cloud.netflix.ribbon.RibbonClient;
 
 @SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
 @EnableEurekaClient
-//@RibbonClient(name = "SPRINGCLOUD-PROVIDER", configuration = RibbonConfig.class)
+@RibbonClient(name = "SPRINGCLOUD-PROVIDER", configuration = RibbonConfig.class)
 public class ConsumerApplication {
 
     public static void main(String[] args) {

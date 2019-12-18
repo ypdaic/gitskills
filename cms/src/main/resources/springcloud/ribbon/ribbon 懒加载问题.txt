@@ -1,0 +1,7 @@
+当我们第一次请求时，会通过SpringClientFactory获取对应服务的子上下文，会导致
+第一次请求比较慢。如果想在容器启动时就加载子上下文，需要使用ribbon的饥饿加载配置
+
+ribbon:
+  eager-load: #配置饥饿加载，也就是启动时就去初始化ribbonClient，否则是在调用时才初始化。代码做了同步处理NamedContextFactory 99行
+    enabled: false
+    clients: springcloud-provider
