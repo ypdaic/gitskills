@@ -1,0 +1,38 @@
+提供一个简单的服务发现器SimpleDiscoveryClient，是基于配置文件的，而不是基于注册中心的
+
+public class SimpleDiscoveryClient implements DiscoveryClient {
+
+	private SimpleDiscoveryProperties simpleDiscoveryProperties;
+
+	public SimpleDiscoveryClient(SimpleDiscoveryProperties simpleDiscoveryProperties) {
+		this.simpleDiscoveryProperties = simpleDiscoveryProperties;
+	}
+
+	@Override
+	public String description() {
+		return "Simple Discovery Client";
+	}
+
+	@Override
+	public List<ServiceInstance> getInstances(String serviceId) {
+		List<ServiceInstance> serviceInstances = new ArrayList<>();
+		List<SimpleServiceInstance> serviceInstanceForService = this.simpleDiscoveryProperties
+				.getInstances().get(serviceId);
+
+		if (serviceInstanceForService != null) {
+			serviceInstances.addAll(serviceInstanceForService);
+		}
+		return serviceInstances;
+	}
+
+	@Override
+	public List<String> getServices() {
+		return new ArrayList<>(this.simpleDiscoveryProperties.getInstances().keySet());
+	}
+
+	@Override
+	public int getOrder() {
+		return this.simpleDiscoveryProperties.getOrder();
+	}
+
+}
