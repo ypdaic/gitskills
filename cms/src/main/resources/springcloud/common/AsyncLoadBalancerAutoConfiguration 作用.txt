@@ -1,0 +1,58 @@
+@Configuration
+@ConditionalOnBean(LoadBalancerClient.class)
+@ConditionalOnClass(AsyncRestTemplate.class)
+// 其作用就是给AsyncRestTemplate添加负载均衡能力
+public class AsyncLoadBalancerAutoConfiguration {
+
+	@Configuration
+	static class AsyncRestTemplateCustomizerConfig {
+
+		@LoadBalanced
+		@Autowired(required = false)
+		private List<AsyncRestTemplate> restTemplates = Collections.emptyList();
+
+		@Bean
+		public SmartInitializingSingleton loadBalancedAsyncRestTemplateInitializer(
+				final List<AsyncRestTemplateCustomizer> customizers) {
+			return new SmartInitializingSingleton() {
+				@Override
+				public void afterSingletonsInstantiated() {
+					for (AsyncRestTemplate restTemplate : AsyncRestTemplateCustomizerConfig.this.restTemplates) {
+						for (AsyncRestTemplateCustomizer customizer : customizers) {
+							customizer.customize(restTemplate);
+						}
+					}
+				}
+			};
+		}
+
+	}
+
+	@Configuration
+	static class LoadBalancerInterceptorConfig {
+
+        // 创建一个支持负载均衡的拦击器
+		@Bean
+		public AsyncLoadBalancerInterceptor asyncLoadBalancerInterceptor(
+				LoadBalancerClient loadBalancerClient) {
+			return new AsyncLoadBalancerInterceptor(loadBalancerClient);
+		}
+
+        // 给AsyncRestTemplate添加负载均衡的拦截器
+		@Bean
+		public AsyncRestTemplateCustomizer asyncRestTemplateCustomizer(
+				final AsyncLoadBalancerInterceptor loadBalancerInterceptor) {
+			return new AsyncRestTemplateCustomizer() {
+				@Override
+				public void customize(AsyncRestTemplate restTemplate) {
+					List<AsyncClientHttpRequestInterceptor> list = new ArrayList<>(
+							restTemplate.getInterceptors());
+					list.add(loadBalancerInterceptor);
+					restTemplate.setInterceptors(list);
+				}
+			};
+		}
+
+	}
+
+}
