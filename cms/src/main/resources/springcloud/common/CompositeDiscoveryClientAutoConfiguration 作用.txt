@@ -1,0 +1,13 @@
+@Configuration
+@AutoConfigureBefore(SimpleDiscoveryClientAutoConfiguration.class)
+// 使用组合模式收集其他的DiscoveryClient，对外暴露的是这个DiscoveryClient
+public class CompositeDiscoveryClientAutoConfiguration {
+
+	@Bean
+	@Primary
+	public CompositeDiscoveryClient compositeDiscoveryClient(
+			List<DiscoveryClient> discoveryClients) {
+		return new CompositeDiscoveryClient(discoveryClients);
+	}
+
+}
