@@ -1,7 +1,81 @@
 IClientConfig：Ribbon 的客户端配置，默认采用 com.netflix.client.config.DefaultClientConfigImpl 实现。
+
+     配置方式：
+     <clientName>.<nameSpace>.<propertyName>=<value>
+
+     1. <clientName>：这是调用ribbon的客户端名称，如果此值为没有配置，则此条属性会作用到所有的客户端。
+     2. <nameSpace>：默认值为 “ribbon”
+     3. <propertyName>：所有的可用的属性都在com.netflix.client.conf.CommonClientConfigKey。
+
 IRule：Ribbon 的负载均衡策略，默认采用 com.netflix.loadbalancer.ZoneAvoidanceRule 实现，该策略能够在多区域环境下选择最佳区域的实例进行访问
+
+    RoundRobinRule
+    轮询规则，默认规则。同时也是更高级rules的回退策略
+
+    AvailabilityFilteringRule
+    这个负载均衡器规则，会先过滤掉以下服务：
+
+    a. 由于多次访问故障而处于断路器跳闸状态
+    b. 并发的连接数量超过阈值
+    然后对剩余的服务列表按照RoundRobinRule策略进行访问
+
+    WeightedResponseTimeRule
+    根据平均响应时间计算所有服务的权重，响应时间越快，服务权重越重、被选中的概率越高。刚启动时，如果统计信息不足，则使用RoundRobinRule策略，等统计信息足够，会切换到WeightedResponseTimeRule。
+
+    RetryRule
+    先按照RoundRobinRule的策略获取服务，如果获取服务失败，则在指定时间内会进行重试，获取可用的服务
+
+    BestAvailableRule
+    此负载均衡器会先过滤掉由于多次访问故障而处于断路器跳闸状态的服务，然后选择一个并发量最小的服务
+
+    RandomRule
+    随机获取一个服务
+
+
 IPing：Ribbon 的实例检查策略，默认采用 com.netflix.loadbalancer.DummyPing 实现，该检查策略是一个特殊的实现，实际上他并不会检查实例是否可用，而是始终返回 true ，默认认为所有服务实例都是可以使用
+
+    NIWSDiscoveryPing
+    不执行真正的ping。如果Discovery Client认为是在线，则程序认为本次心跳成功，服务活着
+
+    PingUrl
+    此组件会使用HttpClient调用服务的一个URL，如果调用成功，则认为本次心跳成功，表示此服务活着。
+
+    NoOpPing
+    永远返回true，即认为服务永远活着
+
+    DummyPing
+    默认实现，默认返回true，即认为服务永远活着
+
+
 ServerList<Server>：服务实例清单的维护机制，默认采用 com.netflix.loadbalancer.ConfigurationBasedServerList 实现。
+
+    ConfigurationBasedServerList
+    从配置文件中获取所有服务列表
+
+        配置例子：
+
+        sample-client.ribbon.listOfServers=www.microsoft.com:80,www.yahoo.com:80,www.google.com:80
+
+    DiscoveryEnabledNIWSServerList
+    从Eureka Client中获取服务列表。此值必须通过属性中的VipAddress来标识服务器集群。DynamicServerListLoadBalancer会调用此对象动态获取服务列表
+
+    DomainExtractingServerList
+    代理类，根据ServerList的值实现具体的逻辑(主要实现分区域能力)
+
 ServerListFilter<Server>：服务实例清单过滤机制，默认采用 org.springframework.cloud.netflix.ribbon.ZonePreferenceServerListFilter 实现，该策略能够优先过滤出与请求调用方处理同区域的服务实现
 ILoadBalancer：负载均衡器，默认采用 com.netflix.loadbalancer.ZoneAwareLoadBalancer 实现，他具备了区域感知的能力
+
+    DynamicServerListLoadBalancer
+    DynamicServerListLoadBalancer组合Rule、IPing、ServerList、ServerListFilter、ServerListUpdater 实现类，实现动态更新和过滤更新服务列表
+
+    ZoneAwareLoadBalancer
+    这是DynamicServerListLoadBalancer的子类，主要加入zone的因素。统计每个zone的平均请求的情况，保证从所有zone选取对当前客户端服务最好的服务组列表
+
+
 ServerListUpdater<Server> 服务实例动态更新机制，默认采用com.netflix.loadbalancer.PollingServerListUpdater
+
+    PollingServerListUpdater
+    默认的实现策略。此对象会启动一个定时线程池，定时执行更新策略
+
+    EurekaNotificationServerListUpdater
+    当收到缓存刷新的通知，会更新服务列表。
