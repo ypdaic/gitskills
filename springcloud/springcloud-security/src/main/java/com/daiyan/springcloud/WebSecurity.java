@@ -49,4 +49,9 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 //                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 //    }
 
+
+    @Override
+    public void configure(org.springframework.security.config.annotation.web.builders.WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/turbine.stream", "/actuator/hystrix.stream");
+    }
 }

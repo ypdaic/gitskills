@@ -9,6 +9,12 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.Import;
 
+/**
+ * http://localhost:8088/actuator/hystrix.stream
+ * hystrix监控信息，需要将整个连接加到hystrix-dashboard中进行监控
+ * 如果有认证需要加认证
+ * http://admin:test1234@localhost:8088/actuator/hystrix.stream
+ */
 @SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
 @Import({WebSecurity.class})
 @EnableEurekaClient

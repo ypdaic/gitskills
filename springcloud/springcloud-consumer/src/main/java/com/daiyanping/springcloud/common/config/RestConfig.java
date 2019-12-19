@@ -39,8 +39,8 @@ public class RestConfig {
      * 自动配置了IRule，但是会去父容器中查找是否存在，如果不存在才会自动注入
      * @return
      */
-    @Bean
-    public IRule ribbonRule() { // 其中IRule就是所有规则的标准
-        return new com.netflix.loadbalancer.RandomRule(); // 随机的访问策略
-    }
+//    @Bean
+//    public IRule ribbonRule() { // 其中IRule就是所有规则的标准
+//        return new com.netflix.loadbalancer.RandomRule(); // 随机的访问策略
+//    }
 }

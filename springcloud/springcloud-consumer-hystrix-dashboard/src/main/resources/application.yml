@@ -1,15 +1,15 @@
 server:
   port: 9800
   servlet:
-    context-path: /@project.name@
+    context-path: /
 spring:
  profiles:
-   active: @env@
+   active: '@env@'
 
-turbine:
-  aggregator:
-    cluster-config: customer-service
-  app-config: customer-service
+#turbine:
+#  aggregator:
+#    cluster-config: customer-service
+#  app-config: customer-service
 
 management:
   endpoint:
@@ -20,4 +20,4 @@ eureka:
   client:
     register-with-eureka: false
     service-url:
-      defaultZone: http://admin:test1234@eureka1:8087/springcloud-eureka/eureka,http://admin:test1234@eureka2:8090/springcloud-eureka2/eureka
+      defaultZone: http://admin:test1234@eureka1:8087/eureka,http://admin:test1234@eureka2:8090/eureka

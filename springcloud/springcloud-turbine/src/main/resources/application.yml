@@ -1,7 +1,18 @@
 server:
   port: 8093
   servlet:
-    context-path: /@project.name@
+    context-path: /
 spring:
  profiles:
-   active: @env@
+   active: '@env@'
+
+eureka:
+  client:
+    register-with-eureka: false
+    service-url:
+      defaultZone: http://admin:test1234@eureka1:8087/eureka,http://admin:test1234@eureka2:8090/eureka
+turbine:
+#  aggregator:
+#    cluster-config: customer-service
+  app-config: SPRINGCLOUD-PROVIDER,USER-SERVICE
+  cluster-name-expression: new String("default")

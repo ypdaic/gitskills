@@ -1,10 +1,10 @@
 server:
   port: 8088
   servlet:
-    context-path: /springcloud-provider
+    context-path: /
 spring:
  profiles:
-   active: @env@
+   active: '@env@'
  datasource:
   druid:
     filter:
@@ -34,19 +34,19 @@ eureka:
       #defaultZone: http://admin:test1234@localhost:8087/springcloud-eureka/eureka/
 
       # 高可用
-      defaultZone: http://admin:test1234@eureka1:8087/springcloud-eureka/eureka,http://admin:test1234@eureka2:8090/springcloud-eureka2/eureka
+      defaultZone: http://admin:test1234@eureka1:8087/eureka,http://admin:test1234@eureka2:8090/eureka
   instance:
-    instanceId: @project.name@
+    instanceId: springcloud-provider-3
     prefer-ip-address: true
     lease-renewal-interval-in-seconds: 30 # 设置心跳的时间间隔（默认是30秒）
     lease-expiration-duration-in-seconds: 90  # 如果现在超过了5秒的间隔（默认是90秒）
 
 info:
-  app.name: @project.name@
+  app.name: '@project.name@'
   company.name: daiyanping
-  build.artifactId: @project.artifactId@
-  build.modelVersion: @project.modelVersion@
-# actuator监控
+  build.artifactId: '@project.artifactId@'
+  build.modelVersion: '@project.modelVersion@'
+# actuator监控,hystrix监控需要
 management:
   endpoints:
     web:

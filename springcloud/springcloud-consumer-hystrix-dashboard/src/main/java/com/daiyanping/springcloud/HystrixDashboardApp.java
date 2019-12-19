@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.hystrix.dashboard.EnableHystrixDashboard;
 
 /**
- * @ClassName HystrixDashboardApp
+ * @ClassName HystrixDashboardApp只能监控一个服务
  * @Description 使用HystrixDashboard对服务进行监控
  *
  *          进入到http://localhost:9090/hystrix/   页面
@@ -14,6 +14,7 @@ import org.springframework.cloud.netflix.hystrix.dashboard.EnableHystrixDashboar
  *
  *          http://localhost:9000/turbine.stream?cluster=customer-service
  *
+ *          监控单点服务：http://localhost:9000//actuator/hystrix.stream?
  *          需要监控服务开启endpoint
  * @Author daiyanping
  * @Date 2019-09-12
