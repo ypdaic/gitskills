@@ -1,0 +1,6 @@
+配置文件为：EurekaRibbonClientConfiguration
+
+下面的两个接口自定义的配置如下：
+
+ServerList<Server>：服务实例清单的维护机制，默认采用 com.netflix.niws.loadbalancer.DiscoveryEnabledNIWSServerList实现，该实现会将服务清单列表交给 Eureka 的服务治理机制来进行维护
+IPing：Ribbon 的实例检查策略，默认采用 com.netflix.niws.loadbalancer.NIWSDiscoveryPing 实现，该实现将实例检查的任务交给了服务治理框架来进行维护
