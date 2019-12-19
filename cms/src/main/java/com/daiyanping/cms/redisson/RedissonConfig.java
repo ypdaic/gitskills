@@ -9,6 +9,7 @@ import org.redisson.config.Config;
 import org.redisson.spring.cache.CacheConfig;
 import org.redisson.spring.cache.RedissonSpringCacheManager;
 import org.redisson.spring.data.connection.RedissonConnectionFactory;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -30,11 +31,13 @@ import java.util.Map;
  * @Version 0.1
  */
 @Configuration
+@EnableCaching
 public class RedissonConfig {
 
     @Bean
     public RedissonClient redisson() throws IOException {
-        Config config = Config.fromYAML(new ClassPathResource("redisson_dev_config.yml").getInputStream());
+//        Config config = Config.fromYAML(new ClassPathResource("redisson_dev_config.yml").getInputStream());
+        Config config = Config.fromYAML(new ClassPathResource("redisson/redisson-single-config.yml").getInputStream());
         RedissonClient redisson = Redisson.create(config);
         return redisson;
     }
