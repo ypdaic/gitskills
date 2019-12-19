@@ -3,6 +3,7 @@ package com.daiyanping.cms.springmvc;
 import com.alibaba.fastjson.JSONObject;
 import com.daiyanping.cms.entity.User;
 import com.daiyanping.cms.service.IUserService;
+import com.daiyanping.cms.validator.Create;
 import com.daiyanping.cms.vo.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -14,6 +15,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.request.async.DeferredResult;
@@ -21,7 +23,6 @@ import org.springframework.web.context.request.async.WebAsyncTask;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.validation.Valid;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Calendar;
@@ -174,7 +175,7 @@ public class HelloController {
 	}
 
 	@PostMapping(value = "/say11")
-	private JSONObject say11(@RequestBody @Valid UserDto userDto, BindingResult bindingResult) {
+	private JSONObject say11(@RequestBody @Validated(Create.class) UserDto userDto, BindingResult bindingResult) {
 //		String[] tests = bindingResult.resolveMessageCodes("test");
 		System.out.println(bindingResult.getAllErrors().get(0).getDefaultMessage());
 		System.out.println(bindingResult.getAllErrors().get(0).getCode());
