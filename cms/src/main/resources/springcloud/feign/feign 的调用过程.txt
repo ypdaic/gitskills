@@ -1,0 +1,21 @@
+SynchronousMethodHandler.invoke()
+
+SynchronousMethodHandler.executeAndDecode()
+
+LoadBalancerFeignClient的 Response execute(Request request, Request.Options options)方法
+
+
+调到AbstractLoadBalancerAwareClient.executeWithLoadBalancer(ribbonRequest, requestConfig).toResponse();方法
+
+调到FeignLoadBalancer的RibbonResponse execute(RibbonRequest request, IClientConfig configOverride)
+
+最终调到Client的实现Default，ApacheHttpClient，OkHttpClient进行具体的请求
+
+ApacheHttpClient，OkHttpClient这两个通过配置项feign.httpclient.enabled = true 或者feign.okhttp.enable=true开启，
+默认使用Default这个实现
+
+实际上LoadBalancerFeignClient包装了ApacheHttpClient，OkHttpClient，Client
+
+对SynchronousMethodHandler暴露的其实是LoadBalancerFeignClient
+注入的代码位置：FeignClientFactoryBean  protected <T> T loadBalance(Feign.Builder builder, FeignContext context,
+                                			HardCodedTarget<T> target)

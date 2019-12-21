@@ -13,3 +13,8 @@ https://gitee.com/geek_qi/cloud-platform
 
 http://itmuch.com/
 
+http://tangyh.top:180/zuihou-admin-ui/#/dashboard
+
+http://tangyh.top:10000/zuihou-ui/#/dashboard
+
+

@@ -1,0 +1,57 @@
+spring解决循环依赖主要是使用3个缓存，分为一级缓存singletonObjects，二级缓存earlySingletonObjects，三级缓存 singletonFactories
+
+
+@Nullable
+	protected Object getSingleton(String beanName, boolean allowEarlyReference) {
+		// 根据beanName从缓存中拿实例
+		// 先从一级缓存拿
+		Object singletonObject = this.singletonObjects.get(beanName);
+		// 如果bean还在创建，还没有创建完成，其实就是堆内存有了，属性还没有DI依赖注入
+		if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
+			synchronized (this.singletonObjects) {
+				// 从二级缓存中拿
+				singletonObject = this.earlySingletonObjects.get(beanName);
+				// 如果还拿不到，并且允许bean提前暴露
+				if (singletonObject == null && allowEarlyReference) {
+					// 从三级缓存中拿到对象工厂
+					ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);
+					if (singletonFactory != null) {
+						// 从工厂中拿到对象
+						singletonObject = singletonFactory.getObject();
+						// 升级到二级缓存
+						this.earlySingletonObjects.put(beanName, singletonObject);
+						// 删除三级缓存
+						this.singletonFactories.remove(beanName);
+					}
+				}
+			}
+		}
+		return singletonObject;
+	}
+
+当我们的bean在实例化过程中，会添加到3级缓存中，而且是在通过构造器反射生成初始化bean之后，代码如下：
+
+AbstractAutowireCapableBeanFactory  592行
+// 这里着重理解，对理解循环依赖帮助非常大，重要程度5，添加三级缓存
+			addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, mbd, bean));
+
+当A对象的属性持有B对象，B对象的属性持有A对象时,A对象的创建过程：
+
+    1：调用A的构造器完成初始化
+    2：将A添加到3级缓存
+    3：对属性B进行赋值
+    4：进行B的初始化
+    5：调用B的构造器完成初始化
+    6：将B添加到3级缓存
+    7：对B的属性A进行赋值
+    8：进行B属性A的初始化
+    9：由于3级缓存中有A，直接从缓存中获取，并将3级缓存中的A删除，将其放入到2级缓存中
+    10：B完成实例化，将其从三级缓存中删除，放入到一级缓存
+    11：A完成实例化，将其从二级缓存中删除，将入到一级缓存
+
+二级缓存存在的意义：
+
+    如果此时A对象还存在一个C对象，C对象的属性也持有A对象，在对C对象进行实例化时，就可以直接从二级缓存中获取A对象
+    而不需要再从3级缓存中获取，放入3级缓存的对象有使用BeanPostProcessor对其进行处理
+
+

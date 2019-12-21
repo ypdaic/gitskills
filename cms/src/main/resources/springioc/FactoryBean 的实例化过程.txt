@@ -1,0 +1,21 @@
+spring在对bean进行实例化时，不管这个bean是否实现了FactoryBean接口，都需要进行FactoryBean
+的调用，代码如下：
+
+sharedInstance = getSingleton(beanName, () -> {
+        try {
+            return createBean(beanName, mbd, args);
+        }
+        catch (BeansException ex) {
+            // Explicitly remove instance from singleton cache: It might have been put there
+            // eagerly by the creation process, to allow for circular reference resolution.
+            // Also remove any beans that received a temporary reference to the bean.
+            destroySingleton(beanName);
+            throw ex;
+        }
+    });
+    //该方法是FactoryBean接口的调用入口
+    bean = getObjectForBeanInstance(sharedInstance, name, beanName, mbd);
+
+  // 这个方法的执行逻辑就是：判断如果不是FactoryBean，或者name是以$开头的就直接返回，否则调用其getObject()返回
+  // 并将其放入到factoryBeanObjectCache缓存中，而FactoryBean本身对应的bean则是放在singletonObjects这个缓存中
+  getObjectForBeanInstance(sharedInstance, name, beanName, mbd);

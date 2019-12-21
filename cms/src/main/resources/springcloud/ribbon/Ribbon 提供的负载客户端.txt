@@ -1,0 +1,7 @@
+OkHttpRibbonConfiguration 提供基于OKHttp的负载客户端
+
+RestClientRibbonConfiguration 提供基于RestClient的负载客户端
+
+HttpClientRibbonConfiguration 提供基于HttpClient的负载客户端
+
+而springcloud则默认使用RestTemplate进行负载均衡，其实现原理就是给RestTemplate添加了LoadBalancerInterceptor

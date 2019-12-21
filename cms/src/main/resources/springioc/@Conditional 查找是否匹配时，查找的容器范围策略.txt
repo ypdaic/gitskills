@@ -1,0 +1,24 @@
+比如当使用@ConditionalOnBean注解时，如果存在多个父，子上下文该如何去匹配呢：
+
+该注解默认有一个SearchStrategy search() default SearchStrategy.ALL;
+
+search()方法， 该方法用于制定查找策略，提供三种策略,如下：
+
+public enum SearchStrategy {
+
+	/**
+	 * Search only the current context.
+	 */
+	CURRENT,  只查找当前context
+
+	/**
+	 * Search all ancestors, but not the current context.
+	 */
+	ANCESTORS, 只查找父context
+
+	/**
+	 * Search the entire hierarchy.
+	 */
+	ALL  查找所有context
+
+}

@@ -1,0 +1,8 @@
+配置方式：
+     <clientName>.<nameSpace>.<propertyName>=<value>
+
+     1. <clientName>：这是调用ribbon的客户端名称，如果此值为没有配置，则此条属性会作用到所有的客户端。
+     2. <nameSpace>：默认值为 “ribbon”
+     3. <propertyName>：所有的可用的属性都在com.netflix.client.conf.CommonClientConfigKey。
+
+默认实现是：DefaultClientConfigImpl

@@ -1,0 +1,9 @@
+zuul 默认忽略掉这三个hears
+
+private Set<String> sensitiveHeaders = new LinkedHashSet<>(
+			Arrays.asList("Cookie", "Set-Cookie", "Authorization"));
+
+如果需要向下游设置这个三个请求头则需要重新配置，如下：
+
+zuul:
+  sensitive-headers: "Cookie,Set-Cookie"
