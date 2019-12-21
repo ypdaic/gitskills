@@ -20,3 +20,10 @@ feign:
         - application/xml
         - application/json
       min-request-size: 2048 # 超过2048的字节进行压缩
+
+ribbon:
+  eager-load: #配置饥饿加载，也就是启动时就去初始化ribbonClient，否则是在调用时才初始化。代码做了同步处理NamedContextFactory 99行
+    enabled: true
+    clients: springcloud-provider
+  ConnectTimeout: 4000  #给RibbonProperties使用
+  ReadTimeout: 4000  #给RibbonProperties使用
