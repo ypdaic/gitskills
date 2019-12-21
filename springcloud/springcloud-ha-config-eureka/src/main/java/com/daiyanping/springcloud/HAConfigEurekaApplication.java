@@ -9,7 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 
 /**
  * @ClassName EurekaApplication
- * @Description TODO
+ * @Description TODO 用于配置中心的注册
  * @Author daiyanping
  * @Date 2019-09-09
  * @Version 0.1

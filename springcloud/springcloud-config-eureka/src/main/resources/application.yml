@@ -1,6 +1,0 @@
-spring:
-  application:
-    name: @project.name@
-  # profiles 还得是用户级别的配置才能生效
-  profiles:
-    active: @env@

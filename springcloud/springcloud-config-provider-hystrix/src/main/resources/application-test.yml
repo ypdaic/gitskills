@@ -2,7 +2,7 @@
 druid:
   db1:
     filters: stat,wall #合并sql
-    url: jdbc:mysql://192.168.0.4:3306/test
+    url: jdbc:mysql://192.168.111.128:3306/test
     username: root
     password: test1234
     driver-class-name: com.mysql.jdbc.Driver
@@ -20,7 +20,7 @@ druid:
     keepAlive: false #连接池中的minIdle数量以内的连接，空闲时间超过minEvictableIdleTimeMillis，则会执行keepAlive操作。
   db2:
     filters: stat,wall #合并sql
-    url: jdbc:mysql://192.168.0.4:3306/test2?useUnicode=true&characterEncoding=UTF8&serverTimezone=UTC
+    url: jdbc:mysql://192.168.111.128:3306/test2?useUnicode=true&characterEncoding=UTF8&serverTimezone=UTC
     username: root
     password: test1234
     driver-class-name: com.mysql.jdbc.Driver

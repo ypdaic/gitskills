@@ -5,7 +5,7 @@ server:
     #context-path: /@project.name@
 spring:
  profiles:
-   active: @env@
+   active: '@env@'
  application:
   name: ha-config
  #security:
@@ -23,14 +23,14 @@ eureka:
   client:
     serviceUrl:
       # 单例
-      defaultZone: http://admin:test1234@localhost:9002/springcloud-ha-config-eureka/eureka/
+      defaultZone: http://admin:test1234@localhost:9002/eureka/
 
       # 高可用
       #defaultZone: http://admin:test1234@eureka1:8087/springcloud-eureka/eureka,http://admin:test1234@eureka2:8090/springcloud-eureka2/eureka
   instance:
-    instanceId: @project.name@
+    instanceId: ha-config-1
     prefer-ip-address: true
     lease-renewal-interval-in-seconds: 30 # 设置心跳的时间间隔（默认是30秒）
     lease-expiration-duration-in-seconds: 90  # 如果现在超过了5秒的间隔（默认是90秒）
-    home-page-url-path: /@project.name@
+    home-page-url-path: /
 

@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Import;
 
 /**
  * @ClassName ConfigApp
- * @Description TODO
+ * @Description TODO 高可用配置中心
  * @Author daiyanping
  * @Date 2019-09-24
  * @Version 0.1

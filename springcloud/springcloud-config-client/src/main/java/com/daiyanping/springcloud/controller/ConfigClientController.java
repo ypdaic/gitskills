@@ -23,12 +23,17 @@ public class ConfigClientController {
     @Value("${eureka.client.service-url.defaultZone}")
     private String eurekaServers;
 
-    @Value("${spring.profiles.active}")
-    private List<String> profile;
+    /**
+     * 基于springcloud-config需要这取值
+     */
+    @Value("${spring.profiles.active[0]}")
+    private String profile;
 
     @GetMapping("/config")
     public String getConfig() {
         return "ApplicationName = " + this.applicationName + "、EurekaServers = "
-                + this.eurekaServers + " 、profiles=" + profile;
+                + this.eurekaServers;
+
+//        return "ApplicationName = " + this.applicationName + " 、profiles=" + profile;
     }
 }
