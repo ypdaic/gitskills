@@ -1,12 +1,12 @@
 server:
   port: 8095
   servlet:
-    context-path: /@project.name@
+    context-path: /
 spring:
  profiles:
-   active: @env@
+   active: '@env@'
  application:
-  name: @project.name@
+  name: springcloud-config-server
  #security:
   #user:
   #  name: admin  # 认证用户名

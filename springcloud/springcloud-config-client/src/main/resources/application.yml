@@ -1,8 +1,8 @@
 spring:
  application:
-  name: @project.name@
+  name: springcloud-config-client1
  # profiles 还得是用户级别的配置才能生效
  profiles:
-  active: @env@
+  active: '@env@'
 
 

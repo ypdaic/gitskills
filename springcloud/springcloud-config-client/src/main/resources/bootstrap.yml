@@ -7,12 +7,12 @@ spring:
       #uri: http://localhost:9004/springcloud-ha-config2 # SpringCloudConfig的服务地址
       username: admin # 连接的用户名
       password: test1234 # 连接的密码
-      discovery:
-        enabled: true   # 通过配置中心加载配置文件
-        service-id: HA-CONFIG   # 在eureka之中注册的服务ID
+#      discovery:
+#        enabled: true   # 通过配置中心加载配置文件
+#        service-id: HA-CONFIG   # 在eureka之中注册的服务ID
 
-eureka:
-  client:
-    service-url:
-      defaultZone: http://admin:test1234@localhost:9002/springcloud-ha-config-eureka/eureka/
-    register-with-eureka: false
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: http://admin:test1234@localhost:9002/springcloud-ha-config-eureka/eureka/
+#    register-with-eureka: false
