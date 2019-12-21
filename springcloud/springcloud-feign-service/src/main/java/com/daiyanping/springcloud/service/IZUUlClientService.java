@@ -17,6 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 @FeignClient(name = "SPRINGCLOUD-ZUUL-GATEWAY",configuration = FeignClientConfig.class, fallbackFactory = IZUUlClientServiceallbackFactory.class)
 public interface IZUUlClientService {
 
-    @PostMapping("/springcloud-zuul-gateway/zuul-api/users-proxy/springcloud-user-hystrix/product/getProduct")
+    @PostMapping("/zuul-api/users-proxy/product/getProduct")
     Product getProduct();
 }
