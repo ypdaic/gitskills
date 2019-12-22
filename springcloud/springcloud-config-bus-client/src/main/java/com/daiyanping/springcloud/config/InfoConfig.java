@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
  * @Version 0.1
  */
 @Component
+// 表示这个配置类可以自动刷新
 @RefreshScope
 public class InfoConfig {
 

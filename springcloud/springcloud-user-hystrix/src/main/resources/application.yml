@@ -22,6 +22,21 @@ spring:
   #user:
   #  name: admin  # 认证用户名
   #  password: test1234  # 认证密码
+ zipkin:
+   base-url: http://localhost:8601/ #所有的服务提交到此服务中
+   sender:
+     type: rabbit #提交的类型是rabbit 服务
+#     type: web #提交的类型是web 服务
+ sleuth:
+   sampler:
+     probability: 1.0 #定义抽样比率，默认为0.1
+ # zipkin sender需要
+ rabbitmq:
+   host: 192.168.111.128
+   port: 5672
+   password: test1234
+   username: root
+   virtual-host: /
 
 mybatis-plus:
   mapperLocations: classpath:/sqlMapperXml/**/*.xml

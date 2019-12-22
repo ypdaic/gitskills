@@ -8,7 +8,9 @@ import org.springframework.context.annotation.Import;
 
 /**
  * @ClassName ConfigApp
- * @Description TODO
+ * @Description TODO 基于消息总线的config-server
+ * 有配置更新后需要发送post请求触发更新，如下：
+ * http://localhost:9005/actuator/bus-refresh
  * @Author daiyanping
  * @Date 2019-09-24
  * @Version 0.1

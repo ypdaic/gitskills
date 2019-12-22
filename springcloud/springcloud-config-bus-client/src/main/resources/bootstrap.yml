@@ -11,7 +11,7 @@ spring:
         enabled: true   # 通过配置中心加载配置文件
         service-id: SPRINGCLOUD-CONFIG-BUS   # 在eureka之中注册的服务ID
   rabbitmq:
-    host: localhost
+    host: 192.168.111.128
     port: 5672    # RabbitMQ的监听端口
     username: root  # 用户名
     password: test1234 # 密码
@@ -19,5 +19,5 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://admin:test1234@localhost:9002/springcloud-ha-config-eureka/eureka/
+      defaultZone: http://admin:test1234@localhost:9002/eureka/
     register-with-eureka: false

@@ -29,6 +29,9 @@
         <module>springcloud-config-bus</module>
         <module>springcloud-zookeeper</module>
         <module>springcloud-turbine</module>
+        <module>springcloud-stream-provider</module>
+        <module>springcloud-stream-consumer</module>
+        <module>springcloud-sleuth</module>
     </modules>
 
     <groupId>com.daiyanping</groupId>

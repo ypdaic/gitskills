@@ -1,0 +1,41 @@
+server:
+  port: 8601
+spring:
+  application:
+    name: springcloud-zipkin-server
+    #这个rabbitmq配置用于actuator的检查
+  rabbitmq:
+    host: 192.168.111.128
+    port: 5672
+    password: test1234
+    username: root
+    virtual-host: /
+
+# 关闭自动信息收集
+management:
+  metrics:
+    web:
+      server:
+        auto-time-requests: false
+
+
+zipkin:
+  collector: #收集器配置
+    sample-rate: 1.0
+    http:
+      enabled: false
+      #这个rabbitmq用于zipkin的搜集，由ZipkinRabbitMQCollectorAutoConfiguration自动配置
+    rabbitmq:
+      addresses: 192.168.111.128:5672
+      password: test1234
+      queue: zipkin
+      username: root
+      virtual-host: /
+  storage: #持久化配置
+    type: mysql
+    mysql:
+      host: 192.168.111.128
+      port: 3306
+      username: root
+      password: test1234
+      db: zipkin

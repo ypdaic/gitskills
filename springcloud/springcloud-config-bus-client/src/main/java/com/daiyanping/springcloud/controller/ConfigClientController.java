@@ -25,8 +25,8 @@ public class ConfigClientController {
     @Value("${eureka.client.service-url.defaultZone}")
     private String eurekaServers;
 
-    @Value("${spring.profiles.active}")
-    private List<String> profile;
+//    @Value("${spring.profiles.active}")
+//    private List<String> profile;
 
     @Autowired
     private InfoConfig infoConfig;
@@ -34,6 +34,6 @@ public class ConfigClientController {
     @GetMapping("/config")
     public String getConfig() {
         return "ApplicationName = " + this.applicationName + "、EurekaServers = "
-                + this.eurekaServers + " 、profiles=" + profile + " 、" + infoConfig.getAppName();
+                + this.eurekaServers + infoConfig.getAppName();
     }
 }
