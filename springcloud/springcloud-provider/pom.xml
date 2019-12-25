@@ -130,11 +130,13 @@
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
+                <!--filtering为true 表示用环境变量替换配置值-->
                 <!--filtering为ture,只会将被过滤的文件打到jar中，其他配置
                 文件也想要打到jar包中，就必须在配置一个resource-->
                 <filtering>true</filtering>
                 <!--开启过滤，并对application.yml文件中包含${key}的配置
                 将使用maven配置的值进行替换-->
+                <!--includes表示只打包指定的文件-->
                 <includes>
                     <include>*-${env}.yml</include>
                     <include>application.yml</include>

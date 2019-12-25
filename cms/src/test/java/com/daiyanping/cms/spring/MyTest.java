@@ -7,22 +7,19 @@ import com.daiyanping.cms.spring.factoryBean.FactoryBeanDemo;
 import com.daiyanping.cms.spring.service.UserService;
 import com.daiyanping.cms.spring.targetSource.Girl;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import redis.clients.jedis.Jedis;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:spring.xml"})
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@ContextConfiguration(locations = {"classpath:spring.xml"})
 public class MyTest {
 
     @Autowired
@@ -54,6 +51,8 @@ public class MyTest {
 //        ((ClassPathXmlApplicationContext) applicationContext).refresh();
 //        AccountService bean = applicationContext.getBean(AccountService.class);
         System.out.println("");
+
+        applicationContext.getBean(Student.class);
     }
 
     @Test
@@ -69,8 +68,13 @@ public class MyTest {
     }
 
     @Test
+    public void componentScanTest() {
+        applicationContext = new AnnotationConfigApplicationContext(ComponentScanBean.class);
+        System.out.println("componentScanTest->" + applicationContext.getBean("userServiceImpl"));
+    }
+
+    @Test
     public void test4() {
-        applicationContext = new AnnotationConfigApplicationContext("com.xiangxue.jack");
         FactoryB factoryB = (FactoryB)applicationContext.getBean("factoryBeanDemo");
         System.out.println(factoryB);
 
@@ -99,9 +103,9 @@ public class MyTest {
 
     @Test
     public void constomTag() {
-        jedis.set("name","jack");
+        jedis.set("name9090","jack---9090");
 
-        System.out.println(jedis.get("name"));
+        System.out.println(jedis.get("name9090"));
     }
 
     @Test
@@ -116,6 +120,73 @@ public class MyTest {
     @Test
     public void constructorAutowiredTest() {
         System.out.println(constructorAutowiredBean.getStudent().getUsername());
+    }
+
+    @Autowired
+    MyAnnoClass myAnnoClass;
+
+    @Test
+    public void CostomAnno() {
+        System.out.println("CostomAnno--->" + myAnnoClass.getUsername());
+    }
+
+    @Autowired
+    CircularRefA circularRefA;
+
+    @Autowired
+    CircularRefB circularRefB;
+
+    @Test
+    public void circularRef() {
+    }
+
+    @Test
+    public void prototypeTest() {
+        for (int i = 0; i < 10; i++) {
+            int finalI = i;
+            new Thread(() -> {
+                if(finalI % 2 == 0) {
+                    System.out.println(Thread.currentThread().getName() + "-->" + applicationContext.getBean("prototypeBean"));
+                    System.out.println(Thread.currentThread().getName() + "-->" + applicationContext.getBean("prototypeBean"));
+                } else {
+                    System.out.println(Thread.currentThread().getName() + "-->" + applicationContext.getBean("prototypeBean"));
+                }
+            }).start();
+        }
+    }
+
+    @Test
+    public void mainThreadPrototypeTest() {
+        for (int i = 0; i < 10; i++) {
+            System.out.println(applicationContext.getBean("prototypeBean"));
+        }
+    }
+
+    @Test
+    public void customScopeTest() {
+        for (int i = 0; i < 10; i++) {
+            int finalI = i;
+            new Thread(() -> {
+                if(finalI % 2 == 0) {
+                    System.out.println(Thread.currentThread().getName() + "-->" + applicationContext.getBean("customScopeBean"));
+                    System.out.println(Thread.currentThread().getName() + "-->" + applicationContext.getBean("customScopeBean"));
+                }
+                else {
+                    System.out.println(Thread.currentThread().getName() + "-->" + applicationContext.getBean("customScopeBean"));
+                }
+
+            }).start();
+        }
+    }
+
+    @Test
+    public void circularRefPropertyTest() {
+        applicationContext.getBean("circularRefPropertyA");
+    }
+
+    @Test
+    public void requestSessoinScopeTest() {
+        applicationContext.getBean("requestSessionBean");
     }
 
     public static void main(String[] args) {
