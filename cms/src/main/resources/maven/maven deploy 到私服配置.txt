@@ -1,0 +1,41 @@
+settings文件配置
+
+<!-- 配置私服的用户名，密码 -->
+     <server>
+      <id>daiyanping</id>
+      <username>admin</username>
+      <password>admin</password>
+    </server>
+    <server>
+      <id>releases</id>
+      <username>admin</username>
+      <password>admin</password>
+    </server>
+    <server>
+      <id>snapshots</id>
+      <username>admin</username>
+      <password>admin</password>
+    </server>
+
+
+<!-- 配置本地私服地址 -->
+     <mirror>
+      <id>test</id>
+      <mirrorOf>*</mirrorOf>
+      <url>http://localhost:8081/repository/maven-public</url>
+    </mirror>
+
+pom文件配置
+<!--配置私服信息，用于上传jar到私服-->
+    <distributionManagement>
+        <repository>
+            <id>releases</id><!--setting中对应的id-->
+            <name>Release Deploy</name>
+            <url>http://localhost:8081/repository/maven-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id><!--setting中对应的id-->
+            <name>Snapshot Deploy</name>
+            <url>http://localhost:8081/repository/maven-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>

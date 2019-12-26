@@ -1,8 +1,12 @@
 启动docker(liunx): service docker start
 
+查看docker信息：docker info
+
 查看镜像：docker images
 
 查看已经存在的容器：docker ps -a
+
+查看容器信息：docker  inspect  容器id
 
 查看运行的容器：docker ps
 
@@ -10,7 +14,7 @@
 
 启动已停止的容器：docker start 容器id
 
-通过镜像启动容器：docker run -p 8080:80 -d 镜像名称
+通过镜像启动容器：docker run -p 8080:80 -d -m 镜像名称   -m:设置容器内存最大值
 
 容器删除：docker rm 容器id （确保容器已经停止）
 
@@ -65,6 +69,16 @@ docker volume rm my-vol
 
 从容器内部连接mysql
 docker exec -it mysql1 mysql -uroot -p123456
+
+查看容器历史：
+docker history centos:7
+
+    结果：这个镜像由3个层组成
+    IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
+    1e1148e4cc2c        12 months ago       /bin/sh -c #(nop)  CMD ["/bin/bash"]            0B
+    <missing>           12 months ago       /bin/sh -c #(nop)  LABEL org.label-schema.sc…   0B
+    <missing>           12 months ago       /bin/sh -c #(nop) ADD file:6f877549795f4798a…   202MB
+
 
 
 

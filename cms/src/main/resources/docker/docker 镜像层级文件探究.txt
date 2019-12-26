@@ -1,0 +1,8 @@
+1：查看镜像组成
+    docker history centos:7
+
+    结果：这个镜像由3个层组成
+    IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
+    1e1148e4cc2c        12 months ago       /bin/sh -c #(nop)  CMD ["/bin/bash"]            0B （空层）
+    <missing>           12 months ago       /bin/sh -c #(nop)  LABEL org.label-schema.sc…   0B  （空层）
+    <missing>           12 months ago       /bin/sh -c #(nop) ADD file:6f877549795f4798a…   202MB

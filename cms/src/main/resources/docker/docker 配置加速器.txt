@@ -1,0 +1,8 @@
+配置docker加速器：vi /etc/docker/daemon.json
+
+配置如下内容：
+{
+   "registry-mirrors":["https://registry.docker-cn.com"]
+}
+
+保存后，重启docker：service docker restart

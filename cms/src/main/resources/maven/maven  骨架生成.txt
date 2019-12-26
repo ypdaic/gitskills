@@ -1,0 +1,1 @@
+在选定的项目根目录下，执行命令：mvn archetype:create-from-project
