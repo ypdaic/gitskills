@@ -1,9 +1,8 @@
 package com.daiyanping.cms.AQS;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import lombok.AllArgsConstructor;
+
+import java.util.concurrent.*;
 
 /**
  * @ClassName ThreadPoolExecutorTest
@@ -20,14 +19,15 @@ public class ThreadPoolExecutorTest {
      * @throws InterruptedException
      */
     public static void main(String[] args) throws InterruptedException {
-        test2();
+//        test2();
 //        test3();
 //        test4();
 //        test6();
 
 //        test();
+//        test8();
+        test90();
 
-        test();
 
     }
 
@@ -255,6 +255,90 @@ public class ThreadPoolExecutorTest {
 //        executorService.execute(()-> {
 //            System.out.println("sdfs");
 //        });
+    }
+
+    /**
+     * allowCoreThreadTimeOut作用
+     */
+    public static void test7() {
+        ThreadPoolExecutor executorService = (ThreadPoolExecutor) Executors.newFixedThreadPool(3);
+        for (int i = 0; i < 10; i++) {
+            executorService.submit(()->{
+                System.out.println("ssss");
+                try {
+                    Thread.sleep(1000 * 10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+//                    Thread.interrupted();
+                }
+            });
+        }
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        // 运行核心线程数等待超时后退出，但是会保留1个线程
+        executorService.allowCoreThreadTimeOut(true);
+//        executorService.shutdownNow();
+//        executorService.execute(()-> {
+//            System.out.println("sdfs");
+//        });
+    }
+
+    /**
+     * 验证业务不处理异常的情况下，线程池中的线程如果处理
+     * 处理步骤：线程中的线程异常退出，然后添加一个新的线程进行消费
+     */
+    public static void test8() {
+        ThreadPoolExecutor executorService = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
+        for (int i = 0; i < 10; i++) {
+            executorService.execute(new MyRunable(i));
+        }
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+//        executorService.shutdownNow();
+//        executorService.execute(()-> {
+//            System.out.println("sdfs");
+//        });
+    }
+
+    @AllArgsConstructor
+    static class MyRunable implements Runnable {
+
+        private int i;
+
+        @Override
+        public void run() {
+            if (i == 5) {
+                throw new RuntimeException("模拟业务出现异常不捕获的情况");
+            }
+            System.out.println(i);
+        }
+    }
+
+    private static final int COUNT_BITS = Integer.SIZE - 3;
+    private static final int CAPACITY   = (1 << COUNT_BITS) - 1;
+
+    // runState is stored in the high-order bits
+    private static final int RUNNING    = -1 << COUNT_BITS;
+    private static final int SHUTDOWN   =  0 << COUNT_BITS;
+    private static final int STOP       =  1 << COUNT_BITS;
+    private static final int TIDYING    =  2 << COUNT_BITS;
+    private static final int TERMINATED =  3 << COUNT_BITS;
+
+    public static void test90() {
+        System.out.println(RUNNING);
+        System.out.println(SHUTDOWN);
+        System.out.println(STOP);
+        System.out.println(TIDYING);
+        System.out.println(TERMINATED);
     }
 
 }
