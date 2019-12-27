@@ -27,7 +27,8 @@ public class AtomicIntegerFieldUpdaterTest {
             new Thread(() -> {
                 countDownLatch.countDown();
                 try {
-                    countDownLatch.await();AtomicIntegerFieldUpdaterTest.atom.incrementAndGet(atomicIntegerFieldUpdaterTest);
+                    countDownLatch.await();
+                    AtomicIntegerFieldUpdaterTest.atom.incrementAndGet(atomicIntegerFieldUpdaterTest);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
