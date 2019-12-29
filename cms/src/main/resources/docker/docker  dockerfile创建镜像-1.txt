@@ -1,0 +1,20 @@
+FROM centos:7
+
+#CMD echo "hello cmd"
+CMD ["/bin/bash", "-c", "echo 'hello cmd!'"]
+
+
+功能就是基于centos:7,创建一个镜像，输出hello cmd!
+
+创建镜像：
+
+    docker build -t cmd . -f test_dockerfile
+
+运行容器：
+
+    docker run cmd
+
+结果：
+
+    [root@localhost docker]# docker run cmd
+    hello cmd!

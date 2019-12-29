@@ -1,0 +1,8 @@
+由于前面的nginx镜像没有指定启动nginx的CMD命令，需要我们在启动容器的时候手动加上启动nginx的命令
+非常不方便，现在我们基于上个镜像从新制作一个镜像并加上启动nginx的CMD的命令
+
+# base image
+FROM centos-nginx:latest
+
+ENV PATH /usr/local/nginx/sbin:$PATH
+CMD ["/bin/bash", "-c", "nginx -g 'daemon off;'"]

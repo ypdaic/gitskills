@@ -1,0 +1,29 @@
+1：下载registry镜像：docker pull registry
+
+2：启动：docker run -d --name reg -p 5000:5000 registry
+
+   可以加上如下两个参数，-v 容器数据挂载到宿主机上，前面的是宿主机目录，后面的是容器目录
+   --restart=always -v /root/docker/registry/:/var/lib/registry/
+
+3：私服默认只能使用https，需要配置开放http
+
+    {
+       "registry-mirrors":["https://registry.docker-cn.com"],
+       "insecure-registries":["192.168.111.128:5000"]  #支持http的访问，默认只能https
+    }
+
+    重启docker
+    systemctl restart docker
+
+4：查询私服的镜像
+    curl http://192.168.111.128:5000/v2/_catalog
+
+5：将自己的镜像上传到私服
+
+    docker tag hello-world 192.168.111.128:5000/hello:1.0
+
+    docker push 192.168.111.128:5000/hello:1.0
+
+6：查看私服镜像版本
+
+   curl http://192.168.111.128:5000/v2/hello/tags/list

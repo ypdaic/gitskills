@@ -1,0 +1,32 @@
+docker数据管理：
+
+    docker容器运行，产生一些数据/文件/等等持久化的东西，不应该放在容器内部。
+    应当以挂载的形式存在主机文件系统中。
+
+比如我们需要将docker 容器中的/opt/data 目录挂载到宿主机上，可以执行如下命令：
+
+    docker run -d --name ce -v /opt/data -it centos:7 /bin/bash
+
+    这里-v 只指定了一个路径，默认是挂载到宿主机的这个路径/var/lib/docker/volumes/
+
+此时我们查看容器信息：
+
+    docker inspect aa
+
+    数据挂载信息：
+
+        "Mounts": [
+                    {
+                        "Type": "volume",
+                        "Name": "f5c1482c1b995f2b61da49b8337513fdb87ad1ecda8f257bb0c44c6e743e5fc6",
+                        "Source": "/var/lib/docker/volumes/f5c1482c1b995f2b61da49b8337513fdb87ad1ecda8f257bb0c44c6e743e5fc6/_data", #宿主机对应的目录
+                        "Destination": "/opt/data", #容器对应的目录
+                        "Driver": "local",
+                        "Mode": "",
+                        "RW": true,
+                        "Propagation": ""
+                    }
+                ],
+
+我们进入到容器的/opt/data目录，增加一个文件123，然后我们在宿主机的目录/var/lib/docker/volumes/f5c1482c1b995f2b61da49b8337513fdb87ad1ecda8f257bb0c44c6e743e5fc6/_data
+一样能看到新增加的文件，我们在宿主机下增加文件，容器相应也会增加

@@ -1,0 +1,4 @@
+拉取 peter2enjoy仓库中的hello镜像
+
+docker pull peter2enjoy/hello:1.0
+

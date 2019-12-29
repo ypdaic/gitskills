@@ -1,0 +1,33 @@
+FROM：
+
+　　FROM {base镜像}
+　　必须放在DOckerfile的第一行，表示从哪个baseimage开始构建 
+
+MAINTAINER：
+    可选的，用来标识image作者的地方
+RUN 
+    RUN都是启动一个容器、执行命令、然后提交存储层文件变更。
+    第一层 RUN command1 的执行仅仅是当前进程，一个内存上的变化而已，其结果不会造成任何文件。
+    而到第二层的时候，启动的是一个全新的容器，跟第一层的容器更完全没关系，自然不可能继承前一层构建过程中的内存变化。
+    而如果需要将两条命令或者多条命令联合起来执行需要加上&&。
+    如：cd /usr/local/src && wget xxxxxxx
+CMD：
+　　CMD的作用是作为执行container时候的默认行为（容器默认的启动命令）
+　　当运行container的时候声明了command，则不再用image中的CMD默认所定义的命令
+    一个Dockerfile中只能有一个有效的CMD，当定义多个CMD的时候，只有最后一个才会起作用
+EXPOSE
+    EXPOSE 指令是声明运行时容器提供服务端口，这只是一个声明，在运行时并不会因为这个声明应用就会开启这个端口的服务。在 Dockerfile 中写入这样的声明有两个好处，一个是帮助镜像使用者理解这个镜像服务的守护端口，以方便配置映射；另一个用处则是在运行时使用随机端口映射时，也就是 docker run -P 时，会自动随机映射 EXPOSE 的端口。
+entrypoint：
+    entrypoint的作用是，把整个container变成可执行的文件，且不能够通过替换CMD的方法来改变创建container的方式。但是可以通过参数传递的方法影响到container内部
+    每个Dockerfile只能够包含一个entrypoint，多个entrypoint只有最后一个有效
+    当定义了entrypoint以后，CMD只能够作为参数进行传递
+ADD & COPY：
+　　把host上的文件或者目录复制到image中（能够进行自动解压压缩包）　 
+ENV：
+　　用来设置环境变量，后续的RUN可以使用它所创建的环境变量 
+WORKDIR：
+　　用来指定当前工作目录（或者称为当前目录） 
+USER：
+　　运行RUN指令的用户 
+VOLUME：
+　　用来创建一个在image之外的mount point

@@ -1,0 +1,39 @@
+// 注意一定得以用户名开头
+1：docker tag hello-world ypdaic/hello:1.0
+
+    结果：会多出一个新的镜像
+
+    REPOSITORY            TAG                 IMAGE ID            CREATED             SIZE
+    rabbitmq              3.7-management      97a5b17e61fa        4 weeks ago         179MB
+    jdk-8u191             20191608            54a1928b1b63        11 months ago       598MB
+    hello-world           latest              fce289e99eb9        12 months ago       1.84kB
+    ypdaic/hello          1.0                 fce289e99eb9        12 months ago       1.84kB
+    nginx                 latest              7042885a156a        12 months ago       109MB
+    mysql                 latest              102816b1ee7d        12 months ago       486MB
+    centos                7                   1e1148e4cc2c        12 months ago       202MB
+
+2：将这个镜像上传到自己的仓库
+
+   // 先登录自己的仓库
+   1：docker login
+
+        结果：
+
+            [root@localhost ~]# docker login
+            Login with your Docker ID to push and pull images from Docker Hub. If you don't have a Docker ID, head over to https://hub.docker.com to create one.
+            Username: ypdaic
+            Password:
+            WARNING! Your password will be stored unencrypted in /root/.docker/config.json.
+            Configure a credential helper to remove this warning. See
+            https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+            Login Succeeded
+            [root@localhost ~]#
+
+    2：将自己的镜像push到自己的仓库
+
+        docker push ypdaic/hello:1.0
+
+
+
+

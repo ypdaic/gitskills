@@ -1,0 +1,12 @@
+备份/恢复数据卷
+
+备份：docker run --rm --volumes-from data -v $(pwd):/backup centos tar cvf /backup/data.tar /opt/data
+恢复：docker run --rm --volumes-from data -v $(pwd):/backup centos tar xvf /backup/data.tar -C /
+
+释义：
+docker  run --rm ----- 启动一个新的容器，执行完毕删除
+--volumes-from data ------- data容器中挂载卷
+-v $(pwd):/backup   --------挂载当前目录到容器中为backup
+cvf /backup/data.tar /opt/data --------- 备份/opt/data目录（即卷中所有的数据）为data.tar
+
+xvf /backup/data.tar -C /  ---------- 解压data.tar 到根目录/ ，因tar归档中已包含了/opt/data路径

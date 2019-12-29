@@ -1,0 +1,42 @@
+1：启动容器：docker run -d --name my-centos -it centos:7 /bin/bash
+
+2：容器内安装nginx服务：
+
+    1.添加一下nginx源：rpm -ivh http://nginx.org/packages/centos/7/noarch/RPMS/nginx-release-centos-7-0.el7.ngx.noarch.rpm
+    2.yum search nginx    ##搜索一下看看
+    3.yum install nginx -y    ## 安装
+    4./usr/sbin/nginx #启动nginx
+
+3: 宿主机上访问nginx
+
+     curl http://172.17.0.2:80
+
+4: commit方法创建镜像
+
+    docker commit 1b centos-nginx:v1
+
+    结果：centos-nginx就是我们创建的新镜像
+
+        REPOSITORY                   TAG                 IMAGE ID            CREATED             SIZE
+        centos-nginx                 v1                  0c6b0ebb87d5        12 seconds ago      309MB
+        rabbitmq                     3.7-management      97a5b17e61fa        4 weeks ago         179MB
+        jdk-8u191                    20191608            54a1928b1b63        11 months ago       598MB
+        192.168.111.128:5000/hello   1.0                 fce289e99eb9        12 months ago       1.84kB
+        hello-world                  latest              fce289e99eb9        12 months ago       1.84kB
+        ypdaic/hello                 1.0                 fce289e99eb9        12 months ago       1.84kB
+        nginx                        latest              7042885a156a        12 months ago       109MB
+        mysql                        latest              102816b1ee7d        12 months ago       486MB
+        centos                       7                   1e1148e4cc2c        12 months ago       202MB
+
+5：启动创建的镜像
+
+    docker run -d --name ngx3 -it centos-nginx:v1 /bin/bash
+
+    由于容器内部的nginx不是开启自启的，我们需要进入到容器内部启动，很不方便，
+    但我们可以在容器启动时就启动nginx,命令如下：
+
+    docker run -d --name ngx4 centos-nginx:v1  /usr/sbin/nginx  -g  "daemon off;"
+
+    后面运行的命令都是容器命令，由于nginx命令没有设置到path中，所以全路径启动，
+    而nginx -g这个参数是指可以在外面添加指令到nginx的配置文件中，
+    daemon off是指nginx服务不运行在后端，而是在前台运行（container中的服务必须运行在前台）

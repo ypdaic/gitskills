@@ -1,0 +1,15 @@
+/*
+    * TODO beanDefinition中的factoryMethod属性实现的
+    * customTargetSourceCreators 并没有什么用卵用
+    * */
+    @Bean(AopConfigUtils.AUTO_PROXY_CREATOR_BEAN_NAME)
+    public AnnotationAwareAspectJAutoProxyCreator annotationAwareAspectJAutoProxyCreator() {
+        AnnotationAwareAspectJAutoProxyCreator creator = new AnnotationAwareAspectJAutoProxyCreator();
+        // creator.setProxyTargetClass(true); 建议这里不要设置，还是取用注解的值来灵活控制最好了
+        MyTargetSourceCreator myTargetSourceCreator = new MyTargetSourceCreator();
+        myTargetSourceCreator.setBeanFactory(beanFactory);
+        creator.setCustomTargetSourceCreators(myTargetSourceCreator);
+        // 手动设置MethodInterceptor，或作用到所有类的所有方法
+        creator.setInterceptorNames("girlMethodInterceptor");
+        return creator;
+    }
