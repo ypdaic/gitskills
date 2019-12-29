@@ -1,0 +1,19 @@
+1.安装扩展源
+
+sudo yum -y install epel-release
+
+2.安装python-pip模块
+
+sudo yum install python-pip
+
+3.升级pip
+
+pip install –-upgrade pip
+
+4: 安装python-devel
+
+yum install python-devel
+
+5: 安装docker-compose
+
+pip install docker-compose

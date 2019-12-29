@@ -1,0 +1,104 @@
+准备 docker-compose.yaml文件，编写如下内容
+
+
+version: '2'
+services:
+  nginx:
+   container_name: member-nginx #指定容器名称
+   image: nginx:latest          #指定镜像
+   restart: always
+   ports:
+   - 80:80
+   privileged: true             #容器给nginx提供root权限
+   volumes:
+   - ./nginx/conf.d:/etc/nginx/conf.d
+  member-1:
+    restart: always
+    image: memger-service
+    expose:
+      - "8090"
+    depends_on:   #依赖nginx
+      - nginx
+  member-2:
+    restart: always
+    image: memger-service
+    expose:
+      - "8090"
+    depends_on:
+      - nginx
+
+
+对应nginx的配置
+
+    upstream member {
+        server member-1:8090; #对应服务名
+        server member-2:8090; #对应服务名
+        }
+
+    server {
+        listen 80;
+        charset utf-8;
+        access_log off;
+
+        location / {
+            proxy_pass http://member;
+            proxy_set_header Host $host:$server_port;
+            proxy_set_header X-Forwarded-Host $server_name;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        }
+
+    }
+
+
+
+在当前执行命令启动：docker-compose up -d
+
+服务停止命令：docker-compose down
+
+
+如果应用的服务是多个的可以不用配置多个，而是通过命令指定，修改配置如下：
+
+version: '2'
+services:
+  nginx:
+   container_name: member-nginx #指定容器名称
+   image: nginx:latest          #指定镜像
+   restart: always
+   ports:
+   - 80:80
+   privileged: true             #容器给nginx提供root权限
+   volumes:
+   - ./nginx/conf.d:/etc/nginx/conf.d
+  member:
+    restart: always
+    image: memger-service
+    expose:
+      - "8090"
+    depends_on:   #依赖nginx
+      - nginx
+
+对应nginx 配置
+
+upstream member {
+    server member:8090;
+    }
+
+server {
+    listen 80;
+    charset utf-8;
+    access_log off;
+
+    location / {
+        proxy_pass http://member;
+        proxy_set_header Host $host:$server_port;
+        proxy_set_header X-Forwarded-Host $server_name;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+}
+
+
+
+启动命令：docker-compose up -d --scale memger=2

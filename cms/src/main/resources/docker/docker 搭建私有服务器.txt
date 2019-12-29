@@ -6,8 +6,9 @@
    --restart=always -v /root/docker/registry/:/var/lib/registry/
 
 3：私服默认只能使用https，需要配置开放http
-
+    vi /etc/docker/daemon.json
     {
+       "bip":"172.17.8.1/24"
        "registry-mirrors":["https://registry.docker-cn.com"],
        "insecure-registries":["192.168.111.128:5000"]  #支持http的访问，默认只能https
     }
