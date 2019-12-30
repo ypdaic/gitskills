@@ -50,7 +50,7 @@ public class MyTomcat {
 
 //        Wrapper dispatchServlet = tomcat.addServlet("/", "dispatchServlet", DispatchServlet.class.getName());
 //        dispatchServlet.addMapping("/mymvc");
-        dispatchServlet.setLoadOnStartup(-1);
+        dispatchServlet.setLoadOnStartup(1);
         dispatchServlet.setAsyncSupported(true);
         try {
             tomcat.start();

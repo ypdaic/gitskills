@@ -1,0 +1,26 @@
+1. NEW(初始化状态)
+
+    还没有调用start方法
+
+2. RUNNABLE(可运行 / 运行状态)
+
+    已经调用了start方法
+
+3. BLOCKED(阻塞状态)
+
+    使用了synchronized时阻塞了
+
+4. WAITING(无时限等待)
+
+    调用了Object.wait(), Thread.join() ,LockSupport.park()
+
+5. TIMED_WAITING(有时限等待)
+
+    1. 调用带超时参数的 Thread.sleep(long millis) 方法;
+    2. 获得 synchronized 隐式锁的线程，调用带超时参数的 Object.wait(long timeout) 方法; 3. 调用带超时参数的 Thread.join(long millis) 方法;
+    4. 调用带超时参数的 LockSupport.parkNanos(Object blocker, long deadline) 方法;
+    5. 调用带超时参数的 LockSupport.parkUntil(long deadline) 方法。
+
+6. TERMINATED(终止状态)
+
+    run方法执行完就自动切为该状态
