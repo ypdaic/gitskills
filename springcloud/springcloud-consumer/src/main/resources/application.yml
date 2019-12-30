@@ -17,5 +17,7 @@ ribbon:
     clients: springcloud-provider
   ConnectTimeout: 4000  #给RibbonProperties使用
   ReadTimeout: 4000  #给RibbonProperties使用
+  restclient:
+    enabled: true #在AbstractLoadBalancerAwareClient不存在的时候自动注入RestClient
 
 
