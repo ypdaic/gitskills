@@ -33,7 +33,7 @@ public class UseAtomicStampedReference {
                 System.out.println(Thread.currentThread().getName()
                         +":当前变量值："
                         +reference + "-当前版本戳：" + asr.getStamp() + "-"
-                        + asr.compareAndSet(reference,
+                        + asr.compareAndSet(oldReference,
                         reference + "+C", oldStamp,
                         oldStamp + 1));
             }

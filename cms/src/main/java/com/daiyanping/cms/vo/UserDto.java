@@ -1,5 +1,7 @@
 package com.daiyanping.cms.vo;
 
+import com.daiyanping.cms.validator.Create;
+import com.daiyanping.cms.validator.Update;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -14,6 +16,6 @@ import javax.validation.constraints.NotNull;
 @Data
 public class UserDto {
 
-    @NotNull
+    @NotNull(message = "用户名不可为空", groups = {Create.class, Update.class})
     private String name;
 }
