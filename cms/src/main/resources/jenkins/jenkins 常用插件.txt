@@ -1,0 +1,9 @@
+git （git 插件）
+
+git Parameter （git 参数构建插件）
+
+Role-based Authorization Strategy  (权限管理插件)
+
+Maven Integration (构建maven项目)
+
+Publish Over SSH（远程发布插件）

@@ -1,0 +1,5 @@
+Build Triggers下的（构建触发器）
+
+Build periodically表示定时构建，
+
+Poll SCM表示轮训构建，也是一个定时构建，不过会去检查是否有更新，没有更新不会构建
