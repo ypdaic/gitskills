@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<!DOCTYPE mycat:schema SYSTEM "schema.dtd">
+<mycat:schema xmlns:mycat="http://io.mycat/">
+
+	<schema name="USERDB" checkSQLschema="false" sqlMaxLimit="100">
+	
+		<table name="post" dataNode="dnUser1" ruleRequired="false" primaryKey="post_code" />
+		<!-- auto sharding by id (long) -->
+		<table name="user_list" dataNode="dnUser1,dnUser2,dnUser3" rule="user-mod-long" />
+		<table name="user_login" dataNode="dnUser1,dnUser2,dnUser3" rule="prefix-pattern" />
+
+		<table name="area" primaryKey="area_code" type="global" dataNode="dnUser1,dnUser2,dnUser3" />
+
+	</schema>
+
+	<schema name="ORDERDB" checkSQLschema="false" sqlMaxLimit="100">
+		<table name="orderlist_buyer" primaryKey="id" dataNode="dnOrder1,dnOrder2"
+			   rule="buyer-sharding-by-pattern">
+			<childTable name="order_item_buyer" primaryKey="id" joinKey="order_id"
+						parentKey="id">
+			</childTable>
+		</table>
+		<table name="orderlist_merchant" primaryKey="id" dataNode="dnOrder1,dnOrder2"
+			   rule="merchant-sharding-by-pattern">
+			<childTable name="order_item_merchant" primaryKey="id" joinKey="order_id"
+						parentKey="id">
+			</childTable>
+		</table>		
+	</schema>	
+	
+	<dataNode name="dnUser1" dataHost="localhost1" database="user" />
+	<dataNode name="dnUser2" dataHost="localhost1" database="user01" />
+	<dataNode name="dnUser3" dataHost="localhost1" database="user02" />
+	<dataNode name="dnOrder1" dataHost="vmhost1" database="order01" />
+	<dataNode name="dnOrder2" dataHost="vmhost1" database="order02" />
+
+	<dataHost name="localhost1" maxCon="1000" minCon="10" balance="0"
+			  writeType="0" dbType="mysql" dbDriver="jdbc" switchType="0"  slaveThreshold="100">
+		<heartbeat>select user()</heartbeat>
+		<!-- can have multi write hosts -->
+		<writeHost host="hostM1" url="jdbc:mysql://192.168.111.128:3308?useSSL=false&amp;useUnicode=true&amp;characterEncoding=UTF8&amp;serverTimezone=UTC" user="root"
+				   password="test1234">
+		</writeHost>
+	</dataHost>
+	<dataHost name="vmhost1" maxCon="1000" minCon="10" balance="0"
+			  writeType="0" dbType="mysql" dbDriver="jdbc" switchType="0"  slaveThreshold="100">
+		<heartbeat>select user()</heartbeat>
+		<!-- can have multi write hosts -->
+		<writeHost host="hostM1" url="jdbc:mysql://192.168.111.128:3306?useSSL=false&amp;useUnicode=true&amp;characterEncoding=UTF8&amp;serverTimezone=UTC" user="root"
+				   password="123456">
+				   <!-- can have multi read hosts -->
+				   <readHost host="hostS1" url="jdbc:mysql://192.168.111.128:3307?useSSL=false&amp;useUnicode=true&amp;characterEncoding=UTF8&amp;serverTimezone=UTC" user="root" password="123456" />
+		</writeHost>
+	</dataHost>
+</mycat:schema>

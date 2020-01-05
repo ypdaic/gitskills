@@ -19,7 +19,7 @@ import java.util.Properties;
  * @Version 0.1
  */
 @Configuration
-public class DataSourceConfig {
+public class   DataSourceConfig {
 
     @Bean(name = "test1")
     DataSource getDataSource1() {

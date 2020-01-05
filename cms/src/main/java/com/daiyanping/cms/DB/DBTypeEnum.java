@@ -5,7 +5,7 @@ package com.daiyanping.cms.DB;
  */
 public enum DBTypeEnum {
 
-    TEST("test1"),TEST2("test2");
+    TEST("test1"),TEST2("test2"), MASTER("master"), SLAVE("slave");
     private String dbName;
 
     DBTypeEnum(String dbName) {

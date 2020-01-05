@@ -1,0 +1,13 @@
+应用指定
+此规则是在运行阶段有应用自主决定路由到那个分片。
+<function name="sharding-by-substring"
+class="io.mycat.route.function.PartitionDirectBySubString">
+<property name="startIndex">0</property><!-- zero-based -->
+<property name="size">2</property>
+<property name="partitionCount">8</property>
+<property name="defaultPartition">0</property>
+</function>
+配置说明：
+此方法为直接根据字符子串（必须是数字）计算分区号（由应用传递参数，显式指定分区号）。
+例如id=05-100000002在此配置中代表根据id 中从startIndex=0，开始，截取siz=2 位数字即05，05 就是获取的分区，如果没传
+默认分配到defaultPartition

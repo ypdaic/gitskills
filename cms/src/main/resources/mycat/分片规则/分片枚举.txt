@@ -1,0 +1,17 @@
+通过在配置文件中配置可能的枚举id，自己配置分片，本规则适用于特定的场景，比如有些业务需要按照省份或区县来做保存，
+而全国省份区县固定的，这类业务使用本条规则，配置如下：
+<function name="hash-int" class="io.mycat.route.function.PartitionByFileMap">
+<property name="mapFile">partition-hash-int.txt</property>
+<property name="type">0</property>
+<property name="defaultNode">0</property>
+</function>
+partition-hash-int.txt 配置：
+10000=0
+10010=1
+DEFAULT_NODE=1
+上面columns 标识将要分片的表字段，algorithm 分片函数，
+其中分片函数配置中，mapFile 标识配置文件名称，type 默认值为0，0 表示Integer，非零表示String，
+所有的节点配置都是从0 开始，及0 代表节点1
+ defaultNode 默认节点:小于0 表示不设置默认节点，大于等于0 表示设置默认节点 默认节点的作用：枚举分片时，如果碰到不识别的枚举值，
+ 就让它路由到默认节点， 如果不配置默认节点（defaultNode 值小于0 表示不配置默认节点），
+ 碰到 不识别的枚举值就会报错， can’t find datanode for sharding column:column_name val:ffffffff

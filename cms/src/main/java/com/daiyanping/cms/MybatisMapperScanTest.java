@@ -48,7 +48,7 @@ public class MybatisMapperScanTest {
         simpleDriverDataSource.setDriverClass(com.mysql.jdbc.Driver.class);
         simpleDriverDataSource.setPassword("test1234");
         simpleDriverDataSource.setUsername("root");
-        simpleDriverDataSource.setUrl("jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=UTF8&serverTimezone=UTC");
+        simpleDriverDataSource.setUrl("jdbc:mysql://192.168.111.128:3306/test?useUnicode=true&characterEncoding=UTF8&serverTimezone=UTC");
         return simpleDriverDataSource;
     }
 

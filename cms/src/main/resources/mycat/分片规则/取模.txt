@@ -1,0 +1,7 @@
+取模
+此规则为对分片字段求摸运算。
+<function name="mod-long" class="io.mycat.route.function.PartitionByMod">
+<property name="count">3</property>
+</function>
+配置说明：
+此种配置非常明确即根据id 进行十进制求模运算。

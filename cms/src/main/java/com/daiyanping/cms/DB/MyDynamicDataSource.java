@@ -14,11 +14,8 @@ import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
 public class MyDynamicDataSource extends AbstractRoutingDataSource {
 
-    @Autowired
-    private DBThreadLocal dbThreadLocal;
-
     @Override
     protected Object determineCurrentLookupKey() {
-        return dbThreadLocal.getDBType();
+        return DBThreadLocal.getDBType();
     }
 }

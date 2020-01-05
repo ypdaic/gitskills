@@ -1,0 +1,18 @@
+范围求模分片
+先进行范围分片计算出归属分片组，组内再根据组内分片数量求模。
+<function name="rang-mod"
+class="io.mycat.route.function.PartitionByRangeMod">
+<property name="mapFile">partition-range-mod.txt</property>
+<property name="defaultNode">21</property>
+</function>
+配置说明：
+rang-mod 函数中mapFile 代表配置文件路径
+defaultNode 超过范围后的默认节点顺序号，节点从0 开始。
+partition-range-mod.txt
+range start-end ,data node group size
+以下配置一个范围代表一个分片组，=号后面的数字代表该分片组所拥有的分片的数量。
+0-200M=5 //代表有5 个分片节点
+200M1-400M=1
+400M1-600M=4
+600M1-800M=4
+800M1-1000M=6

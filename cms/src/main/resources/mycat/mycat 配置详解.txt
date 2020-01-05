@@ -1,0 +1,12 @@
+schema.xml
+
+    schema.xml 作为MyCat中重要的配置文件之一，管理着MyCat的逻辑库，表，分片规则，DataNode以及DataSource
+
+server.xml
+
+    server.xml 几乎保存了所有MyCat需要的系统配置信息
+
+rule.xml
+
+    rule.xml 里面就定义了我们对表进行拆分所涉及到的规则定义，我们可以灵活的对表使用不用的分片算法，或者对
+    表使用相同的算法但具体的参数不同。

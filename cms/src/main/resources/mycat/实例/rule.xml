@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- - - Licensed under the Apache License, Version 2.0 (the "License"); 
+	- you may not use this file except in compliance with the License. - You 
+	may obtain a copy of the License at - - http://www.apache.org/licenses/LICENSE-2.0 
+	- - Unless required by applicable law or agreed to in writing, software - 
+	distributed under the License is distributed on an "AS IS" BASIS, - WITHOUT 
+	WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. - See the 
+	License for the specific language governing permissions and - limitations 
+	under the License. -->
+<!DOCTYPE mycat:rule SYSTEM "rule.dtd">
+<mycat:rule xmlns:mycat="http://io.mycat/">
+
+	<tableRule name="prefix-pattern">
+		<rule>
+			<columns>login_name</columns>
+			<algorithm>prefix-pattern</algorithm>
+		</rule>
+	</tableRule>	
+	
+	<tableRule name="buyer-sharding-by-pattern">
+		<rule>
+			<columns>buyer_user_id</columns>
+			<algorithm>sharding-by-pattern</algorithm>
+		</rule>
+	</tableRule>
+	
+	<tableRule name="merchant-sharding-by-pattern">
+		<rule>
+			<columns>merchant_user_id</columns>
+			<algorithm>sharding-by-pattern</algorithm>
+		</rule>
+	</tableRule>
+	
+	<tableRule name="user-mod-long">
+		<rule>
+			<columns>id</columns>
+			<algorithm>mod-long</algorithm>
+		</rule>
+	</tableRule>
+	
+	<function name="sharding-by-pattern"
+			  class="io.mycat.route.function.PartitionByPattern">
+		<property name="patternValue">256</property>
+		<property name="mapFile">partition-pattern.txt</property>
+	</function>	
+	
+	<function name="mod-long" class="io.mycat.route.function.PartitionByMod">
+		<!-- how many data nodes -->
+		<property name="count">3</property>
+	</function>	
+	
+	<!-- 截取数字做hash 求模范围约束-->
+	<function name="prefix-pattern" class="io.mycat.route.function.PartitionByPrefixPattern">
+		<property name="patternValue">256</property>
+		<property name="prefixLength">8</property>
+		<property name="mapFile">prefix-pattern.txt</property>
+	</function>	
+
+</mycat:rule>

@@ -9,10 +9,15 @@ import com.daiyanping.cms.entity.User;
 import com.daiyanping.cms.service.IUserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.redisson.spring.starter.RedissonAutoConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.rest.RepositoryRestMvcAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.test.context.ContextConfiguration;
@@ -32,7 +37,7 @@ import java.util.Set;
 @ContextConfiguration(classes = {MybatisMapperScanTest.class})
 //@EnableAutoConfiguration注解用于开启自动配置，@EnableAsync注解开启的异步功能使用的线程池就是由
 // 自动配置提供，由于我们不连数据库，就需要排除springjdbc自动配置
-@EnableAutoConfiguration(exclude = DataSourceAutoConfiguration.class)
+@EnableAutoConfiguration(exclude = {RedissonAutoConfiguration.class, DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class, RepositoryRestMvcAutoConfiguration.class, SpringDataWebAutoConfiguration.class, JpaRepositoriesAutoConfiguration.class})
 //@EnableAsync开启异步功能
 @EnableTransactionManagement
 public class TransactionTests {

@@ -18,7 +18,7 @@ import static com.daiyanping.cms.DB.DBTypeEnum.TEST2;
  * @Date 2019-04-04
  * @Version 0.1
  */
-@Service("service2")
+//@Service("service2")
 @DB(DB = TEST2)
 public class UserServiceImpl2 implements IUserService {
 

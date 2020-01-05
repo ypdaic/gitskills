@@ -1,0 +1,9 @@
+按单月小时拆分
+此规则是单月内按照小时拆分，最小粒度是小时，可以一天最多24 个分片，最少1 个分片，一个月完后下月从头开始循环。
+每个月月尾，需要手工清理数据。
+<function name="sharding-by-hour" class="io.mycat.route.function.LatestMonthPartion">
+<property name="splitOneDay">24</property>
+</function>
+配置说明：
+columns： 拆分字段，字符串类型（yyyymmddHH）
+splitOneDay ： 一天切分的分片数

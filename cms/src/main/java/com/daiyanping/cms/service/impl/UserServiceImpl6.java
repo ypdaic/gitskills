@@ -17,7 +17,7 @@ import java.util.List;
  * @Date 2019-11-21
  * @Version 0.1
  */
-@Service("service6")
+//@Service("service6")
 public class UserServiceImpl6 implements IUserService {
 
     @Autowired

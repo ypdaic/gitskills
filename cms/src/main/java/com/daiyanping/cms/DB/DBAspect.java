@@ -34,8 +34,6 @@ public class DBAspect {
      */
 //    private String ajc$Test = "";
 
-    @Autowired
-    private DBThreadLocal dbThreadLocal;
 
     // @Pointcut  定义切入点
     //@annotation  只支持在方法上使用了指定注解，才能被拦截
@@ -49,7 +47,7 @@ public class DBAspect {
     //匿名切入点 表示拦截com.daiyanping.cms.service.impl包及其子包任何方法
     @After("execution(* com.daiyanping.cms.service.impl..*.*(..))")
     public void after(JoinPoint joinPoint) {
-        dbThreadLocal.cleanDBType();
+        DBThreadLocal.cleanDBType();
         AopProxyContext.clean();
     }
 
@@ -67,11 +65,11 @@ public class DBAspect {
 
             if (db.DB().getDbName().equals(DBTypeEnum.TEST.getDbName())) {
                 System.out.println("开始切换数据源：" + DBTypeEnum.TEST.getDbName());
-                dbThreadLocal.setDBType(DBTypeEnum.TEST);
+                DBThreadLocal.setDBType(DBTypeEnum.TEST);
             }
             if (db.DB().getDbName().equals(DBTypeEnum.TEST2.getDbName())) {
                 System.out.println("开始切换数据源：" + DBTypeEnum.TEST2.getDbName());
-                dbThreadLocal.setDBType(DBTypeEnum.TEST2);
+                DBThreadLocal.setDBType(DBTypeEnum.TEST2);
             }
         }
 
@@ -87,11 +85,11 @@ public class DBAspect {
 
                 if (annotation.DB().getDbName().equals(DBTypeEnum.TEST.getDbName())) {
                     System.out.println("开始切换数据源：" + DBTypeEnum.TEST.getDbName());
-                    dbThreadLocal.setDBType(DBTypeEnum.TEST);
+                    DBThreadLocal.setDBType(DBTypeEnum.TEST);
                 }
                 if (annotation.DB().getDbName().equals(DBTypeEnum.TEST2.getDbName())) {
                     System.out.println("开始切换数据源：" + DBTypeEnum.TEST2.getDbName());
-                    dbThreadLocal.setDBType(DBTypeEnum.TEST2);
+                    DBThreadLocal.setDBType(DBTypeEnum.TEST2);
                 }
             }
         } catch (NoSuchMethodException e) {

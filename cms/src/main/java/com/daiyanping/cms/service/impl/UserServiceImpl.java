@@ -9,6 +9,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.support.SqlSessionDaoSupport;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -30,9 +31,15 @@ public class UserServiceImpl extends SqlSessionDaoSupport implements IUserServic
     @Autowired
     private UserDao userDao;
 
+    @Autowired
+    @Qualifier("service1")
+    IUserService userService;
+
+    @Transactional
     public List<User> getAll() {
         SqlSession sqlSession = this.getSqlSession();
         List<User> objects = sqlSession.selectList("com.daiyanping.cms.dao.UserDao.getAllUser");
+        userService.getUserById("1");
         return objects;
     }
 
@@ -44,7 +51,7 @@ public class UserServiceImpl extends SqlSessionDaoSupport implements IUserServic
      * @param id
      * @return
      */
-    @Transactional(propagation = Propagation.NESTED)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public User getUserById(String id) {
         User userById = userDao.getUserById(id);
 //        Object o = AopContext.currentProxy();

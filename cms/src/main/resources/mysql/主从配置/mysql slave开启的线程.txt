@@ -1,0 +1,14 @@
+mysql> show processlist;
++----+-----------------+-----------+-------+---------+------+--------------------------------------------------------+------------------+
+| Id | User            | Host      | db    | Command | Time | State                                                  | Info             |
++----+-----------------+-----------+-------+---------+------+--------------------------------------------------------+------------------+
+|  6 | event_scheduler | localhost | NULL  | Daemon  | 2646 | Waiting on empty queue                                 | NULL             |
+| 10 | root            | localhost | mysql | Query   |    0 | starting                                               | show processlist |
+| 20 | system user     |           | NULL  | Connect |  250 | Waiting for master to send event                       | NULL             |
+| 21 | system user     |           | NULL  | Query   |  249 | Slave has read all relay log; waiting for more updates | NULL             |
++----+-----------------+-----------+-------+---------+------+--------------------------------------------------------+------------------+
+
+
+Connect线程是等待主库发送binlog事件的线程
+
+Query线程就是负责将所有的事件写入到relay log的线程

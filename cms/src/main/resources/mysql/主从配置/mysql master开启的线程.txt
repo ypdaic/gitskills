@@ -1,0 +1,11 @@
+mysql> mysql> show processlist;
++----+-----------------+------------------+------+-------------+------+---------------------------------------------------------------+------------------+
+| Id | User            | Host             | db   | Command     | Time | State                                                         | Info             |
++----+-----------------+------------------+------+-------------+------+---------------------------------------------------------------+------------------+
+|  6 | event_scheduler | localhost        | NULL | Daemon      | 2031 | Waiting on empty queue                                        | NULL             |
+| 13 | slave           | 172.17.8.2:54371 | NULL | Binlog Dump |  118 | Master has sent all binlog to slave; waiting for more updates | NULL             |
+| 14 | root            | localhost        | NULL | Query       |    0 | starting                                                      | show processlist |
++----+-----------------+------------------+------+-------------+------+---------------------------------------------------------------+------------------+
+
+
+Binlog Dump线程就是负责往从库发送binlog的线程

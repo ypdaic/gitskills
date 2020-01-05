@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service("service4")
+//@Service("service4")
 @DB(DB = DBTypeEnum.TEST2)
 public class UserServiceImpl4 implements IUserService {
 

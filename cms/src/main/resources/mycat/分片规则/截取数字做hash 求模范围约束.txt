@@ -1,0 +1,23 @@
+截取数字做hash 求模范围约束
+此种规则类似于取模范围约束，此规则支持数据符号字母取模。
+<function name="sharding-by-pattern"
+class="io.mycat.route.function.PartitionByPrefixPattern">
+<property name="patternValue">256</property>
+<property name="prefixLength">5</property>
+<property name="mapFile">partition-pattern.txt</property>
+</function>
+partition-pattern.txt
+1-4=0
+5-8=1
+9-12=2
+13-16=3
+17-20=4
+21-24=5
+25-28=6
+29-32=7
+0-0=7
+配置说明：
+patternValue 即求模基数，prefixLength截取的位数
+mapFile 配置文件路径
+配置文件中，1-32 即代表id%256 后分布的范围，如果在1-32 则在分区1，其他类推
+此种方式类似方式6 只不过采取的是将列种获取前prefixLength 位列所有ASCII 码的和进行求模。

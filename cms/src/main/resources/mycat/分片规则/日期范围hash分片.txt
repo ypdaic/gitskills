@@ -1,0 +1,12 @@
+日期范围hash 分片
+思想与范围求模一致，当由于日期在取模会有数据集中问题，所以改成hash 方法。
+先根据日期分组，再根据时间hash 使得短期内数据分布的更均匀。
+<function name="range-date-hash"
+class="io.mycat.route.function.PartitionByRangeDateHash">
+<property name="sBeginDate">2014-01-01 00:00:00</property>
+<property name="sPartionDay">3</property>
+<property name="dateFormat">yyyy-MM-dd HH:mm:ss</property>
+<property name="groupPartionSize">6</property>
+</function>
+sPartionDay 代表多少天分一个分片
+groupPartionSize 代表分片组的大小，在上述的例子中分片组共包含天数为6*3=18天

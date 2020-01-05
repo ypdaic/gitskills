@@ -1,0 +1,22 @@
+本条规则类似于十进制的求模运算，区别在于是二进制的操作,是取id 的二进制低10 位，即id 二进制&1111111111。
+<function name="func1" class="io.mycat.route.function.PartitionByLong">
+<property name="partitionCount">2,1</property>
+<property name="partitionLength">256,512</property>
+</function>
+配置说明：
+上面columns 标识将要分片的表字段，algorithm 分片函数，partitionCount 分片个数列表，partitionLength 分片范围列表
+分区长度:最大支持1024个 分区
+约束:
+count,length 两个数组的长度必须是一致的。
+1024 = sum((count[i]*length[i])). count 和length 两个向量的点积恒等于1024
+用法例子：
+本例的分区策略：希望将数据水平分成3 份，前两份各占25%，第三份占50%。（故本例非均匀分区）
+ |<———————1024———————————>|
+ |<—-256—>|<—-256—>|<———-512————->|
+ | partition0 | partition1 | partition2 |
+  0 -------255,256------511,512----1023
+如果需要平均分配设置：平均分为4 分片，partitionCount*partitionLength=1024
+<function name="func1" class="io.mycat.route.function.PartitionByLong">
+<property name="partitionCount">4</property>
+<property name="partitionLength">256</property>
+</function>
