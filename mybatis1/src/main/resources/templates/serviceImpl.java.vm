@@ -5,6 +5,10 @@ import ${package.Mapper}.${table.mapperName};
 import ${package.Service}.${table.serviceName};
 import ${superServiceImplClassPackage};
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import java.util.Date;
 
 /**
  * <p>
@@ -21,6 +25,79 @@ open class ${table.serviceImplName} : ${superServiceImplClass}<${table.mapperNam
 }
 #else
 public class ${table.serviceImplName} extends ${superServiceImplClass}<${table.mapperName}, ${entity}> implements ${table.serviceName} {
+
+    /**
+     * 新增${table.comment}
+     * @param ${entity}Dto
+     * @param token
+     * @return
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public ${entity} add(${entity}Dto ${entity}Dto, AccountToken token) {
+
+        ${entity} ${entity} = new ${entity}();
+        Date date = new Date();
+        #foreach($element in ${table.fields})
+        ${entity}.set${element.propertyName}(${entity}Dto.get${element.propertyName}());
+        #end
+
+        return ${entity};
+    }
+
+    /**
+     * 更新${table.comment}
+     * @param ${entity}Dto
+     * @param token
+     * @return
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public ${entity} update(${entity}Dto ${entity}Dto, AccountToken token) {
+        ${entity} ${entity} = baseMapper.selectById(${entity}Dto.getId());
+        if (${entity} == null) {
+            return null;
+        }
+
+        Date date = new Date();
+        #foreach($element in ${table.fields})
+        ${entity}.set${element.propertyName}(${entity}Dto.get${element.propertyName}());
+        #end
+        ${entity}.updateById();
+        return ${entity};
+    }
+
+    /**
+     * 删除${table.comment}
+     * @param ${entity}Dto
+     * @param token
+     * @return
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public ${entity} delete(${entity}Dto ${entity}Dto, AccountToken token) {
+        ${entity} ${entity} = baseMapper.selectById(${entity}Dto.getId());
+        if (${entity} == null) {
+            return null;
+        }
+
+        ${entity}.setEnable(EnableEnum.DELETE.getValue());
+        ${entity}.updateById();
+
+        return ${entity};
+    }
+
+    /**
+     * 分页查询${table.comment}
+     * @param ${entity}Dto
+     * @param ${entity}Page
+     * @return
+     */
+    @Override
+    public IPage<${entity}> queryPage(${entity}Dto ${entity}Dto, Page<${entity}> ${entity}Page) {
+
+        return baseMapper.queryPage(${entity}Page, ${entity}Dto);
+    }
 
 }
 #end
