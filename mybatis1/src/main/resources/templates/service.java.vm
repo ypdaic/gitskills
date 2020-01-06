@@ -2,6 +2,9 @@ package ${package.Service};
 
 import ${package.Entity}.${entity};
 import ${superServiceClassPackage};
+import ${package.MODULE_NAME}.vo.${entity}Dto;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 /**
  * <p>
@@ -16,5 +19,12 @@ interface ${table.serviceName} : ${superServiceClass}<${entity}>
 #else
 public interface ${table.serviceName} extends ${superServiceClass}<${entity}> {
 
+    ${entity} add(${entity}Dto ${entity}Dto, AccountToken token);
+
+    ${entity} update(${entity}Dto ${entity}Dto, AccountToken token);
+
+    ${entity} delete(${entity}Dto ${entity}Dto, AccountToken token);
+
+    IPage<${entity}> queryPage(${entity} ${entity}, Page<${entity}> ${entity}Page);
 }
 #end
