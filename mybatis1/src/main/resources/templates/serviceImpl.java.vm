@@ -4,11 +4,24 @@ import ${package.Entity}.${entity};
 import ${package.Mapper}.${table.mapperName};
 import ${package.Service}.${table.serviceName};
 import ${superServiceImplClassPackage};
+import ${dtoPackage}.${entity}Dto;
+import ${enumPackage}.${entity}ExcelHeadersEnum;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import java.util.Date;
+import sungo.util.ExcelUtil;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import javax.servlet.http.HttpServletResponse;
+#if(${AccountToken})
+import sungo.cms.entity.AccountToken;
+#end
+#if(${SysAccountToken})
+import sungo.manager.entity.SysAccountToken;
+#end
 
 /**
  * <p>
@@ -28,76 +41,102 @@ public class ${table.serviceImplName} extends ${superServiceImplClass}<${table.m
 
     /**
      * 新增${table.comment}
-     * @param ${entity}Dto
+     * @param ${entityLowerName}Dto
      * @param token
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public ${entity} add(${entity}Dto ${entity}Dto, AccountToken token) {
+    public ${entity} add(${entity}Dto ${entityLowerName}Dto,#if(${AccountToken}) AccountToken token#elseif(${SysAccountToken}) SysAccountToken token#else AccountToken token#end) {
 
-        ${entity} ${entity} = new ${entity}();
+        ${entity} ${entityLowerName} = new ${entity}();
         Date date = new Date();
         #foreach($element in ${table.fields})
-        ${entity}.set${element.propertyName}(${entity}Dto.get${element.propertyName}());
+        ${entityLowerName}.set${element.customMap.upperFieldName}(${entityLowerName}Dto.get${element.customMap.upperFieldName}());
         #end
-
-        return ${entity};
+        ${entityLowerName}.insert();
+        return ${entityLowerName};
     }
 
     /**
      * 更新${table.comment}
-     * @param ${entity}Dto
+     * @param ${entityLowerName}Dto
      * @param token
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public ${entity} update(${entity}Dto ${entity}Dto, AccountToken token) {
-        ${entity} ${entity} = baseMapper.selectById(${entity}Dto.getId());
-        if (${entity} == null) {
+    public ${entity} update(${entity}Dto ${entityLowerName}Dto,#if(${AccountToken}) AccountToken token#elseif(${SysAccountToken}) SysAccountToken token#else AccountToken token#end) {
+        ${entity} ${entityLowerName} = baseMapper.selectById(${entityLowerName}Dto.getId());
+        if (${entityLowerName} == null) {
             return null;
         }
 
         Date date = new Date();
         #foreach($element in ${table.fields})
-        ${entity}.set${element.propertyName}(${entity}Dto.get${element.propertyName}());
+        ${entityLowerName}.set${element.customMap.upperFieldName}(${entityLowerName}Dto.get${element.customMap.upperFieldName}());
         #end
-        ${entity}.updateById();
-        return ${entity};
+        ${entityLowerName}.updateById();
+        return ${entityLowerName};
     }
 
     /**
      * 删除${table.comment}
-     * @param ${entity}Dto
+     * @param ${entityLowerName}Dto
      * @param token
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public ${entity} delete(${entity}Dto ${entity}Dto, AccountToken token) {
-        ${entity} ${entity} = baseMapper.selectById(${entity}Dto.getId());
-        if (${entity} == null) {
+    public ${entity} delete(${entity}Dto ${entityLowerName}Dto,#if(${AccountToken}) AccountToken token#elseif(${SysAccountToken}) SysAccountToken token#else AccountToken token#end) {
+        ${entity} ${entityLowerName} = baseMapper.selectById(${entityLowerName}Dto.getId());
+        if (${entityLowerName} == null) {
             return null;
         }
 
-        ${entity}.setEnable(EnableEnum.DELETE.getValue());
-        ${entity}.updateById();
+        ${entityLowerName}.setEnable(EnableEnum.DELETE.getValue());
+        ${entityLowerName}.updateById();
 
-        return ${entity};
+        return ${entityLowerName};
     }
 
     /**
      * 分页查询${table.comment}
-     * @param ${entity}Dto
-     * @param ${entity}Page
+     * @param ${entityLowerName}Dto
+     * @param ${entityLowerName}Page
      * @return
      */
     @Override
-    public IPage<${entity}> queryPage(${entity}Dto ${entity}Dto, Page<${entity}> ${entity}Page) {
+    public IPage<${entity}> queryPage(${entity}Dto ${entityLowerName}Dto, Page<${entity}> ${entityLowerName}Page) {
 
-        return baseMapper.queryPage(${entity}Page, ${entity}Dto);
+        return baseMapper.queryPage(${entityLowerName}Page, ${entityLowerName}Dto);
     }
+
+    /**
+     * 导出${table.comment}
+     * @param ${entityLowerName}Dto
+     * @return
+     */
+    @Override
+    public boolean export(${entity}Dto ${entityLowerName}Dto, HttpServletResponse response) {
+
+        List<String> headers = new ArrayList<String>();
+        List<String> resultSetColumnNames = new ArrayList<String>();
+        ${entity}ExcelHeadersEnum[] values = ${entity}ExcelHeadersEnum.values();
+        for (${entity}ExcelHeadersEnum value : values) {
+            headers.add(value.getDesc());
+            resultSetColumnNames.add(value.getCode());
+        }
+
+        Integer count = baseMapper.queryCount(${entityLowerName}Dto);
+        return ExcelUtil.exportExcelToWebsite(response, count, "${table.comment}统计表", headers, (sheet, currentPage, pageSize, startRowCount, cellStyle) -> {
+        Page<Map<String, Object>> page = new Page<Map<String, Object>>(currentPage, pageSize);
+        IPage<Map<String, Object>> iPage = baseMapper.queryPageForExport(page, ${entityLowerName}Dto);
+        ExcelUtil.insertDataToExcel(sheet, iPage.getRecords(), resultSetColumnNames, cellStyle, startRowCount);
+        });
+    }
+
+
 
 }
 #end

@@ -2,9 +2,17 @@ package ${package.Service};
 
 import ${package.Entity}.${entity};
 import ${superServiceClassPackage};
-import ${package.MODULE_NAME}.vo.${entity}Dto;
+import ${dtoPackage}.${entity}Dto;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import javax.servlet.http.HttpServletResponse;
+#if(${AccountToken})
+import sungo.cms.entity.AccountToken;
+#end
+#if(${SysAccountToken})
+import sungo.manager.entity.SysAccountToken;
+#end
+
 
 /**
  * <p>
@@ -19,12 +27,14 @@ interface ${table.serviceName} : ${superServiceClass}<${entity}>
 #else
 public interface ${table.serviceName} extends ${superServiceClass}<${entity}> {
 
-    ${entity} add(${entity}Dto ${entity}Dto, AccountToken token);
+    ${entity} add(${entity}Dto ${entityLowerName}Dto,#if(${AccountToken}) AccountToken token#elseif(${SysAccountToken}) SysAccountToken token#else AccountToken token#end);
 
-    ${entity} update(${entity}Dto ${entity}Dto, AccountToken token);
+    ${entity} update(${entity}Dto ${entityLowerName}Dto,#if(${AccountToken}) AccountToken token#elseif(${SysAccountToken}) SysAccountToken token#else AccountToken token#end);
 
-    ${entity} delete(${entity}Dto ${entity}Dto, AccountToken token);
+    ${entity} delete(${entity}Dto ${entityLowerName}Dto,#if(${AccountToken}) AccountToken token#elseif(${SysAccountToken}) SysAccountToken token#else AccountToken token#end);
 
-    IPage<${entity}> queryPage(${entity} ${entity}, Page<${entity}> ${entity}Page);
+    IPage<${entity}> queryPage(${entity} ${entityLowerName}, Page<${entity}> ${entityLowerName}Page);
+
+    boolean export(${entity}Dto ${entityLowerName}Dto, HttpServletResponse response);
 }
 #end
