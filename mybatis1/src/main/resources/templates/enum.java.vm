@@ -1,0 +1,37 @@
+package ${enumPackage};
+
+public enum ${entity}ExcelHeadersEnum {
+
+    #foreach($field in ${table.fields})
+    #if(${foreach.hasNext})
+    ${field.name.toUpperCase()}("${field.name}", "${field.comment}"),
+    #else
+    ${field.name.toUpperCase()}("${field.name}", "${field.comment}");
+    #end
+    #end
+
+    private String code;
+
+    private String desc;
+
+    ${entity}ExcelHeadersEnum(String code, String desc) {
+        this.code = code;
+        this.desc = desc;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+}

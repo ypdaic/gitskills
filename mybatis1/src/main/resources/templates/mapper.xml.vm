@@ -25,5 +25,42 @@
 #end
     </resultMap>
 
+    <select id="queryPage" resultMap="BaseResultMap">
+        select
+            *
+        from
+            ${table.name}
+        where
+            enable = 1
+        #foreach($field in ${table.fields})
+            <if test="dto.${field.propertyName} != null">
+                ${field.name} = #{${field.propertyName}}
+            </if>
+        #end
+
+    </select>
+
+    <select id="queryCount" resultType="java.lang.Integer">
+        select count(*) from ${table.name}
+        <where>
+        #foreach($field in ${table.fields})
+            <if test="dto.${field.propertyName} != null">
+                ${field.name} = #{${field.propertyName}}
+            </if>
+        #end
+        </where>
+    </select>
+
+    <select id="queryPageForExport" resultType="java.util.HashMap">
+        select * from ${table.name}
+        <where>
+        #foreach($field in ${table.fields})
+            <if test="dto.${field.propertyName} != null">
+                ${field.name} = #{${field.propertyName}}
+            </if>
+        #end
+        </where>
+    </select>
+
 #end
 </mapper>
