@@ -1,0 +1,25 @@
+package ${dtoPackage};
+
+#foreach($field in ${table.fields})
+#if("$!field.columnType.pkg" != "")
+import ${field.columnType.pkg};
+#end
+#end
+import lombok.Data;
+import ${baseDtoPackage}.BaseDTO;
+
+
+@Data
+public class ${entity}Dto extends BaseDTO {
+
+#foreach ($field in ${table.fields})
+	#if("$!field.comment" != "")
+	/**
+	 * ${field.comment}
+	 */
+	#end
+	private ${field.propertyType} ${field.propertyName};
+
+#end
+
+}
