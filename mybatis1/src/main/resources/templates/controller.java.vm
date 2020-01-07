@@ -13,6 +13,7 @@ import ${superControllerClassPackage};
 #end
 
 import ${package.Service}.${table.serviceName};
+import ${dtoPackage}.${entity}Dto;
 
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -22,6 +23,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.commons.lang3.StringUtils;
+import sungo.util.enums.FailureEnum;
+import sungo.util.result.Result;
+import sungo.util.result.ResultUtil;
+#if(${AccountToken})
+import sungo.cms.entity.AccountToken;
+import javax.servlet.http.HttpServletRequest;
+#end
+#if(${SysAccountToken})
+import sungo.manager.entity.SysAccountToken;
+import sungo.manager.annotation.Token;
+#end
 
 /**
  * <p>
@@ -48,92 +60,116 @@ public class ${table.controllerName} {
 #end
 
     @Autowired
-    ${table.serviceName} ${table.serviceName};
+    ${table.serviceName} ${serviceLowerName};
 
     /**
      *
      * 新增${table.comment}
-     * @param ${entity}Dto
-     * @param httpServletRequest
+     * @param ${entityLowerName}Dto
+     * @param#if(${AccountToken}) httpServletRequest #elseif (${SysAccountToken}) token #else httpServletRequest #end
      * @return
      */
     @PostMapping("/add")
-    public Result add(@RequestBody @Validated ${entity}Dto ${entity}Dto, BindingResult bindingResult, HttpServletRequest httpServletRequest) {
+    public Result add(@RequestBody @Validated ${entity}Dto ${entityLowerName}Dto, BindingResult bindingResult,#if(${AccountToken}) HttpServletRequest httpServletRequest#elseif(${SysAccountToken}) @Token SysAccountToken token#else HttpServletRequest httpServletRequest#end) {
         if (bindingResult.hasErrors()) {
             return paramError(bindingResult);
         }
 
+        #if(${AccountToken})
         AccountToken token = getUserToken(httpServletRequest);
-        ${entity} ${entity} = ${table.serviceName}.add(${entity}Dto, token);
-        return ResultUtil.successOfInsert(${entity});
+        #end
+        ${entity} ${entityLowerName} = ${table.serviceName}.add(${entityLowerName}Dto, token);
+
+        return ResultUtil.successOfInsert(${entityLowerName});
     }
 
     /**
      *
      * 修改${table.comment}
-     * @param ${entity}Dto
-     * @param httpServletRequest
+     * @param ${entityLowerName}Dto
+     * @param#if(${AccountToken}) httpServletRequest #elseif (${SysAccountToken}) token #else httpServletRequest #end
      * @return
      */
     @PostMapping("/update")
-    public Result update(@RequestBody @Validated ${entity}Dto ${entity}Dto, BindingResult bindingResult, HttpServletRequest httpServletRequest) {
+    public Result update(@RequestBody @Validated ${entity}Dto ${entityLowerName}Dto, BindingResult bindingResult,#if(${AccountToken}) HttpServletRequest httpServletRequest#elseif(${SysAccountToken}) @Token SysAccountToken token#else HttpServletRequest httpServletRequest#end) {
         if (bindingResult.hasErrors()) {
             return paramError(bindingResult);
         }
+        #if(${AccountToken})
         AccountToken token = getUserToken(httpServletRequest);
-        ${entity} ${entity} = ${table.serviceName}.update(${entity}Dto, token);
-        if (${entity} == null) {
+        #end
+        ${entity} ${entityLowerName} = ${table.serviceName}.update(${entityLowerName}Dto, token);
+        if (${entityLowerName} == null) {
             return ResultUtil.failure(FailureEnum.PARAMETER_FAILURE);
         }
-        return ResultUtil.successOfUpdate(${entity});
+        return ResultUtil.successOfUpdate(${entityLowerName});
     }
 
     /**
      *
      * 删除${table.comment}
-     * @param ${entity}Dto
-     * @param httpServletRequest
+     * @param ${entityLowerName}Dto
+     * @param#if(${AccountToken}) httpServletRequest #elseif (${SysAccountToken}) token #else httpServletRequest #end
      * @return
      */
     @PostMapping("/delete")
-    public Result delete(@RequestBody ${entity}Dto ${entity}Dto, HttpServletRequest httpServletRequest) {
+
+    public Result delete(@RequestBody ${entity}Dto ${entityLowerName}Dto,#if(${AccountToken}) HttpServletRequest httpServletRequest#elseif(${SysAccountToken}) @Token SysAccountToken token#else HttpServletRequest httpServletRequest#end) {
+        #if(${AccountToken})
         AccountToken token = getUserToken(httpServletRequest);
-        ${entity} ${entity} = ${table.serviceName}.delete(${entity}Dto, token);
-        if (${entity} == null) {
+        #end
+        ${entity} ${entityLowerName} = ${table.serviceName}.delete(${entityLowerName}Dto, token);
+        if (${entityLowerName} == null) {
             return ResultUtil.failure(FailureEnum.PARAMETER_FAILURE);
         }
-        return ResultUtil.successOfDelete(${entity});
+        return ResultUtil.successOfDelete(${entityLowerName});
     }
 
     /**
      *
      * 分页查询${table.comment}
-     * @param ${entity}Dto
-     * @param httpServletRequest
+     * @param ${entityLowerName}Dto
      * @return
      */
     @PostMapping("/queryPage")
-    public Result queryPage(@RequestBody ${entity}Dto ${entity}Dto, HttpServletRequest httpServletRequest) {
-        Page<${entity}> ${entity}Page = new Page<>(${entity}Dto.getPageIndex(), ${entity}Dto.getPageSize());
-        IPage<${entity}> page = ${table.serviceName}.queryPage(${entity}Dto, ${entity}Page);
+    public Result queryPage(@RequestBody ${entity}Dto ${entityLowerName}Dto) {
+        Page<${entity}> ${entityLowerName}Page = new Page<>(${entityLowerName}Dto.getPageIndex(), ${entityLowerName}Dto.getPageSize());
+        IPage<${entity}> page = ${table.serviceName}.queryPage(${entityLowerName}Dto, ${entityLowerName}Page);
         return ResultUtil.success(page);
     }
 
     /**
      *
      * 根据id查询${table.comment}
-     * @param ${entity}Dto
-     * @param httpServletRequest
+     * @param ${entityLowerName}Dto
      * @return
      */
     @PostMapping("/queryById")
-    public Result queryById(@RequestBody ${entity}Dto ${entity}Dto, HttpServletRequest httpServletRequest) {
-        ${entity} ${entity} = ${table.serviceName}.getById(${entity}Dto.getId());
-        if (${entity} == null) {
+    public Result queryById(@RequestBody ${entity}Dto ${entityLowerName}Dto) {
+        ${entity} ${entityLowerName} = ${table.serviceName}.getById(${entityLowerName}Dto.getId());
+        if (${entityLowerName} == null) {
             return ResultUtil.failure(FailureEnum.PARAMETER_FAILURE);
         }
-        return ResultUtil.success(${entity});
+        return ResultUtil.success(${entityLowerName});
     }
+
+    /**
+     *
+     * 导出
+     * @param ${entityLowerName}Dto
+     * @param response
+     * @return
+     */
+    @PostMapping("/export")
+    public Result export(@RequestBody ${entity}Dto ${entityLowerName}Dto, HttpServletResponse response) {
+
+        boolean export = ${table.serviceName}.export(${entityLowerName}Dto, response);
+
+        if (!export) {
+        return ResultUtil.failure(FailureEnum.EXPORT_ERROR, null);
+        }
+        return null;
+        }
 
 }
 
