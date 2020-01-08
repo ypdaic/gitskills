@@ -1,0 +1,223 @@
+通过Keepaliver实现nginx的高可用
+
+1：通过docker安装centos (通过用centos镜像来安装高可用所需要的所有环境)
+
+    docker pull centos
+
+2：启动centos
+
+    docker run -d --name centos_1 -it  centos:latest /bin/bash
+
+    docker run -tid --name centos_2 --privileged=true centos:latest /sbin/init
+
+3：进入到容器
+
+    docker exec -it 0b /bin/bash
+
+    #删除yum.conf文件，否则通过yum安装有时会报超时
+    mv /etc/yum.conf /etc/yum.conf.bak
+
+    # 使用yum安装nginx需要包括Nginx的库，安装Nginx的库
+    rpm -Uvh http://nginx.org/packages/centos/7/noarch/RPMS/nginx-release-centos-7-0.el7.ngx.noarch.rpm
+
+    # 使用下面命令安装nginx
+    #yum install nginx
+
+    # 安装网络包(需要使用ifconfig和ping命令)
+    yum install net-tools
+
+4：安装keepalived
+
+    #安装keepalived环境依赖
+
+        yum install -y gcc openssl-devel popt-devel
+
+        #安装keepalived
+
+        通过yum install keepalived
+
+    #或者通过源码安装
+
+        wget http://124.205.69.132/files/90630000053A2BB4/www.keepalived.org/software/keepalived-1.3.4.tar.gz
+
+        tar zxvf keepalived-1.3.4.tar.gz
+
+        cd keepalived-1.3.4
+
+        ./configure --prefix=/usr/local/keepalived
+
+        make && make install
+
+
+
+        拷贝几个文件到CentOS7环境中：
+
+        cp keepalived-1.3.4/keepalived/etc/init.d/keepalived /etc/init.d/
+        mkdir /etc/keepalived
+        cp /usr/local/keepalived/etc/keepalived/keepalived.conf /etc/keepalived/
+        cp keepalived-1.3.4/keepalived/etc/sysconfig/keepalived /etc/sysconfig/
+        cp /usr/local/keepalived/sbin/keepalived /usr/sbin/
+
+5：修改/etc/keepalived/keepalived.conf文件
+
+    ! Configuration File for keepalived
+    global_defs {
+        notification_email {
+            841943896@qq.com
+        }
+        notification_email_from itsection@example.com
+        smtp_server mail.example.com
+        smtp_connect_timeout 30
+        router_id LVS_DEVEL
+        script_user root
+        enable_script_security
+    }
+
+
+    vrrp_script chk_nginx {
+        script "/etc/keepalived/nginx_check.sh"
+        interval 2 #（检测脚本执行的间隔，单位是秒）
+        weight -5 #权重
+        fall 3
+        rise 2
+    }
+
+
+    vrrp_instance VI_1 {
+        state MASTER         #keepalived主服务
+        interface eth0       # 当前进行vrrp通讯的网络接口卡(当前centos的网卡) 用ifconfig查看你具体的网卡
+        virtual_router_id 2  # 虚拟路由编号，主从要一直
+        priority 101         #选举的优先级
+        advert_int 2         # 检查间隔，默认为1s(vrrp组播周期秒数)
+        #授权访问
+        authentication {
+            auth_type PASS   #设置验证类型和密码，MASTER和BACKUP必须使用相同的密码才能正常通信
+            auth_pass 1111
+        }
+        virtual_ipaddress {
+            172.17.0.210  #虚拟地址ip，多个ip可以以多行的方式添加
+        }
+        track_script {
+           chk_nginx  #指定检测脚本，此处为/etc/keepalived/nginx_check.sh
+        }
+
+    }
+
+6：添加/etc/keepalived/check_nginx.sh文件
+
+
+    #! /bin/bash
+
+    #检测nginx是否启动了
+    A=`ps -ef | grep nginx | grep -v grep | wc -l`
+    #如果nginx没有启动就启动nginx
+    if [ $A -eq 0 ];then
+        #重启nginx
+        systemctl start nginx
+        sleep 2
+        if [ `ps -ef | grep nginx | grep -v grep | wc -l` -eq 0 ];then
+            #killall keepalived
+            ps -ef|grep keepalived|grep -v grep|awk '{print $2}'|xargs kill -9
+        fi
+
+    fi　
+
+
+7：check_nginx.sh赋于执行权限
+
+    chmod +x check_nginx.sh
+
+8：设置keepalived开机启动
+
+    chkconfig keepalived on
+
+    或者
+
+    systemctl enable keepalived.service  设置开机自动启动
+
+9：启动keepalived
+
+    systemctl start keepalived.service
+
+10：启动nginx
+
+    nginx
+
+11：修改修改Nginx默认页面
+
+    vi /usr/share/nginx/html/index.html
+
+    <h1>Welcome to nginx Master!<strong>nginx</strong> on Red Hat Enterprise Linux!</h1>
+
+
+10：保存docker容器的修改
+
+    docker commit 901f ypdaic/centos_keeplived_nginx_master:v1
+
+11：#基于keepalived_master:v1镜像，启动keepalived_slave容器
+   docker run --privileged  -tid --name  keepalived_slave ypdaic/centos_keeplived_nginx_master:v1 /usr/sbin/init
+
+12：修改/etc/keepalived/keepalived.conf文件
+
+    ! Configuration File for keepalived
+    global_defs {
+        notification_email {
+            841943896@qq.com
+        }
+        notification_email_from itsection@example.com
+        smtp_server mail.example.com
+        smtp_connect_timeout 30
+        router_id LVS_DEVEL
+        script_user root
+        enable_script_security
+    }
+
+
+    vrrp_script chk_nginx {
+        script "/etc/keepalived/nginx_check.sh"
+        interval 2
+        weight -5
+        fall 3
+        rise 2
+    }
+
+
+    vrrp_instance VI_1 {
+        state BACKUP  #keepalived主服务
+        interface eth0
+        virtual_router_id 2
+        priority 100  #选举的优先级，Master设置的101
+        advert_int 2
+        authentication {
+            auth_type PASS
+            auth_pass 1111
+        }
+        virtual_ipaddress {
+            172.17.0.210  #虚拟地址ip，多个ip可以以多行的方式添加
+        }
+        track_script {
+           chk_nginx  #指定检测脚本，此处为/etc/keepalived/nginx_check.sh
+        }
+
+    }
+
+13：重启keepalived
+   systemctl daemon-reload  #重新加载配置
+   systemctl start keepalived.service #启动keepalived服务
+   systemctl status keepalived.service #查看当前状态
+
+14：启动nginx
+
+    nginx
+
+15：修改修改Nginx默认页面
+
+    vi /usr/share/nginx/html/index.html
+
+    <h1>Welcome to nginx Slave!<strong>nginx</strong> on Red Hat Enterprise Linux!</h1>
+
+
+16：验证
+
+    停掉master上的keepalived,访问curl 172.17.0.210
+    停掉master上的nignx,测试nginx 存活脚本

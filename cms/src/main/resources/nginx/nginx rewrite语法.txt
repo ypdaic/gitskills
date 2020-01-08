@@ -1,0 +1,29 @@
+rewrite regex replacement [flag];
+
+    rewrite 的含义：该指令是实现 URL 重写的指令。
+    regex 的含义：用于匹配 URI 的正则表达式。
+    replacement：将 regex 正则匹配到的内容替换成 replacement。
+    flag：flag 标记。
+
+    flag 有如下值：
+        last：本条规则匹配完成后，继续向下匹配新的 Location URI 规则。(不常用)
+        break：本条规则匹配完成即终止，不再匹配后面的任何规则(不常用)。
+        redirect：返回 302 临时重定向，浏览器地址会显示跳转新的 URL 地址。
+        permanent：返回 301 永久重定向。浏览器地址会显示跳转新的 URL 地址。
+
+
+示例：
+
+    server {
+            listen       80;
+            server_name  localhost;
+
+            location /java/ {
+                proxy_pass http://127.0.0.1:8080;
+                rewrite ^/java /egg/ redirect; #将http://localhost/java 重定向到http://localhost/egg
+            }
+
+           location /egg/ {
+                proxy_pass http://127.0.0.1:8081;
+            }
+    }
