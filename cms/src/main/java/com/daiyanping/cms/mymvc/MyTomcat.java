@@ -50,6 +50,11 @@ public class MyTomcat {
 
 //        Wrapper dispatchServlet = tomcat.addServlet("/", "dispatchServlet", DispatchServlet.class.getName());
 //        dispatchServlet.addMapping("/mymvc");
+        /**
+         * 如果该元素的值为负数或者没有设置，则容器会当Servlet被请求时再加之
+         * 如果只为正数或者0时，表示容器在应用启动时就加载，并初始化这个servlet,
+         * 值越小优先级越高，越优先被加载
+         */
         dispatchServlet.setLoadOnStartup(1);
         dispatchServlet.setAsyncSupported(true);
         try {
