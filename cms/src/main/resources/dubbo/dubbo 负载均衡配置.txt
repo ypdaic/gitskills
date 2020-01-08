@@ -1,0 +1,5 @@
+<dubbo:consumer   loadbalance="random"/>
+1、 Random ：按权重随机------根据weight值（服务方设置）来随机--
+2、 RoundRobin ：轮询
+3、 LeastActive ：最少活跃数（正在处理的数）
+	慢的机器，收到的请求少

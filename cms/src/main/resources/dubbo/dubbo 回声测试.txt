@@ -1,0 +1,6 @@
+测试报告：reference的服务是否都就绪？
+所有rpc引用的代理对象，都实现了接口 --- EchoService
+
+ 例：
+ EchoService echoService = (EchoService)ctx.getBean(id);
+ ret = echoService.$echo("ok");

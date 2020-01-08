@@ -1,0 +1,6 @@
+<dubbo:method name=“xxx"   async="true" onreturn="callBack.onOrderSubmit" onthrow="callBack.onError"/>
+<bean id="callBack" class="com.enjoy.callback.CallBack" />
+PS：主要在异步方法时使用（方法什么时候返回，什么时候回调处理）
+正常返回和异常处理，都对应处理
+
+当业务不需要返回值时，就可以使用回调

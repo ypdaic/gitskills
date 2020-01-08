@@ -1,0 +1,11 @@
+ <dubbo:reference  id="payService" interface="com.enjoy.service.PayService" >
+        #cancelPay方法是异步调用的
+        <dubbo:method name="cancelPay" async="true" />
+ </dubbo:reference>
+
+ 消费端futureTask获取:
+
+   cancel_order = orderService.cancelPay(orderView);
+
+   // 只有async=true，才能得到此对象，否则为null
+   Future<String> cancelOrder = RpcContext.getContext().getFuture();

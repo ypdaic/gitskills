@@ -1,0 +1,14 @@
+<dubbo:consumer cluster="failover” retries="2" forks="2" />
+
+1、 Failover ：当出现失败，重试其它服务器。 retries=“2” 来设置重试次数(不含第一次)。
+	幂等性操作使用，如读操作
+
+2、 Failfast ：快速失败，只发起一次调用，失败立即报错
+	非幂等性操作，如写操作
+
+3、 Failsafe ：出现异常时，直接忽略
+	无关紧要的旁支操作，如打日志
+4、 Failback ：后台记录失败请求，定时重发
+	后续专业处理
+5、 Forking ：并行调用多个服务器，只要一个成功即返回
+	 forks=“2” 来设置最大并行数

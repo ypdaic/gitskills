@@ -1,0 +1,15 @@
+泛化 ---- 抽象
+当A项目没有得到B项目接口描述，它还想要rpc调用它，有没有办法？
+类似java反射
+
+1、配置dubbo引入，设置generic = true
+
+   <dubbo:reference id="otherService" interface="com.enjoy.service.OtherService" generic="true" />
+
+2、从IOC容器中取出代理对象，转为泛型接口对象，通过$invoke方法调用目标方法（传入方法名/参数类型/参数值）
+
+   GenericService genericService = (GenericService)ctx.getBean("otherService");
+
+   Object ret = genericService.$invoke("getDetail",new String[]{"java.lang.String"},new Object[]{"name"});
+
+   使用场景--------当项目未能得到目标服务的支持包时，用此方法救急（后续应当更正为常规方法）
