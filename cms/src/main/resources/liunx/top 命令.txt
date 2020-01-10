@@ -1,0 +1,46 @@
+#top 命令查询进程情况
+
+root@bcserver01:~/.ssh# top
+top - 13:50:27 up 27 days,  4:23,  2 users,  load average: 0.91, 0.91, 0.91
+Tasks: 162 total,   1 running, 161 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  0.5 us,  0.6 sy,  0.0 ni, 98.6 id,  0.3 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem :  7998992 total,  1024228 free,  5523696 used,  1451068 buff/cache
+KiB Swap:  1000444 total,   351756 free,   648688 used.  2155456 avail Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+13556 root      20   0 5845856 812388  17048 S   4.7 10.2 232:38.00 java
+17295 root      20   0 5838924 1.088g  17340 S   4.7 14.3   6:33.76 java
+19220 root      20   0 5724224 751056  10780 S   4.7  9.4   1505:56 java
+11917 root      20   0 5765004 807732  15332 S   1.3 10.1 369:13.66 java
+ 1005 root      20   0  259512  32052   3152 S   0.3  0.4  37:35.69 oraynewph
+ 1068 root      20   0  102504   3664   3144 S   0.3  0.0  13:24.43 oraysl
+ 1178 root      20   0  836868  37316   6164 S   0.3  0.5 109:10.70 dockerd
+ 1452 root      20   0  804588  21324   3256 S   0.3  0.3  74:24.55 docker-containe
+ 1459 root      20   0 5721560 1.123g  10604 S   0.3 14.7  54:04.77 java
+23290 root      20   0   43552   3604   3008 R   0.3  0.0   0:00.01 top
+
+
+#load average 代表1分钟、5分钟、15分钟的系统平均负载，从这三个数字，可以判断系统负荷是大还是小。当CPU完全空闲的时候，平均负荷为0；当CPU工作量饱和的时候，平均负荷为1
+load average: 0.91, 0.91, 0.91
+
+# top -p 13556  -H 命令查询线程的情况
+
+root@bcserver01:~/.ssh# top -p 13556  -H
+top - 13:55:15 up 27 days,  4:27,  2 users,  load average: 0.94, 0.94, 0.93
+Threads:  90 total,   0 running,  90 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  0.3 us,  1.0 sy,  0.0 ni, 98.5 id,  0.2 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem :  7998992 total,  1011792 free,  5531040 used,  1456160 buff/cache
+KiB Swap:  1000444 total,   351772 free,   648672 used.  2148024 avail Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND
+13687 root      20   0 5845856 812388  17048 S  3.3 10.2 155:53.33 java
+13578 root      20   0 5845856 812388  17048 S  0.3 10.2  15:14.48 java
+13962 root      20   0 5845856 812388  17048 S  0.3 10.2  13:55.30 java
+13963 root      20   0 5845856 812388  17048 S  0.3 10.2  13:49.67 java
+13964 root      20   0 5845856 812388  17048 S  0.3 10.2  13:55.91 java
+13556 root      20   0 5845856 812388  17048 S  0.0 10.2   0:00.00 java
+13558 root      20   0 5845856 812388  17048 S  0.0 10.2   0:14.44 java
+
+
+# 使用如下命令将pid转化为16进制
+printf "%x" 13687
