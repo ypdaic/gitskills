@@ -1,0 +1,16 @@
+
+# 输出pid, mian方法的全类名
+jps -l
+
+
+daiyanpingdeiMac:~ daiyanping$ jps -l
+41712 sungo.manager.ManagerServerApplication
+37600 org.jetbrains.jps.cmdline.Launcher
+41713 org.jetbrains.jps.cmdline.Launcher
+41762 sun.tools.jps.Jps
+37603 org.jetbrains.jps.cmdline.Launcher
+840 com.syntevo.QBootLoader
+41531 org.jetbrains.idea.maven.server.RemoteMavenServer
+41708 org.jetbrains.jps.cmdline.Launcher
+37598 org.jetbrains.jps.cmdline.Launcher
+38558 org.jetbrains.kotlin.daemon.KotlinCompileDaemon

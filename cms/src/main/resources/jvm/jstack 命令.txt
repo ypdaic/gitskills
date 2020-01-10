@@ -1,0 +1,1 @@
+jstack -l 41378 > core.log

@@ -174,7 +174,7 @@
 
 
     vrrp_script chk_nginx {
-        script "/etc/keepalived/nginx_check.sh"
+        script "/usr/local/src/check_ngx.sh" #一定要放在这个路径下，否则脚本不执行
         interval 2
         weight -5
         fall 3
@@ -196,7 +196,7 @@
             172.17.0.210  #虚拟地址ip，多个ip可以以多行的方式添加
         }
         track_script {
-           chk_nginx  #指定检测脚本，此处为/etc/keepalived/nginx_check.sh
+           chk_nginx  #指定检测脚本，此处为/usr/local/src/check_ngx.sh
         }
 
     }

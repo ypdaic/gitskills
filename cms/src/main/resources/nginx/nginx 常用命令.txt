@@ -1,0 +1,7 @@
+启动nginx    ./sbin/nginx
+停止nginx    ./sbin/nginx -s stop   ./sbin/nginx -s quit
+重载配置      ./sbin/nginx -s reload(平滑重启) service nginx reload
+重载指定配置文件    ./sbin/nginx -c  /usr/local/nginx/conf/nginx.conf
+查看nginx版本  ./sbin/nginx -v
+检查配置文件是否正确  ./sbin/nginx -t
+显示帮助信息  ./sbin/nginx  -h

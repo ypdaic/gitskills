@@ -1,12 +1,12 @@
-package com.daiyanping.cms.util;
+package com.sungo.report.server.common.util.lang;
 
+import com.daiyanping.cms.util.FileUtil;
 import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.poi.hssf.usermodel.HSSFPalette;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
@@ -15,6 +15,7 @@ import org.springframework.core.io.ClassPathResource;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
@@ -72,7 +73,6 @@ public class ExcelUtil {
      */
     public static final Integer PER_SHEET_WRITE_COUNT = PER_SHEET_ROW_COUNT / PER_WRITE_ROW_COUNT;
 
-
     /**
      * 校验日期格式
      *
@@ -110,6 +110,44 @@ public class ExcelUtil {
 
         // 在内存当中保持 100 行 , 超过的数据放到硬盘中在内存当中保持 100 行 , 超过的数据放到硬盘中
         SXSSFWorkbook wb = new SXSSFWorkbook(100);
+
+        // 获取sheet数量
+        Integer sheetCount = ((totalRowCount % PER_SHEET_ROW_COUNT == 0) ?
+                (totalRowCount / PER_SHEET_ROW_COUNT) : (totalRowCount / PER_SHEET_ROW_COUNT + 1));
+
+        // 根据总记录数创建sheet并分配标题
+        for (int i = 0; i < sheetCount; i++) {
+            Sheet sheet = wb.createSheet(sheetName + (i + 1));
+            //第一个参数代表列id(从0开始),第2个参数代表宽度值
+            for (int j = 0; j < headers.size(); j++) {
+
+                sheet.setColumnWidth(j, (int) ((40 + 0.72) * 256));
+            }
+            CellStyle cellStyle = setExcelHeaderStyle(wb);
+            Row headRow = sheet.createRow(0);
+
+            //在excel表中添加表头
+            for (int j = 0; j < headers.size(); j++) {
+                Cell cell = headRow.createCell(j);
+                cell.setCellValue(headers.get(j));
+                cell.setCellStyle(cellStyle);
+            }
+        }
+
+        return wb;
+    }
+
+    /**
+     * 初始化EXCEL(sheet个数和标题)
+     *
+     * @param totalRowCount 总记录数
+     * @param headers       表头
+     * @return XSSFWorkbook对象
+     */
+    public static XSSFWorkbook initExcelForXSS(Integer totalRowCount, List<String> headers, String sheetName) {
+
+        // 在内存当中保持 100 行 , 超过的数据放到硬盘中在内存当中保持 100 行 , 超过的数据放到硬盘中
+        XSSFWorkbook wb = new XSSFWorkbook();
 
         // 获取sheet数量
         Integer sheetCount = ((totalRowCount % PER_SHEET_ROW_COUNT == 0) ?
@@ -188,6 +226,57 @@ public class ExcelUtil {
         }
         logger.info("End export data");
         return true;
+    }
+
+    /**
+     * 支持Excel表生成后进行后续处理
+     *
+     * @param response
+     * @param totalRowCount          总记录数
+     * @param fileName               文件名称
+     * @param headers                标题
+     * @param writeExcelDataCallback 向EXCEL写数据回调
+     * @throws Exception
+     */
+    public static final boolean exportExcelToWebsiteAfter(HttpServletResponse response, Integer totalRowCount, String fileName, List<String> headers, WriteExcelDataCallback writeExcelDataCallback, ExcelAfterHandle excelAfterHandle) {
+
+        logger.info("Start export data");
+
+        // 初始化EXCEL
+        XSSFWorkbook wb = initExcelForXSS(totalRowCount, headers, fileName);
+        try {
+            CellStyle cellStyle = setExcelContentStyle(wb);
+            // 分批写数据
+            int sheetCount = wb.getNumberOfSheets();
+            for (int i = 0; i < sheetCount; i++) {
+                Sheet sheet = wb.getSheetAt(i);
+                for (int j = 1; j <= PER_SHEET_WRITE_COUNT; j++) {
+                    int pageIndex = i * PER_SHEET_WRITE_COUNT + j;
+                    int pageSize = PER_WRITE_ROW_COUNT;
+                    int startRowCount = (j - 1) * PER_WRITE_ROW_COUNT + 1;
+                    writeExcelDataCallback.doWith(sheet, pageIndex, pageSize, startRowCount, cellStyle);
+                }
+            }
+
+            excelAfterHandle.doWith(wb);
+            // 下载EXCEL
+            setResponseHeader(response);
+            wb.write(response.getOutputStream());
+            response.flushBuffer();
+        } catch (Exception e) {
+            logger.error("excel表格上生成失败！", e);
+            return false;
+        } finally {
+            FileUtil.close(wb);
+        }
+        logger.info("End export data");
+        return true;
+    }
+
+    @FunctionalInterface
+    public interface ExcelAfterHandle {
+
+        void doWith(Workbook wb) throws IOException;
     }
 
     public static void insertDataToExcel(Sheet sheet, List<Map<String, Object>> data, List<String> resultSetColumnNames, CellStyle cellStyle, int startRowCount) {
@@ -435,12 +524,11 @@ public class ExcelUtil {
      */
     public static CellStyle createCustomCellStyle(CustomCellStyle customCellStyle) {
         CellStyle cellStyle = customCellStyle.getWb().createCellStyle();
-        HSSFPalette customPalette = customCellStyle.getWb().getCustomPalette();
         if (customCellStyle.getBackgroundCustomRGB() != null && customCellStyle.getBackgroundIndexedColors() != null) {
 
-            customPalette.setColorAtIndex(customCellStyle.getBackgroundIndexedColors().index, customCellStyle.getBackgroundCustomRGB()[0], customCellStyle.getBackgroundCustomRGB()[1], customCellStyle.getBackgroundCustomRGB()[2]);
+            XSSFColor xssfColor = new XSSFColor(new java.awt.Color(customCellStyle.getBackgroundCustomRGB()[0], customCellStyle.getBackgroundCustomRGB()[1], customCellStyle.getBackgroundCustomRGB()[2]));
             // 设置背景色
-            cellStyle.setFillForegroundColor(customCellStyle.getBackgroundIndexedColors().index);
+            cellStyle.setFillForegroundColor(xssfColor.getIndex());
             cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         }
 
@@ -483,8 +571,9 @@ public class ExcelUtil {
         }
         font.setFontHeightInPoints(customCellStyle.getFontSize());
         if (customCellStyle.getFontCustomRGB() != null) {
-            HSSFColor hssfColor = customPalette.findSimilarColor(customCellStyle.getFontCustomRGB()[0], customCellStyle.getFontCustomRGB()[1], customCellStyle.getFontCustomRGB()[2]);
-            font.setColor(hssfColor.getIndex());
+//            HSSFColor hssfColor = customPalette.findSimilarColor(customCellStyle.getFontCustomRGB()[0], customCellStyle.getFontCustomRGB()[1], customCellStyle.getFontCustomRGB()[2]);
+            XSSFColor xssfColor = new XSSFColor(new java.awt.Color(customCellStyle.getBackgroundCustomRGB()[0], customCellStyle.getBackgroundCustomRGB()[1], customCellStyle.getBackgroundCustomRGB()[2]));
+            font.setColor(xssfColor.getIndex());
         }
 
         if (customCellStyle.getFontIndexedColors() != null) {
@@ -504,7 +593,7 @@ public class ExcelUtil {
     @Data
     public static class CustomCellStyle {
 
-        private HSSFWorkbook wb;
+        private Workbook wb;
 
         /**
          * 是否创建下边框
@@ -539,7 +628,7 @@ public class ExcelUtil {
         /**
          * 自定义背景色
          */
-        private byte[] backgroundCustomRGB;
+        private int[] backgroundCustomRGB;
 
         /**
          * 指定背景色
@@ -580,5 +669,51 @@ public class ExcelUtil {
          * 字体名称
          */
         private String fontName;
+    }
+
+    /**
+     * 填充空白cell,并设置值为0
+     * @param sheet
+     * @param contentCellStyle
+     * @param dataStartRowIndex
+     * @param dataStartCellIndex
+     */
+    public static void fillingNullCell(Sheet sheet, CellStyle contentCellStyle, int dataStartRowIndex, int dataStartCellIndex) {
+        int lastRowNum = sheet.getLastRowNum();
+        int maxCellNum = 0;
+        for (int j = 0; j <= lastRowNum; j++) {
+            Row row = sheet.getRow(j);
+            short lastCellNum = row.getLastCellNum();
+            maxCellNum = Math.max(lastCellNum, maxCellNum);
+        }
+
+        for (int j = dataStartRowIndex; j <= lastRowNum; j++) {
+            Row row = sheet.getRow(j);
+            for (int k = dataStartCellIndex; k < maxCellNum; k++) {
+                Cell cell = row.getCell(k);
+                if (cell == null) {
+                    cell = row.createCell(k);
+                    cell.setCellValue(0);
+                    cell.setCellStyle(contentCellStyle);
+                }
+            }
+        }
+
+    }
+
+    /**
+     * 合并单元格
+     * @param sheet
+     * @param firstRow 起始行
+     * @param lastRow 结束行
+     * @param firstCol 起始列
+     * @param lastCol 结束列
+     */
+    public static void mergeCells(Sheet sheet, int firstRow, int lastRow, int firstCol, int lastCol) {
+        //创建合并单元格
+        CellRangeAddress region = new CellRangeAddress(firstRow, lastRow, firstCol, lastCol);
+        //在sheet里增加合并单元格
+        sheet.addMergedRegion(region);
+
     }
 }
