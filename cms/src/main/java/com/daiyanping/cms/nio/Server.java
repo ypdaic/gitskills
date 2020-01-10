@@ -32,6 +32,7 @@ public class Server {
             socket.bind(inetSocketAddress);
             serverSocketChannel.configureBlocking(true);
 //            serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
+//            accept方法是阻塞的
             serverSocketChannel.accept();
             System.out.println("服务端启动成功");
             new Thread(new ServerTask()).start();
