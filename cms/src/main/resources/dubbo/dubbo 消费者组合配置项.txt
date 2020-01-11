@@ -1,0 +1,5 @@
+ReferenceConfig的init方法，具体通过appendParameters方法进行合并，先合并application标签，再合并module标签
+然后合并consumer标签（会带上default前缀），最后合并reference标签
+
+最后在进行refre时还要合并服务提供方的配置，相同的key,消费者方的基本高，具体在RegistryDirectory.mergeUrl方法中进行合并
+

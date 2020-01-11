@@ -1,0 +1,2 @@
+first=com.daiyanping.cms.loadbalance.FirstLoadBalance
+last=com.daiyanping.cms.loadbalance.LastLoadBalance

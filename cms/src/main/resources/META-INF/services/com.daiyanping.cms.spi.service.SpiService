@@ -1,0 +1,2 @@
+com.daiyanping.cms.spi.service.DubboSpiServiceImpl
+com.daiyanping.cms.spi.service.RmiSpiServiceImpl

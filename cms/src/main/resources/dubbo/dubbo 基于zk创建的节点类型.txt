@@ -1,0 +1,9 @@
+当父节点/dubbo/com.enjoy.service.OrderService/providers不存在时，会创建父节点的永久节点
+
+当创建服务提供者，节点时，如下：也就是providers后面的
+
+/dubbo/com.enjoy.service.OrderService/providers/dubbo%3A%2F%2F192.168.1.2%3A20880%2Fcom.enjoy.service.OrderService%3Fanyhost%3Dtrue%26application%3DstoreServer%26dubbo%3D2.5.7%26dynamic%3Dtrue%26generic%3Dfalse%26interface%3Dcom.enjoy.service.OrderService%26methods%3Dcancel%2Csubmit%2CgetDetail%26pid%3D9156%26side%3Dprovider%26timestamp%3D1578670341004
+
+则会根据标签中的dynamic="true" 属性判定是创建永久节点还是临时节点
+
+消费者则默认是永久节点

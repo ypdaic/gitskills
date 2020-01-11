@@ -1,0 +1,14 @@
+stub=org.apache.dubbo.rpc.proxy.wrapper.StubProxyFactoryWrapper
+jdk=org.apache.dubbo.rpc.proxy.jdk.JdkProxyFactory
+javassist=org.apache.dubbo.rpc.proxy.javassist.JavassistProxyFactory
+
+当代理类去获取实际的实现类时，依然是找ExtensionLoader的getExtension(String name)方法去获取的，
+如果存在有的实现类需要依赖注入接口类型的实例的，该方法会返回这个实现类，对应上面的就是stub，而不是直接返回需要的实现类，对应上面的就是javassist类型
+
+
+StubProxyFactoryWrapper实际用于本地存根，也就是在调用远程服务之前，消费端自己需要执行的代码，类似AOP，一般配置在消费端
+
+实例：
+
+ <dubbo:reference id="userService" interface="org.huxin.dubbo.test.user.service.UserInterface"
+                    stub="org.huxin.dubbo.test.UserServiceStub" protocol="dubbo"/>

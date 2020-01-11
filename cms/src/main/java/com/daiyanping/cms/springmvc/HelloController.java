@@ -25,9 +25,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 
@@ -277,6 +275,15 @@ public class HelloController {
 		calendar.set(Calendar.MILLISECOND, 0);
 		Date time = calendar.getTime();
 		System.out.println(time);
+	}
+
+	/*
+	 * 这个方法，所有的请求都会先调用这个方法
+	 * */
+	@ModelAttribute("areaBean")
+	public List<String> queryArea(@RequestParam String areaCode) {
+
+		return new ArrayList<>();
 	}
 
 }

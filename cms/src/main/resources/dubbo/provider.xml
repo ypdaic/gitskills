@@ -8,5 +8,5 @@
     <dubbo:registry group="aaa" address="zookeeper://127.0.0.1:2181"/>
     <dubbo:protocol name="dubbo" port="20890"/>
     <bean id="providerService" class="com.daiyanping.cms.dubbo.provider.impl.ProviderServiceImpl"/>
-    <dubbo:service interface="com.daiyanping.cms.dubbo.provider.ProviderService" ref="providerService" />
+    <dubbo:service interface="com.daiyanping.cms.dubbo.provider.ProviderService" ref="providerService" dynamic="true"/>
 </beans>

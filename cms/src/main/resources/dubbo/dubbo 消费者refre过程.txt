@@ -1,0 +1,6 @@
+先调用ZookeeperRegistry的doRegister注册自己，然后调用doSubscribe监听服务端的变化，
+就会刷新RegistryDirectory的methodInvokerMap
+
+methodInvokerMap会在AbstractClusterInvoker中被使用
+
+methodInvokerMap就包含了方法对应的invoker
