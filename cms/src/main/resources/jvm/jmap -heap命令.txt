@@ -1,0 +1,50 @@
+
+# 使用jmap -heap pid查看进程堆内存使用情况，包括使用的GC算法、堆配置参数和各代中堆内存使用情况
+jmap -heap pid
+
+    Attaching to process ID 13556, please wait...
+    Debugger attached successfully.
+    Server compiler detected.
+    JVM version is 25.201-b09
+
+    using thread-local object allocation.
+    Parallel GC with 4 thread(s)
+
+    Heap Configuration:
+       MinHeapFreeRatio         = 0                         #GC后如果发现空闲堆内存占到整个预估堆内存的N%(百分比), 则放大堆内存的预估最大值
+       MaxHeapFreeRatio         = 100                       #GC后如果发现空闲堆内存占到整个预估堆内存的N%(百分比)，则收缩堆内存的预估最大值
+       MaxHeapSize              = 2048917504 (1954.0MB)     #最大的堆内存
+       NewSize                  = 42991616 (41.0MB)         #新生代最小值
+       MaxNewSize               = 682622976 (651.0MB)       #新生代最大值
+       OldSize                  = 87031808 (83.0MB)         #老年代的默认大小
+       NewRatio                 = 2                         #老年代对比新生代的空间大小, 比如2代表老年代空间是新生代的两倍大小
+       SurvivorRatio            = 8                         #Eden/Survivor的值
+       MetaspaceSize            = 21807104 (20.796875MB)    #分配给类元数据空间的初始大小
+       CompressedClassSpaceSize = 1073741824 (1024.0MB)     #类指针压缩空间大小, 默认为1G
+       MaxMetaspaceSize         = 17592186044415 MB         #分配给类元数据空间的最大值, 超过此值就会触发Full GC. 此值仅受限于系统内存的大小, JVM会动态地改变此值
+       G1HeapRegionSize         = 0 (0.0MB)                 #G1区块的大小, 取值为1M至32M. 其取值是要根据最小Heap大小划分出2048个区块
+
+    Heap Usage:
+    PS Young Generation
+    Eden Space:
+       capacity = 39845888 (38.0MB)
+       used     = 24068376 (22.953392028808594MB)
+       free     = 15777512 (15.046607971191406MB)
+       60.40366323370682% used
+    From Space:
+       capacity = 524288 (0.5MB)
+       used     = 294912 (0.28125MB)
+       free     = 229376 (0.21875MB)
+       56.25% used
+    To Space:
+       capacity = 524288 (0.5MB)
+       used     = 0 (0.0MB)
+       free     = 524288 (0.5MB)
+       0.0% used
+    PS Old Generation
+       capacity = 206569472 (197.0MB)
+       used     = 107841256 (102.8454360961914MB)
+       free     = 98728216 (94.1545639038086MB)
+       52.205805124970254% used
+
+    47288 interned Strings occupying 5047424 bytes.

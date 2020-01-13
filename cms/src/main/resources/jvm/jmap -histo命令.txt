@@ -1,0 +1,35 @@
+使用jmap -histo[:live] pid查看堆内存中的对象数目、大小统计直方图，如果带上live则只统计活对象
+
+如：jmap -histo:live 13556 > class.log
+
+    num     #instances         #bytes  class name
+    ----------------------------------------------
+       1:        154066       14338232  [C
+       2:        223432        7149824  java.util.concurrent.ConcurrentHashMap$Node
+       3:         65827        5792776  java.lang.reflect.Method
+       4:        103953        4989744  org.aspectj.weaver.reflect.ShadowMatchImpl
+       5:        153278        3678672  java.lang.String
+       6:         40539        3514600  [Ljava.lang.Object;
+       7:        103953        3326496  org.aspectj.weaver.patterns.ExposedState
+       8:           645        2244576  [Ljava.util.concurrent.ConcurrentHashMap$Node;
+       9:         19999        2236144  java.lang.Class
+      10:         55485        2219400  java.util.LinkedHashMap$Entry
+      11:          8077        2132224  [B
+      12:         20415        1490896  [Ljava.util.HashMap$Node;
+      13:          9861        1386744  [I
+      14:         22388        1253728  java.util.LinkedHashMap
+      15:         42689        1024536  org.springframework.core.MethodClassKey
+      16:         48849         781584  java.lang.Object
+
+
+      class name 说明如下；
+
+        B  byte
+        C  char
+        D  double
+        F  float
+        I  int
+        J  long
+        Z  boolean
+        [  数组，如[I表示int[]
+        [L+类名 其他对象

@@ -1,0 +1,4 @@
+用jmap把进程内存使用情况dump到文件中，再用jhat分析查看。jmap进行dump命令格式如下：
+
+    如：jmap -dump:live,format=b,file=/tmp/dump.bin 2171 (live 只统计活的对象)
+
