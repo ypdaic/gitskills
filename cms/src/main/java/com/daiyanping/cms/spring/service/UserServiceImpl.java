@@ -17,4 +17,9 @@ public class UserServiceImpl implements UserService {
     public String queryUser(String userId) {
         return "xxx";
     }
+
+    @Override
+    public void addxx(String id) {
+        
+    }
 }
