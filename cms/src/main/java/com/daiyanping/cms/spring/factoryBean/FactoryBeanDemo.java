@@ -1,9 +1,8 @@
 package com.daiyanping.cms.spring.factoryBean;
 
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.stereotype.Service;
 
-@Service
+//@Service
 public class FactoryBeanDemo implements FactoryBean {
 
     @Override

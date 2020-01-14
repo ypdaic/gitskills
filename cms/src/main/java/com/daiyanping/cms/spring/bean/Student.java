@@ -5,6 +5,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Role;
 import org.springframework.stereotype.Service;
 
+//@Lazy
 @Data
 @Service
 @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
@@ -18,5 +19,9 @@ public class Student {
     @Autowired
     public Student(ConstructorAutowiredBean constructorAutowiredBean) {
         this.constructorAutowiredBean = constructorAutowiredBean;
+    }*/
+
+/*    public Student(String username) {
+        this.username = username;
     }*/
 }

@@ -18,12 +18,13 @@ public class BeanDefinitionTest implements BeanDefinitionRegistryPostProcessor {
         GenericBeanDefinition genericBeanDefinition = new GenericBeanDefinition();
         genericBeanDefinition.setBeanClass(BeanClass.class);
 
+//        genericBeanDefinition.getConstructorArgumentValues().addGenericArgumentValue(null);
+
         MutablePropertyValues propertyValues = genericBeanDefinition.getPropertyValues();
         propertyValues.addPropertyValue("username","peter");
 
         registry.registerBeanDefinition("beanClass",genericBeanDefinition);
 
-        // 扫描自定义注解
         ClassPathBeanDefinitionScanner scanner = new ClassPathBeanDefinitionScanner(registry);
         scanner.addIncludeFilter(new AnnotationTypeFilter(MyService.class));
         scanner.scan("com.xiangxue.jack");

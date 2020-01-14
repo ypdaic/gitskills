@@ -1,0 +1,22 @@
+1：direct exchange
+
+    路由键必须是全匹配
+
+2: fanout exchange
+
+    忽略路由键，将消息发送到所有队列
+
+3：topic  exchange
+
+    通过通配符*，#，将消息发送到相应的队列
+    比如：消息的路由键是
+          user.a
+         队列的路由键是user.#
+
+         则这个消息发给我
+
+         *只能匹配一个分隔符，而#匹配.后的所有，如：
+
+         user.*.a 只能匹配user.c.a，user.d.a，如果来一个user.c.b是匹配不了的
+         user.# 则可以匹配user.c.a，user.d.a，user.c.b
+         #     则匹配所有

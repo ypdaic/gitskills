@@ -10,6 +10,6 @@ public class GirlMethodInterceptor implements MethodInterceptor {
     public Object invoke(MethodInvocation invocation) throws Throwable {
 
         System.out.println("专门拦路拦截漂亮妹妹！！");
-        return null;
+        return invocation.proceed();
     }
 }

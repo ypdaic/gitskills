@@ -3,6 +3,9 @@ package com.daiyanping.cms.spring.beanPostProcessor;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessor;
 
+/*
+* 可以使所有类不能ioc依赖注入
+* */
 //@Service
 public class InstantiationAwareBeanPostProcessorDemo implements InstantiationAwareBeanPostProcessor {
     @Override
