@@ -45,8 +45,6 @@ public class SpringApplication {
             tomcatServer.getServer().await();
         } catch (LifecycleException e) {
             e.printStackTrace();
-        } catch (ServletException e) {
-            e.printStackTrace();
         }
     }
 
