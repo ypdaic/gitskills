@@ -19,8 +19,8 @@ public class GoodsServiceImpl implements GoodsService {
     @Transactional
     @Override
     public void addGoods(ZgGoods zgGoods) {
-        int i = commonMapper.addGood(zgGoods);
-        if(true) throw new RuntimeException("yic");
+//        int i = commonMapper.addGood(zgGoods);
+//        if(true) throw new RuntimeException("yic");
     }
 
     @Transactional(readOnly = true)

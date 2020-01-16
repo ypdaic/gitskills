@@ -14,7 +14,7 @@ import javax.sql.DataSource;
 
 @Component
 @EnableTransactionManagement(proxyTargetClass = false)
-@MapperScan(basePackages = {"com.xiangxue.jack.dao"},annotationClass = Repository.class)
+@MapperScan(basePackages = {"com.daiyanping.cms.spring.dao"},annotationClass = Repository.class)
 public class EnableTransactionManagementBean {
 
     @Bean
