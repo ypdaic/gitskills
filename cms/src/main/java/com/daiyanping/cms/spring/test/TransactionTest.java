@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,6 +57,8 @@ public class TransactionTest {
         zgGoods.setGoodName(goodsStr);
         zgGoods.setCount(100);
         transationService.transation(area,zgGoods);
+        DataSource dataSource = (DataSource) applicationContext.getBean("ds1");
+        System.out.println(dataSource);
     }
 
     @Test
