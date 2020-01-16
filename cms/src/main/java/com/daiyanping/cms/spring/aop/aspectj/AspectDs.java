@@ -14,20 +14,24 @@ import org.springframework.stereotype.Component;
 public class AspectDs {
 
     @Around(value = "@annotation(targetSource)",argNames = "joinPoint,targetSource")
-    public void xx(ProceedingJoinPoint joinPoint, TargetSource targetSource) {
+    public Object xx(ProceedingJoinPoint joinPoint, TargetSource targetSource) {
 
         System.out.println("========AspectDs.xx");
         String value = targetSource.value();
 
         if(value != null && !"".equals(value)) {
+            System.out.println("数据源切换" + value);
             DynamicDataSourceHolder.getLocal().set(value);
         } else {
             DynamicDataSourceHolder.getLocal().set("ds1");
         }
+        Object proceed = null;
         try {
-            joinPoint.proceed();
+            proceed = joinPoint.proceed();
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
+
+        return proceed;
     }
 }

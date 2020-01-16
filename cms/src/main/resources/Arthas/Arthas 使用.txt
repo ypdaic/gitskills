@@ -1,0 +1,141 @@
+1: 下载
+
+    curl -O https://alibaba.github.io/arthas/arthas-boot.jar
+
+    curl -O https://arthas.gitee.io/arthas-boot.jar
+
+2: 运行
+
+    java -jar arthas-boot.jar
+
+3: trace 命令（用来打印某个方法执行过程中的执行时长）
+
+    trace org.springframework.web.servlet.DispatcherServlet *
+
+    输出：
+
+        `---ts=2020-01-15 10:10:56;thread_name=http-nio-9104-exec-8;id=75;is_daemon=true;priority=5;TCCL=org.springframework.boot.web.embedded.tomcat.TomcatEmbeddedWebappClassLoader@171c1f7b
+            `---[3.006806ms] org.springframework.web.servlet.DispatcherServlet:buildLocaleContext()
+
+        `---ts=2020-01-15 10:10:56;thread_name=http-nio-9104-exec-8;id=75;is_daemon=true;priority=5;TCCL=org.springframework.boot.web.embedded.tomcat.TomcatEmbeddedWebappClassLoader@171c1f7b
+            `---[16.560779ms] org.springframework.web.servlet.DispatcherServlet:doService()
+                +---[0.050072ms] org.springframework.beans.JrBeanReloader:checkAndReloadBeanDefinitions() #44001
+                +---[2.250695ms] org.springframework.web.servlet.DispatcherServlet:logRequest() #910
+                |   `---[2.188042ms] org.springframework.web.servlet.DispatcherServlet:logRequest()
+                |       `---[0.026234ms] org.springframework.core.log.LogFormatUtils:traceDebug() #955
+                +---[0.021034ms] org.springframework.web.util.WebUtils:isIncludeRequest() #915
+                +---[0.018655ms] org.springframework.web.servlet.DispatcherServlet:getWebApplicationContext() #927
+                +---[0.024508ms] javax.servlet.http.HttpServletRequest:setAttribute() #927
+                +---[0.013216ms] javax.servlet.http.HttpServletRequest:setAttribute() #928
+                +---[0.003971ms] javax.servlet.http.HttpServletRequest:setAttribute() #929
+                +---[0.077336ms] org.springframework.web.servlet.DispatcherServlet:getThemeSource() #930
+                |   `---[0.050645ms] org.springframework.web.servlet.DispatcherServlet:getThemeSource()
+                |       `---[min=8.96E-4ms,max=0.001065ms,total=0.001961ms,count=2] org.springframework.web.servlet.DispatcherServlet:getWebApplicationContext() #803
+                +---[0.002745ms] javax.servlet.http.HttpServletRequest:setAttribute() #930
+                +---[0.027098ms] org.springframework.web.servlet.FlashMapManager:retrieveAndUpdate() #933
+                +---[0.010551ms] org.springframework.web.servlet.FlashMap:<init>() #937
+                +---[0.002212ms] javax.servlet.http.HttpServletRequest:setAttribute() #937
+                +---[0.001184ms] javax.servlet.http.HttpServletRequest:setAttribute() #938
+                +---[13.838438ms] org.springframework.web.servlet.DispatcherServlet:doDispatch() #942 [throws Exception]
+
+4: stack 命令 (用来打印方法的调用栈)
+
+    stack org.springframework.web.servlet.DispatcherServlet doDispatch
+
+    输出：
+
+        ts=2020-01-15 10:12:24;thread_name=http-nio-9104-exec-10;id=77;is_daemon=true;priority=5;TCCL=org.springframework.boot.web.embedded.tomcat.TomcatEmbeddedWebappClassLoader@171c1f7b
+            @java.lang.reflect.Method.invoke()
+                at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:-1)
+                at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:942)
+                at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1005)
+                at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:908)
+                at javax.servlet.http.HttpServlet.service(HttpServlet.java:660)
+                at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:882)
+                at javax.servlet.http.HttpServlet.service(HttpServlet.java:741)
+                at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:231)
+                at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+                at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
+                at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+                at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+                at com.alibaba.druid.support.http.WebStatFilter.doFilter(WebStatFilter.java:124)
+                at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+                at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+                at org.springframework.boot.actuate.web.trace.servlet.HttpTraceFilter.doFilterInternal(HttpTraceFilter.java:88)
+                at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:118)
+                at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+                at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+                at sungo.util.filter.CosOriginFilter.doFilter(CosOriginFilter.java:40)
+                at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+                at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+                at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:99)
+                at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:118)
+                at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+                at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+                at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:92)
+                at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:118)
+                at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+                at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+                at org.springframework.web.filter.HiddenHttpMethodFilter.doFilterInternal(HiddenHttpMethodFilter.java:93)
+                at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:118)
+                at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+                at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+                at org.springframework.cloud.sleuth.instrument.web.ExceptionLoggingFilter.doFilter(ExceptionLoggingFilter.java:50)
+                at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+                at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+                at brave.servlet.TracingFilter.doFilter(TracingFilter.java:99)
+                at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+                at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+                at org.springframework.boot.actuate.metrics.web.servlet.WebMvcMetricsFilter.filterAndRecordMetrics(WebMvcMetricsFilter.java:114)
+                at org.springframework.boot.actuate.metrics.web.servlet.WebMvcMetricsFilter.doFilterInternal(WebMvcMetricsFilter.java:104)
+                at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:118)
+                at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+                at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+                at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:200)
+                at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:118)
+                at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+                at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+                at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:202)
+                at org.apache.catalina.core.StandardContextValve.__invoke(StandardContextValve.java:96)
+                at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:41002)
+                at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:490)
+                at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:139)
+                at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:92)
+                at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+                at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:343)
+                at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:408)
+                at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:66)
+                at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:853)
+                at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1587)
+                at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49)
+                at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+                at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+                at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+                at java.lang.Thread.run(Thread.java:748)
+
+5: watch 命令（方法执行数据观测，能观察到的范围为：返回值、抛出异常、入参，通过编写 OGNL 表达式进行对应变量的查看。）
+
+    watch  org.springframework.web.servlet.DispatcherServlet doDispatch "{params[0]}"
+
+
+6: 基础命令
+
+    help——查看命令帮助信息
+
+    cls——清空当前屏幕区域
+
+    session——查看当前会话的信息
+
+    reset——重置增强类，将被 Arthas 增强过的类全部还原，Arthas 服务端关闭时会重置所有增强过的类
+
+    version——输出当前目标 Java 进程所加载的 Arthas 版本号
+
+    history——打印命令历史
+
+    quit——退出当前 Arthas 客户端，其他 Arthas 客户端不受影响
+
+    stop——和shutdown命令一致（推荐使用，避免误操作）
+
+    shutdown——关闭 Arthas 服务端，所有 Arthas 客户端全部退出
+
+    keymap——Arthas快捷键列表及自定义快捷键

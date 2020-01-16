@@ -68,7 +68,7 @@ public class Client {
                                 System.out.println("客户端已连上服务器");
                                 socketChannel.register(selector, SelectionKey.OP_READ);
 
-                                FileSystemResource fileSystemResource = new FileSystemResource("/Users/daiyanping/git-clone-repository/gitskills/cms/src/main/resources/test.xls");
+                                FileSystemResource fileSystemResource = new FileSystemResource("/Users/daiyanping/git-clone-repository/gitskills/cms/src/main/resources/test.txt");
                                 InputStream inputStream1 = fileSystemResource.getInputStream();
                                 byte[] buffer2 = new byte[1024];
                                 int count2 = 0;

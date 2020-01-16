@@ -1,3 +1,4 @@
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
@@ -5,18 +6,17 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
 import com.baomidou.mybatisplus.generator.config.*;
+import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
 import com.baomidou.mybatisplus.generator.config.converts.MySqlTypeConvert;
+import com.baomidou.mybatisplus.generator.config.po.TableField;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
-import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
+import com.baomidou.mybatisplus.generator.config.rules.FileType;
 import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
-import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 import com.baomidou.mybatisplus.generator.engine.VelocityTemplateEngine;
-import org.omg.CORBA.PRIVATE_MEMBER;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.io.File;
+import java.util.*;
 
 /**
  * @ClassName CodeGenerator
@@ -27,23 +27,23 @@ import java.util.Scanner;
  */
 public class CodeGenerator {
 
-//    private final static String PROJECT_PATH = "/Users/daiyanping/git-clone-repository/gitskills/mybatis1";
+    private final static String PROJECT_PATH = "/Users/daiyanping/git-clone-repository/gitskills/mybatis1";
 //
 //    private final static String MODULE_NAME = "test";
 
-    private final static String PROJECT_PATH = "/Users/daiyanping/code/yyc-cms";
+//    private final static String PROJECT_PATH = "/Users/daiyanping/code/yyc-cms";
 
-    private final static String MODULE_NAME = "yyc";
+    private final static String MODULE_NAME = "cms";
 
-    private final static String PARTENT_PATH = "com.sungo.management.server";
+    private final static String PARTENT_PATH = "sungo";
 
-    private final static String DATABASE_URL = "jdbc:mysql://192.168.1.12:3306/yyc_wx";
+    private final static String DATABASE_URL = "jdbc:mysql://192.168.1.12:3306/yyc_cms_dev";
 
     private final static String USERNAME = "root";
 
     private final static String PASSWORD = "123456";
 
-    private final static String MAPPERXML_PATH = "/src/main/resources/sqlMapperXml/yyc/";
+    private final static String MAPPERXML_PATH = "/src/main/resources/sqlMapperXml/cms/";
 
     /**
      * <p>
@@ -112,7 +112,7 @@ public class CodeGenerator {
         // service 实现类包名
         packageConfig.setServiceImpl("service.impl");
         // mapper映射文件 包名   默认会在mapper目录下生成xml目录，并放置mapper.xml文件
-//        packageConfig.setXml("xml");
+//        packageConfig.setXml();
 
         /**
          * 包配置
@@ -146,10 +146,67 @@ public class CodeGenerator {
 
         // 自定义配置
         InjectionConfig cfg = new InjectionConfig() {
-            @Override
+
             public void initMap() {
-                // to do nothing
+            IFileCreate iFileCreate = new IFileCreate() {
+
+                @Override
+                public boolean isCreate(ConfigBuilder configBuilder, FileType fileType, String filePath) {
+                    return !FileType.XML.equals(fileType);
+                }
+            };
+
+            setFileCreate(iFileCreate);
+
+        }
+
+            public void initTableMap(TableInfo tableInfo) {
+                // 子类重写注入表对应补充信息
+                getUpperFieldList(tableInfo);
+
             }
+
+            /**
+             * 模板待渲染 Object Map 预处理<br>
+             * com.baomidou.mybatisplus.generator.engine.AbstractTemplateEngine
+             * 方法： getObjectMap 结果处理
+             */
+            public Map<String, Object> prepareObjectMap(Map<String, Object> objectMap) {
+                Map<String, Object> map = new HashMap<String, Object>(6);
+
+                // 小写entity名称
+                map.put("entityLowerName", StrUtil.lowerFirst(String.valueOf(objectMap.get("entity"))));
+
+                String serviceName = ((TableInfo) objectMap.get("table")).getServiceName();
+                String serviceLowerName = StrUtil.subSuf(serviceName, 1);
+
+                // 小写接口实现类名称
+                map.put("serviceLowerName", StrUtil.lowerFirst(serviceLowerName));
+
+//                // 首字母大小字段名
+//                map.put("upperFieldList", getUpperFieldList((TableInfo) objectMap.get("table")));
+
+                // 首字母大小字段名
+                map.put("dtoPackage", PARTENT_PATH + StringPool.DOT + MODULE_NAME + StringPool.DOT + "vo");
+
+                map.put("enumPackage", PARTENT_PATH + StringPool.DOT + MODULE_NAME + StringPool.DOT + "enums");
+
+                // 首字母大小字段名
+                map.put("dtoSupClassName", "BaseDTO");
+
+                // 首字母大小字段名
+                map.put("baseDtoPackage", "sungo.manager.utils");
+
+                map.put("AccountToken", false);
+                map.put("SysAccountToken", true);
+
+
+
+
+                objectMap.putAll(map);
+                return objectMap;
+            }
+
         };
 
         // 如果模板引擎是 freemarker
@@ -168,6 +225,54 @@ public class CodeGenerator {
             }
         });
 
+        String voTemplatePath = "/templates/dto.java.vm";
+
+        // 自定义配置会被优先输出
+        fileOutList.add(new FileOutConfig(voTemplatePath) {
+            @Override
+            public String outputFile(TableInfo tableInfo) {
+
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append(PROJECT_PATH).append(File.separator);
+                stringBuilder.append("src/main/java").append(File.separator);
+                stringBuilder.append(PARTENT_PATH).append(File.separator);
+                stringBuilder.append(MODULE_NAME).append(File.separator);
+                stringBuilder.append("vo");
+                File file = new File(stringBuilder.toString());
+                boolean exist = file.exists();
+                if (!exist) {
+                    file.mkdirs();
+                }
+                stringBuilder.append(File.separator);
+                stringBuilder.append(tableInfo.getEntityName() + "Dto.java");
+                return stringBuilder.toString();
+            }
+        });
+
+        String excelTemplatePath = "/templates/enum.java.vm";
+
+        // 自定义配置会被优先输出
+        fileOutList.add(new FileOutConfig(excelTemplatePath) {
+            @Override
+            public String outputFile(TableInfo tableInfo) {
+
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append(PROJECT_PATH).append(File.separator);
+                stringBuilder.append("src/main/java").append(File.separator);
+                stringBuilder.append(PARTENT_PATH).append(File.separator);
+                stringBuilder.append(MODULE_NAME).append(File.separator);
+                stringBuilder.append("enums");
+                File file = new File(stringBuilder.toString());
+                boolean exist = file.exists();
+                if (!exist) {
+                    file.mkdirs();
+                }
+                stringBuilder.append(File.separator);
+                stringBuilder.append(tableInfo.getEntityName() + "ExcelHeadersEnum.java");
+                return stringBuilder.toString();
+            }
+        });
+
         cfg.setFileOutConfigList(fileOutList);
         gen.setCfg(cfg);
 
@@ -177,31 +282,14 @@ public class CodeGenerator {
         // 配置自定义输出模板
         // 指定自定义模板路径，注意不要带上.ftl/.vm, 会根据使用的模板引擎自动识别
         // 默认不用指定
-//        templateConfig.setController("templates/controller.java");
-//        templateConfig.setEntity("templates/entity.java");
-//        templateConfig.setService("templates/service.java");
-//        templateConfig.setMapper("templates/mapper.java");
-//        templateConfig.setServiceImpl("templates/serviceImpl.java");
+        templateConfig.setController("templates/controller.java");
+        templateConfig.setEntity("templates/entity.java");
+        templateConfig.setService("templates/service.java");
+        templateConfig.setMapper("templates/mapper.java");
+        templateConfig.setServiceImpl("templates/serviceImpl.java");
         // 给null，默认会在mapper包下生成xml文件夹放mapper.xml   这个xml文件我们自定义生成目录
-//        templateConfig.setXml(null);
+        templateConfig.setXml("templates/mapper.xml");
         gen.setTemplate(templateConfig);
-
-        /**
-         * 模板配置
-         */
-//        gen.setTemplate(
-//                // 关闭默认 xml 生成 使用自定配置生成到指定目录
-                new TemplateConfig().setXml(null);
-//                // 自定义模板配置，模板可以参考源码 /mybatis-plus/src/main/resources/template 使用 copy
-//                // 至您项目 src/main/resources/template 目录下，模板名称也可自定义如下配置：
-//                // .setController("...");
-//                // .setEntity("...");
-//                // .setMapper("...");
-//                // .setXml("...");
-//                // .setService("...");
-//                // .setServiceImpl("...");
-//        );
-
 
         // 策略配置
         StrategyConfig strategy = new StrategyConfig();
@@ -214,11 +302,11 @@ public class CodeGenerator {
         // 需要生成的表的字段名的策略  此处为下滑线分隔 （具体给什么参数以数据库为准）
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
         // 需要生成的表的表名
-        strategy.setInclude(new String[]{"medassist_medicine"});
+        strategy.setInclude(new String[]{"volunteer_apply_count", "account"});
         // 需要排除生成的表的表名
 //        strategy.setExclude(new String[]{"test"});
         // 设置实体类的父类 默认Model
-        strategy.setSuperEntityClass("com.sungo.report.server.common.base.SuperEntity");
+        strategy.setSuperEntityClass("sungo.manager.utils.SuperEntity");
         // 自定义 mapper 父类 默认BaseMapper
         strategy.setSuperMapperClass("com.baomidou.mybatisplus.core.mapper.BaseMapper");
         // 自定义 service 父类 默认IService
@@ -226,7 +314,7 @@ public class CodeGenerator {
         // 自定义 service 实现类父类 默认ServiceImpl
         strategy.setSuperServiceImplClass("com.baomidou.mybatisplus.extension.service.impl.ServiceImpl");
         // 自定义 controller 父类
-        strategy.setSuperControllerClass("com.sungo.report.server.common.base.BaseController");
+        strategy.setSuperControllerClass("sungo.manager.utils.BaseController");
         // 【实体】是否生成字段常量（默认 false）
         // public static final String ID = "test_id";
         strategy.setEntityColumnConstant(false);
@@ -246,5 +334,19 @@ public class CodeGenerator {
 
         gen.setTemplateEngine(new VelocityTemplateEngine());
         gen.execute();
+    }
+
+    private static void getUpperFieldList(TableInfo table) {
+        List<TableField> fields = table.getFields();
+        fields.forEach(tableField -> {
+            String propertyName = tableField.getPropertyName();
+            HashMap<String, Object> fieldMap = new HashMap<>();
+            fieldMap.put("lowerFieldName", StrUtil.lowerFirst(propertyName));
+            fieldMap.put("upperFieldName", StrUtil.upperFirst(propertyName));
+            tableField.setCustomMap(fieldMap);
+        });
+
+
+
     }
 }

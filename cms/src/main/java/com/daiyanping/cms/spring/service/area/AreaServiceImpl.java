@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-@PropertySource("classpath:config/core/core.properties")
+@PropertySource("classpath:spring/jdbc.properties")
 @Service
 public class AreaServiceImpl implements AreaService {
 
@@ -77,7 +77,7 @@ public class AreaServiceImpl implements AreaService {
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public int addArea(ConsultConfigArea area) {
-        int i = commonMapper.addArea(area);
-        return i;
+//        int i = commonMapper.addArea(area);
+        return 0;
     }
 }

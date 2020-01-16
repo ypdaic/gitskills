@@ -70,7 +70,7 @@ public class ${table.controllerName} {
      * @return
      */
     @PostMapping("/add")
-    public Result add(@RequestBody @Validated ${entity}Dto ${entityLowerName}Dto, BindingResult bindingResult,#if(${AccountToken}) HttpServletRequest httpServletRequest#elseif(${SysAccountToken}) @Token SysAccountToken token#else HttpServletRequest httpServletRequest#end) {
+    public Result<${entity}> add(@RequestBody @Validated ${entity}Dto ${entityLowerName}Dto, BindingResult bindingResult,#if(${AccountToken}) HttpServletRequest httpServletRequest#elseif(${SysAccountToken}) @Token SysAccountToken token#else HttpServletRequest httpServletRequest#end) {
         if (bindingResult.hasErrors()) {
             return paramError(bindingResult);
         }
@@ -91,7 +91,7 @@ public class ${table.controllerName} {
      * @return
      */
     @PostMapping("/update")
-    public Result update(@RequestBody @Validated ${entity}Dto ${entityLowerName}Dto, BindingResult bindingResult,#if(${AccountToken}) HttpServletRequest httpServletRequest#elseif(${SysAccountToken}) @Token SysAccountToken token#else HttpServletRequest httpServletRequest#end) {
+    public Result<${entity}> update(@RequestBody @Validated ${entity}Dto ${entityLowerName}Dto, BindingResult bindingResult,#if(${AccountToken}) HttpServletRequest httpServletRequest#elseif(${SysAccountToken}) @Token SysAccountToken token#else HttpServletRequest httpServletRequest#end) {
         if (bindingResult.hasErrors()) {
             return paramError(bindingResult);
         }
@@ -114,7 +114,7 @@ public class ${table.controllerName} {
      */
     @PostMapping("/delete")
 
-    public Result delete(@RequestBody ${entity}Dto ${entityLowerName}Dto,#if(${AccountToken}) HttpServletRequest httpServletRequest#elseif(${SysAccountToken}) @Token SysAccountToken token#else HttpServletRequest httpServletRequest#end) {
+    public Result<${entity}> delete(@RequestBody ${entity}Dto ${entityLowerName}Dto,#if(${AccountToken}) HttpServletRequest httpServletRequest#elseif(${SysAccountToken}) @Token SysAccountToken token#else HttpServletRequest httpServletRequest#end) {
         #if(${AccountToken})
         AccountToken token = getUserToken(httpServletRequest);
         #end
@@ -132,7 +132,7 @@ public class ${table.controllerName} {
      * @return
      */
     @PostMapping("/queryPage")
-    public Result queryPage(@RequestBody ${entity}Dto ${entityLowerName}Dto) {
+    public Result<IPage<${entity}>> queryPage(@RequestBody ${entity}Dto ${entityLowerName}Dto) {
         Page<${entity}> ${entityLowerName}Page = new Page<>(${entityLowerName}Dto.getPageIndex(), ${entityLowerName}Dto.getPageSize());
         IPage<${entity}> page = ${table.serviceName}.queryPage(${entityLowerName}Dto, ${entityLowerName}Page);
         return ResultUtil.success(page);
@@ -145,7 +145,7 @@ public class ${table.controllerName} {
      * @return
      */
     @PostMapping("/queryById")
-    public Result queryById(@RequestBody ${entity}Dto ${entityLowerName}Dto) {
+    public Result<${entity}> queryById(@RequestBody ${entity}Dto ${entityLowerName}Dto) {
         ${entity} ${entityLowerName} = ${table.serviceName}.getById(${entityLowerName}Dto.getId());
         if (${entityLowerName} == null) {
             return ResultUtil.failure(FailureEnum.PARAMETER_FAILURE);
@@ -161,7 +161,7 @@ public class ${table.controllerName} {
      * @return
      */
     @PostMapping("/export")
-    public Result export(@RequestBody ${entity}Dto ${entityLowerName}Dto, HttpServletResponse response) {
+    public Result<Object> export(@RequestBody ${entity}Dto ${entityLowerName}Dto, HttpServletResponse response) {
 
         boolean export = ${table.serviceName}.export(${entityLowerName}Dto, response);
 
