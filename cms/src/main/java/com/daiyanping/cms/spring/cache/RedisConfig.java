@@ -13,7 +13,7 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.stereotype.Component;
 import redis.clients.jedis.JedisPoolConfig;
 
-@PropertySource("classpath:redis/redis.properties")
+@PropertySource("classpath:spring/redis.properties")
 @Component
 public class RedisConfig {
 
