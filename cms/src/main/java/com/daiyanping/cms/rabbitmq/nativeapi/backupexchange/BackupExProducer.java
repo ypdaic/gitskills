@@ -38,11 +38,11 @@ public class BackupExProducer {
         Map<String,Object> argsMap = new HashMap<String,Object>();
         argsMap.put("alternate-exchange",BAK_EXCHANGE_NAME);
         //主交换器
+        channel.exchangeDeclare(EXCHANGE_NAME,"direct",
+                false,false,argsMap);
         //备用交换器
         channel.exchangeDeclare(BAK_EXCHANGE_NAME,BuiltinExchangeType.FANOUT,
                 true,false,null);
-        channel.exchangeDeclare(EXCHANGE_NAME,"direct",
-                false,false,argsMap);
 
         //所有日志严重性级别
         String[] severities={"error","info","warning"};

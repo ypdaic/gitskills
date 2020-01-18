@@ -1,0 +1,17 @@
+1：临时队列
+
+    自动删除队列    channel.queueDeclare(queueName, false, false, true, null); 第4个参数为true，表示是自动删除队列，所有消费者与该队列断开后，该队列就会自动删除
+
+    单消费者队列    channel.queueDeclare(queueName, false, false, true, null); 第3个参数为true，表示是单消费者队列
+
+    自动过期队列    一段时间没有消费者取消息，或者没有消费者绑定在队列上，配置参数x-expires
+                   Map<String, Object> arguments = new HashMap<String, Object>();
+                           arguments.put("x-expires",
+                                  1000);
+                           channel.queueDeclare(queueName,false,false,
+                                   false,arguments);
+
+
+2：永久队列
+
+    持久化队列：     channel.queueDeclare(queueName, true, false, true, null); 第二个参数为true，表示持久化队列

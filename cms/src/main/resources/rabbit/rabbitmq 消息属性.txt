@@ -1,0 +1,13 @@
+content-type	消息体的MIME类型，如application/json
+content-encoding	消息的编码类型，如是否压缩
+message-id	消息的唯一性标识，由应用进行设置
+correlation-id	一般用做关联消息的message-id，常用于消息的响应
+timestamp	消息的创建时刻，整形，精确到秒
+expiration	消息的过期时刻， 字符串，但是呈现格式为整型，精确到秒 （如果过期间隔只有一秒，该消息会被丢弃）
+delivery-mode	消息的持久化类型，1为非持久化，2为持久化，性能影响巨大
+app-id	应用程序的类型和版本号
+user-id	标识已登录用户，极少使用
+type	消息类型名称，完全由应用决定如何使用该字段
+reply-to	构建回复消息的私有响应队列
+headers	键/值对表，用户自定义任意的键和值
+priority	指定队列中消息的优先级

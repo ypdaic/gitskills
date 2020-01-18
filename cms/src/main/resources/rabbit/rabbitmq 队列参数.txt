@@ -1,0 +1,17 @@
+x-dead-letter-exchange	死信交换器
+x-dead-letter-routing-key	死信消息的可选路由键
+x-expires	队列在指定毫秒数后被删除
+x-ha-policy	创建HA队列
+x-ha-nodes	HA队列的分布节点
+x-max-length	队列的最大消息数
+x-message-ttl	毫秒为单位的消息过期时间，队列级别
+x-max-priority	最大优先值为255的队列优先排序功能
+
+
+通过如下方式配置：
+
+   Map<String, Object> arguments = new HashMap<String, Object>();
+   arguments.put("x-expires",
+          1000);
+   channel.queueDeclare(queueName,false,false,
+           false,arguments);
