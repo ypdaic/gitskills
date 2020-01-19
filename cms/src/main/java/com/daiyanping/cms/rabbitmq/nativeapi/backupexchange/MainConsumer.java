@@ -3,7 +3,11 @@ package com.daiyanping.cms.rabbitmq.nativeapi.backupexchange;
 import com.rabbitmq.client.*;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeoutException;
+
+import static com.daiyanping.cms.rabbitmq.nativeapi.backupexchange.BackupExProducer.BAK_EXCHANGE_NAME;
 
 /**
  *类说明：主交换器的消费者
@@ -14,7 +18,7 @@ public class MainConsumer {
     public static void main(String[] argv)
             throws IOException, TimeoutException {
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("192.168.111.128");
+        factory.setHost("127.0.0.1");
         factory.setPort(5672);
         factory.setUsername("root");
         factory.setPassword("test1234");
@@ -22,7 +26,13 @@ public class MainConsumer {
         // 打开连接和创建频道，与发送端一样
         Connection connection = factory.newConnection();
         final Channel channel = connection.createChannel();
-        channel.exchangeDeclare(BackupExProducer.EXCHANGE_NAME, "direct");
+        // 声明备用交换器
+        Map<String,Object> argsMap = new HashMap<String,Object>();
+        argsMap.put("alternate-exchange",BAK_EXCHANGE_NAME);
+        channel.exchangeDeclare(BackupExProducer.EXCHANGE_NAME, "direct", false, false, argsMap);
+        //备用交换器
+        channel.exchangeDeclare(BAK_EXCHANGE_NAME,BuiltinExchangeType.FANOUT,
+                false,false,null);
         // 声明一个队列
         String queueName = "focuserror";
         channel.queueDeclare(queueName,
