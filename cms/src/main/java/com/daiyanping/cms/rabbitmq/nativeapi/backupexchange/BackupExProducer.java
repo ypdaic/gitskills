@@ -16,7 +16,7 @@ import java.util.concurrent.TimeoutException;
 public class BackupExProducer {
 
     public final static String EXCHANGE_NAME = "main-exchange";
-    public final static String BAK_EXCHANGE_NAME = "ae";
+    public final static String BAK_EXCHANGE_NAME = "ac";
 
     public static void main(String[] args)
             throws IOException, TimeoutException {
@@ -24,7 +24,7 @@ public class BackupExProducer {
          * 创建连接连接到RabbitMQ
          */
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("192.168.111.128");
+        factory.setHost("127.0.0.1");
         factory.setPort(5672);
         factory.setUsername("root");
         factory.setPassword("test1234");
@@ -37,12 +37,13 @@ public class BackupExProducer {
         // 声明备用交换器
         Map<String,Object> argsMap = new HashMap<String,Object>();
         argsMap.put("alternate-exchange",BAK_EXCHANGE_NAME);
+
         //主交换器
         channel.exchangeDeclare(EXCHANGE_NAME,"direct",
                 false,false,argsMap);
         //备用交换器
         channel.exchangeDeclare(BAK_EXCHANGE_NAME,BuiltinExchangeType.FANOUT,
-                true,false,null);
+                false,false,null);
 
         //所有日志严重性级别
         String[] severities={"error","info","warning"};

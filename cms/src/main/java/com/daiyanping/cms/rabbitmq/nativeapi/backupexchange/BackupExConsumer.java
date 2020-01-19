@@ -14,7 +14,7 @@ public class BackupExConsumer {
     public static void main(String[] argv)
             throws IOException, TimeoutException {
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("192.168.111.128");
+        factory.setHost("127.0.0.1");
         factory.setPort(5672);
         factory.setUsername("root");
         factory.setPassword("test1234");
@@ -24,7 +24,7 @@ public class BackupExConsumer {
         final Channel channel = connection.createChannel();
         channel.exchangeDeclare(BackupExProducer.BAK_EXCHANGE_NAME,
                 BuiltinExchangeType.FANOUT,
-                true, false, null);
+                false, false, null);
         // 声明一个队列
         String queueName = "fetchother";
         channel.queueDeclare(queueName,
