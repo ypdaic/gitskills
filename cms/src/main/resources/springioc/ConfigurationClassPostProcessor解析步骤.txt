@@ -260,6 +260,7 @@
         // 如果bean 包含@Import注解，判断导入的是否是ImportSelector，如果是再次加载ImportSelector的返回值，如果是ImportBeanDefinitionRegistrar，
         // 则
         // Process any @Import annotations
+        // getImports(sourceClass) 方法会往上依次解析该类所有的注解，注解中的注解，直到找到@Import注解，并收集起来
         processImports(configClass, sourceClass, getImports(sourceClass), true);
 
         // Process any @ImportResource annotations
