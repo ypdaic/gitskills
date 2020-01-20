@@ -1,9 +1,11 @@
 package com.daiyanping.cms.rabbitmq;
 
+import com.daiyanping.cms.rabbitmq.nativeapi.NativeApi;
 import org.springframework.amqp.core.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 /**
  * @ClassName RabbitmqConfig
@@ -147,5 +149,11 @@ public class RabbitmqConfig {
     @Bean
     public Binding bindingTopicExchangeWithC() {
         return BindingBuilder.bind(topicC()).to(topicExchange()).with("topic.*.z");
+    }
+
+    @Configuration
+    @Import(NativeApi.class)
+    public static class StaticConfig {
+
     }
 }
