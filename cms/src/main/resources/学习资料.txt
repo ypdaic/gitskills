@@ -20,5 +20,10 @@ http://tangyh.top:10000/zuihou-ui/#/dashboard
 
 https://www.oschina.net/p/sculptor-boot
 
+rabbitmq 实例
+
+https://github.com/wangzaiplus/springboot/tree/wxw/src/main/java/com/wangzaiplus/test
+
+
 
 
