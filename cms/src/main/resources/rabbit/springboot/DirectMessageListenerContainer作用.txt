@@ -1,0 +1,45 @@
+
+// 开启定时任务进行监控
+private void startMonitor(long idleEventInterval, final Map<String, Queue> namesToQueues) {
+		this.consumerMonitorTask = this.taskScheduler.scheduleAtFixedRate(() -> {
+			long now = System.currentTimeMillis();
+			// 发送ListenerContainerIdleEvent 事件
+			checkIdle(idleEventInterval, now);
+			// 如果消费者的通道没有关闭，协助进行ack，如果关闭了，该消费者需要重新进行初始化进行消费
+			checkConsumers(now);
+			if (this.lastRestartAttempt + getFailedDeclarationRetryInterval() < now) {
+				synchronized (this.consumersMonitor) {
+					List<SimpleConsumer> restartableConsumers = new ArrayList<>(this.consumersToRestart);
+					this.consumersToRestart.clear();
+					if (this.started) {
+						if (restartableConsumers.size() > 0) {
+						    // 进行队列的创建，如果需要
+							doRedeclareElementsIfNecessary();
+						}
+						Iterator<SimpleConsumer> iterator = restartableConsumers.iterator();
+						while (iterator.hasNext()) {
+							SimpleConsumer consumer = iterator.next();
+							iterator.remove();
+							// consumersByQueue 不包含consumer.getQueue() 则不进行 重启消费者
+							if (!DirectMessageListenerContainer.this.consumersByQueue
+									.containsKey(consumer.getQueue())) {
+								if (this.logger.isDebugEnabled()) {
+									this.logger.debug("Skipping restart of consumer " + consumer);
+								}
+								continue;
+							}
+							if (this.logger.isDebugEnabled()) {
+								this.logger.debug("Attempting to restart consumer " + consumer);
+							}
+							//重启消费者
+							if (!restartConsumer(namesToQueues, restartableConsumers, consumer)) {
+								break;
+							}
+						}
+						this.lastRestartAttempt = now;
+					}
+				}
+			}
+			processMonitorTask();
+		}, this.monitorInterval);
+	}

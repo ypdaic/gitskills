@@ -1,0 +1,7 @@
+用于收集类上包含@RabbitListener，方法上包含@RabbitHandler，
+或者方法上包含@RabbitListener的Bean
+
+并将每个方法包装成MethodRabbitListenerEndpoint（方法上加@RabbitListener），
+或者MultiMethodRabbitListenerEndpoint（方法上加@RabbitHandler，类上加@RabbitListener）
+用于后续MessageListenerContainer，MessageListener的创建
+

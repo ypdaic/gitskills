@@ -1,0 +1,3 @@
+最终消费消息的接口，在注解的方式下使用的是AbstractAdaptableMessageListener
+
+配置文件方式则使用的是MessageListenerAdapter

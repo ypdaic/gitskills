@@ -1,0 +1,3 @@
+我们使用了@Configurable 注解的配置类，spring会通过ConfigurationClassEnhancer
+对象创建一个代理，该代理主要代理含有@Bean注解的方法和setBeanFactory方法
+

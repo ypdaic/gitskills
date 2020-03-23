@@ -1,0 +1,114 @@
+
+    // MessageListener  onMessage 方法入口
+    private final ContainerDelegate delegate = this::actualInvokeListener;
+
+	protected final Object consumersMonitor = new Object(); //NOSONAR
+
+    // 消费者参数
+	private final Map<String, Object> consumerArgs = new HashMap<>();
+
+    // 实际由proxy 触发actualInvokeListener方法的调用，当存在
+    // advice时，会创建代理类
+	private ContainerDelegate proxy = this.delegate;
+
+    // 等待消费者shutdown的时间
+	private long shutdownTimeout = DEFAULT_SHUTDOWN_TIMEOUT;
+
+    // 事件派发者
+	private ApplicationEventPublisher applicationEventPublisher;
+
+    // 事物管理器
+	@Nullable
+	private PlatformTransactionManager transactionManager;
+
+    // 事物属性
+	private TransactionAttribute transactionAttribute = new DefaultTransactionAttribute();
+
+	@Nullable
+	private String beanName;
+
+    // 消费者创建线程池
+	private Executor taskExecutor = new SimpleAsyncTaskExecutor();
+
+	private boolean taskExecutorSet;
+
+	private BackOff recoveryBackOff = new FixedBackOff(DEFAULT_RECOVERY_INTERVAL, FixedBackOff.UNLIMITED_ATTEMPTS);
+
+	private MessagePropertiesConverter messagePropertiesConverter = new DefaultMessagePropertiesConverter();
+
+	private AmqpAdmin amqpAdmin;
+
+	private boolean missingQueuesFatal = true;
+
+	private boolean missingQueuesFatalSet;
+
+	private boolean possibleAuthenticationFailureFatal = true;
+
+	private boolean possibleAuthenticationFailureFatalSet;
+
+	private boolean autoDeclare = true;
+
+	private boolean mismatchedQueuesFatal = false;
+
+	private long failedDeclarationRetryInterval = DEFAULT_FAILED_DECLARATION_RETRY_INTERVAL;
+
+	private boolean autoStartup = true;
+
+	private int phase = Integer.MAX_VALUE;
+
+	private volatile boolean active = false;
+
+	private volatile boolean running = false;
+
+	private final Object lifecycleMonitor = new Object();
+
+	private volatile List<Queue> queues = new CopyOnWriteArrayList<>();
+
+	private ErrorHandler errorHandler = new ConditionalRejectingErrorHandler();
+
+	private MessageConverter messageConverter;
+
+	private boolean exposeListenerChannel = true;
+
+	private volatile MessageListener messageListener;
+
+	private volatile AcknowledgeMode acknowledgeMode = AcknowledgeMode.AUTO;
+
+	private volatile boolean deBatchingEnabled = DEFAULT_DEBATCHING_ENABLED;
+
+	private volatile boolean initialized;
+
+	private Collection<MessagePostProcessor> afterReceivePostProcessors;
+
+	private volatile ApplicationContext applicationContext;
+
+	private String listenerId;
+
+	private Advice[] adviceChain = new Advice[0];
+
+	@Nullable
+	private ConsumerTagStrategy consumerTagStrategy;
+
+	private volatile boolean exclusive;
+
+	private volatile boolean noLocal;
+
+	private volatile boolean defaultRequeueRejected = true;
+
+	private volatile int prefetchCount = DEFAULT_PREFETCH_COUNT;
+
+	private long idleEventInterval;
+
+	private volatile long lastReceive = System.currentTimeMillis();
+
+	private boolean statefulRetryFatalWithNullMessageId = true;
+
+	private ConditionalExceptionLogger exclusiveConsumerExceptionLogger = new DefaultExclusiveConsumerLogger();
+
+	private boolean alwaysRequeueWithTxManagerRollback;
+
+	private String lookupKeyQualifier = "";
+
+	private boolean forceCloseChannel = true;
+
+	private String errorHandlerLoggerName = getClass().getName();

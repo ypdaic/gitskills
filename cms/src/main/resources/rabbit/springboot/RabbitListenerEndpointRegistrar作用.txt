@@ -1,0 +1,29 @@
+负责收集 RabbitListenerAnnotationBeanPostProcessor创建的RabbitListenerEndpoint，并往
+RabbitListenerEndpointRegistry中注册MessageListenerContainer
+
+属性如下：
+
+    // 收集的RabbitListenerEndpoint
+    private final List<AmqpListenerEndpointDescriptor> endpointDescriptors =
+			new ArrayList<AmqpListenerEndpointDescriptor>();
+
+    //由 RabbitBootstrapConfiguration 提供
+	@Nullable
+	private RabbitListenerEndpointRegistry endpointRegistry;
+
+    // 默认为null，可以在RabbitListenerAnnotationBeanPostProcessor创建时，手动指定
+    // 用于覆盖RabbitListenerAnnotationBeanPostProcessor RabbitHandlerMethodFactoryAdapter
+    // 的messageHandlerMethodFactory
+	private MessageHandlerMethodFactory messageHandlerMethodFactory;
+
+    // 由RabbitAnnotationDrivenConfiguration提供（自动配置的）
+	private RabbitListenerContainerFactory<?> containerFactory;
+
+    // 由RabbitListenerAnnotationBeanPostProcessor defaultContainerFactoryBeanName属性提供
+	private String containerFactoryBeanName;
+
+	private BeanFactory beanFactory;
+
+    // 是否立即启动容器，如果为true,后续调用registerEndpoint就直接往RabbitListenerEndpointRegistry中注册MessageListenerContainer
+    // 并且立即启动容器
+	private boolean startImmediately;

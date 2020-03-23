@@ -1,0 +1,34 @@
+protected void doStart() {
+		// 检查容器中的队列名称是否包含我们期望的队列名称
+		checkListenerContainerAware();
+		super.doStart();
+		synchronized (this.consumersMonitor) {
+			if (this.consumers != null) {
+				throw new IllegalStateException("A stopped container should not have consumers");
+			}
+			// 根据消费者的并发数创建多个BlockingQueueConsumer
+			int newConsumers = initializeConsumers();
+			if (this.consumers == null) {
+				logger.info("Consumers were initialized and then cleared " +
+						"(presumably the container was stopped concurrently)");
+				return;
+			}
+			if (newConsumers <= 0) {
+				if (logger.isInfoEnabled()) {
+					logger.info("Consumers are already running");
+				}
+				return;
+			}
+			Set<AsyncMessageProcessingConsumer> processors = new HashSet<AsyncMessageProcessingConsumer>();
+			for (BlockingQueueConsumer consumer : this.consumers) {
+				// 为每个消费者创建一个异步任务进行消费
+				AsyncMessageProcessingConsumer processor = new AsyncMessageProcessingConsumer(consumer);
+				processors.add(processor);
+				getTaskExecutor().execute(processor);
+				if (getApplicationEventPublisher() != null) {
+					getApplicationEventPublisher().publishEvent(new AsyncConsumerStartedEvent(this, consumer));
+				}
+			}
+			waitForConsumersToStart(processors);
+		}
+	}

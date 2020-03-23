@@ -1,0 +1,17 @@
+用于MessageListenerContainer的创建，销毁，启动
+
+当调用RabbitListenerContainerFactory的createListenerContainer时，
+要么创建SimpleMessageListenerContainer
+要么创建DirectMessageListenerContainer
+
+然后使用RabbitListenerContainerFactory中的属性填充到MessageListenerContainer
+
+然后调用endpoint.setupListenerContainer(instance);往容器中填充队列，admin，是否是单一消费者
+
+然后调用endpoint.createMessageListener()方法，创建一个MessageListener，
+并调用container.setupMessageListener(messageListener);
+将其注入到MessageListenerContainer中
+
+
+每个endpoint都会创建一个MessageListenerContainer，一个MessageListener
+

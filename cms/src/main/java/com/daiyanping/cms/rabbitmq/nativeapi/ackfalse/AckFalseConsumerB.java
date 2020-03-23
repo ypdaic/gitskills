@@ -46,7 +46,7 @@ public class AckFalseConsumerB {
                 String message = new String(body, "UTF-8");
                 System.out.println("Received["+envelope.getRoutingKey()
                         +"]"+message);
-//                手动确认消息
+//                手动确认消息，第二个为true时，则可以一次性确认 delivery_tag 小于等于传入值的所有消息
                 channel.basicAck(envelope.getDeliveryTag(),false);
             }
         };

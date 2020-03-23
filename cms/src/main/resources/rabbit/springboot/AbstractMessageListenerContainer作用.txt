@@ -1,0 +1,35 @@
+// initialize做的事情，在afterPropertiesSet中调用，也就是创建容器成功后就会调用
+public void initialize() {
+		try {
+			synchronized (this.lifecycleMonitor) {
+				this.lifecycleMonitor.notifyAll();
+			}
+			// 如果存在adviceChain就创建代理类
+			initializeProxy(this.delegate);
+			checkMissingQueuesFatalFromProperty();
+			// 设置账号认证失败抛异常，默认为true
+			checkPossibleAuthenticationFailureFatalFromProperty();
+			doInitialize();
+			if (!this.isExposeListenerChannel() && this.transactionManager != null) {
+				logger.warn("exposeListenerChannel=false is ignored when using a TransactionManager");
+			}
+			if (!this.taskExecutorSet && StringUtils.hasText(getListenerId())) {
+
+			    // 该异步任务执行器，每来一个任务就会创建一个线程
+				this.taskExecutor = new SimpleAsyncTaskExecutor(getListenerId() + "-");
+				this.taskExecutorSet = true;
+			}
+			if (this.transactionManager != null && !isChannelTransacted()) {
+				logger.debug("The 'channelTransacted' is coerced to 'true', when 'transactionManager' is provided");
+				setChannelTransacted(true);
+			}
+			if (this.messageListener != null) {
+			    // 设置ack 模式
+				this.messageListener.containerAckMode(this.acknowledgeMode);
+			}
+			this.initialized = true;
+		}
+		catch (Exception ex) {
+			throw convertRabbitAccessException(ex);
+		}
+	}

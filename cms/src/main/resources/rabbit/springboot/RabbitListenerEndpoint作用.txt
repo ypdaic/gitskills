@@ -1,0 +1,78 @@
+AbstractRabbitListenerEndpoint 属性如下
+        // id
+        private String id;
+
+        // 队列
+    	private final Collection<Queue> queues = new ArrayList<>();
+
+        // 队列名称 (queues, queueNames两者只能有一个有值) 由@RabbitListener的queues，queuesToDeclare，QueueBinding解析得来
+    	private final Collection<String> queueNames  = new ArrayList<>();
+
+        // 是否是单消费队列 由@RabbitListener提供
+    	private boolean exclusive;
+
+        // 优先级 由@RabbitListener提供
+    	private Integer priority;
+
+        // 一个队列上消费者的个数 由@RabbitListener提供，
+        // 如果RabbitProperties 也提供了SimpleContainer 的这两个属性 concurrentConsumers，maxConcurrentConsumers
+        // 或者 DirectContainer 的 consumersPerQueue
+        // 则以@RabbitListener的为准
+        // n-m 形式 只能用于 SimpleContainer
+    	private String concurrency;
+
+        // 由@RabbitListener提供
+    	private AmqpAdmin admin;
+
+        // 在setBeanFactory方法中注入
+    	private BeanFactory beanFactory;
+
+        // 在setBeanFactory方法中注入
+    	private BeanExpressionResolver resolver;
+
+        // 在setBeanFactory方法中注入
+    	private BeanExpressionContext expressionContext;
+
+        // 在setBeanFactory方法中注入
+    	private BeanResolver beanResolver;
+
+        // 由@RabbitListener提供
+    	private String group;
+
+        // 是否自动启动 // 由@RabbitListener提供
+    	private Boolean autoStartup;
+
+        // 消息转换器
+        // 由AbstractRabbitListenerContainerFactory提供
+        // AbstractRabbitListenerContainerFactory默认不提供，可以由我们自己提供覆盖下面的默认值
+        // 由于通过注解方式的Listener是MessagingMessageListenerAdapter 其默认的是 SimpleMessageConverter
+    	private MessageConverter messageConverter;
+
+
+MethodRabbitListenerEndpoint 属性如下
+
+	// @RabbitListener 注解所在的bean
+	private Object bean;
+
+    // @RabbitListener所在的方法
+    private Method method;
+
+    // 消费者接受到消息反射调用Bean方法 InvocableHandlerMethod实例创建工厂，
+    // 由RabbitListenerAnnotationBeanPostProcessor 在创建时注入 RabbitHandlerMethodFactoryAdapter
+    private MessageHandlerMethodFactory messageHandlerMethodFactory;
+
+    // 如果为true，消费者消费异常后，在没有errorHandler时 会将异常发送给生成者，否则异常
+    // 抛给自己
+    private boolean returnExceptions;
+
+    // 消费者消费异常后，会将异常发送给生成者
+    private RabbitListenerErrorHandler errorHandler;
+
+
+ MultiMethodRabbitListenerEndpoint 主要属性，包含上面全部
+
+    // @RabbitHandler所在方法列表
+    private final List<Method> methods;
+
+    // @RabbitHandler所在的默认方法
+    private final Method defaultMethod;

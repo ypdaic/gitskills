@@ -1,0 +1,33 @@
+主要通过createMessageListener() 方法创建MessagingMessageListenerAdapter
+
+protected MessagingMessageListenerAdapter createMessageListener(MessageListenerContainer container) {
+		Assert.state(this.messageHandlerMethodFactory != null,
+				"Could not create message listener - MessageHandlerMethodFactory not set");
+	    // 创建一个MessageListener适配器
+		MessagingMessageListenerAdapter messageListener = createMessageListenerInstance();
+		// 创建反射调用bean方法的HandlerAdapter
+		messageListener.setHandlerAdapter(configureListenerAdapter(messageListener));
+
+		// 设置消息收到后，转发到其他队列的地址，由@SendTo注解指定
+		String replyToAddress = getDefaultReplyToAddress();
+		if (replyToAddress != null) {
+			messageListener.setResponseAddress(replyToAddress);
+		}
+
+		// 设置消息转化器
+		MessageConverter messageConverter = getMessageConverter();
+		if (messageConverter == null) {
+			// fall back to the legacy converter holder in the container
+			messageConverter = container.getMessageConverter();
+		}
+		if (messageConverter != null) {
+			messageListener.setMessageConverter(messageConverter);
+		}
+		if (getBeanResolver() != null) {
+			messageListener.setBeanResolver(getBeanResolver());
+		}
+		return messageListener;
+	}
+
+然后调用container.setupMessageListener(messageListener);将上面创建的MessageListenerContainer
+注入到MessageListenerContainer中

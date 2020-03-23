@@ -1,12 +1,15 @@
 package com.daiyanping.cms.redis;
 
 import com.daiyanping.cms.cache.MyRedisCacheWriter;
+import com.daiyanping.cms.cache.RedisCacheManagerInterceptor;
 import com.daiyanping.cms.cache.RedisCacheManagerProxy;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RedissonClient;
+import org.springframework.aop.framework.ProxyFactory;
+import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.cache.CacheProperties;
 import org.springframework.boot.autoconfigure.data.redis.LettuceClientConfigurationBuilderCustomizer;
@@ -136,17 +139,24 @@ public class RedisConfig {
         RedisCacheManager redisCacheManager = builder
                 .transactionAware()
                 .build();
-        RedisCacheManagerProxy redisCacheManagerProxy = new RedisCacheManagerProxy(redisCacheManager, redissonClient, TaskScheduler);
+//        RedisCacheManagerProxy redisCacheManagerProxy = new RedisCacheManagerProxy(redisCacheManager, redissonClient, TaskScheduler);
+////
+////        Enhancer enhancer = new Enhancer();
+////        enhancer.setSuperclass(RedisCacheManager.class);
+////        enhancer.setInterfaces(new Class<?>[] {CacheManager.class});
+////        enhancer.setNamingPolicy(SpringNamingPolicy.INSTANCE);
+////        enhancer.setCallbackTypes(new Class[]{MethodInterceptor.class});
+////        enhancer.setCallback(redisCacheManagerProxy);
+////        RedisCacheManager redisCacheManager2 = (RedisCacheManager) enhancer.create(new Class[]{RedisCacheWriter.class, RedisCacheConfiguration.class}, new Object[]{new MyRedisCacheWriter(), config});
+////
+////        return redisCacheManager2;
+        ProxyFactory factory = new ProxyFactory();
+        factory.setExposeProxy(true);
+        factory.addAdvisor(new DefaultPointcutAdvisor(new RedisCacheManagerInterceptor(redisCacheManager, redissonClient, TaskScheduler)));
+        factory.setTarget(redisCacheManager);
+        redisCacheManager = (RedisCacheManager) factory.getProxy(RedisCacheManager.class.getClassLoader());
 
-        Enhancer enhancer = new Enhancer();
-        enhancer.setSuperclass(RedisCacheManager.class);
-        enhancer.setInterfaces(new Class<?>[] {CacheManager.class});
-        enhancer.setNamingPolicy(SpringNamingPolicy.INSTANCE);
-        enhancer.setCallbackTypes(new Class[]{MethodInterceptor.class});
-        enhancer.setCallback(redisCacheManagerProxy);
-        RedisCacheManager redisCacheManager2 = (RedisCacheManager) enhancer.create(new Class[]{RedisCacheWriter.class, RedisCacheConfiguration.class}, new Object[]{new MyRedisCacheWriter(), config});
-
-        return redisCacheManager2;
+        return redisCacheManager;
     }
 
     /**

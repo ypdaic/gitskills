@@ -1,0 +1,1 @@
+post  请求  curl -d "method=getPatient&params={papid:5}" "https://papkmbzayyc.ilvzhou.com/weixin/medassist/"

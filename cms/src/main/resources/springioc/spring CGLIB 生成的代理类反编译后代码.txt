@@ -1,0 +1,901 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by Fernflower decompiler)
+//
+
+package com.daiyanping.demo.rabbit.proxy;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.UndeclaredThrowableException;
+import org.aopalliance.aop.Advice;
+import org.springframework.aop.Advisor;
+import org.springframework.aop.SpringProxy;
+import org.springframework.aop.TargetClassAware;
+import org.springframework.aop.TargetSource;
+import org.springframework.aop.framework.Advised;
+import org.springframework.aop.framework.AopConfigException;
+import org.springframework.cglib.core.ReflectUtils;
+import org.springframework.cglib.core.Signature;
+import org.springframework.cglib.proxy.Callback;
+import org.springframework.cglib.proxy.Dispatcher;
+import org.springframework.cglib.proxy.Factory;
+import org.springframework.cglib.proxy.MethodInterceptor;
+import org.springframework.cglib.proxy.MethodProxy;
+import org.springframework.cglib.proxy.NoOp;
+
+public class Test$$EnhancerBySpringCGLIB$$90179f5a extends Test implements SpringProxy, Advised, Factory {
+    private boolean CGLIB$BOUND;
+    public static Object CGLIB$FACTORY_DATA;
+    private static final ThreadLocal CGLIB$THREAD_CALLBACKS;
+
+    // 就是通过Callback[] enhancer.setCallbacks(callbacks); 添加的
+    private static final Callback[] CGLIB$STATIC_CALLBACKS;
+
+    // 就是Callback[0]
+    // 具体那些方法会应用到Callback[0] 就是通过
+    // 设置回调过滤器，也就在创建代理类的每个方法时，会
+    // 根据该过滤器返回的index 去确定方法中使用的是CGLIB$CALLBACK_0，还是CGLIB$CALLBACK_1，还是CGLIB$CALLBACK_2
+       enhancer.setCallbackFilter(new ProxyCallbackFilter(
+               this.advised.getConfigurationOnlyCopy(), this.fixedInterceptorMap, this.fixedInterceptorOffset));
+
+    private MethodInterceptor CGLIB$CALLBACK_0;
+
+    // 就是Callback[1]
+    private MethodInterceptor CGLIB$CALLBACK_1;
+
+    // 就是Callback[2]
+    private NoOp CGLIB$CALLBACK_2;
+
+    // 就是Callback[3]
+    private Dispatcher CGLIB$CALLBACK_3;
+
+    // 就是Callback[4]
+    private Dispatcher CGLIB$CALLBACK_4;
+
+    // 就是Callback[5]
+    private MethodInterceptor CGLIB$CALLBACK_5;
+
+    // 就是Callback[6]
+    private MethodInterceptor CGLIB$CALLBACK_6;
+
+    private static Object CGLIB$CALLBACK_FILTER;
+    private static final Method CGLIB$equals$0$Method;
+    private static final MethodProxy CGLIB$equals$0$Proxy;
+    private static final Object[] CGLIB$emptyArgs;
+    private static final Method CGLIB$toString$1$Method;
+    private static final MethodProxy CGLIB$toString$1$Proxy;
+    private static final Method CGLIB$hashCode$2$Method;
+    private static final MethodProxy CGLIB$hashCode$2$Proxy;
+    private static final Method CGLIB$getName$3$Method;
+    private static final MethodProxy CGLIB$getName$3$Proxy;
+    private static final Method CGLIB$setName$4$Method;
+    private static final MethodProxy CGLIB$setName$4$Proxy;
+    private static final Method CGLIB$say$5$Method;
+    private static final MethodProxy CGLIB$say$5$Proxy;
+    private static final Method CGLIB$canEqual$6$Method;
+    private static final MethodProxy CGLIB$canEqual$6$Proxy;
+    private static final Method CGLIB$clone$7$Method;
+    private static final MethodProxy CGLIB$clone$7$Proxy;
+
+    static void CGLIB$STATICHOOK1() {
+        CGLIB$THREAD_CALLBACKS = new ThreadLocal();
+        CGLIB$emptyArgs = new Object[0];
+        Class var0 = Class.forName("com.daiyanping.demo.rabbit.proxy.Test$$EnhancerBySpringCGLIB$$90179f5a");
+        Class var1;
+        CGLIB$clone$7$Method = ReflectUtils.findMethods(new String[]{"clone", "()Ljava/lang/Object;"}, (var1 = Class.forName("java.lang.Object")).getDeclaredMethods())[0];
+        CGLIB$clone$7$Proxy = MethodProxy.create(var1, var0, "()Ljava/lang/Object;", "clone", "CGLIB$clone$7");
+        Method[] var10000 = ReflectUtils.findMethods(new String[]{"equals", "(Ljava/lang/Object;)Z", "toString", "()Ljava/lang/String;", "hashCode", "()I", "getName", "()Ljava/lang/String;", "setName", "(Ljava/lang/String;)V", "say", "()V", "canEqual", "(Ljava/lang/Object;)Z"}, (var1 = Class.forName("com.daiyanping.demo.rabbit.proxy.Test")).getDeclaredMethods());
+        CGLIB$equals$0$Method = var10000[0];
+        CGLIB$equals$0$Proxy = MethodProxy.create(var1, var0, "(Ljava/lang/Object;)Z", "equals", "CGLIB$equals$0");
+        CGLIB$toString$1$Method = var10000[1];
+        CGLIB$toString$1$Proxy = MethodProxy.create(var1, var0, "()Ljava/lang/String;", "toString", "CGLIB$toString$1");
+        CGLIB$hashCode$2$Method = var10000[2];
+        CGLIB$hashCode$2$Proxy = MethodProxy.create(var1, var0, "()I", "hashCode", "CGLIB$hashCode$2");
+        CGLIB$getName$3$Method = var10000[3];
+        CGLIB$getName$3$Proxy = MethodProxy.create(var1, var0, "()Ljava/lang/String;", "getName", "CGLIB$getName$3");
+        CGLIB$setName$4$Method = var10000[4];
+        CGLIB$setName$4$Proxy = MethodProxy.create(var1, var0, "(Ljava/lang/String;)V", "setName", "CGLIB$setName$4");
+        CGLIB$say$5$Method = var10000[5];
+        CGLIB$say$5$Proxy = MethodProxy.create(var1, var0, "()V", "say", "CGLIB$say$5");
+        CGLIB$canEqual$6$Method = var10000[6];
+        CGLIB$canEqual$6$Proxy = MethodProxy.create(var1, var0, "(Ljava/lang/Object;)Z", "canEqual", "CGLIB$canEqual$6");
+    }
+
+    final boolean CGLIB$equals$0(Object var1) {
+        return super.equals(var1);
+    }
+
+    public final boolean equals(Object var1) {
+        try {
+            //
+            MethodInterceptor var10000 = this.CGLIB$CALLBACK_5;
+            if (var10000 == null) {
+                CGLIB$BIND_CALLBACKS(this);
+                var10000 = this.CGLIB$CALLBACK_5;
+            }
+
+            if (var10000 != null) {
+                Object var4 = var10000.intercept(this, CGLIB$equals$0$Method, new Object[]{var1}, CGLIB$equals$0$Proxy);
+                return var4 == null ? false : (Boolean)var4;
+            } else {
+                return super.equals(var1);
+            }
+        } catch (Error | RuntimeException var2) {
+            throw var2;
+        } catch (Throwable var3) {
+            throw new UndeclaredThrowableException(var3);
+        }
+    }
+
+    final String CGLIB$toString$1() {
+        return super.toString();
+    }
+
+    public final String toString() {
+        try {
+            MethodInterceptor var10000 = this.CGLIB$CALLBACK_0;
+            if (var10000 == null) {
+                CGLIB$BIND_CALLBACKS(this);
+                var10000 = this.CGLIB$CALLBACK_0;
+            }
+
+            return var10000 != null ? (String)var10000.intercept(this, CGLIB$toString$1$Method, CGLIB$emptyArgs, CGLIB$toString$1$Proxy) : super.toString();
+        } catch (Error | RuntimeException var1) {
+            throw var1;
+        } catch (Throwable var2) {
+            throw new UndeclaredThrowableException(var2);
+        }
+    }
+
+    final int CGLIB$hashCode$2() {
+        return super.hashCode();
+    }
+
+    public final int hashCode() {
+        try {
+            MethodInterceptor var10000 = this.CGLIB$CALLBACK_6;
+            if (var10000 == null) {
+                CGLIB$BIND_CALLBACKS(this);
+                var10000 = this.CGLIB$CALLBACK_6;
+            }
+
+            if (var10000 != null) {
+                Object var3 = var10000.intercept(this, CGLIB$hashCode$2$Method, CGLIB$emptyArgs, CGLIB$hashCode$2$Proxy);
+                return var3 == null ? 0 : ((Number)var3).intValue();
+            } else {
+                return super.hashCode();
+            }
+        } catch (Error | RuntimeException var1) {
+            throw var1;
+        } catch (Throwable var2) {
+            throw new UndeclaredThrowableException(var2);
+        }
+    }
+
+    final String CGLIB$getName$3() {
+        return super.getName();
+    }
+
+    public final String getName() {
+        try {
+            MethodInterceptor var10000 = this.CGLIB$CALLBACK_0;
+            if (var10000 == null) {
+                CGLIB$BIND_CALLBACKS(this);
+                var10000 = this.CGLIB$CALLBACK_0;
+            }
+
+            return var10000 != null ? (String)var10000.intercept(this, CGLIB$getName$3$Method, CGLIB$emptyArgs, CGLIB$getName$3$Proxy) : super.getName();
+        } catch (Error | RuntimeException var1) {
+            throw var1;
+        } catch (Throwable var2) {
+            throw new UndeclaredThrowableException(var2);
+        }
+    }
+
+    final void CGLIB$setName$4(String var1) {
+        super.setName(var1);
+    }
+
+    public final void setName(String var1) {
+        try {
+            MethodInterceptor var10000 = this.CGLIB$CALLBACK_0;
+            if (var10000 == null) {
+                CGLIB$BIND_CALLBACKS(this);
+                var10000 = this.CGLIB$CALLBACK_0;
+            }
+
+            if (var10000 != null) {
+                var10000.intercept(this, CGLIB$setName$4$Method, new Object[]{var1}, CGLIB$setName$4$Proxy);
+            } else {
+                super.setName(var1);
+            }
+        } catch (Error | RuntimeException var2) {
+            throw var2;
+        } catch (Throwable var3) {
+            throw new UndeclaredThrowableException(var3);
+        }
+    }
+
+    final void CGLIB$say$5() {
+        super.say();
+    }
+
+    public final void say() {
+        try {
+            MethodInterceptor var10000 = this.CGLIB$CALLBACK_0;
+            if (var10000 == null) {
+                CGLIB$BIND_CALLBACKS(this);
+                var10000 = this.CGLIB$CALLBACK_0;
+            }
+
+            if (var10000 != null) {
+                var10000.intercept(this, CGLIB$say$5$Method, CGLIB$emptyArgs, CGLIB$say$5$Proxy);
+            } else {
+                super.say();
+            }
+        } catch (Error | RuntimeException var1) {
+            throw var1;
+        } catch (Throwable var2) {
+            throw new UndeclaredThrowableException(var2);
+        }
+    }
+
+    final boolean CGLIB$canEqual$6(Object var1) {
+        return super.canEqual(var1);
+    }
+
+    protected final boolean canEqual(Object var1) {
+        try {
+            MethodInterceptor var10000 = this.CGLIB$CALLBACK_0;
+            if (var10000 == null) {
+                CGLIB$BIND_CALLBACKS(this);
+                var10000 = this.CGLIB$CALLBACK_0;
+            }
+
+            if (var10000 != null) {
+                Object var4 = var10000.intercept(this, CGLIB$canEqual$6$Method, new Object[]{var1}, CGLIB$canEqual$6$Proxy);
+                return var4 == null ? false : (Boolean)var4;
+            } else {
+                return super.canEqual(var1);
+            }
+        } catch (Error | RuntimeException var2) {
+            throw var2;
+        } catch (Throwable var3) {
+            throw new UndeclaredThrowableException(var3);
+        }
+    }
+
+    final Object CGLIB$clone$7() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
+    protected final Object clone() throws CloneNotSupportedException {
+        try {
+            MethodInterceptor var10000 = this.CGLIB$CALLBACK_0;
+            if (var10000 == null) {
+                CGLIB$BIND_CALLBACKS(this);
+                var10000 = this.CGLIB$CALLBACK_0;
+            }
+
+            return var10000 != null ? var10000.intercept(this, CGLIB$clone$7$Method, CGLIB$emptyArgs, CGLIB$clone$7$Proxy) : super.clone();
+        } catch (Error | CloneNotSupportedException | RuntimeException var1) {
+            throw var1;
+        } catch (Throwable var2) {
+            throw new UndeclaredThrowableException(var2);
+        }
+    }
+
+    public static MethodProxy CGLIB$findMethodProxy(Signature var0) {
+        String var10000 = var0.toString();
+        switch(var10000.hashCode()) {
+        case -1184972270:
+            if (var10000.equals("setName(Ljava/lang/String;)V")) {
+                return CGLIB$setName$4$Proxy;
+            }
+            break;
+        case -909388886:
+            if (var10000.equals("say()V")) {
+                return CGLIB$say$5$Proxy;
+            }
+            break;
+        case -508378822:
+            if (var10000.equals("clone()Ljava/lang/Object;")) {
+                return CGLIB$clone$7$Proxy;
+            }
+            break;
+        case 437408081:
+            if (var10000.equals("canEqual(Ljava/lang/Object;)Z")) {
+                return CGLIB$canEqual$6$Proxy;
+            }
+            break;
+        case 1218144844:
+            if (var10000.equals("getName()Ljava/lang/String;")) {
+                return CGLIB$getName$3$Proxy;
+            }
+            break;
+        case 1826985398:
+            if (var10000.equals("equals(Ljava/lang/Object;)Z")) {
+                return CGLIB$equals$0$Proxy;
+            }
+            break;
+        case 1913648695:
+            if (var10000.equals("toString()Ljava/lang/String;")) {
+                return CGLIB$toString$1$Proxy;
+            }
+            break;
+        case 1984935277:
+            if (var10000.equals("hashCode()I")) {
+                return CGLIB$hashCode$2$Proxy;
+            }
+        }
+
+        return null;
+    }
+
+    public final int indexOf(Advisor var1) {
+        try {
+            Dispatcher var10000 = this.CGLIB$CALLBACK_4;
+            if (var10000 == null) {
+                CGLIB$BIND_CALLBACKS(this);
+                var10000 = this.CGLIB$CALLBACK_4;
+            }
+
+            return ((Advised)var10000.loadObject()).indexOf(var1);
+        } catch (Error | RuntimeException var2) {
+            throw var2;
+        } catch (Throwable var3) {
+            throw new UndeclaredThrowableException(var3);
+        }
+    }
+
+    public final int indexOf(Advice var1) {
+        try {
+            Dispatcher var10000 = this.CGLIB$CALLBACK_4;
+            if (var10000 == null) {
+                CGLIB$BIND_CALLBACKS(this);
+                var10000 = this.CGLIB$CALLBACK_4;
+            }
+
+            return ((Advised)var10000.loadObject()).indexOf(var1);
+        } catch (Error | RuntimeException var2) {
+            throw var2;
+        } catch (Throwable var3) {
+            throw new UndeclaredThrowableException(var3);
+        }
+    }
+
+    public final boolean isFrozen() {
+        try {
+            Dispatcher var10000 = this.CGLIB$CALLBACK_4;
+            if (var10000 == null) {
+                CGLIB$BIND_CALLBACKS(this);
+                var10000 = this.CGLIB$CALLBACK_4;
+            }
+
+            return ((Advised)var10000.loadObject()).isFrozen();
+        } catch (Error | RuntimeException var1) {
+            throw var1;
+        } catch (Throwable var2) {
+            throw new UndeclaredThrowableException(var2);
+        }
+    }
+
+    public final void addAdvisor(int var1, Advisor var2) throws AopConfigException {
+        try {
+            Dispatcher var10000 = this.CGLIB$CALLBACK_4;
+            if (var10000 == null) {
+                CGLIB$BIND_CALLBACKS(this);
+                var10000 = this.CGLIB$CALLBACK_4;
+            }
+
+            ((Advised)var10000.loadObject()).addAdvisor(var1, var2);
+        } catch (Error | AopConfigException | RuntimeException var3) {
+            throw var3;
+        } catch (Throwable var4) {
+            throw new UndeclaredThrowableException(var4);
+        }
+    }
+
+    public final void addAdvisor(Advisor var1) throws AopConfigException {
+        try {
+            Dispatcher var10000 = this.CGLIB$CALLBACK_4;
+            if (var10000 == null) {
+                CGLIB$BIND_CALLBACKS(this);
+                var10000 = this.CGLIB$CALLBACK_4;
+            }
+
+            ((Advised)var10000.loadObject()).addAdvisor(var1);
+        } catch (Error | AopConfigException | RuntimeException var2) {
+            throw var2;
+        } catch (Throwable var3) {
+            throw new UndeclaredThrowableException(var3);
+        }
+    }
+
+    public final Class[] getProxiedInterfaces() {
+        try {
+            Dispatcher var10000 = this.CGLIB$CALLBACK_4;
+            if (var10000 == null) {
+                CGLIB$BIND_CALLBACKS(this);
+                var10000 = this.CGLIB$CALLBACK_4;
+            }
+
+            return ((Advised)var10000.loadObject()).getProxiedInterfaces();
+        } catch (Error | RuntimeException var1) {
+            throw var1;
+        } catch (Throwable var2) {
+            throw new UndeclaredThrowableException(var2);
+        }
+    }
+
+    public final boolean isInterfaceProxied(Class var1) {
+        try {
+            Dispatcher var10000 = this.CGLIB$CALLBACK_4;
+            if (var10000 == null) {
+                CGLIB$BIND_CALLBACKS(this);
+                var10000 = this.CGLIB$CALLBACK_4;
+            }
+
+            return ((Advised)var10000.loadObject()).isInterfaceProxied(var1);
+        } catch (Error | RuntimeException var2) {
+            throw var2;
+        } catch (Throwable var3) {
+            throw new UndeclaredThrowableException(var3);
+        }
+    }
+
+    public final String toProxyConfigString() {
+        try {
+            Dispatcher var10000 = this.CGLIB$CALLBACK_4;
+            if (var10000 == null) {
+                CGLIB$BIND_CALLBACKS(this);
+                var10000 = this.CGLIB$CALLBACK_4;
+            }
+
+            return ((Advised)var10000.loadObject()).toProxyConfigString();
+        } catch (Error | RuntimeException var1) {
+            throw var1;
+        } catch (Throwable var2) {
+            throw new UndeclaredThrowableException(var2);
+        }
+    }
+
+    public final void addAdvice(int var1, Advice var2) throws AopConfigException {
+        try {
+            Dispatcher var10000 = this.CGLIB$CALLBACK_4;
+            if (var10000 == null) {
+                CGLIB$BIND_CALLBACKS(this);
+                var10000 = this.CGLIB$CALLBACK_4;
+            }
+
+            ((Advised)var10000.loadObject()).addAdvice(var1, var2);
+        } catch (Error | AopConfigException | RuntimeException var3) {
+            throw var3;
+        } catch (Throwable var4) {
+            throw new UndeclaredThrowableException(var4);
+        }
+    }
+
+    public final void addAdvice(Advice var1) throws AopConfigException {
+        try {
+            Dispatcher var10000 = this.CGLIB$CALLBACK_4;
+            if (var10000 == null) {
+                CGLIB$BIND_CALLBACKS(this);
+                var10000 = this.CGLIB$CALLBACK_4;
+            }
+
+            ((Advised)var10000.loadObject()).addAdvice(var1);
+        } catch (Error | AopConfigException | RuntimeException var2) {
+            throw var2;
+        } catch (Throwable var3) {
+            throw new UndeclaredThrowableException(var3);
+        }
+    }
+
+    public final void setTargetSource(TargetSource var1) {
+        try {
+            Dispatcher var10000 = this.CGLIB$CALLBACK_4;
+            if (var10000 == null) {
+                CGLIB$BIND_CALLBACKS(this);
+                var10000 = this.CGLIB$CALLBACK_4;
+            }
+
+            ((Advised)var10000.loadObject()).setTargetSource(var1);
+        } catch (Error | RuntimeException var2) {
+            throw var2;
+        } catch (Throwable var3) {
+            throw new UndeclaredThrowableException(var3);
+        }
+    }
+
+    public final TargetSource getTargetSource() {
+        try {
+            Dispatcher var10000 = this.CGLIB$CALLBACK_4;
+            if (var10000 == null) {
+                CGLIB$BIND_CALLBACKS(this);
+                var10000 = this.CGLIB$CALLBACK_4;
+            }
+
+            return ((Advised)var10000.loadObject()).getTargetSource();
+        } catch (Error | RuntimeException var1) {
+            throw var1;
+        } catch (Throwable var2) {
+            throw new UndeclaredThrowableException(var2);
+        }
+    }
+
+    public final void setPreFiltered(boolean var1) {
+        try {
+            Dispatcher var10000 = this.CGLIB$CALLBACK_4;
+            if (var10000 == null) {
+                CGLIB$BIND_CALLBACKS(this);
+                var10000 = this.CGLIB$CALLBACK_4;
+            }
+
+            ((Advised)var10000.loadObject()).setPreFiltered(var1);
+        } catch (Error | RuntimeException var2) {
+            throw var2;
+        } catch (Throwable var3) {
+            throw new UndeclaredThrowableException(var3);
+        }
+    }
+
+    public final boolean isPreFiltered() {
+        try {
+            Dispatcher var10000 = this.CGLIB$CALLBACK_4;
+            if (var10000 == null) {
+                CGLIB$BIND_CALLBACKS(this);
+                var10000 = this.CGLIB$CALLBACK_4;
+            }
+
+            return ((Advised)var10000.loadObject()).isPreFiltered();
+        } catch (Error | RuntimeException var1) {
+            throw var1;
+        } catch (Throwable var2) {
+            throw new UndeclaredThrowableException(var2);
+        }
+    }
+
+    public final Advisor[] getAdvisors() {
+        try {
+            Dispatcher var10000 = this.CGLIB$CALLBACK_4;
+            if (var10000 == null) {
+                CGLIB$BIND_CALLBACKS(this);
+                var10000 = this.CGLIB$CALLBACK_4;
+            }
+
+            return ((Advised)var10000.loadObject()).getAdvisors();
+        } catch (Error | RuntimeException var1) {
+            throw var1;
+        } catch (Throwable var2) {
+            throw new UndeclaredThrowableException(var2);
+        }
+    }
+
+    public final boolean removeAdvisor(Advisor var1) {
+        try {
+            Dispatcher var10000 = this.CGLIB$CALLBACK_4;
+            if (var10000 == null) {
+                CGLIB$BIND_CALLBACKS(this);
+                var10000 = this.CGLIB$CALLBACK_4;
+            }
+
+            return ((Advised)var10000.loadObject()).removeAdvisor(var1);
+        } catch (Error | RuntimeException var2) {
+            throw var2;
+        } catch (Throwable var3) {
+            throw new UndeclaredThrowableException(var3);
+        }
+    }
+
+    public final void removeAdvisor(int var1) throws AopConfigException {
+        try {
+            Dispatcher var10000 = this.CGLIB$CALLBACK_4;
+            if (var10000 == null) {
+                CGLIB$BIND_CALLBACKS(this);
+                var10000 = this.CGLIB$CALLBACK_4;
+            }
+
+            ((Advised)var10000.loadObject()).removeAdvisor(var1);
+        } catch (Error | AopConfigException | RuntimeException var2) {
+            throw var2;
+        } catch (Throwable var3) {
+            throw new UndeclaredThrowableException(var3);
+        }
+    }
+
+    public final boolean replaceAdvisor(Advisor var1, Advisor var2) throws AopConfigException {
+        try {
+            Dispatcher var10000 = this.CGLIB$CALLBACK_4;
+            if (var10000 == null) {
+                CGLIB$BIND_CALLBACKS(this);
+                var10000 = this.CGLIB$CALLBACK_4;
+            }
+
+            return ((Advised)var10000.loadObject()).replaceAdvisor(var1, var2);
+        } catch (Error | AopConfigException | RuntimeException var3) {
+            throw var3;
+        } catch (Throwable var4) {
+            throw new UndeclaredThrowableException(var4);
+        }
+    }
+
+    public final boolean removeAdvice(Advice var1) {
+        try {
+            Dispatcher var10000 = this.CGLIB$CALLBACK_4;
+            if (var10000 == null) {
+                CGLIB$BIND_CALLBACKS(this);
+                var10000 = this.CGLIB$CALLBACK_4;
+            }
+
+            return ((Advised)var10000.loadObject()).removeAdvice(var1);
+        } catch (Error | RuntimeException var2) {
+            throw var2;
+        } catch (Throwable var3) {
+            throw new UndeclaredThrowableException(var3);
+        }
+    }
+
+    public final void setExposeProxy(boolean var1) {
+        try {
+            Dispatcher var10000 = this.CGLIB$CALLBACK_4;
+            if (var10000 == null) {
+                CGLIB$BIND_CALLBACKS(this);
+                var10000 = this.CGLIB$CALLBACK_4;
+            }
+
+            ((Advised)var10000.loadObject()).setExposeProxy(var1);
+        } catch (Error | RuntimeException var2) {
+            throw var2;
+        } catch (Throwable var3) {
+            throw new UndeclaredThrowableException(var3);
+        }
+    }
+
+    public final boolean isExposeProxy() {
+        try {
+            Dispatcher var10000 = this.CGLIB$CALLBACK_4;
+            if (var10000 == null) {
+                CGLIB$BIND_CALLBACKS(this);
+                var10000 = this.CGLIB$CALLBACK_4;
+            }
+
+            return ((Advised)var10000.loadObject()).isExposeProxy();
+        } catch (Error | RuntimeException var1) {
+            throw var1;
+        } catch (Throwable var2) {
+            throw new UndeclaredThrowableException(var2);
+        }
+    }
+
+    public final boolean isProxyTargetClass() {
+        try {
+            Dispatcher var10000 = this.CGLIB$CALLBACK_4;
+            if (var10000 == null) {
+                CGLIB$BIND_CALLBACKS(this);
+                var10000 = this.CGLIB$CALLBACK_4;
+            }
+
+            return ((Advised)var10000.loadObject()).isProxyTargetClass();
+        } catch (Error | RuntimeException var1) {
+            throw var1;
+        } catch (Throwable var2) {
+            throw new UndeclaredThrowableException(var2);
+        }
+    }
+
+    public final Class getTargetClass() {
+        try {
+            Dispatcher var10000 = this.CGLIB$CALLBACK_4;
+            if (var10000 == null) {
+                CGLIB$BIND_CALLBACKS(this);
+                var10000 = this.CGLIB$CALLBACK_4;
+            }
+
+            return ((TargetClassAware)var10000.loadObject()).getTargetClass();
+        } catch (Error | RuntimeException var1) {
+            throw var1;
+        } catch (Throwable var2) {
+            throw new UndeclaredThrowableException(var2);
+        }
+    }
+
+    public Test$$EnhancerBySpringCGLIB$$90179f5a(String var1) {
+        try {
+            super(var1);
+            CGLIB$BIND_CALLBACKS(this);
+        } catch (Error | RuntimeException var2) {
+            throw var2;
+        } catch (Throwable var3) {
+            throw new UndeclaredThrowableException(var3);
+        }
+    }
+
+    public static void CGLIB$SET_THREAD_CALLBACKS(Callback[] var0) {
+        CGLIB$THREAD_CALLBACKS.set(var0);
+    }
+
+    public static void CGLIB$SET_STATIC_CALLBACKS(Callback[] var0) {
+        CGLIB$STATIC_CALLBACKS = var0;
+    }
+
+    private static final void CGLIB$BIND_CALLBACKS(Object var0) {
+        Test$$EnhancerBySpringCGLIB$$90179f5a var1 = (Test$$EnhancerBySpringCGLIB$$90179f5a)var0;
+        if (!var1.CGLIB$BOUND) {
+            var1.CGLIB$BOUND = true;
+            Object var10000 = CGLIB$THREAD_CALLBACKS.get();
+            if (var10000 == null) {
+                var10000 = CGLIB$STATIC_CALLBACKS;
+                if (var10000 == null) {
+                    return;
+                }
+            }
+
+            Callback[] var10001 = (Callback[])var10000;
+            var1.CGLIB$CALLBACK_6 = (MethodInterceptor)((Callback[])var10000)[6];
+            var1.CGLIB$CALLBACK_5 = (MethodInterceptor)var10001[5];
+            var1.CGLIB$CALLBACK_4 = (Dispatcher)var10001[4];
+            var1.CGLIB$CALLBACK_3 = (Dispatcher)var10001[3];
+            var1.CGLIB$CALLBACK_2 = (NoOp)var10001[2];
+            var1.CGLIB$CALLBACK_1 = (MethodInterceptor)var10001[1];
+            var1.CGLIB$CALLBACK_0 = (MethodInterceptor)var10001[0];
+        }
+
+    }
+
+    public Object newInstance(Callback[] var1) {
+        try {
+            CGLIB$SET_THREAD_CALLBACKS(var1);
+            Test$$EnhancerBySpringCGLIB$$90179f5a var10000 = new Test$$EnhancerBySpringCGLIB$$90179f5a();
+            CGLIB$SET_THREAD_CALLBACKS((Callback[])null);
+            return var10000;
+        } catch (Error | RuntimeException var2) {
+            throw var2;
+        } catch (Throwable var3) {
+            throw new UndeclaredThrowableException(var3);
+        }
+    }
+
+    public Object newInstance(Callback var1) {
+        try {
+            throw new IllegalStateException("More than one callback object required");
+        } catch (Error | RuntimeException var2) {
+            throw var2;
+        } catch (Throwable var3) {
+            throw new UndeclaredThrowableException(var3);
+        }
+    }
+
+    public Object newInstance(Class[] var1, Object[] var2, Callback[] var3) {
+        try {
+            CGLIB$SET_THREAD_CALLBACKS(var3);
+            Test$$EnhancerBySpringCGLIB$$90179f5a var10000 = new Test$$EnhancerBySpringCGLIB$$90179f5a;
+            switch(var1.length) {
+            case 1:
+                if (var1[0].getName().equals("java.lang.String")) {
+                    var10000.<init>((String)var2[0]);
+                    CGLIB$SET_THREAD_CALLBACKS((Callback[])null);
+                    return var10000;
+                }
+            default:
+                throw new IllegalArgumentException("Constructor not found");
+            }
+        } catch (Error | RuntimeException var4) {
+            throw var4;
+        } catch (Throwable var5) {
+            throw new UndeclaredThrowableException(var5);
+        }
+    }
+
+    public Callback getCallback(int var1) {
+        try {
+            CGLIB$BIND_CALLBACKS(this);
+            Object var10000;
+            switch(var1) {
+            case 0:
+                var10000 = this.CGLIB$CALLBACK_0;
+                break;
+            case 1:
+                var10000 = this.CGLIB$CALLBACK_1;
+                break;
+            case 2:
+                var10000 = this.CGLIB$CALLBACK_2;
+                break;
+            case 3:
+                var10000 = this.CGLIB$CALLBACK_3;
+                break;
+            case 4:
+                var10000 = this.CGLIB$CALLBACK_4;
+                break;
+            case 5:
+                var10000 = this.CGLIB$CALLBACK_5;
+                break;
+            case 6:
+                var10000 = this.CGLIB$CALLBACK_6;
+                break;
+            default:
+                var10000 = null;
+            }
+
+            return (Callback)var10000;
+        } catch (Error | RuntimeException var2) {
+            throw var2;
+        } catch (Throwable var3) {
+            throw new UndeclaredThrowableException(var3);
+        }
+    }
+
+    public void setCallback(int var1, Callback var2) {
+        try {
+            switch(var1) {
+            case 0:
+                this.CGLIB$CALLBACK_0 = (MethodInterceptor)var2;
+                break;
+            case 1:
+                this.CGLIB$CALLBACK_1 = (MethodInterceptor)var2;
+                break;
+            case 2:
+                this.CGLIB$CALLBACK_2 = (NoOp)var2;
+                break;
+            case 3:
+                this.CGLIB$CALLBACK_3 = (Dispatcher)var2;
+                break;
+            case 4:
+                this.CGLIB$CALLBACK_4 = (Dispatcher)var2;
+                break;
+            case 5:
+                this.CGLIB$CALLBACK_5 = (MethodInterceptor)var2;
+                break;
+            case 6:
+                this.CGLIB$CALLBACK_6 = (MethodInterceptor)var2;
+            }
+
+        } catch (Error | RuntimeException var3) {
+            throw var3;
+        } catch (Throwable var4) {
+            throw new UndeclaredThrowableException(var4);
+        }
+    }
+
+    public Callback[] getCallbacks() {
+        try {
+            CGLIB$BIND_CALLBACKS(this);
+            return new Callback[]{this.CGLIB$CALLBACK_0, this.CGLIB$CALLBACK_1, this.CGLIB$CALLBACK_2, this.CGLIB$CALLBACK_3, this.CGLIB$CALLBACK_4, this.CGLIB$CALLBACK_5, this.CGLIB$CALLBACK_6};
+        } catch (Error | RuntimeException var1) {
+            throw var1;
+        } catch (Throwable var2) {
+            throw new UndeclaredThrowableException(var2);
+        }
+    }
+
+    public void setCallbacks(Callback[] var1) {
+        try {
+            this.CGLIB$CALLBACK_0 = (MethodInterceptor)var1[0];
+            this.CGLIB$CALLBACK_1 = (MethodInterceptor)var1[1];
+            this.CGLIB$CALLBACK_2 = (NoOp)var1[2];
+            this.CGLIB$CALLBACK_3 = (Dispatcher)var1[3];
+            this.CGLIB$CALLBACK_4 = (Dispatcher)var1[4];
+            this.CGLIB$CALLBACK_5 = (MethodInterceptor)var1[5];
+            this.CGLIB$CALLBACK_6 = (MethodInterceptor)var1[6];
+        } catch (Error | RuntimeException var2) {
+            throw var2;
+        } catch (Throwable var3) {
+            throw new UndeclaredThrowableException(var3);
+        }
+    }
+
+    static {
+        CGLIB$STATICHOOK2();
+        CGLIB$STATICHOOK1();
+    }
+
+    static void CGLIB$STATICHOOK2() {
+        try {
+            ;
+        } catch (Error | RuntimeException var0) {
+            throw var0;
+        } catch (Throwable var1) {
+            throw new UndeclaredThrowableException(var1);
+        }
+    }
+}
