@@ -30,85 +30,196 @@
     // 消费者创建线程池
 	private Executor taskExecutor = new SimpleAsyncTaskExecutor();
 
+    // 线程设置标志
 	private boolean taskExecutorSet;
 
+    // 消费者初始化失败后，下次重试间隔
 	private BackOff recoveryBackOff = new FixedBackOff(DEFAULT_RECOVERY_INTERVAL, FixedBackOff.UNLIMITED_ATTEMPTS);
 
+    // 消息属性转换器，将rabbit client的BasicProperties属性封装到MessageProperties中
 	private MessagePropertiesConverter messagePropertiesConverter = new DefaultMessagePropertiesConverter();
 
+    // amqpAdmin 由endpoint注入或者 在configureAdminIfNeeded方法中注入
+    // 用于交换器，队列的创建
 	private AmqpAdmin amqpAdmin;
 
+
+    // 由RabbitProperties提供
+    // SimpleContainer 默认为true
+    // missingQueuesFatal 默认为false
+    // 如果不指定的话 AbstractMessageListenerContainer 在执行initialize方法时会去
+    // 从 bean 名称为spring.amqp.global.properties 的Properties中去获取
+    // 其作用就是，在容器创建消费者之前，先判断队列是否已经被创建了，如果有
+    // 队列没有被创建，就抛异常出来
 	private boolean missingQueuesFatal = true;
 
+    // missingQueuesFatal 被设置标识
 	private boolean missingQueuesFatalSet;
 
+    // 消费者初始化，用户名，密码认证失败后，是否立即抛相关异常出来
 	private boolean possibleAuthenticationFailureFatal = true;
 
+    // possibleAuthenticationFailureFatal设置标识
 	private boolean possibleAuthenticationFailureFatalSet;
 
+
+    // 自动声明队列标识，用于列队自动创建
 	private boolean autoDeclare = true;
 
+
+    // AbstractMessageListenerContainer 默认为true
+    // 为true 时表示容器调用start 方法启动时，会去获取amqpadmin, 并调用amqpadmin的initialize
+    // 进行队列，交换器的提前创建
+    // 如果为false, 且   AbstractMessageListenerContainer 的autoDeclare 属性为true 时，
+    // 一样会进行队列，交换器的创建
 	private boolean mismatchedQueuesFatal = false;
 
+
+    // 默认5000
+    // SimpleMessageListenerContainer 用于检测 队列是否创建完成的间隔，默认检测3次
+    // DirectMessageListenerContainer 用于检测消费者连接通道关闭后，消费者重启间隔
 	private long failedDeclarationRetryInterval = DEFAULT_FAILED_DECLARATION_RETRY_INTERVAL;
 
+
+    // 是否在容器启动时启动
 	private boolean autoStartup = true;
 
+
+    // 启动顺序
 	private int phase = Integer.MAX_VALUE;
 
+
+    // ListenerContainer激活标识
 	private volatile boolean active = false;
 
+
+    // ListenerContainer执行标识
 	private volatile boolean running = false;
 
+
+    // 锁
 	private final Object lifecycleMonitor = new Object();
 
+
+    // 队列
 	private volatile List<Queue> queues = new CopyOnWriteArrayList<>();
 
+    // 这里为null,AbstractRabbitListenerContainer  中默认为ConditionalRejectingErrorHandler
+    // 在listener消费异常后，并且抛出的RuntimeException 异常才会被errorHandler处理
+    // 该ErrorHandler 在 RabbitListenerErrorHandler 的后面执行
 	private ErrorHandler errorHandler = new ConditionalRejectingErrorHandler();
 
+
+    // 由AbstractRabbitListenerContainerFactoryConfigurer注入，
+    // configure方法，103行，如果有提供MessageConverter的实现
+    // AbstractRabbitListenerContainerFactory默认不提供，可以由我们自己提供覆盖下面的默认值
+    // 由于通过注解方式的Listener是MessagingMessageListenerAdapter 其默认的是 SimpleMessageConverter
 	private MessageConverter messageConverter;
 
+
+    // 是否暴露channel，默认true，需要手动指定
 	private boolean exposeListenerChannel = true;
 
+
+    // 消费监听器
 	private volatile MessageListener messageListener;
 
+
+    // 由RabbitProperties提供，消费者应答模式
+    // NONE 创建消费者时rabbit客户端自动应答
+    // MANUAL 业务手动应答
+    // AUTO spring 进行应答
+    // AbstractRabbitListenerContainer 该属性默认为AUTO
 	private volatile AcknowledgeMode acknowledgeMode = AcknowledgeMode.AUTO;
 
+
+     // 使用BatchingTemplate 发送消息时，要置为true
 	private volatile boolean deBatchingEnabled = DEFAULT_DEBATCHING_ENABLED;
 
+    // 初始化完成标识
 	private volatile boolean initialized;
 
+    // 收到消息后置处理器，需要手动指定
+    // 在执行业务代码之前执行
+    // 支持排序 需要继承PriorityOrdered， Ordered 接口
 	private Collection<MessagePostProcessor> afterReceivePostProcessors;
 
 	private volatile ApplicationContext applicationContext;
 
 	private String listenerId;
 
+
+    // 由RabbitProperties提供,用于后续在MessageListenerContainer中使用
+    // 重试策略拦截器，分有状态和无状态
+    // StatelessRetryInterceptorBuilder 无状态重试拦截器建造者
+    // StatefulRetryInterceptorBuilder 有状态重试拦截器建造者
+    // RetryOperationsInterceptor 无状态拦截器
+    // StatefulRetryOperationsInterceptor 有状态拦截器
+
+    // 而且该拦截器只能配置一个，当存在拦截器时，
+    // AbstractMessageListenerContainer 的 ContainerDelegate proxy = this.delegate;
+    // 属性 会创建一个代理对象
+    // 也就是添加重试机制
 	private Advice[] adviceChain = new Advice[0];
 
+
+    // 默认为null，创建消费者的消费标签策略
+    // 需要手动指定
+    // 如果为null,创建消费者时给的“”
 	@Nullable
 	private ConsumerTagStrategy consumerTagStrategy;
 
+    // 是否是单消费者，由endpoint指定
 	private volatile boolean exclusive;
 
+    // 如果为true,生成者的消费不会发送给消费者
+    // RabbitMQ服务器不支持此标志。
 	private volatile boolean noLocal;
 
+
+    // 默认情况下是否重新入队被拒绝的消息，由RabbitProperties提供
+    // AbstractRabbitListenerContainer 该值为true
+    // 如果为true,这会重新投递这些消息到队列继续消费
+    // 只有AcknowledgeMode为AUTO时，才会生效，AUTO时，ack，nack 都是spring给我们做，而不需要业务自己处理
 	private volatile boolean defaultRequeueRejected = true;
 
+
+    // qos 批量获取的消息数,由RabbitProperties提供
+    // DirectRabbitListenerContainerFactory 的messagesPerAck 如果大于
+    // RabbitProperties的则会覆盖，但是DirectRabbitListenerContainerFactory 的messagesPerAck必须手动指定
+    // SimpleRabbitListenerContainerFactory 的txSize 如果大于RabbitProperties的则会覆盖，由RabbitProperties提供
+    // 为SimpleRabbitListenerContainerFactory 且AcknowledgeMode为MANUAL或AUTO 才有效
+    // 为DirectRabbitListenerContainerFactory 都有效，不区分ack模式
+    // 默认值250
 	private volatile int prefetchCount = DEFAULT_PREFETCH_COUNT;
 
+
+    // 空闲容器事件应多久发布一次。由RabbitProperties提供
+    // 在DirectMessageListenerContainer 中，由checkIdle方法进行发布
+    // 在SimpleMessageListenerContainer 中，由mainLoop方法中进行发布
 	private long idleEventInterval;
 
+    // 用于发送消费者没收到消息，容器空闲事件
 	private volatile long lastReceive = System.currentTimeMillis();
 
+
+    // 由状态重试失败标识
 	private boolean statefulRetryFatalWithNullMessageId = true;
 
+    // 消费者独享出错后异常日志
 	private ConditionalExceptionLogger exclusiveConsumerExceptionLogger = new DefaultExclusiveConsumerLogger();
 
+    // 在事物管理器存在的情况下，是否在回滚时重新将拒绝的消息发送队列
 	private boolean alwaysRequeueWithTxManagerRollback;
 
+
+    //当ConnectionFactory 为RoutingConnectionFactory时
+    // 路由key 的前缀，并且我们指定的完整key必须是这样foo[test,test2]
+    // foo 为前缀，[test,test2] 为队列名称
 	private String lookupKeyQualifier = "";
 
+    // 如果消费者不响应关闭，则强制关闭通道。
 	private boolean forceCloseChannel = true;
 
+    // errorHandle 执行异常后，日志打印的名称
 	private String errorHandlerLoggerName = getClass().getName();

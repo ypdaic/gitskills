@@ -110,7 +110,7 @@ AbstractRabbitListenerContainerFactory 属性如下：
 	private Boolean missingQueuesFatal;
 
 
-    // AbstractMessageListenerContainer 默认为true
+    // AbstractMessageListenerContainer 默认为false
     // 为true 时表示容器调用start 方法启动时，会去获取amqpadmin, 并调用amqpadmin的initialize
     // 进行队列，交换器的提前创建
     // 如果为false, 且   AbstractMessageListenerContainer 的autoDeclare 属性为true 时，
@@ -119,6 +119,7 @@ AbstractRabbitListenerContainerFactory 属性如下：
 
 
     // 默认为null，创建消费者的消费标签策略
+    // 需要手动指定
 	private ConsumerTagStrategy consumerTagStrategy;
 
 
@@ -151,7 +152,7 @@ AbstractRabbitListenerContainerFactory 属性如下：
 	private Integer phase;
 
 
-    // 收到消息后置处理器
+    // 收到消息后置处理器,需要手动指定
     // 在执行业务代码之前执行
     // 支持排序 需要继承PriorityOrdered， Ordered 接口
 	private MessagePostProcessor[] afterReceivePostProcessors;

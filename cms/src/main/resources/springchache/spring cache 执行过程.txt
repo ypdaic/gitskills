@@ -1,0 +1,79 @@
+@Nullable
+	private Object execute(final CacheOperationInvoker invoker, Method method, CacheOperationContexts contexts) {
+		// Special handling of synchronized invocation
+		// 是否开启同步，同步就是@Cacheable 注解
+		if (contexts.isSynchronized()) {
+		    // 获取方法上所有的@Cacheable 注解，开启同步的只允许有一个，原因@Cacheable(sync=true)的限制.txt 中有说
+			CacheOperationContext context = contexts.get(CacheableOperation.class).iterator().next();
+			if (isConditionPassing(context, CacheOperationExpressionEvaluator.NO_RESULT)) {
+				Object key = generateKey(context, CacheOperationExpressionEvaluator.NO_RESULT);
+				Cache cache = context.getCaches().iterator().next();
+				try {
+				    // 开始从缓存中获取值
+					return wrapCacheValue(method, cache.get(key, () -> unwrapReturnValue(invokeOperation(invoker))));
+				}
+				catch (Cache.ValueRetrievalException ex) {
+					// The invoker wraps any Throwable in a ThrowableWrapper instance so we
+					// can just make sure that one bubbles up the stack.
+					throw (CacheOperationInvoker.ThrowableWrapper) ex.getCause();
+				}
+			}
+			else {
+				// No caching required, only call the underlying method
+				return invokeOperation(invoker);
+			}
+		}
+
+        // 当存在@CachEvict 并且beforeInvocation 为true时执行缓存删除操作
+		// Process any early evictions
+		processCacheEvicts(contexts.get(CacheEvictOperation.class), true,
+				CacheOperationExpressionEvaluator.NO_RESULT);
+
+        // 当存在@Cacheable注解，一个或多个，只要有一个可以从缓存中获取值就表现缓存命中了
+		// Check if we have a cached item matching the conditions
+		Cache.ValueWrapper cacheHit = findCachedItem(contexts.get(CacheableOperation.class));
+
+
+		// Collect puts from any @Cacheable miss, if no cached item is found
+		List<CachePutRequest> cachePutRequests = new LinkedList<>();
+		if (cacheHit == null) {
+		    // 如果没有命中, 则创建cachePutRequests，用于后续的缓存插入
+			collectPutRequests(contexts.get(CacheableOperation.class),
+					CacheOperationExpressionEvaluator.NO_RESULT, cachePutRequests);
+		}
+
+		Object cacheValue;
+		Object returnValue;
+
+        // 命中缓存，则解析返回的值
+		if (cacheHit != null && !hasCachePut(contexts)) {
+			// If there are no put requests, just use the cache hit
+			cacheValue = cacheHit.get();
+			returnValue = wrapCacheValue(method, cacheValue);
+		}
+		else {
+		    // 没有命中，则执行业务获取结果
+			// Invoke the method if we don't have a cache hit
+			returnValue = invokeOperation(invoker);
+			cacheValue = unwrapReturnValue(returnValue);
+		}
+
+        // 当存在一个或多个CachePutOperation时，创建cachePutRequests，用于后续的缓存插入
+		// Collect any explicit @CachePuts
+		collectPutRequests(contexts.get(CachePutOperation.class), cacheValue, cachePutRequests);
+
+        // 进行缓存的插入
+		// Process any collected put requests, either from @CachePut or a @Cacheable miss
+		for (CachePutRequest cachePutRequest : cachePutRequests) {
+			cachePutRequest.apply(cacheValue);
+		}
+
+        // 当存在@CachEvict 并且beforeInvocation 为false时执行缓存删除操作
+		// Process any late evictions
+		processCacheEvicts(contexts.get(CacheEvictOperation.class), false, cacheValue);
+
+		return returnValue;
+	}
+
+	从上面也可看到
+	我们的业务方法上应该只允许使用同一种类型的缓存注解
