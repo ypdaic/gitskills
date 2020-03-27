@@ -1,0 +1,30 @@
+当我们在RabbitProperties 中设置publisherConfirms为true,或publisherReturns为true时，就开启
+失败通知（消息无法路由到队列时），和发送者确认（消息可以路由到队列，和消息无法路由到队列）
+
+当我们使用RabbitTemplate发送消息，就会往channel中注册自己，用于监听失败通知和发送者确认
+发送者确认是使用的异步确认方式
+
+    Confirm的三种实现方式：
+    方式一：channel.waitForConfirms()普通发送方确认模式；消息到达交换器，就会返回true。
+    方式二：channel.waitForConfirmsOrDie()批量确认模式；使用同步方式等所有的消息发送之后才会执行后面代码，只要有一个消息未到达交换器就会抛出IOException异常。
+    方式三：channel.addConfirmListener()异步监听发送方确认模式；
+
+public void addListener(Channel channel) {
+		if (channel instanceof PublisherCallbackChannel) {
+			PublisherCallbackChannel publisherCallbackChannel = (PublisherCallbackChannel) channel;
+			Channel key = channel instanceof ChannelProxy ? ((ChannelProxy) channel).getTargetChannel() : channel;
+			if (this.publisherConfirmChannels.putIfAbsent(key, this) == null) {
+			    // 注册监听器用于回调
+				publisherCallbackChannel.addListener(this);
+				if (logger.isDebugEnabled()) {
+					logger.debug("Added publisher confirm channel: " + channel + " to map, size now "
+							+ this.publisherConfirmChannels.size());
+				}
+			}
+		}
+		else {
+			throw new IllegalStateException(
+					"Channel does not support confirms or returns; " +
+							"is the connection factory configured for confirms or returns?");
+		}
+	}

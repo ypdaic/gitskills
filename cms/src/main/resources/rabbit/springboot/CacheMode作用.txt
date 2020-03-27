@@ -1,0 +1,16 @@
+/**
+	 * The cache mode.
+	 */
+	public enum CacheMode {
+		/**
+		 * Cache channels - single connection. 表示就一个连接，但是有多个通道，默认最多25个通道，
+		 * 通道的创建会使用Semaphore进行控制，最多允许25个线程同时创建，通道创建后会缓存下来
+		 * 下次再创建通道直接从缓存中获取，最多允许25个线程获取
+		 */
+		CHANNEL,
+		/**
+		 * Cache connections and channels within each connection. 这种模式会创建多个连接，每个连接的通道也会缓存
+		 * 通过信号量控制
+		 */
+		CONNECTION
+	}

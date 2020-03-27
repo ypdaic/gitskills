@@ -24,6 +24,8 @@ rabbitmq 实例
 
 https://github.com/wangzaiplus/springboot/tree/wxw/src/main/java/com/wangzaiplus/test
 
+rabbitmq 使用实例
+https://mp.weixin.qq.com/s/9fU2IMaKJ71FlaqJNQpaNA
 
 
 
