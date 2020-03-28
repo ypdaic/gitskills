@@ -28,4 +28,16 @@ public class GetAnnotationUtil {
         Method method = methodSignature.getMethod();
         return AnnotationUtils.findAnnotation(method, clazz);
     }
+
+    public static <A extends Annotation> A getAnnotationWithMethod(JoinPoint joinPoint, Class<A> clazz) {
+        MethodSignature methodSignature = (MethodSignature)joinPoint.getSignature();
+        Method method = methodSignature.getMethod();
+        return AnnotationUtils.findAnnotation(method, clazz);
+    }
+
+    public static <A extends Annotation> A getAnnotationWithClass(JoinPoint joinPoint, Class<A> clazz) {
+        MethodSignature methodSignature = (MethodSignature)joinPoint.getSignature();
+        Method method = methodSignature.getMethod();
+        return AnnotationUtils.findAnnotation(method.getDeclaringClass(), clazz);
+    }
 }

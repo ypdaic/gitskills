@@ -11,3 +11,21 @@
 ErrorsMethodArgumentResolver这个解析器解析，解析就是从mavContainer中获取我们的之前保存的BindingResult，最后注入给我们的参数，整个校验就完成了
 
 校验的具体工作是由hibernate提供实现支持
+
+当我们的需要校验的参数的后面一个参数不是Error 接口的实现时，就会已抛异抛出，代码如下：
+
+    AbstractMessageConverterMethodArgumentResolver的isBindExceptionRequired方法
+
+    /**
+	 * Whether to raise a fatal bind exception on validation errors.
+	 * @param binder the data binder used to perform data binding
+	 * @param parameter the method parameter descriptor
+	 * @return {@code true} if the next method argument is not of type {@link Errors}
+	 * @since 4.1.5
+	 */
+	protected boolean isBindExceptionRequired(WebDataBinder binder, MethodParameter parameter) {
+		int i = parameter.getParameterIndex();
+		Class<?>[] paramTypes = parameter.getExecutable().getParameterTypes();
+		boolean hasBindingResult = (paramTypes.length > (i + 1) && Errors.class.isAssignableFrom(paramTypes[i + 1]));
+		return !hasBindingResult;
+	}
