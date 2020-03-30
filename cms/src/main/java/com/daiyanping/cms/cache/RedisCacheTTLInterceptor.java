@@ -1,11 +1,14 @@
 package com.daiyanping.cms.cache;
 
+import lombok.Data;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.cache.Cache;
 import org.springframework.cache.transaction.TransactionAwareCacheDecorator;
+import org.springframework.context.annotation.Scope;
 import org.springframework.data.redis.cache.RedisCache;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheWriter;
+import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 import java.time.Duration;
@@ -18,15 +21,16 @@ import java.util.Random;
  * redis cache 缓存时间 设置随机值支持
  * @author daiyanping
  */
+@Component
+@Scope("prototype")
+@Data
 public class RedisCacheTTLInterceptor extends AbstractCacheInterceptor {
 
-    private MyRedisCache myRedisCache;
+    private volatile MyRedisCache myRedisCache;
+
+    private final Object lockMonitor = new Object();
 
     private List<String> cacheNames = new ArrayList<String>(0);
-
-    public RedisCacheTTLInterceptor(List<String> cacheNames) {
-        this.cacheNames = cacheNames;
-    }
 
     @Override
     protected boolean matchMethod(Method method) {
@@ -44,7 +48,13 @@ public class RedisCacheTTLInterceptor extends AbstractCacheInterceptor {
             redisCache = (RedisCache) cache;
         }
         if (Objects.isNull(myRedisCache)) {
-            myRedisCache = new MyRedisCache(redisCache.getName(), redisCache.getNativeCache(), redisCache.getCacheConfiguration());
+            synchronized (lockMonitor) {
+                if (Objects.isNull(myRedisCache)) {
+                    myRedisCache = new MyRedisCache(redisCache.getName(), redisCache.getNativeCache(), redisCache.getCacheConfiguration());
+                }
+
+            }
+
         }
         Object cacheValue = myRedisCache.preProcessCacheValue(arguments[1]);
 

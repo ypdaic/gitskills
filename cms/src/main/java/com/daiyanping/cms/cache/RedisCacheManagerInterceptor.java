@@ -1,14 +1,13 @@
 package com.daiyanping.cms.cache;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.aopalliance.intercept.MethodInvocation;
-import org.redisson.api.RedissonClient;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.cache.Cache;
 import org.springframework.data.redis.cache.RedisCacheManager;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import org.springframework.stereotype.Service;
+import sungo.cms.common.config.ApplicationContextProvider;
 import sungo.util.enums.RedisKeyEnum;
 
 import java.lang.reflect.Method;
@@ -21,14 +20,10 @@ import java.util.concurrent.ConcurrentMap;
  * @author daiyanping
  */
 @Data
-@AllArgsConstructor
+@Service
 public class RedisCacheManagerInterceptor extends AbstractCacheInterceptor {
 
     private RedisCacheManager redisCacheManager;
-
-    private RedissonClient redissonClient;
-
-    private ThreadPoolTaskScheduler threadPoolTaskScheduler;
 
     private final ConcurrentMap<String, Cache> cacheMap = new ConcurrentHashMap<>(4);
 
@@ -55,11 +50,12 @@ public class RedisCacheManagerInterceptor extends AbstractCacheInterceptor {
 
                     ProxyFactory factory = new ProxyFactory();
                     factory.setExposeProxy(true);
-                    RedisLockCacheInterceptor redisLockCacheInterceptor = new RedisLockCacheInterceptor(redisCache, redissonClient);
-                    LocalLockCacheInterceptor localLockCacheInterceptor = new LocalLockCacheInterceptor(redisCache, threadPoolTaskScheduler);
+                    RedisLockCacheInterceptor redisLockCacheInterceptor = ApplicationContextProvider.getBean(RedisLockCacheInterceptor.class);
+                    LocalLockCacheInterceptor localLockCacheInterceptor = ApplicationContextProvider.getBean(LocalLockCacheInterceptor.class);
                     ArrayList<String> cacheNames = new ArrayList<>(1);
                     cacheNames.add(RedisKeyEnum.APP_CACHE.getPrefix());
-                    RedisCacheTTLInterceptor redisCacheTTLInterceptor = new RedisCacheTTLInterceptor(cacheNames);
+                    RedisCacheTTLInterceptor redisCacheTTLInterceptor = ApplicationContextProvider.getBean(RedisCacheTTLInterceptor.class);
+                    redisCacheTTLInterceptor.setCacheNames(cacheNames);
                     factory.addAdvisor(new DefaultPointcutAdvisor(localLockCacheInterceptor));
                     factory.addAdvisor(new DefaultPointcutAdvisor(redisLockCacheInterceptor));
                     factory.addAdvisor(new DefaultPointcutAdvisor(redisCacheTTLInterceptor));

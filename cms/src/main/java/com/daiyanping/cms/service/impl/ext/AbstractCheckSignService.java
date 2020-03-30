@@ -1,11 +1,11 @@
 package com.daiyanping.cms.service.impl.ext;
 
+import com.daiyanping.cms.enums.ExtApiTypeEnum;
+import com.daiyanping.cms.enums.FailureEnum;
+import com.daiyanping.cms.result.Result;
+import com.daiyanping.cms.result.ResultUtil;
+import com.daiyanping.cms.service.IExtApiService;
 import lombok.extern.slf4j.Slf4j;
-import sungo.cms.common.enums.ExtApiTypeEnum;
-import sungo.cms.common.service.IExtApiService;
-import sungo.util.enums.FailureEnum;
-import sungo.util.result.Result;
-import sungo.util.result.ResultUtil;
 
 import java.util.Map;
 

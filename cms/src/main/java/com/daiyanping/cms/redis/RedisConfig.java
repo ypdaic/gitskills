@@ -104,6 +104,9 @@ public class RedisConfig {
     @Autowired
     private CacheProperties cacheProperties;
 
+    @Autowired
+    RedisCacheManagerInterceptor redisCacheManagerInterceptor;
+
     /**
      * springboot 自动配置默认会配置RedisCacheManager，但是默认使用JdkSerializationRedisSerializer进行序列化
      * 不符合JSON场景，这就需要我们自定义配置
@@ -152,7 +155,8 @@ public class RedisConfig {
 ////        return redisCacheManager2;
         ProxyFactory factory = new ProxyFactory();
         factory.setExposeProxy(true);
-        factory.addAdvisor(new DefaultPointcutAdvisor(new RedisCacheManagerInterceptor(redisCacheManager, redissonClient, TaskScheduler)));
+        redisCacheManagerInterceptor.setRedisCacheManager(redisCacheManager);
+        factory.addAdvisor(new DefaultPointcutAdvisor(redisCacheManagerInterceptor));
         factory.setTarget(redisCacheManager);
         redisCacheManager = (RedisCacheManager) factory.getProxy(RedisCacheManager.class.getClassLoader());
 

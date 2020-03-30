@@ -1,11 +1,12 @@
 package com.daiyanping.cms.service.impl.ext;
 
+import com.daiyanping.cms.enums.ExtApiTypeEnum;
+import com.daiyanping.cms.result.Result;
+import com.daiyanping.cms.service.IExtApiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
-import sungo.cms.common.enums.ExtApiTypeEnum;
-import sungo.cms.common.service.IExtApiService;
-import sungo.util.result.Result;
+
 
 import java.util.List;
 import java.util.Map;

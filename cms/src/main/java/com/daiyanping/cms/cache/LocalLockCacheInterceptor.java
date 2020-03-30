@@ -2,10 +2,14 @@ package com.daiyanping.cms.cache;
 
 import lombok.Data;
 import org.aopalliance.intercept.MethodInvocation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
+import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,20 +19,19 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author daiyanping
  */
 @Data
-public class LocalLockCacheInterceptor extends AbstractCacheLockInterceptor {
+@Component
+@Scope("prototype")
+public class LocalLockCacheInterceptor extends AbstractCacheLockInterceptor{
 
-    private Cache cache;
-
-    // 定时清理本地锁,防止内存溢出
+    @Autowired
     private ThreadPoolTaskScheduler threadPoolTaskScheduler;
 
     private static String lockSuffix = "~lock";
 
-    private final Map<String, Object> lockMap = new ConcurrentHashMap();
+    private final Map<String, Object> lockMap = new ConcurrentHashMap(16);
 
-    public LocalLockCacheInterceptor(Cache cache, ThreadPoolTaskScheduler threadPoolTaskScheduler){
-        this.cache = cache;
-        this.threadPoolTaskScheduler = threadPoolTaskScheduler;
+    @PostConstruct
+    public void init() {
         /**
          * 清除本地锁,防止潜在内存泄漏风险,锁不多的情况下暂不使用,后续考虑使用
          */
@@ -45,7 +48,7 @@ public class LocalLockCacheInterceptor extends AbstractCacheLockInterceptor {
      * @return
      */
     public <T> T get(Object key, Callable<T> valueLoader, MethodInvocation invocation) throws Throwable {
-
+        Cache cache = (Cache) invocation.getThis();
         // 获取到结果立马返回
         Cache.ValueWrapper result = cache.get(key);
         if (result != null) {

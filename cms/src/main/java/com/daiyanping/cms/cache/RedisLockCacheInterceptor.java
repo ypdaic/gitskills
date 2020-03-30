@@ -6,8 +6,10 @@ import org.aopalliance.intercept.MethodInvocation;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.aop.framework.AopContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
-import sungo.util.exception.CommonException;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.util.concurrent.Callable;
 
@@ -15,20 +17,16 @@ import java.util.concurrent.Callable;
  * 分布式锁支持
  * @author daiyanping
  */
-@Slf4j
 @Data
+@Slf4j
+@Component
+@Scope("prototype")
 public class RedisLockCacheInterceptor extends AbstractCacheLockInterceptor{
 
-    private Cache cache;
-
+    @Autowired
     private RedissonClient redissonClient;
 
     private static String lockSuffix = "~lock";
-
-    public RedisLockCacheInterceptor(Cache cache, RedissonClient redissonClient){
-        this.cache = cache;
-        this.redissonClient = redissonClient;
-    }
 
     /**
      * 重新实现同步的get方法
@@ -55,7 +53,7 @@ public class RedisLockCacheInterceptor extends AbstractCacheLockInterceptor{
 
         } catch (Throwable e) {
             log.error("缓存获取失败", e);
-            throw new CommonException("缓存获取失败!");
+            throw new RuntimeException("缓存获取失败!");
         } finally {
             if (fairLock.isHeldByCurrentThread()) {
                 fairLock.unlock();
