@@ -1,0 +1,30 @@
+
+
+
+private final Node<K,V>[] initTable() {
+        Node<K,V>[] tab; int sc;
+        // ConcurrentHashMap创建后，table必然是空
+        while ((tab = table) == null || tab.length == 0) {
+            // 如果sizeCtl小于0表示有其他线程在进行初始化，这里让出cpu
+            if ((sc = sizeCtl) < 0)
+                Thread.yield(); // lost initialization race; just spin
+            // 如果多个线程同时进行初始化，使用cas保证只会有一个线程进行初始化
+            else if (U.compareAndSwapInt(this, SIZECTL, sc, -1)) {
+                try {
+                    if ((tab = table) == null || tab.length == 0) {
+                        // 默认tab 长度为16
+                        int n = (sc > 0) ? sc : DEFAULT_CAPACITY;
+                        @SuppressWarnings("unchecked")
+                        Node<K,V>[] nt = (Node<K,V>[])new Node<?,?>[n];
+                        table = tab = nt;
+                        sc = n - (n >>> 2);
+                    }
+                } finally {
+                    // 重新设置sizeCtl为tab长度的0.75
+                    sizeCtl = sc;
+                }
+                break;
+            }
+        }
+        return tab;
+    }

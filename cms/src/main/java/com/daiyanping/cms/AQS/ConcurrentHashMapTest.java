@@ -22,6 +22,33 @@ public class ConcurrentHashMapTest {
      * @param args
      */
     public static void main(String[] args) {
-        map.put("test", "test");
+        ConcurrentHashMap<MyTest, String> stringStringConcurrentHashMap = new ConcurrentHashMap<>();
+        for (int i = 0; i < 100; i++) {
+            if (i != 99) {
+
+            stringStringConcurrentHashMap.put(new MyTest(), "test" + i);
+            }
+            if (i == 99) {
+                stringStringConcurrentHashMap.put(new MyTest(), "test" + i);
+            }
+
+
+        }
+
+    }
+
+    /**
+     * 构造 hashcode 始终相同，equals始终不同
+     */
+    public static class MyTest {
+        @Override
+        public int hashCode() {
+            return 1;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return false;
+        }
     }
 }

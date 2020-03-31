@@ -1,0 +1,58 @@
+         // put 方法分析
+        final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
+                           boolean evict) {
+                Node<K,V>[] tab; Node<K,V> p; int n, i;
+                // 如果tab为null,或者长度为0就进行扩容
+                if ((tab = table) == null || (n = tab.length) == 0)
+                    n = (tab = resize()).length;
+                // 根据hash 进行tab数组长度取模，如果索引位置为null,则创建新的node
+                if ((p = tab[i = (n - 1) & hash]) == null)
+                    tab[i] = newNode(hash, key, value, null);
+                else {
+                    Node<K,V> e; K k;
+                    // 如索引位置有node，且该node的hash与新hash相同，node的key 也与新key相同，则取出该node
+                    // 用于下面覆盖旧value
+                    if (p.hash == hash &&
+                        ((k = p.key) == key || (key != null && key.equals(k))))
+                        e = p;
+                    // 处理是该node是红黑树的情况
+                    else if (p instanceof TreeNode)
+                        e = ((TreeNode<K,V>)p).putTreeVal(this, tab, hash, key, value);
+                    else {
+                        // 处理hash相同，key不相同的情况，需要形成链表
+                        for (int binCount = 0; ; ++binCount) {
+                            // 如果该node正好是最后一个node则创建新的node添加到链表尾部
+                            if ((e = p.next) == null) {
+                                p.next = newNode(hash, key, value, null);
+                                // 如果链表长度超过8，tab长度大于64进行转红黑树处理
+                                if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st
+                                    treeifyBin(tab, hash);
+                                break;
+                            }
+                            // 如果该node不是链表的最后一个node,存在后续node key相同的情况
+                            // 退出该循环，进行旧value的覆盖
+                            if (e.hash == hash &&
+                                ((k = e.key) == key || (key != null && key.equals(k))))
+                                break;
+                            // 把e赋给p 进行向下遍历
+                            p = e;
+                        }
+                    }
+                    // 进行旧value的覆盖
+                    if (e != null) { // existing mapping for key
+                        V oldValue = e.value;
+                        if (!onlyIfAbsent || oldValue == null)
+                            e.value = value;
+                        afterNodeAccess(e);
+                        return oldValue;
+                    }
+                }
+
+                // 修改此次加1
+                ++modCount;
+                // 如果node数量大于扩容的阈值，就进行扩容
+                if (++size > threshold)
+                    resize();
+                afterNodeInsertion(evict);
+                return null;
+            }

@@ -7,8 +7,6 @@ import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.cache.Cache;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.stereotype.Service;
-import sungo.cms.common.config.ApplicationContextProvider;
-import sungo.util.enums.RedisKeyEnum;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -53,7 +51,7 @@ public class RedisCacheManagerInterceptor extends AbstractCacheInterceptor {
                     RedisLockCacheInterceptor redisLockCacheInterceptor = ApplicationContextProvider.getBean(RedisLockCacheInterceptor.class);
                     LocalLockCacheInterceptor localLockCacheInterceptor = ApplicationContextProvider.getBean(LocalLockCacheInterceptor.class);
                     ArrayList<String> cacheNames = new ArrayList<>(1);
-                    cacheNames.add(RedisKeyEnum.APP_CACHE.getPrefix());
+                    cacheNames.add("app");
                     RedisCacheTTLInterceptor redisCacheTTLInterceptor = ApplicationContextProvider.getBean(RedisCacheTTLInterceptor.class);
                     redisCacheTTLInterceptor.setCacheNames(cacheNames);
                     factory.addAdvisor(new DefaultPointcutAdvisor(localLockCacheInterceptor));

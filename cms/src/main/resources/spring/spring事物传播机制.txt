@@ -8,7 +8,7 @@ PROPAGATION_MANDATORY 不存在事物则不可运行,存在则包含在父事物
 
 PROPAGATION_REQUIRES_NEW 不存在事物则创建,存在也是创建新事物,并将父事物信息保存下来,自己的的事物在提交或回滚后,恢复父事物信息
 
-PROPAGATION_NOT_SUPPORTED 不存在事物则以非事物运行,存在事物,则将父事物信息保存下来,自己还是以非事物的方式运行,但连接还是同一个连接,只不过是自动提交的,最后恢复父事物信息
+PROPAGATION_NOT_SUPPORTED 不存在事物则以非事物运行,存在事物,则将父事物信息保存下来,自己还是以非事物的方式运行,最后恢复父事物信息
 
 PROPAGATION_NEVER 不存在事物则以非事物运行,存在事物则报错
 
