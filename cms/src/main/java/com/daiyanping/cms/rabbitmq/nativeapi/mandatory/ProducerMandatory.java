@@ -6,7 +6,13 @@ import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
 /**
- *类说明：失败通知
+ *类说明：开启失败通知后，当消息发送到交换器，但消息无法路由到队列的时候，生成者会收到失败通知
+ *       也就是E->Q 的情况
+ *
+ *       如果消息发送的时候随便指定一个不存在的交换器，失败通知是否有效呢?
+ *       答案是在这种情况下失败通知是无效的，但是会会抛channel关闭的异常出来，
+ *       如果有给channel.addShutdownListener 添加监听器则会回调
+ *
  */
 public class ProducerMandatory {
 
@@ -59,6 +65,7 @@ public class ProducerMandatory {
             }
         });
 
+//        发送3钟消息
         String[] severities={"error","info","warning"};
         for(int i=0;i<3;i++){
             String severity = severities[i%3];
@@ -66,7 +73,8 @@ public class ProducerMandatory {
             String message = "Hello World_"+(i+1)
                     +("_"+System.currentTimeMillis());
 //            第3个参数设置为true,开启失败通知
-            channel.basicPublish(EXCHANGE_NAME,severity,true,
+//            第二个参数为路由键
+            channel.basicPublish("sfsfsfs",severity,true,
                     null,message.getBytes());
             System.out.println("----------------------------------");
             System.out.println(" Sent Message: [" + severity +"]:'"

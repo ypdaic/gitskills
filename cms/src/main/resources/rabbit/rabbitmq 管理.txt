@@ -1,0 +1,16 @@
+日志一般放在：
+/var/log/rabbitmq/rabbit@centosvm.log
+/var/log/rabbitmq/rabbit@centosvm-sasl.log
+
+管理虚拟主机
+rabbitmqctl add_vhost [vhost_name]
+rabbitmqctl list_vhosts
+
+启动和关闭rabbitmq
+rabbitmq-server会启动Erlang节点和Rabbitmq应用
+rabbitmqctl stop会关闭Erlang节点和Rabbitmq应用
+rabbitmqctl stop_app关闭Rabbitmq应用
+rabbitmqctl start_app启动Rabbitmq应用
+rabbitmqctl status 检查消息节点是否正常
+
+Rabbitmq配置文件放在 /etc/rabbitmq 下，名为rabbitmq.config，没有且需要使用则可以自己新建一个。

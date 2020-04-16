@@ -7,6 +7,9 @@ import java.util.concurrent.TimeoutException;
 
 /**
  *类说明：批量确认
+ *
+ * 如果消息发送的时候随便指定一个不存在的交换器，发送者通知是否有效呢?
+ * 答案和异步确认一样
  */
 public class ProducerBatchConfirm {
 
@@ -52,7 +55,7 @@ public class ProducerBatchConfirm {
             String message = "Hello World_"+(i+1);
             //参数1：exchange name
             //参数2：routing key
-            channel.basicPublish(EXCHANGE_NAME, ROUTE_KEY, true,null, message.getBytes());
+            channel.basicPublish("sdfsfds", ROUTE_KEY, true,null, message.getBytes());
             System.out.println(" Sent Message: [" + ROUTE_KEY +"]:'"+ message + "'");
         }
         // 批量确认

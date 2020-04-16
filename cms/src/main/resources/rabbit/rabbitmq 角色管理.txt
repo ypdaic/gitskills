@@ -1,0 +1,44 @@
+RabbitMQ的用户角色分类
+
+    none、management、policymaker、monitoring、administrator
+
+    none
+
+        不能访问 management plugin，通常就是普通的生产者和消费者
+
+    management
+    普通的生产者和消费者加：
+    列出自己可以通过AMQP登入的virtual hosts
+    查看自己的virtual hosts中的queues, exchanges 和 bindings
+    查看和关闭自己的channels 和 connections
+    查看有关自己的virtual hosts的“全局”的统计信息，包含其他用户在这些virtual hosts中的活动。
+
+    policymaker
+
+        management可以做的任何事加：
+        查看、创建和删除自己的virtual hosts所属的policies和parameters
+
+    monitoring
+
+        management可以做的任何事加：
+        列出所有virtual hosts，包括他们不能登录的virtual hosts
+        查看其他用户的connections和channels
+        查看节点级别的数据如clustering和memory使用情况
+        查看真正的关于所有virtual hosts的全局的统计信息
+
+    administrator
+
+        policymaker和monitoring可以做的任何事加:
+        创建和删除virtual hosts
+        查看、创建和删除users
+        查看创建和删除permissions
+        关闭其他用户的connections
+
+角色添加：
+
+    rabbitmqctl  set_user_tags  User  Tag
+    User为用户名， Tag为角色名(对应于下面的administrator，monitoring，policymaker，management)
+
+    例：
+
+        rabbitmqctl set_user_tags daiyanping adminstartor

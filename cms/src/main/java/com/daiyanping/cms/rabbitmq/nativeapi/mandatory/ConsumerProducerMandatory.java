@@ -6,7 +6,10 @@ import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
 /**
- *类说明：
+ *类说明：消费者实际所在线程为rabbit客户端自己的线程池
+ * 当我们没有在ConnectionFactory中指定线程池时，ConsumerWorkService
+ * 默认使用的Executors.newFixedThreadPool(DEFAULT_NUM_THREADS, threadFactory)
+ * 线程池
  */
 public class ConsumerProducerMandatory {
 
@@ -26,7 +29,7 @@ public class ConsumerProducerMandatory {
 
         String queueName = channel.queueDeclare().getQueue();
 
-        //只关注error级别的日志
+        //只关注error级别的日志，info，warning日志由于无法路由，生成者会收到失败通知
         String severity="error";
         channel.queueBind(queueName, ProducerMandatory.EXCHANGE_NAME,
                 severity);
@@ -40,6 +43,7 @@ public class ConsumerProducerMandatory {
                                        Envelope envelope,
                                        AMQP.BasicProperties properties,
                                        byte[] body) throws IOException {
+                System.out.println("当前线程名称:" + Thread.currentThread().getName());
                 String message = new String(body, "UTF-8");
                 //记录日志到文件：
                 System.out.println( "Received ["+ envelope.getRoutingKey()

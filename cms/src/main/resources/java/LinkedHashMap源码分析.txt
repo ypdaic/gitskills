@@ -7,3 +7,5 @@ Entry 内部使用befor,after 指向前驱Node,后续Node
 LinkedHashMap默认是按照插入顺序排序，也提供按访问顺序排序，（被访问的始终放在队尾，插入的时候，需要我们
 自己实现removeEldestEntry方法，进行first节点的移除，mybatis的LRUCache就是基于LinkedHashMap做的）
 accessOrder：true:按访问顺序排序（LRU），false:按插入顺序排序；
+
+当accessOrder 为true时，每次调用get方法都会将该node放到队列尾部，添加node时，如果removeEldestEntry返回true就会删除first节点

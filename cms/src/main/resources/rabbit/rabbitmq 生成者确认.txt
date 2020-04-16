@@ -1,0 +1,11 @@
+生产者确认模式下，只要消息成功发送到交换器就会发送ack通知
+而不会去管交换器是否将消息发送到队列
+
+ 结合channel.waitForConfirms() 也就一条条确认
+ * 可以看出，消息只要成功发送到交换器，就会发送ack通知
+ *
+ *
+ * 如果消息发送的时候随便指定一个不存在的交换器，发送者通知是否有效呢?
+ * 答案是在这种情况下发送者通知是无效的，但是会抛channel关闭的异常出来，
+ * 如果有给channel.addShutdownListener 添加监听器则会回调
+   springboot 整合rabbit就是通过ShutdownListener去发送nack的信息

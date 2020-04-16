@@ -1,0 +1,13 @@
+用户管理
+rabbitmqctl add_user [username] [pwd]
+rabbitmqctl delete_user [username]
+rabbitmqctl change_password [username] [new_pwd]
+
+用户权限控制
+rabbitmqctl set_permissions [-p <vhostpath>] <user> <conf> <write> <read>
+如用户Mark在虚拟主机logHost上的所有权限：
+rabbitmqctl set_permissions –p logHost Mark “.*” “.*” “.*”  (windows 双引号)
+
+rabbitmqctl set_permissions -p / daiyanping '.*' '.*' '.*'  (liunx 单引号)
+
+用户的角色

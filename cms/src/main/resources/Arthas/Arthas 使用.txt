@@ -139,3 +139,9 @@
     shutdown——关闭 Arthas 服务端，所有 Arthas 客户端全部退出
 
     keymap——Arthas快捷键列表及自定义快捷键
+
+7： jad 命令 反编译
+
+    jad demo.MathGame main   反编译某个方法
+
+    jad --source-only demo.MathGame  --source-only 只显示源码
