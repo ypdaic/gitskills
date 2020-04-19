@@ -1,0 +1,43 @@
+
+    // 大体流程
+    @Override
+	public final boolean matches(ConditionContext context,
+			AnnotatedTypeMetadata metadata) {
+		String classOrMethodName = getClassOrMethodName(metadata);
+		try {
+		    // 由子类提供，已经包含了匹配的结果和要打印的信息
+			ConditionOutcome outcome = getMatchOutcome(context, metadata);
+			// 打印匹配，不匹配的信息
+			logOutcome(classOrMethodName, outcome);
+			// 记录匹配结果
+			recordEvaluation(context, classOrMethodName, outcome);
+			// 返回是否匹配
+			return outcome.isMatch();
+		}
+		catch (NoClassDefFoundError ex) {
+			throw new IllegalStateException(
+					"Could not evaluate condition on " + classOrMethodName + " due to "
+							+ ex.getMessage() + " not "
+							+ "found. Make sure your own configuration does not rely on "
+							+ "that class. This can also happen if you are "
+							+ "@ComponentScanning a springframework package (e.g. if you "
+							+ "put a @ComponentScan in the default package by mistake)",
+					ex);
+		}
+		catch (RuntimeException ex) {
+			throw new IllegalStateException(
+					"Error processing condition on " + getName(metadata), ex);
+		}
+	}
+
+
+	getMatchOutcome方法由子类实现
+
+
+	OnClassCondition则通过classloader 是否可以成功加载该类来匹配
+
+    OnBeanCondition则更加查询spring容器的策略，查看容器中是否存在bean来匹配，
+    提供3中策略
+        CURRENT,  只查找当前contex
+        ANCESTORS, 只查找父context
+        ALL  查找所有context

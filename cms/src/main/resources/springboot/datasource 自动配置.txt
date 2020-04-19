@@ -1,0 +1,20 @@
+
+    // 内存数据源配置，当不存在外部数据源时，默认使用内存数据源
+    @Configuration
+	@Conditional(EmbeddedDatabaseCondition.class)
+	@ConditionalOnMissingBean({ DataSource.class, XADataSource.class })
+	@Import(EmbeddedDataSourceConfiguration.class)
+	protected static class EmbeddedDatabaseConfiguration {
+
+	}
+
+    // 外部数据源配置，默认使用Hikari数据源
+	@Configuration
+	@Conditional(PooledDataSourceCondition.class)
+	@ConditionalOnMissingBean({ DataSource.class, XADataSource.class })
+	@Import({ DataSourceConfiguration.Hikari.class, DataSourceConfiguration.Tomcat.class,
+			DataSourceConfiguration.Dbcp2.class, DataSourceConfiguration.Generic.class,
+			DataSourceJmxConfiguration.class })
+	protected static class PooledDataSourceConfiguration {
+
+	}

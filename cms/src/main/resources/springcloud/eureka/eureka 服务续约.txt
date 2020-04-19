@@ -1,0 +1,10 @@
+# 将服务注册到eureka上
+eureka:
+  instance:
+    lease-renewal-interval-in-seconds: 2 # 设置心跳的时间间隔（默认是30秒）
+    lease-expiration-duration-in-seconds: 5  # 如果现在超过了5秒的间隔，就清理该服务（默认是90秒）
+
+
+lease-renewal-interval-in-seconds 配置项用于服务的续约，但超过这个时间客户端还没向eureka服务端发送心跳，则说明客户端可能存在问题
+                                  但是服务端并不是马上去剔除该服务，而是要等到lease-expiration-duration-in-seconds
+                                  时间后再剔除服务

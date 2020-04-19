@@ -1,0 +1,9 @@
+当客户端宕机，而eureka 的心跳超时时间还没到，此时有请求正好请求到宕机的客户端，此时怎么将宕机的服务下线
+
+eureka 提供了相关的接口，进行手动下线
+
+delete方式 请求下面地址
+
+    http://localhost:8763/eureka/apps/MICRO-ORDER/localhost:micro-order:8084
+
+    8763是eureka服务端，8084是具体要下线的客户端

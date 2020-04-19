@@ -32,3 +32,7 @@ https://mp.weixin.qq.com/s/9fU2IMaKJ71FlaqJNQpaNA
 分布式事务mq 实现具体方案：
 
 https://github.com/vvsuperman/coolmq
+
+
+接口安全设计
+https://mp.weixin.qq.com/s/QL6nu1aXYLaWMqdrIooqqw

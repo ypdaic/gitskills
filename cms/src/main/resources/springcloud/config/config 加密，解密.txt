@@ -1,0 +1,11 @@
+当我们将 配置放在配置中心后，如果想要对相关的配置值进行加密可以使用
+
+config 服务端提供了加密接口和解密接口，如下：
+
+    加密：http://localhost:8085/encrypt?data=123456    post请求
+    解密：http://localhost:8090/decrypt                post请求，body给加密的密文
+
+
+
+加密后的密文在配置时，需要添加{cipher}的前缀，这是为了让springcloud-config知道这里是
+使用了加密

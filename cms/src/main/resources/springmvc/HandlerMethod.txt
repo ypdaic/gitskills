@@ -1,0 +1,41 @@
+HandlerMethod
+
+
+    /** Logger that is available to subclasses. */
+    	protected final Log logger = LogFactory.getLog(getClass());
+
+    	private final Object bean;  // 这个为bean的名称
+
+    	@Nullable
+    	private final BeanFactory beanFactory;
+
+    	private final Class<?> beanType;
+
+    	private final Method method;
+
+    	private final Method bridgedMethod;
+
+    	private final MethodParameter[] parameters;
+
+    	@Nullable
+    	private HttpStatus responseStatus;
+
+    	@Nullable
+    	private String responseStatusReason;
+
+    	@Nullable
+    	private HandlerMethod resolvedFromHandlerMethod;
+
+    	@Nullable
+    	private volatile List<Annotation[][]> interfaceParameterAnnotations;
+
+     // 在这个方法中才会真正去容器中获取bean对象，每次调用都会从容器获取
+     public HandlerMethod createWithResolvedBean() {
+     		Object handler = this.bean;
+     		if (this.bean instanceof String) {
+     			Assert.state(this.beanFactory != null, "Cannot resolve bean name without BeanFactory");
+     			String beanName = (String) this.bean;
+     			handler = this.beanFactory.getBean(beanName);
+     		}
+     		return new HandlerMethod(this, handler);
+     	}

@@ -1,0 +1,18 @@
+当我修改git上面的配置后，需要我们手动调接口去刷新服务端的配置信息
+
+    接口：http://localhost:7070/actuator/refresh
+
+    但是这方式只能刷新Enviraonment 的方法，@Value的方法是刷新不了的
+
+    // 这种方式刷新不了
+    @Value("${username}")
+    private String username;
+
+    @Value("${redis.password}")
+    private String redispass;
+
+    // 这种方式可以刷新
+    @Autowired
+    Environment environment;
+
+    如果想要@value的方式也可以刷新，需要在类上加@RefreshScope注解

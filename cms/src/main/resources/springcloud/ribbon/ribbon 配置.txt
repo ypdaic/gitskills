@@ -1,0 +1,27 @@
+ribbon 可以做全局配置，也就所有服务都使用同样的配置，也可以为具体某个服务进行配置
+
+当为某个服务进行配置时，需要以服务名作为前缀，例：
+
+    SPRINGCLOUD-PROVIDER:
+      ribbon:
+        listOfServers: http://localhost:8088,http://localhost:8091
+
+    上面这种情况在ribbon不需要从eureka获取服务时，可以使用，而也就是手动指定服务列表
+
+    关闭 ribbon从eureka 获取服务配置如下：
+
+    ribbon:
+      eureka:
+        enabled: false
+
+
+
+全局配置 例：
+
+    ribbon:
+      ConnectTimeout: 5000
+      ReadTimeout: 10000
+      maxAutoRetries: 1  #当前服务的重试次数
+      maxAutoRetriesNextServer: 1    #切换实例重试次数
+      okToRetryOnAllOperations: true
+      retryableStatusCodes: 500,404,502,408
