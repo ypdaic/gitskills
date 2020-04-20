@@ -18,6 +18,7 @@ public class InfoConfig {
 
     @Value("${info.app.name}")
     private String appName ;
+
     @Value("${info.company.name}")
     private String companyName ;
 
@@ -32,6 +33,7 @@ public class InfoConfig {
     public String getCompanyName() {
         return companyName;
     }
+
 
     public void setCompanyName(String companyName) {
         this.companyName = companyName;

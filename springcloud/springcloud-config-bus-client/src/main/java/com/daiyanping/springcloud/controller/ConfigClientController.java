@@ -34,6 +34,6 @@ public class ConfigClientController {
     @GetMapping("/config")
     public String getConfig() {
         return "ApplicationName = " + this.applicationName + "、EurekaServers = "
-                + this.eurekaServers + infoConfig.getAppName();
+                + this.eurekaServers + infoConfig.getAppName() + infoConfig.getCompanyName();
     }
 }

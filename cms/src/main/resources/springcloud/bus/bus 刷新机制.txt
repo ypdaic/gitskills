@@ -1,0 +1,67 @@
+
+当调用配置中心的bus刷新接口刷新后，客户端的RefreshListener会收到刷新事件
+
+继而调用ContextRefresher的refresh方法进行刷新
+
+    public synchronized Set<String> refresh() {
+    		Set<String> keys = refreshEnvironment();
+    		this.scope.refreshAll();
+    		return keys;
+    	}
+
+    public synchronized Set<String> refreshEnvironment() {
+        Map<String, Object> before = extract(
+                this.context.getEnvironment().getPropertySources());
+        // 刷新Environment对象
+        addConfigFilesToEnvironment();
+        // 找出变化的key
+        Set<String> keys = changes(before,
+                extract(this.context.getEnvironment().getPropertySources())).keySet();
+        // 发送EnvironmentChangeEvent事件，该事件会被ConfigurationPropertiesRebinder给监听
+        this.context.publishEvent(new EnvironmentChangeEvent(this.context, keys));
+        return keys;
+    }
+
+
+    ConfigurationPropertiesRebinder要做的就是将带有ConfigurationProperties注解的类
+    先调用destory方法，然后调用initializeBean方法初始bean
+
+
+    而ConfigurationPropertiesBindingPostProcessor会进行ConfigurationProperties参数的重新绑定
+
+    @ManagedOperation
+	public boolean rebind(String name) {
+		if (!this.beans.getBeanNames().contains(name)) {
+			return false;
+		}
+		if (this.applicationContext != null) {
+			try {
+				Object bean = this.applicationContext.getBean(name);
+				if (AopUtils.isAopProxy(bean)) {
+					bean = ProxyUtils.getTargetObject(bean);
+				}
+				if (bean != null) {
+					this.applicationContext.getAutowireCapableBeanFactory()
+							.destroyBean(bean);
+					this.applicationContext.getAutowireCapableBeanFactory()
+							.initializeBean(bean, name);
+					return true;
+				}
+			}
+			catch (RuntimeException e) {
+				this.errors.put(name, e);
+				throw e;
+			}
+			catch (Exception e) {
+				this.errors.put(name, e);
+				throw new IllegalStateException("Cannot rebind to " + name, e);
+			}
+		}
+		return false;
+	}
+
+
+
+
+
+

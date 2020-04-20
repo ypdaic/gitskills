@@ -1,0 +1,36 @@
+首先调用 GenericScope的destroy方法，清除cache，而cache 保存的是最终的实例对象
+
+凡是由@RefreshScope注解的对象，spring都会为其生成一个代理类，其拦截器为LockedScopedProxyFactoryBean
+
+而advised.getTargetSource()为SimpleBeanTargetSource每次都是如下方式获取bean
+
+
+
+    @Override
+	public Object getTarget() throws Exception {
+		return getBeanFactory().getBean(getTargetBeanName());
+	}
+
+
+	由于getBeanFactory().getBean(getTargetBeanName());
+	最终会走
+
+
+    GenericScope内部类BeanLifecycleWrapper的getBean方法，如下
+
+	public Object getBean() {
+        if (this.bean == null) {
+            synchronized (this.name) {
+                if (this.bean == null) {
+                    this.bean = this.objectFactory.getObject();
+                }
+            }
+        }
+        return this.bean;
+    }
+
+    由于GenericScope的destroy方法会清空每个BeanLifecycleWrapper的bean对象，后面再调用代理类时，会重新容器中获取一个新对象，
+    实现对象属性刷新
+
+
+
