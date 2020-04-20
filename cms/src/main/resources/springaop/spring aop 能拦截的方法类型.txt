@@ -1,0 +1,3 @@
+private 是不可拦截的
+
+public protected package(也就是默认的)
