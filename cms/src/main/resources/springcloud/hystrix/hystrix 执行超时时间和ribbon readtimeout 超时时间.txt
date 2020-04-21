@@ -1,0 +1,31 @@
+ribbon:
+  ConnectTimeout: 5000
+  ReadTimeout: 10000
+  maxAutoRetries: 1
+  maxAutoRetriesNextServer: 1
+  okToRetryOnAllOperations: true
+  retryableStatusCodes: 500,404,502,408
+
+
+
+hystrix:
+command:
+  default:  #default全局有效，service id指定应用有效
+    execution:
+      timeout:
+        #如果enabled设置为false，则请求超时交给ribbon控制,为true,则超时作为熔断根据
+        enabled: true
+      isolation:
+        thread:
+          timeoutInMilliseconds: 20000 #断路器超时时间，默认1000ms，默认1000ms
+
+
+如果ribbon的重试总时间超过了hystrix超时时间，那么超时时间就已hystrix为准
+
+ribbon 没有配置重试的情况下是有默认重试的，ribbon重试配置
+
+    ribbon：
+      maxAutoRetries: 1  #当前服务的重试次数
+      maxAutoRetriesNextServer: 1    #切换实例重试次数
+      okToRetryOnAllOperations: true #重试所有操作
+      retryableStatusCodes: 500,404,502,408 #指定只对那些响应码进行重试

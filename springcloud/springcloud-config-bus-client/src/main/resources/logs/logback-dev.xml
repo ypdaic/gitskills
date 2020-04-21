@@ -151,7 +151,7 @@ debug:当此属性设置为true时，将打印出logback内部日志信息，实
         <!-- 只是DEBUG级别以上的日志才显示 -->
         <!--ThresholdFilter：临界值过滤器，过滤掉低于指定临界值的日志。当日志级别等于或高于临界值时，过滤器返回NEUTRAL；当日志级别低于临界值时，日志会被拒绝。-->
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>DEBUG</level>
+            <level>TRACE</level>
         </filter>
     </appender>
 
@@ -166,7 +166,7 @@ debug:当此属性设置为true时，将打印出logback内部日志信息，实
     <logger name="com.daiyanping.springcloud" level="DEBUG"/>
 
     <!--指定最基础的日志输出级别-->
-    <root level="debug">
+    <root level="trace">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="fileErrorLog"/>
         <appender-ref ref="fileWarnLog"/>
