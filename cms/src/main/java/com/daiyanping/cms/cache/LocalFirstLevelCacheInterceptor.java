@@ -3,30 +3,51 @@ package com.daiyanping.cms.cache;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.Expiry;
-import com.github.benmanes.caffeine.cache.LoadingCache;
+import com.rabbitmq.client.Channel;
+import lombok.Data;
 import org.aopalliance.intercept.MethodInvocation;
-import org.apache.poi.ss.formula.functions.T;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.springframework.cache.caffeine.CaffeineCache;
+import org.springframework.amqp.core.AmqpAdmin;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.rabbit.annotation.Queue;
+import org.springframework.amqp.rabbit.annotation.QueueBinding;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer;
+import org.springframework.amqp.rabbit.listener.MessageListenerContainer;
+import org.springframework.amqp.rabbit.listener.RabbitListenerContainerFactory;
+import org.springframework.amqp.rabbit.listener.api.ChannelAwareMessageListener;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
-import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 本地一级缓存
  */
-public class LocalFirstLevelCacheInterceptor extends AbstractCacheInterceptor {
+@Data
+@Component
+@Scope("prototype")
+public class LocalFirstLevelCacheInterceptor extends AbstractCacheInterceptor implements InitializingBean, ChannelAwareMessageListener
+{
 
     private Cache<String, Object> cache;
 
-    public LocalFirstLevelCacheInterceptor() {
+    private String name;
+
+    private static String FIRST_LEVEL_CACHE = "first_level_cache";
+
+    public LocalFirstLevelCacheInterceptor(String name) {
         this.cache = Caffeine.newBuilder()
                 // 自定义过期策略
                 .expireAfter(new MyExpiry())
                 .maximumSize(3)
                 .build();
+        this.name = name;
     }
 
     @Override
@@ -47,6 +68,26 @@ public class LocalFirstLevelCacheInterceptor extends AbstractCacheInterceptor {
         });
     }
 
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        Queue name = new Queue("name");
+        RabbitListenerContainerFactory rabbitListenerContainerFactory = (RabbitListenerContainerFactory) ApplicationContextProvider.getBean("rabbitListenerContainerFactory");
+        AmqpAdmin amqpAdmin = (AmqpAdmin) ApplicationContextProvider.getBean("amqpAdmin");
+        AbstractMessageListenerContainer listenerContainer = (AbstractMessageListenerContainer) rabbitListenerContainerFactory.createListenerContainer();
+        listenerContainer.setupMessageListener(this);
+
+        listenerContainer.setQueueNames(FIRST_LEVEL_CACHE + this.name);
+        listenerContainer.setAmqpAdmin(amqpAdmin);
+        listenerContainer.set
+
+        listenerContainer.start();
+    }
+
+    @Override
+    public void onMessage(Message message, Channel channel) throws Exception {
+
+    }
+
     private static class MyExpiry implements Expiry {
 
         @Override
@@ -64,5 +105,10 @@ public class LocalFirstLevelCacheInterceptor extends AbstractCacheInterceptor {
         public long expireAfterRead(@NonNull Object key, @NonNull Object value, long currentTime, @NonNegative long currentDuration) {
             return currentDuration;
         }
+    }
+
+    @RabbitListener(bindings = @QueueBinding(value = @Queue(name)))
+    public void removeCache() {
+
     }
 }
