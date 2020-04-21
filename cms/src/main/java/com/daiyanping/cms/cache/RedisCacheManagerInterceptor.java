@@ -45,7 +45,7 @@ public class RedisCacheManagerInterceptor extends AbstractCacheInterceptor {
                 if (cache == null) {
 
                     Cache redisCache = (Cache) invocation.proceed();
-
+                    String name = redisCache.getName();
                     ProxyFactory factory = new ProxyFactory();
                     factory.setExposeProxy(true);
                     RedisLockCacheInterceptor redisLockCacheInterceptor = ApplicationContextProvider.getBean(RedisLockCacheInterceptor.class);
