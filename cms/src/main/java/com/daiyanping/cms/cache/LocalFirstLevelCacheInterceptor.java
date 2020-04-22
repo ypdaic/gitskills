@@ -8,23 +8,19 @@ import lombok.Data;
 import org.aopalliance.intercept.MethodInvocation;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.springframework.amqp.core.AmqpAdmin;
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.rabbit.annotation.Queue;
-import org.springframework.amqp.rabbit.annotation.QueueBinding;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer;
-import org.springframework.amqp.rabbit.listener.MessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.RabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.listener.api.ChannelAwareMessageListener;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 本地一级缓存
@@ -32,8 +28,7 @@ import java.util.Map;
 @Data
 @Component
 @Scope("prototype")
-public class LocalFirstLevelCacheInterceptor extends AbstractCacheInterceptor implements InitializingBean, ChannelAwareMessageListener
-{
+public class LocalFirstLevelCacheInterceptor extends AbstractCacheInterceptor implements InitializingBean, ChannelAwareMessageListener, BeanFactoryAware {
 
     private Cache<String, Object> cache;
 
@@ -41,11 +36,15 @@ public class LocalFirstLevelCacheInterceptor extends AbstractCacheInterceptor im
 
     private static String FIRST_LEVEL_CACHE = "first_level_cache";
 
+    private BeanFactory beanFactory;
+
+    private int increment;
+
     public LocalFirstLevelCacheInterceptor(String name) {
         this.cache = Caffeine.newBuilder()
                 // 自定义过期策略
                 .expireAfter(new MyExpiry())
-                .maximumSize(3)
+                .maximumSize(1000)
                 .build();
         this.name = name;
     }
@@ -70,22 +69,40 @@ public class LocalFirstLevelCacheInterceptor extends AbstractCacheInterceptor im
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        Queue name = new Queue("name");
+        String queueName = FIRST_LEVEL_CACHE + "." + this.name;
+        String exchange = FIRST_LEVEL_CACHE + ".EXCHANGE";
+        org.springframework.amqp.core.Queue queue = new org.springframework.amqp.core.Queue(queueName);
+        TopicExchange topicExchange = new TopicExchange(exchange);
+
+        Binding binding = BindingBuilder.bind(queue).to(topicExchange).with(FIRST_LEVEL_CACHE + "." + name + ".*");
+
+        ((ConfigurableBeanFactory) this.beanFactory)
+                .registerSingleton(exchange + ++this.increment , topicExchange);
+
+        ((ConfigurableBeanFactory) this.beanFactory)
+                .registerSingleton(exchange + "." + name + ++this.increment, binding);
+
         RabbitListenerContainerFactory rabbitListenerContainerFactory = (RabbitListenerContainerFactory) ApplicationContextProvider.getBean("rabbitListenerContainerFactory");
         AmqpAdmin amqpAdmin = (AmqpAdmin) ApplicationContextProvider.getBean("amqpAdmin");
+
         AbstractMessageListenerContainer listenerContainer = (AbstractMessageListenerContainer) rabbitListenerContainerFactory.createListenerContainer();
         listenerContainer.setupMessageListener(this);
 
-        listenerContainer.setQueueNames(FIRST_LEVEL_CACHE + this.name);
+        listenerContainer.setQueueNames(queueName);
         listenerContainer.setAmqpAdmin(amqpAdmin);
-        listenerContainer.set
 
         listenerContainer.start();
     }
 
     @Override
     public void onMessage(Message message, Channel channel) throws Exception {
+        byte[] body = message.getBody();
+        cache.invalidate(new String(body));
+    }
 
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        this.beanFactory = beanFactory;
     }
 
     private static class MyExpiry implements Expiry {
@@ -107,8 +124,4 @@ public class LocalFirstLevelCacheInterceptor extends AbstractCacheInterceptor im
         }
     }
 
-    @RabbitListener(bindings = @QueueBinding(value = @Queue(name)))
-    public void removeCache() {
-
-    }
 }
