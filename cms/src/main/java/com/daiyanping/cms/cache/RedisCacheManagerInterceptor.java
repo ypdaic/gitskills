@@ -4,6 +4,9 @@ import lombok.Data;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.cache.Cache;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.stereotype.Service;
@@ -19,11 +22,13 @@ import java.util.concurrent.ConcurrentMap;
  */
 @Data
 @Service
-public class RedisCacheManagerInterceptor extends AbstractCacheInterceptor {
+public class RedisCacheManagerInterceptor extends AbstractCacheInterceptor implements BeanFactoryAware {
 
     private RedisCacheManager redisCacheManager;
 
     private final ConcurrentMap<String, Cache> cacheMap = new ConcurrentHashMap<>(4);
+
+    private BeanFactory beanFactory;
 
     @Override
     protected boolean matchMethod(Method method) {
@@ -51,9 +56,15 @@ public class RedisCacheManagerInterceptor extends AbstractCacheInterceptor {
                     RedisLockCacheInterceptor redisLockCacheInterceptor = ApplicationContextProvider.getBean(RedisLockCacheInterceptor.class);
                     LocalLockCacheInterceptor localLockCacheInterceptor = ApplicationContextProvider.getBean(LocalLockCacheInterceptor.class);
                     ArrayList<String> cacheNames = new ArrayList<>(1);
-                    cacheNames.add("app");
+                    cacheNames.add("");
                     RedisCacheTTLInterceptor redisCacheTTLInterceptor = ApplicationContextProvider.getBean(RedisCacheTTLInterceptor.class);
                     redisCacheTTLInterceptor.setCacheNames(cacheNames);
+
+
+                    LocalFirstLevelCacheInterceptor.setValue(beanFactory, name);
+                    LocalFirstLevelCacheInterceptor localFirstLevelCacheInterceptor = ApplicationContextProvider.getBean(LocalFirstLevelCacheInterceptor.class);
+
+                    factory.addAdvisor(new DefaultPointcutAdvisor(localFirstLevelCacheInterceptor));
                     factory.addAdvisor(new DefaultPointcutAdvisor(localLockCacheInterceptor));
                     factory.addAdvisor(new DefaultPointcutAdvisor(redisLockCacheInterceptor));
                     factory.addAdvisor(new DefaultPointcutAdvisor(redisCacheTTLInterceptor));
@@ -65,5 +76,10 @@ public class RedisCacheManagerInterceptor extends AbstractCacheInterceptor {
             }
 
         }
+    }
+
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        this.beanFactory = beanFactory;
     }
 }
