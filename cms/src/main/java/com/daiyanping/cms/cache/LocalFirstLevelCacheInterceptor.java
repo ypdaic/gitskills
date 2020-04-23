@@ -13,10 +13,14 @@ import org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer
 import org.springframework.amqp.rabbit.listener.RabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.listener.api.ChannelAwareMessageListener;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -26,27 +30,28 @@ import java.lang.reflect.Method;
  * 本地一级缓存
  */
 @Data
-@Component
+@Component(value = LocalFirstLevelCacheInterceptor.beanName)
 @Scope("prototype")
 public class LocalFirstLevelCacheInterceptor extends AbstractCacheInterceptor implements InitializingBean, ChannelAwareMessageListener, BeanFactoryAware {
+
+    protected static final String beanName = "LocalFirstLevelCacheInterceptor";
+
+    private static final String FIRST_LEVEL_CACHE = "FIRST_LEVEL_CACHE";
 
     private Cache<String, Object> cache;
 
     private String name;
 
-    private static String FIRST_LEVEL_CACHE = "first_level_cache";
-
     private BeanFactory beanFactory;
 
-    private int increment;
+    private static int increment;
 
-    public LocalFirstLevelCacheInterceptor(String name) {
+    public LocalFirstLevelCacheInterceptor() {
         this.cache = Caffeine.newBuilder()
                 // 自定义过期策略
                 .expireAfter(new MyExpiry())
                 .maximumSize(1000)
                 .build();
-        this.name = name;
     }
 
     @Override
@@ -71,10 +76,14 @@ public class LocalFirstLevelCacheInterceptor extends AbstractCacheInterceptor im
     public void afterPropertiesSet() throws Exception {
         String queueName = FIRST_LEVEL_CACHE + "." + this.name;
         String exchange = FIRST_LEVEL_CACHE + ".EXCHANGE";
+
         org.springframework.amqp.core.Queue queue = new org.springframework.amqp.core.Queue(queueName);
         TopicExchange topicExchange = new TopicExchange(exchange);
 
         Binding binding = BindingBuilder.bind(queue).to(topicExchange).with(FIRST_LEVEL_CACHE + "." + name + ".*");
+
+        ((ConfigurableBeanFactory) this.beanFactory)
+                .registerSingleton(queueName + ++this.increment , queue);
 
         ((ConfigurableBeanFactory) this.beanFactory)
                 .registerSingleton(exchange + ++this.increment , topicExchange);
@@ -122,6 +131,21 @@ public class LocalFirstLevelCacheInterceptor extends AbstractCacheInterceptor im
         public long expireAfterRead(@NonNull Object key, @NonNull Object value, long currentTime, @NonNegative long currentDuration) {
             return currentDuration;
         }
+    }
+
+    /**
+     * 属性注入
+     * @param beanFactory
+     * @param name
+     */
+    public static void setValue(BeanFactory beanFactory, String name) {
+        DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) beanFactory;
+        BeanDefinition beanDefinition = defaultListableBeanFactory.getBeanDefinition(beanName);
+        System.out.println("LocalFirstLevelCacheInterceptor的hashcode:" + beanDefinition.hashCode());
+        AbstractBeanDefinition abstractBeanDefinition = (AbstractBeanDefinition) beanDefinition;
+        MutablePropertyValues propertyValues = new MutablePropertyValues();
+        propertyValues.add("name", name);
+        abstractBeanDefinition.setPropertyValues(propertyValues);
     }
 
 }
