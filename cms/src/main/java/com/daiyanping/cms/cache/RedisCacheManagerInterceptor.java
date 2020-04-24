@@ -10,6 +10,7 @@ import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.cache.Cache;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.stereotype.Service;
+import sungo.util.enums.RedisKeyEnum;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -56,13 +57,14 @@ public class RedisCacheManagerInterceptor extends AbstractCacheInterceptor imple
                     RedisLockCacheInterceptor redisLockCacheInterceptor = ApplicationContextProvider.getBean(RedisLockCacheInterceptor.class);
                     LocalLockCacheInterceptor localLockCacheInterceptor = ApplicationContextProvider.getBean(LocalLockCacheInterceptor.class);
                     ArrayList<String> cacheNames = new ArrayList<>(1);
-                    cacheNames.add("");
+                    cacheNames.add(RedisKeyEnum.APP_CACHE.getPrefix());
                     RedisCacheTTLInterceptor redisCacheTTLInterceptor = ApplicationContextProvider.getBean(RedisCacheTTLInterceptor.class);
                     redisCacheTTLInterceptor.setCacheNames(cacheNames);
 
 
-                    LocalFirstLevelCacheInterceptor.setValue(beanFactory, name);
-                    LocalFirstLevelCacheInterceptor localFirstLevelCacheInterceptor = ApplicationContextProvider.getBean(LocalFirstLevelCacheInterceptor.class);
+                    String beanName = LocalFirstLevelCacheInterceptor.registerBeanDefinition(beanFactory, name);
+
+                    LocalFirstLevelCacheInterceptor localFirstLevelCacheInterceptor = (LocalFirstLevelCacheInterceptor) ApplicationContextProvider.getBean(beanName);
 
                     factory.addAdvisor(new DefaultPointcutAdvisor(localFirstLevelCacheInterceptor));
                     factory.addAdvisor(new DefaultPointcutAdvisor(localLockCacheInterceptor));
