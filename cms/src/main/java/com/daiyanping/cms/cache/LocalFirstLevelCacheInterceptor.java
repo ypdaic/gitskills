@@ -5,6 +5,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.Expiry;
 import com.rabbitmq.client.Channel;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.aopalliance.intercept.MethodInvocation;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -17,20 +18,25 @@ import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.context.annotation.ScannedGenericBeanDefinition;
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.type.classreading.CachingMetadataReaderFactory;
+import org.springframework.core.type.classreading.MetadataReader;
+import sungo.util.exception.CommonException;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 
 /**
  * 本地一级缓存
  */
+@Slf4j
 @Data
-@Component(value = LocalFirstLevelCacheInterceptor.beanName)
 @Scope("prototype")
 public class LocalFirstLevelCacheInterceptor extends AbstractCacheInterceptor implements InitializingBean, ChannelAwareMessageListener, BeanFactoryAware {
 
@@ -40,11 +46,13 @@ public class LocalFirstLevelCacheInterceptor extends AbstractCacheInterceptor im
 
     private Cache<String, Object> cache;
 
-    private String name;
+    private String cacheName;
 
     private BeanFactory beanFactory;
 
     private static int increment;
+
+    private static int beanNameIncrement;
 
     public LocalFirstLevelCacheInterceptor() {
         this.cache = Caffeine.newBuilder()
@@ -74,13 +82,13 @@ public class LocalFirstLevelCacheInterceptor extends AbstractCacheInterceptor im
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        String queueName = FIRST_LEVEL_CACHE + "." + this.name;
+        String queueName = FIRST_LEVEL_CACHE + "." + this.cacheName;
         String exchange = FIRST_LEVEL_CACHE + ".EXCHANGE";
 
         org.springframework.amqp.core.Queue queue = new org.springframework.amqp.core.Queue(queueName);
         TopicExchange topicExchange = new TopicExchange(exchange);
 
-        Binding binding = BindingBuilder.bind(queue).to(topicExchange).with(FIRST_LEVEL_CACHE + "." + name + ".*");
+        Binding binding = BindingBuilder.bind(queue).to(topicExchange).with(FIRST_LEVEL_CACHE + "." + cacheName + ".*");
 
         ((ConfigurableBeanFactory) this.beanFactory)
                 .registerSingleton(queueName + ++this.increment , queue);
@@ -89,7 +97,7 @@ public class LocalFirstLevelCacheInterceptor extends AbstractCacheInterceptor im
                 .registerSingleton(exchange + ++this.increment , topicExchange);
 
         ((ConfigurableBeanFactory) this.beanFactory)
-                .registerSingleton(exchange + "." + name + ++this.increment, binding);
+                .registerSingleton(exchange + "." + cacheName + ++this.increment, binding);
 
         RabbitListenerContainerFactory rabbitListenerContainerFactory = (RabbitListenerContainerFactory) ApplicationContextProvider.getBean("rabbitListenerContainerFactory");
         AmqpAdmin amqpAdmin = (AmqpAdmin) ApplicationContextProvider.getBean("amqpAdmin");
@@ -134,18 +142,36 @@ public class LocalFirstLevelCacheInterceptor extends AbstractCacheInterceptor im
     }
 
     /**
-     * 属性注入
+     * 注入一级缓存的BeanDefinition
      * @param beanFactory
-     * @param name
+     * @param cacheName
      */
-    public static void setValue(BeanFactory beanFactory, String name) {
+    public static String registerBeanDefinition(BeanFactory beanFactory, String cacheName) {
         DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) beanFactory;
-        BeanDefinition beanDefinition = defaultListableBeanFactory.getBeanDefinition(beanName);
-        System.out.println("LocalFirstLevelCacheInterceptor的hashcode:" + beanDefinition.hashCode());
-        AbstractBeanDefinition abstractBeanDefinition = (AbstractBeanDefinition) beanDefinition;
+        CachingMetadataReaderFactory cachingMetadataReaderFactory = new CachingMetadataReaderFactory();
+        MetadataReader metadataReader = null;
+        String name1 = LocalFirstLevelCacheInterceptor.class.getName();
+        String classpathAllUrlPrefix = ResourceLoader.CLASSPATH_URL_PREFIX;
+        String replace = name1.replace(".", "/");
+        PathMatchingResourcePatternResolver pathMatchingResourcePatternResolver = new PathMatchingResourcePatternResolver();
+        Resource resource = pathMatchingResourcePatternResolver.getResource(classpathAllUrlPrefix + replace + ".class");
+
+        try {
+            metadataReader = cachingMetadataReaderFactory.getMetadataReader(resource);
+        } catch (IOException e) {
+            log.error("已经缓存初始化失败", e);
+            throw new CommonException("xxxxx");
+        }
+        ScannedGenericBeanDefinition sbd = new ScannedGenericBeanDefinition(metadataReader);
+        sbd.setResource(resource);
+        sbd.setSource(resource);
+
         MutablePropertyValues propertyValues = new MutablePropertyValues();
-        propertyValues.add("name", name);
-        abstractBeanDefinition.setPropertyValues(propertyValues);
+        propertyValues.add("cacheName", cacheName);
+        String name = beanName + ++beanNameIncrement;
+        defaultListableBeanFactory.registerBeanDefinition(name, sbd);
+        return name;
+
     }
 
 }
