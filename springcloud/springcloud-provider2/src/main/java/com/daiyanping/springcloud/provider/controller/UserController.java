@@ -1,17 +1,16 @@
 package com.daiyanping.springcloud.provider.controller;
 
 
-import com.daiyanping.springcloud.vo.UserDto;
+import com.daiyanping.springcloud.common.base.BaseController;
 import com.daiyanping.springcloud.provider.entity.User;
 import com.daiyanping.springcloud.provider.service.IUserService;
+import com.daiyanping.springcloud.vo.UserDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import org.springframework.web.bind.annotation.RestController;
-import com.daiyanping.springcloud.common.base.BaseController;
 
 /**
  * <p>
@@ -31,12 +30,19 @@ public class UserController extends BaseController {
 
     @PostMapping(value = "/addUser")
     public User addUser(@RequestBody UserDto userDto) {
-        log.trace("日志输出 trace");
-        log.debug("日志输出 debug");
-        log.info("日志输出 info");
-        log.warn("日志输出 warn");
-        log.error("日志输出 error");
         User user = userService.addUser(userDto);
+        return user;
+    }
+
+    @PostMapping(value = "/deleteUser")
+    public User deleteUser(@RequestBody UserDto userDto) {
+        userService.deleteUser(userDto);
+        return null;
+    }
+
+    @PostMapping(value = "/getUser")
+    public User getUser(@RequestBody UserDto userDto) {
+        User user = userService.getUser(userDto);
         return user;
     }
 

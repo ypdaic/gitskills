@@ -156,14 +156,16 @@ debug:当此属性设置为true时，将打印出logback内部日志信息，实
     </appender>
 
     <!--一旦我们在logger中指定了appender-ref 在root中也指定了appender-ref 且两个一样，就会导致日志打印两次，要么appender-ref只在一个中配置，要么添加additivity="false"为false-->
-    <logger name="org.springframework" level="INFO" additivity="false">
-        <appender-ref ref="fileInfoLog"/>
+    <logger name="org.springframework" level="INFO">
     </logger>
     <!--com.alibaba.dubbo是dubbo服务的包，在如何是info以下的级别会产生大量的启动日志，调成WARN减少日志输出-->
     <logger name="com.alibaba.dubbo" level="WARN" />
 
     <!--com.daiyanping.springcloud是本项目的包，把这个包的打印日志级别调成 DEBUG级别可以看到sql执行-->
     <logger name="com.daiyanping.springcloud" level="DEBUG"/>
+    <logger name="org.redisson" level="INFO"/>
+    <logger name="io.netty" level="INFO"/>
+    <logger name="io.lettuce" level="INFO"/>
 
     <!--指定最基础的日志输出级别-->
     <root level="debug">

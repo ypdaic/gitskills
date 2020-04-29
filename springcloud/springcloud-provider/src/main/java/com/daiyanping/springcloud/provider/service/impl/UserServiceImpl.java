@@ -1,5 +1,7 @@
 package com.daiyanping.springcloud.provider.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.daiyanping.springcloud.common.annotation.PrintRequestTime;
 import com.daiyanping.springcloud.vo.UserDto;
 import com.daiyanping.springcloud.common.DB.DB;
 import com.daiyanping.springcloud.common.DB.DBTypeEnum;
@@ -8,6 +10,9 @@ import com.daiyanping.springcloud.provider.mapper.UserMapper;
 import com.daiyanping.springcloud.provider.service.IUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -20,6 +25,8 @@ import org.springframework.transaction.support.TransactionTemplate;
  * @author daiyanping
  * @since 2019-08-03
  */
+@PrintRequestTime(printError = 0l)
+@CacheConfig(cacheNames = "APP_CACHE")
 @Service
 @DB(DBTypeEnum.DB1)
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
@@ -41,5 +48,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             return user2;
         });
         return save ? user : null;
+    }
+
+    @Cacheable(sync = true, key = "'USER:' + #userDto.id")
+    @Override
+    public User getUser(UserDto userDto) {
+        return baseMapper.selectById(userDto.getId());
+    }
+
+    @CacheEvict(key = "'USER:' + #userDto.id")
+    public void deleteUser(UserDto userDto) {
+//        baseMapper.deleteById(userDto.getId());
+    }
+
+    @CacheEvict(key = "'USER:' + #userDto.id", allEntries = true)
+    @Override
+    public void deleteAll(UserDto userDto) {
+
     }
 }

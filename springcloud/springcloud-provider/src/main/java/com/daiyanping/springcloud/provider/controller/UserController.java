@@ -31,13 +31,26 @@ public class UserController extends BaseController {
 
     @PostMapping(value = "/addUser")
     public User addUser(@RequestBody UserDto userDto) {
-        log.trace("日志输出 trace");
-        log.debug("日志输出 debug");
-        log.info("日志输出 info");
-        log.warn("日志输出 warn");
-        log.error("日志输出 error");
         User user = userService.addUser(userDto);
         return user;
+    }
+
+    @PostMapping(value = "/deleteUser")
+    public User deleteUser(@RequestBody UserDto userDto) {
+        userService.deleteUser(userDto);
+        return null;
+    }
+
+    @PostMapping(value = "/getUser")
+    public User getUser(@RequestBody UserDto userDto) {
+        User user = userService.getUser(userDto);
+        return user;
+    }
+
+    @PostMapping(value = "/deleteAll")
+    public User deleteAll(@RequestBody UserDto userDto) {
+        userService.deleteAll(userDto);
+        return null;
     }
 
 }

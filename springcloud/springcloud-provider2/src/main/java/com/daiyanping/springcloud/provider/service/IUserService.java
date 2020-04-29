@@ -1,8 +1,8 @@
 package com.daiyanping.springcloud.provider.service;
 
-import com.daiyanping.springcloud.vo.UserDto;
-import com.daiyanping.springcloud.provider.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.daiyanping.springcloud.provider.entity.User;
+import com.daiyanping.springcloud.vo.UserDto;
 
 /**
  * <p>
@@ -15,4 +15,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface IUserService extends IService<User> {
 
     User addUser(UserDto userDto);
+
+    User getUser(UserDto userDto);
+
+    void deleteUser(UserDto userDto);
+
 }
