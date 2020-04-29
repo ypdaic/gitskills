@@ -36,3 +36,16 @@ https://github.com/vvsuperman/coolmq
 
 接口安全设计
 https://mp.weixin.qq.com/s/QL6nu1aXYLaWMqdrIooqqw
+
+
+秒杀设计
+https://mp.weixin.qq.com/s/cfl0T0ad1JO1HuSoAiNvVw
+
+
+
+独孤烟博客，redis 热点key
+https://www.cnblogs.com/rjzheng/category/1204667.html
+
+
+redis 热点key的解决方案
+http://www.360doc.com/content/19/0526/20/835902_838366982.shtml
