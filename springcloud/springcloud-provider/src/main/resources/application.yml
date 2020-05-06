@@ -22,6 +22,17 @@ spring:
   #user:
   #  name: admin  # 认证用户名
   #  password: test1234  # 认证密码
+ security:
+   oauth2:
+     resource:
+       user-info-uri: http://127.0.0.1:10001/auth/security/check
+       prefer-token-info: false
+     client:
+       clientId: micro-web
+       client-secret: 123456
+       access-token-uri: http://api-gateway/auth/oauth/token
+       grant-type: client_credentials
+       scope: all
 
 mybatis-plus:
   mapperLocations: classpath:/sqlMapperXml/**/*.xml

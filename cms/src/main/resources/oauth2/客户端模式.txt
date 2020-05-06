@@ -1,0 +1,19 @@
+通过客户端模式获取token
+
+appid appSecret grant_type=client
+
+一般通过这三个参数去获取token
+
+appid  appSecret 由提供服务的服务方颁发，grant_type=client表示当前是客户端模式，可以参考微信的token获取
+
+默认提供这个接口用于获取token,post请求
+{{URL}}/oauth/token
+
+表单参数如下，前面为key,后面为value
+grant_type client_credentials
+
+client_id  micro-web (相当于appid)
+
+client_secret   123456 (相当于appsecret)
+
+scope all

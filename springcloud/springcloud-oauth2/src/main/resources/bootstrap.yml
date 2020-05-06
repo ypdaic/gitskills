@@ -3,10 +3,10 @@ eureka:
   client:
     serviceUrl:
       # 单例
-      #defaultZone: http://admin:test1234@eureka1:8087/eureka/
+      defaultZone: http://admin:test1234@eureka1:8087/eureka/
 
       # 高可用
-      defaultZone: http://admin:test1234@eureka1:8087/eureka,http://admin:test1234@eureka2:8090/eureka
+      #defaultZone: http://admin:test1234@eureka1:8087/eureka,http://admin:test1234@eureka2:8090/eureka
   instance:
     instanceId: springcloud-oauth #配置实例名称
     prefer-ip-address: true # 使用ip显示应用的链接，否则使用 如下显示：http://user-20191116qx:8088/springcloud-provider/actuator/info
