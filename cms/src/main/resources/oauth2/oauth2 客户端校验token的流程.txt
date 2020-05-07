@@ -1,0 +1,124 @@
+OAuth2AuthenticationProcessingFilter 由这个拦截器进行处理
+
+public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException,
+			ServletException {
+
+		final boolean debug = logger.isDebugEnabled();
+		final HttpServletRequest request = (HttpServletRequest) req;
+		final HttpServletResponse response = (HttpServletResponse) res;
+
+		try {
+
+            // 解析header 中是否存在Authorization 并且是以bearer 开头的 例： bearer b4e1cc3a-c25b-419b-9a8e-57aa34912c80
+			Authentication authentication = tokenExtractor.extract(request);
+
+			if (authentication == null) {
+				if (stateless && isAuthenticated()) {
+					if (debug) {
+						logger.debug("Clearing security context.");
+					}
+					SecurityContextHolder.clearContext();
+				}
+				if (debug) {
+					logger.debug("No token in request, will continue chain.");
+				}
+			}
+			else {
+				request.setAttribute(OAuth2AuthenticationDetails.ACCESS_TOKEN_VALUE, authentication.getPrincipal());
+				if (authentication instanceof AbstractAuthenticationToken) {
+					AbstractAuthenticationToken needsDetails = (AbstractAuthenticationToken) authentication;
+					needsDetails.setDetails(authenticationDetailsSource.buildDetails(request));
+				}
+				// 使用authenticationManager进行认证，也就会调用到认证服务器去认证token是否有效，oauth2的会使用OAuth2AuthenticationManager
+				Authentication authResult = authenticationManager.authenticate(authentication);
+
+				if (debug) {
+					logger.debug("Authentication success: " + authResult);
+				}
+
+				eventPublisher.publishAuthenticationSuccess(authResult);
+				SecurityContextHolder.getContext().setAuthentication(authResult);
+
+			}
+		}
+		catch (OAuth2Exception failed) {
+			SecurityContextHolder.clearContext();
+
+			if (debug) {
+				logger.debug("Authentication request failed: " + failed);
+			}
+			eventPublisher.publishAuthenticationFailure(new BadCredentialsException(failed.getMessage(), failed),
+					new PreAuthenticatedAuthenticationToken("access-token", "N/A"));
+
+			authenticationEntryPoint.commence(request, response,
+					new InsufficientAuthenticationException(failed.getMessage(), failed));
+
+			return;
+		}
+
+		chain.doFilter(request, response);
+	}
+
+
+	OAuth2AuthenticationManager调用的代码
+
+
+	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+
+        if (authentication == null) {
+            throw new InvalidTokenException("Invalid token (token not found)");
+        }
+        // 获取header解析后的token
+        String token = (String) authentication.getPrincipal();
+        // 开始调用认证服务器进行token验证，当存在security:
+                                                  oauth2:
+                                                    resource:
+                                                      user-info-uri：http://127.0.0.1:10001/security/check
+                                                      配置项时使用的是UserInfoTokenServices
+
+        OAuth2Authentication auth = tokenServices.loadAuthentication(token);
+        if (auth == null) {
+            throw new InvalidTokenException("Invalid token: " + token);
+        }
+
+        Collection<String> resourceIds = auth.getOAuth2Request().getResourceIds();
+        if (resourceId != null && resourceIds != null && !resourceIds.isEmpty() && !resourceIds.contains(resourceId)) {
+            throw new OAuth2AccessDeniedException("Invalid token does not contain resource id (" + resourceId + ")");
+        }
+
+        checkClientDetails(auth);
+
+        if (authentication.getDetails() instanceof OAuth2AuthenticationDetails) {
+            OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) authentication.getDetails();
+            // Guard against a cached copy of the same details
+            if (!details.equals(auth.getDetails())) {
+                // Preserve the authentication details from the one loaded by token services
+                details.setDecodedDetails(auth.getDetails());
+            }
+        }
+        auth.setDetails(authentication.getDetails());
+        auth.setAuthenticated(true);
+        return auth;
+
+    }
+
+    	UserInfoTokenServices的调用
+
+
+    	@Override
+        public OAuth2Authentication loadAuthentication(String accessToken)
+                throws AuthenticationException, InvalidTokenException {
+            // 使用OAuth2RestTemplate调用security:
+                                          oauth2:
+                                            resource:
+                                              user-info-uri: http://127.0.0.1:10001/security/check
+                                     配置的接口，认证服务端通过本地的token存储机制查询该token是否存在
+            Map<String, Object> map = getMap(this.userInfoEndpointUrl, accessToken);
+            if (map.containsKey("error")) {
+                if (this.logger.isDebugEnabled()) {
+                    this.logger.debug("userinfo returned error: " + map.get("error"));
+                }
+                throw new InvalidTokenException(accessToken);
+            }
+            return extractAuthentication(map);
+        }

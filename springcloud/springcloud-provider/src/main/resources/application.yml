@@ -22,17 +22,21 @@ spring:
   #user:
   #  name: admin  # 认证用户名
   #  password: test1234  # 认证密码
- security:
-   oauth2:
-     resource:
-       user-info-uri: http://127.0.0.1:10001/auth/security/check
-       prefer-token-info: false
-     client:
-       clientId: micro-web
-       client-secret: 123456
-       access-token-uri: http://api-gateway/auth/oauth/token
-       grant-type: client_credentials
-       scope: all
+ main:
+   allow-bean-definition-overriding: true
+security:
+ oauth2:
+   resource:
+     user-info-uri: http://127.0.0.1:10001/security/check
+     prefer-token-info: true #配置为true
+     token-info-uri: http://127.0.0.1:10001/oauth/check_token #该配置有值，会由RemoteTokenServices去获取token的具体信息，否则使用UserInfoTokenServices获取
+     id: micro-web
+   client:
+     clientId: micro-web
+     client-secret: 123456
+     access-token-uri: http://127.0.0.1:10001/oauth/token
+     grant-type: client_credentials
+     scope: all
 
 mybatis-plus:
   mapperLocations: classpath:/sqlMapperXml/**/*.xml

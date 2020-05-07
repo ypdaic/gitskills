@@ -7,6 +7,9 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 
 @SpringBootApplication
 @EnableEurekaClient
+/*
+ * EnableResourceServer注解开启资源服务，因为程序需要对外暴露获取token的API和验证token的API所以该程序也是一个资源服务器
+ * */
 @EnableResourceServer
 public class Oauth2App {
 
