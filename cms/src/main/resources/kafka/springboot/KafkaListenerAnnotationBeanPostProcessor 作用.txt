@@ -1,0 +1,3 @@
+KafkaListenerAnnotationBeanPostProcessor  用于搜集某个类上是否有@KafkaListener注解，方法上有@KafkaHandler注解，或者方法上有@KafkaListener注解
+
+并将KafkaHandler注解的属性封装为 MethodKafkaListenerEndpoint对象，用于后续消费者的创建
