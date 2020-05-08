@@ -1,0 +1,31 @@
+队列相关：
+
+
+    Ready：待消费的消息总数。
+    Unacked：待应答的消息总数。
+    Total：总数 Ready+Unacked。
+
+    Publish：producter pub消息的速率。
+    Publisher confirm：broker确认pub消息的速率。
+    Deliver(manual ack)：customer手动确认的速率。
+    Deliver( auto ack)：customer自动确认的速率。
+    Consumer ack：customer正在确认的速率。
+    Redelivered：正在传递'redelivered'标志集的消息的速率。
+    Get (manual ack)：响应basic.get而要求确认的消息的传输速率。
+    Get (auto ack)：响应于basic.get而发送不需要确认的消息的速率。
+    Return：将basic.return发送给producter的速率。
+    Disk read：queue从磁盘读取消息的速率。
+    Disk write：queue从磁盘写入消息的速率。
+
+
+
+    Virtual host：所属的虚拟主机。
+    Name：名称。
+    Features：功能。 可以是以下之一，或者不是：D: 持久化。
+    State：当前的状态，running：运行中；idle：空闲。
+    Ready：待消费的消息总数。
+    Unacked：待应答的消息总数。
+    Total：总数 Ready+Unacked。
+    incoming：消息进入的速率。
+    deliver/get：消息获取的速率。
+    ack：消息应答的速率。

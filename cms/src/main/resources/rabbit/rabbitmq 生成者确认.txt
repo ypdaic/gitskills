@@ -9,3 +9,6 @@
  * 答案是在这种情况下发送者通知是无效的，但是会抛channel关闭的异常出来，
  * 如果有给channel.addShutdownListener 添加监听器则会回调
    springboot 整合rabbit就是通过ShutdownListener去发送nack的信息
+
+
+如果设置了消息持久化，那么ack= true是在消息持久化完成后，就是存到硬盘上之后再发送的
