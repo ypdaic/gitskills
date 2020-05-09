@@ -1,6 +1,6 @@
 1：临时队列
 
-    自动删除队列    channel.queueDeclare(queueName, false, false, true, null); 第4个参数为true，表示是自动删除队列，所有消费者与该队列断开后，该队列就会自动删除
+    自动删除队列    channel.queueDeclare(queueName, false, false, true, null); 第4个参数为true，表示是自动删除队列，所有消费者与该队列断开后，且消息都被消费后，该队列就会自动删除
 
     单消费者队列    channel.queueDeclare(queueName, false, false, true, null); 第3个参数为true，表示是单消费者队列
 
