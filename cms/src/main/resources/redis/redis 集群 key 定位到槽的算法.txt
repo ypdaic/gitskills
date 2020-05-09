@@ -1,0 +1,7 @@
+键到slot的基本映射算法如下：
+
+HASH_SLOT = CRC16(key) mod 16384
+
+用Redis中的代码表示如下（这个代码被稍微修改了一下，后面会还原）：
+
+crc16(key) & 0x3FFF
