@@ -2,3 +2,11 @@
 
 logging:
   config: classpath:logs/logback-dev.xml
+
+
+spring:
+  rabbitmq:
+    host: 192.168.111.128
+    port: 5672    # RabbitMQ的监听端口
+    username: root  # 用户名
+    password: test1234 # 密码
