@@ -1,0 +1,7 @@
+http://www.ruby-lang.org/zh_cn/documentation/installation/#yum
+
+liunx:
+
+    sudo yum install ruby
+
+redis 5.0 以后将不支持ruby脚本进行集群的操作

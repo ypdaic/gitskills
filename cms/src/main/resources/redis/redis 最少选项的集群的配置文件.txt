@@ -1,0 +1,5 @@
+port 7000 #集群间交互信息的端口
+cluster-enabled yes #开启集群模式
+cluster-config-file nodes.conf #保存节点配置文件路径，默认值nodes.conf，无需修改，由redis 集群在启动时创建，并在需要时自动更新
+cluster-node-timeout 5000 # 集群超时时间
+appendonly yes #开启aof

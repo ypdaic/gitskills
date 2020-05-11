@@ -27,7 +27,6 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.type.classreading.CachingMetadataReaderFactory;
 import org.springframework.core.type.classreading.MetadataReader;
-import sungo.util.exception.CommonException;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -160,7 +159,7 @@ public class LocalFirstLevelCacheInterceptor extends AbstractCacheInterceptor im
             metadataReader = cachingMetadataReaderFactory.getMetadataReader(resource);
         } catch (IOException e) {
             log.error("已经缓存初始化失败", e);
-            throw new CommonException("xxxxx");
+            throw new RuntimeException("xxxxx");
         }
         ScannedGenericBeanDefinition sbd = new ScannedGenericBeanDefinition(metadataReader);
         sbd.setResource(resource);

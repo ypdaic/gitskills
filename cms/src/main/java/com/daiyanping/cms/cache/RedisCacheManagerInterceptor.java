@@ -10,7 +10,6 @@ import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.cache.Cache;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.stereotype.Service;
-import sungo.util.enums.RedisKeyEnum;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -57,7 +56,7 @@ public class RedisCacheManagerInterceptor extends AbstractCacheInterceptor imple
                     RedisLockCacheInterceptor redisLockCacheInterceptor = ApplicationContextProvider.getBean(RedisLockCacheInterceptor.class);
                     LocalLockCacheInterceptor localLockCacheInterceptor = ApplicationContextProvider.getBean(LocalLockCacheInterceptor.class);
                     ArrayList<String> cacheNames = new ArrayList<>(1);
-                    cacheNames.add(RedisKeyEnum.APP_CACHE.getPrefix());
+                    cacheNames.add("APP_CACHE");
                     RedisCacheTTLInterceptor redisCacheTTLInterceptor = ApplicationContextProvider.getBean(RedisCacheTTLInterceptor.class);
                     redisCacheTTLInterceptor.setCacheNames(cacheNames);
 
