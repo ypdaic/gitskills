@@ -1,0 +1,42 @@
+master:
+
+    master:0>INFO Replication
+    # Replication
+    role:master
+    connected_slaves:2
+    slave0:ip=127.0.0.1,port=6381,state=online,offset=854,lag=0
+    slave1:ip=127.0.0.1,port=6380,state=online,offset=854,lag=0
+    master_replid:2893e6e5263c70d098cb28b60b1649dbe1982689
+    master_replid2:0000000000000000000000000000000000000000
+    master_repl_offset:854
+    second_repl_offset:-1
+    repl_backlog_active:1
+    repl_backlog_size:1048576
+    repl_backlog_first_byte_offset:1
+    repl_backlog_histlen:854
+
+
+
+slaves:
+
+
+    slave_6380:0>INFO Replication
+    # Replication
+    role:slave
+    master_host:127.0.0.1
+    master_port:6379
+    master_link_status:up
+    master_last_io_seconds_ago:10
+    master_sync_in_progress:0
+    slave_repl_offset:924
+    slave_priority:100
+    slave_read_only:1
+    connected_slaves:0
+    master_replid:2893e6e5263c70d098cb28b60b1649dbe1982689
+    master_replid2:0000000000000000000000000000000000000000
+    master_repl_offset:924
+    second_repl_offset:-1
+    repl_backlog_active:1
+    repl_backlog_size:1048576
+    repl_backlog_first_byte_offset:1
+    repl_backlog_histlen:924
