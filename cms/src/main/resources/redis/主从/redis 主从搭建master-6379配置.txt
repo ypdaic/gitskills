@@ -220,9 +220,12 @@ always-show-logo yes
 #   like in the following example:
 #
 #   save ""
-
+# 快照生成时间设置
+# 15 分钟 至少更改了1个键
 save 900 1
+# 5分钟至少更改了10个键
 save 300 10
+# 1分钟至少更改了 10000个键
 save 60 10000
 
 # By default Redis will stop accepting writes if RDB snapshots are enabled

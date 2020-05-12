@@ -23,4 +23,4 @@ appendfsync everysec  #每秒钟同步一次，该策略为AOF的缺省策略。
 appendfsync no          #从不同步。高效但是数据不会被持久化。
 
 
-rdb,aof同时存在的话，会先加载aof
+rdb,aof同时存在的话，会先加载aof，因为AOF的数据是比RDB更完整的。
