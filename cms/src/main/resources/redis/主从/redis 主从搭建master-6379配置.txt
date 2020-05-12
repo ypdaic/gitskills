@@ -444,6 +444,13 @@ repl-disable-tcp-nodelay no
 # It is used by Redis Sentinel in order to select a replica to promote into a
 # master if the master is no longer working correctly.
 #
+# 优先级低的副本被认为更适合升级，因此
+# 例如，如果有三个副本的优先级分别为10、100、25，Sentinel将
+# 选择优先级最低的10。
+#
+# 但是，特殊优先级0表示副本无法执行
+# 为主角色，因此优先级为0的副本永远不会被
+# Redis前哨升级。
 # A replica with a low priority number is considered better for promotion, so
 # for instance if there are three replicas with priority 10, 100, 25 Sentinel will
 # pick the one with priority 10, that is the lowest.
