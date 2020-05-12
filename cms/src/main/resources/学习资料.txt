@@ -49,3 +49,7 @@ https://www.cnblogs.com/rjzheng/category/1204667.html
 
 redis 热点key的解决方案
 http://www.360doc.com/content/19/0526/20/835902_838366982.shtml
+
+
+java学习资料(重要)：
+https://github.com/AobingJava/JavaFamily
