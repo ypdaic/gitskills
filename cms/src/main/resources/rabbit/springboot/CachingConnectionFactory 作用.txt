@@ -1,0 +1,22 @@
+CachingConnectionFactory 主要提供连接和信道，分为两种模式，当为CHANNEL模式时表示缓存信道，连接只有一个，当为CONNECTION模式时，缓存连接，也就是会有多个连接多个信道
+
+public enum CacheMode {
+		/**
+		 * Cache channels - single connection.
+		 */
+		CHANNEL,
+		/**
+		 * Cache connections and channels within each connection.
+		 */
+		CONNECTION
+	}
+
+
+private final Map<Connection, Semaphore> checkoutPermits = new HashMap<>();
+
+当存在 checkout-timeout配置时，每次用到channel时都会去获取信号量，信号量初始值为配置的信道size，只有当channel关闭时才会释放信号量
+
+    cache:
+      channel:
+        size: 2 # 通道数量
+        checkout-timeout: 3000
