@@ -1,0 +1,8 @@
+1：redis 采用 异步方式复制数据到slave节点，不过redis 2.8开始，slave node 会周期性的确认自己每次复制的数据量
+2：一个master node 是可以配置多个slave node的
+3：slave node 也可以连接其他的slave node
+4: slave node 做复制的时候，是不会block master node 的正常工作的
+5：slave node 在做复制的时候，也不会block 对自己的查询操作，它会用旧的数据 来提供服务，但是复制完成的时候，需要剔除旧数据，加载新数据，这个时候会暂停对外的服务
+6：slave node 主要来进行横向扩容，做读写分离，扩容的slave node可以提高读的吞吐量
+
+slave对高可用性，有很大关系

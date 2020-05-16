@@ -1,4 +1,5 @@
 Redis全量复制：
+
     一般发生在Slave初始化阶段，这时Slave需要将Master上的所有数据都复制一份。具体步骤如下：
 　　-  从服务器连接主服务器，发送SYNC命令；
 　　-  主服务器接收到SYNC命名后，开始执行BGSAVE命令生成RDB文件并使用缓冲区记录此后执行的所有写命令；
@@ -10,7 +11,19 @@ Redis全量复制：
    如果master同时收到多个 slave发来的同步连接命令，只会使用启动一个进程来写数据库镜像，然后发送给所有slave。
 
    slave node 如果跟 master node 有网络故障，断开了连接，会自动重连，连接之后 master node 仅会复制给 slave 部分缺少的数据。
+   master node 会在内存中存储一个bakclog，master,slave都会保存一个replica offset还有一个master id
+   offset 就是保存在backlog中，如果master和slave网络连接断掉了，slave会让masetr从上次的replica offset开始继续复制
+   如果没有找到对应的offset,这进行全量同步
 
+   无磁盘化复制
+
+        master 在内存中直接创建rdb,然后发给slave,不会在本地落地磁盘了
+
+        对应配置项：
+            repl-diskless-sync no 默认关闭
+            repl-diskless-sync-delay 等待一定时长再开始复制，因为要等更多slave重新连接过来
+
+        slave 不会过期key, 只会等待master过期key，如果master过期了一个key，或者通过LRU淘汰了一个key，那么会模拟一条del命令发送给slave
 redis 增量同步：
 
     AOF，增量的就像MySQL的Binlog一样，把日志增量同步给从服务就好了

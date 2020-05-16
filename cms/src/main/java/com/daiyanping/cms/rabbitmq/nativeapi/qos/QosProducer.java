@@ -32,7 +32,7 @@ public class QosProducer {
         channel.exchangeDeclare(EXCHANGE_NAME, "direct");
 
         //发送210条消息，其中第210条消息表示本批次消息的结束
-        for(int i=0;i<100;i++){
+        for(int i=0;i<1000;i++){
             // 发送的消息
             String message = "Hello World_"+(i+1);
             if(i==99){

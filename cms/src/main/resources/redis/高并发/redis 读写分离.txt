@@ -1,0 +1,5 @@
+主从模式下
+
+    一主多从下
+
+    写都打到master，读都打到slaves，而且spring-date-redis 已经给我们提供了读模式的配置

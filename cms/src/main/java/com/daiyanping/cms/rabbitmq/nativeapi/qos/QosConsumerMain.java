@@ -49,15 +49,16 @@ public class QosConsumerMain {
                 System.out.println("Received["+envelope.getRoutingKey()
                         +"]"+message);
 //                一条条确认
-                channel.basicAck(envelope.getDeliveryTag(),false);
+//                channel.basicAck(envelope.getDeliveryTag(),false);
             }
         };
 //        设置qos批量获取，每次获取150条，第二个参数表示在整个信道上生效，false表示只针对该消费者
-        channel.basicQos(150,true);
+//        channel.basicQos(150,true);
+//        channel.basicQos(10,false);
         /*消费者正式开始在指定队列上消费消息*/
         BatchAckConsumer batchAckConsumer = new BatchAckConsumer(channel);
         channel.basicConsume(queueName,false,consumer);
-        channel.basicConsume(queueName,false,batchAckConsumer);
+//        channel.basicConsume(queueName,false,batchAckConsumer);
 
 
     }

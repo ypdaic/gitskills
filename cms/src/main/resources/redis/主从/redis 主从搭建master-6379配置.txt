@@ -427,7 +427,7 @@ repl-disable-tcp-nodelay no
 # disconnected and later be able to perform a partial resynchronization.
 #
 # The backlog is only allocated once there is at least a replica connected.
-#
+# backlog 大小
 # repl-backlog-size 1mb
 
 # After a master has no longer connected replicas for some time, the backlog
@@ -461,7 +461,7 @@ repl-disable-tcp-nodelay no
 # However a special priority of 0 marks the replica as not able to perform the
 # role of master, so a replica with priority of 0 will never be selected by
 # Redis Sentinel for promotion.
-#
+# 优先级
 # By default the priority is 100.
 replica-priority 100
 
@@ -478,7 +478,7 @@ replica-priority 100
 # are available, to the specified number of seconds.
 #
 # For example to require at least 3 replicas with a lag <= 10 seconds use:
-#
+# 要求至少有3个slave，数据复制和同步的延迟不能超过10秒，如果超过10s，master不接受请求
 # min-replicas-to-write 3
 # min-replicas-max-lag 10
 #
@@ -1230,6 +1230,7 @@ activerehashing yes
 #
 # Both the hard or the soft limit can be disabled by setting them to zero.
 client-output-buffer-limit normal 0 0 0
+# 内存缓冲区持续消耗超过64MB，或者一次性超过256MB，那么停止复制，复制失败
 client-output-buffer-limit replica 256mb 64mb 60
 client-output-buffer-limit pubsub 32mb 8mb 60
 

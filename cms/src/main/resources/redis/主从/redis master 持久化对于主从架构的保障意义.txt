@@ -1,0 +1,6 @@
+如果采用了主从架构，那么建议必须开启master node的持久化
+
+不建议用slave node 作为master node 的数据热备，因为那样的话，如果你关掉master的持久化
+可能在master宕机重启的时候数据是空的，然后可能一经过复制，slave node 数据也丢了
+即使使用哨兵模式，slave node 可以自动接管master node，但是也可能哨兵没有检测到master failure，master node 就自动重启了，还是可能导致
+slave node的数据清空

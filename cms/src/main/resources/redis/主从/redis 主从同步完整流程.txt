@@ -1,0 +1,56 @@
+1:  复制的完整流程
+
+    1：slave node启动，仅仅保存master node的信息，包括master node的host和ip，但是复制流程没开始
+    2：slave node内部有个定时任务，每秒检查是否有新的master node 要连接和复制，如果发现，就跟master node 建立socket网络连接
+    3：slave node发送ping命令给master node
+    4: 口令认证，如果master设置了requirepass,那么salve node 必须发送masterauth的口令过去进行认证
+    5：master node 第一次执行全量复制，将所有数据发送给slave node
+    6: master node 后续持续写命令，异步复制给slave node
+
+2: 数据同步相关的核心机制
+
+    1：master 和 slave 都会维护一个offset
+       master 会在自身不断累加offset，slave也会在自身不断累加offset
+       slave每秒都会上报自己的offset给master，同时master也会保存每一个slave的offset
+
+    2: backlog
+
+       master node 有一个backlog，默认是1MB大小
+       master node 给 slave node 复制数据时，也会将数据在backlog 中同步写一份
+       baclog主要是用来做全量复制中断后的增量复制
+
+    3：master run id
+
+       info server，可以看到master run id
+       如果根据host+ip定位master node，是不靠谱的，如果master node 重启或者数据出现了变化，那么slave node应该根据不同的run id 区分，run id 不同就做全量复制
+       如果需要不更改run id重启redis，可以使用redis-cli debug reload命令
+
+    4：psync
+
+        从节点使用psync从master node 进行复制，psync runid offset
+        master node会根据自身的情况返回响应信息，可能是FULLRESYNC runid offset触发全量复制，可能是CONTINUE触发增量复制
+
+3：全量复制
+
+    1：master 执行bgsave，在本地生成一份rdb快照文件
+    2：master node 将rdb快照文件发送给slave node，如果rdb 复制时间超过60秒（repl-timeout）,那么slave node 就会认为复制失败，可以适当调节大这个参数
+    3：对于千兆网卡的机器，一般每秒传输100MB,6g 文件，很可能超过60s
+    4: master node 在生成rdb时，会将所有新写命令缓存在内存中，在slave node 保存了rdb之后，再将新的写命令复制给slave node
+    5：client-output-buffer-limit slave 256MB 64MB 60，如果在复制期间，内存缓冲区持续消耗超过64MB，或者一次性超过256MB，那么停止复制，复制失败
+    6：slave node 接收到rdb 后，清空自己的旧数据，然后重新加载rdb到自己的内存中，同时基于旧的数据版本对外提供服务
+    7：如果slave node 开启了AOF，那么会立即执行BGREWRITEAOF，重写AOF
+
+4：增量复制
+
+    1：如果全量复制过程中，master-slave网络连接断掉，那么slave重新连接master时，会触发增量复制
+    2: master直接从自己的backlog中获取部分丢失的数据，发送给slave node，默认baclog就是1MB
+    3: master就是根据slave发送的psync中的offset来从backlog中获取数据的
+
+5：hearbeat
+
+    主从节点互相都会发送hearbeat信息
+    master默认每隔10秒发送一次hearbeat，slave node 每隔1秒发送一个heartbeat
+
+6: 异步复制
+
+   master每次接收写命令之后，先在内部写数据，然后异步发送给slave node
