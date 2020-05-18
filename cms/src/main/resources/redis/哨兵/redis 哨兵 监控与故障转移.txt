@@ -1,0 +1,41 @@
+1：sdown和odown转换机制
+
+    sdown和odown两种失败状态
+
+    sdown是主管宕机，就一个哨兵如果自己觉得一个master宕机了，那么就是主观宕机
+
+    odown是客观宕机，如果quorum数量的哨兵都觉得一个master宕机了，那么就是客观宕机
+
+    sdown达成的条件很简单，如果一个哨兵ping一个master，超过了is-master-down-after-milliseconds指定的毫秒数之后，就主观认为master宕机
+
+2: 哨兵和slave集群的自动发现机制
+
+    哨兵互相之间的发现，是通过redis的pub/sub系统实现的，每个哨兵都会往_sentinel_:hello这个channel里发送一个消息，这时候所有其他哨兵 都可以消费到这个消息，并感知到其他的哨兵的存在
+    每隔两秒，每个哨兵都会往自己监控的某个master+slaves对应的_sentinel_:hello channel里发送一个消息，内容是自己的host,ip和runid还有对这个master的监控配置
+    每个哨兵也会去监听自己监控的每个master+slaves对应的_sentinel_:hello channel,然后去感知到同样在监听这个master+slaves的其他哨兵的存在
+    每个哨兵还会跟其他哨兵交换对master的监控配置，互相进行监控配置的同步
+
+3：slave配置的自动纠正
+
+    哨兵会负责自动纠正slave的一些配置，比如slave如果要成为潜在的master候选人，哨兵会确保slave在复制现有master的数据
+    如果slave 连接到了一个错误的master上，比如故障转移之后，那么哨兵会确保它们连接到正确的master上
+
+4：slave->master选举算法
+
+    如果一个master被认为odwon了，而且majority哨兵都允许了主备切换，那么某个哨兵就会执行主备切换操作，此时首先要选举一个slave来
+
+    会考虑slave的一些信息
+
+        1：跟master断开连接的时长
+        2：slave优先级
+        3：复制offset
+        4: run id
+
+        如果一个slave跟master断开连接已经超过了down-after-milliseconds的10倍，外加master宕机的时长，那么slave就被认为不适合选举为master
+
+        down-after-milliseconds*10 + milliseconds_since_master_is_in_SDOWN_state
+
+        接下来会对slave进行排序
+        1：按照slave优先级进行排序，slave priority 越低，优先级就越高
+        2：如果slave priority相同，那么看replica offset,那个slave复制了越多的数据，offset越靠后，优先级就越高
+        3：如果上面两个条件都相同，那么选择一个run id比较小的那个slave
