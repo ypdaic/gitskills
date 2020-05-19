@@ -1,0 +1,7 @@
+在JedisCluster初始化的时候，就会随机选择一个node，初始化hashslot -> node 映射表，同时为每个节点创建一个jedisPoll连接池
+每次基于jedisCluster执行操作，首先JedisCluster都会在本地计算key的hashslot，然后在本地映射表找对对应的节点
+如果那个node正好还是持有那个hashslot，那么就ok
+如果发现对应的node返回moved，那么利用该节点的元数据，更新hashslot -> node 映射表
+重复上面几个步骤，直到找到对应的节点，如果重试超过5次，那么就报错，JedisClusterMaxRedirectionException
+jedis老版本，可能会出现在集群某个节点故障还没完成自动切换恢复时，频繁更新hash slot ，频繁ping节点检查活跃，导致大量IO开销
+jedis最新版本，对于这些过度的hash slot 更新和ping，都进行了优化，避免类似问题

@@ -1,0 +1,3 @@
+如果hash slot正在迁移，那么会返回ask重定向给jedis
+jedis接收到ask重定向之后，会重新定位到目标节点去执行，但是因为ask发生在hash slot迁移过程中，所以jedisCluster API 不会更新hashslot本地缓存
+moved是会更新本地hashslot -> node 映射表缓存的
