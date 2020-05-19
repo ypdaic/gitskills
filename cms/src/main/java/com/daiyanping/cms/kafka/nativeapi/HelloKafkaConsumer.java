@@ -10,7 +10,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 
 import java.time.Duration;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.Properties;
 
 public class HelloKafkaConsumer {
@@ -19,7 +19,8 @@ public class HelloKafkaConsumer {
         LogManager.getRootLogger().setLevel(Level.ERROR);
         //TODO 消费者三个属性必须指定(broker地址清单、key和value的反序列化器)
         Properties properties = new Properties();
-        properties.put("bootstrap.servers","192.168.140.129:9092");
+//        properties.put("bootstrap.servers","192.168.140.129:9092");
+        properties.put("bootstrap.servers","127.0.0.1:9092");
         properties.put("key.deserializer", StringDeserializer.class);
         properties.put("value.deserializer", StringDeserializer.class);
 
@@ -28,7 +29,11 @@ public class HelloKafkaConsumer {
         KafkaConsumer<String,String> consumer = new KafkaConsumer<String, String>(properties);
         try {
             //TODO 消费者订阅主题（可以多个）
-            consumer.subscribe(Collections.singletonList(BusiConst.HELLO_KAFKA));
+            ArrayList<String> list = new ArrayList<>();
+            list.add(BusiConst.HELLO_KAFKA);
+            list.add(BusiConst.HELLO_KAFKA2);
+//            consumer.subscribe(Collections.singletonList(BusiConst.HELLO_KAFKA));
+            consumer.subscribe(list);
             while(true){
                 //TODO 拉取（新版本）
                 ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(500));
