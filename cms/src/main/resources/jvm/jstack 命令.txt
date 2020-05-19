@@ -1,1 +1,3 @@
 jstack -l 41378 > core.log
+
+printf "%x\n" 769960
