@@ -1,0 +1,51 @@
+fetch.min.bytes
+
+    每次fetch请求时，server应该返回的最小字节数。如果没有足够的数据返回，请求会等待，直到足够的数据才会返回。缺省为1个字节。多消费者下，可以设大这个值，以降低broker的工作负载
+
+fetch.wait.max.ms
+
+    如果没有足够的数据能够满足fetch.min.bytes，则此项配置是指在应答fetch请求之前，server会阻塞的最大时间。缺省为500个毫秒。和上面的fetch.min.bytes结合起来，要么满足数据的大小，要么满足时间，就看哪个条件先满足。
+
+max.partition.fetch.bytes
+
+    指定了服务器从每个分区里返回给消费者的最大字节数，默认1MB。假设一个主题有20个分区和5个消费者，那么每个消费者至少要有4MB的可用内存来接收记录，而且一旦有消费者崩溃，这个内存还需更大。注意，这个参数要比服务器的message.max.bytes更大，否则消费者可能无法读取消息。
+
+session.timeout.ms
+
+    如果consumer在这段时间内没有发送心跳信息，则它会被认为挂掉了。默认3秒。
+
+auto.offset.reset
+
+    消费者在读取一个没有偏移量的分区或者偏移量无效的情况下，如何处理。默认值是latest，从最新的记录开始读取，另一个值是earliest，表示消费者从起始位置读取分区的记录。
+    注意：默认值是latest，意思是说，在偏移量无效的情况下，消费者将从最新的记录开始读取数据（在消费者启动之后生成的记录），可以先启动生产者，再启动消费者，观察到这种情况。观察代码，在模块kafka-no-spring下包hellokafka中。
+
+enable .auto.commit
+
+    默认值true，表明消费者是否自动提交偏移。为了尽量避免重复数据和数据丢失，可以改为false，自行控制何时提交。
+
+partition.assignment.strategy
+
+    分区分配给消费者的策略。系统提供两种策略。默认为Range。允许自定义策略。
+    Range
+    把主题的连续分区分配给消费者。例如，有主题T1和T2，各有3个分区，消费者C1和C2，则可能的分配形式为：
+    C1: T1(0，1),T2(0,，1)
+    C2: T1(2),T2(2)
+    RoundRobin
+    把主题的分区循环分配给消费者。例如，有主题T1和T2，各有3个分区，消费者C1和C2，则可能的分配形式为：
+    C1: T1(0，2),T2(1)
+    C2: T1(1),T2(0，2)
+    自定义策略
+    extends 类AbstractPartitionAssignor，然后在消费者端增加参数：
+    properties.put(ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, 类.class.getName());即可。
+
+client.id
+
+    当向server发出请求时，这个字符串会发送给server。目的是能够追踪请求源头，以此来允许ip/port许可列表之外的一些应用可以发送信息。这项应用可以设置任意字符串，因为没有任何功能性的目的，除了记录和跟踪。
+
+max.poll.records
+
+    控制每次poll方法返回的的记录数量。
+
+receive.buffer.bytes和send.buffer.bytes
+
+指定TCP socket接受和发送数据包的缓存区大小。如果它们被设置为-1，则使用操作系统的默认值。如果生产者或消费者处在不同的数据中心，那么可以适当增大这些值，因为跨数据中心的网络一般都有比较高的延迟和比较低的带宽。

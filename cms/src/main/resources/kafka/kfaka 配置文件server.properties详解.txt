@@ -74,7 +74,7 @@ log.dirs=/opt/kafka_2.11-2.3.0/data/kafka/kafka-logs
 # the brokers.
 num.partitions=1
 
-#每数据目录用于日志恢复启动和关闭时的线程数量。因为这些线程只是服务器启动（正常启动和崩溃后重启）和关闭时会用到。
+#每个数据目录用于日志恢复启动和关闭时的线程数量。因为这些线程只是服务器启动（正常启动和崩溃后重启）和关闭时会用到。
 #所以完全可以设置 大量的线程来达到并行操作的目的。注意，这个参数指的是每个日志目录的线程数，
 #比如本参数设置为 8，而 log.dirs 设置为了三个路径，则总共会启动 24 个线程。
 # The number of threads per data directory to be used for log recovery at startup and flushing at shutdown.
@@ -120,6 +120,7 @@ transaction.state.log.min.isr=1
 # The minimum age of a log file to be eligible for deletion due to age
 log.retention.hours=168
 
+# topic每个分区的最大文件大小，一个topic的大小限制 = 分区数*log.retention.bytes。-1没有大小限制。log.retention.bytes和log.retention.minutes任意一个达到要求，都会执行删除。
 # A size-based retention policy for logs. Segments are pruned from the log unless the remaining
 # segments drop below log.retention.bytes. Functions independently of log.retention.hours.
 #log.retention.bytes=1073741824
@@ -136,7 +137,7 @@ log.segment.bytes=1073741824
 # The interval at which log segments are checked to see if they can be deleted according
 # to the retention policies
 log.retention.check.interval.ms=300000
-
+log.retention.bytes
 ############################# Zookeeper #############################
 #zookeeper 集群的地址，可以是多个，多个之间用逗号分割。
 #（一组 hostname:port/path 列表,hostname 是 zk 的机器名或 IP、port 是 zk 的端口、/path 是可选 zk 的路径，如果不指定，默认使用根路径）
