@@ -1,0 +1,8 @@
+Subscribe订阅方式和poll API方式
+
+    Subscribe订阅方式就是我们常见的注册消费者
+
+    poll API方式
+
+        GetResponse basicGet(String queue, boolean autoAck)
+        这种方式比较简单，直接通过RPC从MQ Server端获取队列中的消息
