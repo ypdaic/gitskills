@@ -1,0 +1,62 @@
+导入 KafkaBootstrapConfiguration配置类，kafak自动配置已经就自动开启KafKa 了，无需应用再次开启
+
+@Configuration
+@ConditionalOnClass(EnableKafka.class)
+class KafkaAnnotationDrivenConfiguration {
+
+	private final KafkaProperties properties;
+
+	private final RecordMessageConverter messageConverter;
+
+	private final KafkaTemplate<Object, Object> kafkaTemplate;
+
+	private final KafkaAwareTransactionManager<Object, Object> transactionManager;
+
+	private final ErrorHandler errorHandler;
+
+	private final AfterRollbackProcessor<Object, Object> afterRollbackProcessor;
+
+	KafkaAnnotationDrivenConfiguration(KafkaProperties properties,
+			ObjectProvider<RecordMessageConverter> messageConverter,
+			ObjectProvider<KafkaTemplate<Object, Object>> kafkaTemplate,
+			ObjectProvider<KafkaAwareTransactionManager<Object, Object>> kafkaTransactionManager,
+			ObjectProvider<ErrorHandler> errorHandler,
+			ObjectProvider<AfterRollbackProcessor<Object, Object>> afterRollbackProcessor) {
+		this.properties = properties;
+		this.messageConverter = messageConverter.getIfUnique();
+		this.kafkaTemplate = kafkaTemplate.getIfUnique();
+		this.transactionManager = kafkaTransactionManager.getIfUnique();
+		this.errorHandler = errorHandler.getIfUnique();
+		this.afterRollbackProcessor = afterRollbackProcessor.getIfUnique();
+	}
+
+	@Bean
+	@ConditionalOnMissingBean
+	public ConcurrentKafkaListenerContainerFactoryConfigurer kafkaListenerContainerFactoryConfigurer() {
+		ConcurrentKafkaListenerContainerFactoryConfigurer configurer = new ConcurrentKafkaListenerContainerFactoryConfigurer();
+		configurer.setKafkaProperties(this.properties);
+		configurer.setMessageConverter(this.messageConverter);
+		configurer.setReplyTemplate(this.kafkaTemplate);
+		configurer.setTransactionManager(this.transactionManager);
+		configurer.setErrorHandler(this.errorHandler);
+		configurer.setAfterRollbackProcessor(this.afterRollbackProcessor);
+		return configurer;
+	}
+
+	@Bean
+	@ConditionalOnMissingBean(name = "kafkaListenerContainerFactory")
+	public ConcurrentKafkaListenerContainerFactory<?, ?> kafkaListenerContainerFactory(
+			ConcurrentKafkaListenerContainerFactoryConfigurer configurer,
+			ConsumerFactory<Object, Object> kafkaConsumerFactory) {
+		ConcurrentKafkaListenerContainerFactory<Object, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
+		configurer.configure(factory, kafkaConsumerFactory);
+		return factory;
+	}
+
+    // 自动开启KafKa
+	@Configuration
+	@EnableKafka
+	@ConditionalOnMissingBean(name = KafkaListenerConfigUtils.KAFKA_LISTENER_ANNOTATION_PROCESSOR_BEAN_NAME)
+	protected static class EnableKafkaConfiguration {
+
+	}

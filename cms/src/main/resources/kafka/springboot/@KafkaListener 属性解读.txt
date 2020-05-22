@@ -1,0 +1,45 @@
+public @interface KafkaListener {
+
+	// id, 默认org.springframework.kafka.KafkaListenerEndpointContainer#0，1，2 进行自增
+	String id() default "";
+
+	// 指定 listener 容器工厂，默认使用自动配置的ConcurrentKafkaListenerContainerFactory
+	String containerFactory() default "";
+
+	// 消费的主题，与topicPattern，topicPartitions 互斥
+	String[] topics() default {};
+
+	// 以正则表达式消费的主题，与topics，topicPartitions 互斥
+	String topicPattern() default "";
+
+	// 消费指定主题的指定分区，与topics，topicPartitions 互斥
+	TopicPartition[] topicPartitions() default {};
+
+	// 指定消费者所属的MessageListenerContainer是否放在一个同一个List中，如果指定了属性值，则以该值为bean的名称往spring容器注入该List
+	String containerGroup() default "";
+
+	// 当消费者消费失败，并抛出ListenerExecutionFailedException异常时，由该errorHandler处理该消息
+	String errorHandler() default "";
+
+	// 指定消费者的消费群组
+	String groupId() default "";
+
+    // 如果不提供groupId属性，则以id为消费群组id
+	boolean idIsGroup() default true;
+
+	// 客户端id 前缀，会覆盖掉自动配置的客户端id
+	String clientIdPrefix() default "";
+
+    // 用于访问使用了@KafKaListener注解的bean的别名
+	String beanRef() default "__listener";
+
+	// 消费者的数量
+	String concurrency() default "";
+
+	// 消费是否自动启动
+	String autoStartup() default "";
+
+	// 消费者自定义消费参数，
+	String[] properties() default {};
+
+}
