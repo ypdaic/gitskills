@@ -1,0 +1,44 @@
+可以用来扩展KafkaListenerEndpointRegistrar
+
+    KafkaListenerAnnotationBeanPostProcessor的afterSingletonsInstantiated方法
+
+    @Override
+	public void afterSingletonsInstantiated() {
+		this.registrar.setBeanFactory(this.beanFactory);
+
+		if (this.beanFactory instanceof ListableBeanFactory) {
+			Map<String, KafkaListenerConfigurer> instances =
+					((ListableBeanFactory) this.beanFactory).getBeansOfType(KafkaListenerConfigurer.class);
+		    // 搜集KafkaListenerConfigurer, 然后进行扩展
+			for (KafkaListenerConfigurer configurer : instances.values()) {
+				configurer.configureKafkaListeners(this.registrar);
+			}
+		}
+
+		if (this.registrar.getEndpointRegistry() == null) {
+			if (this.endpointRegistry == null) {
+				Assert.state(this.beanFactory != null,
+						"BeanFactory must be set to find endpoint registry by bean name");
+				this.endpointRegistry = this.beanFactory.getBean(
+						KafkaListenerConfigUtils.KAFKA_LISTENER_ENDPOINT_REGISTRY_BEAN_NAME,
+						KafkaListenerEndpointRegistry.class);
+			}
+			this.registrar.setEndpointRegistry(this.endpointRegistry);
+		}
+
+		if (this.defaultContainerFactoryBeanName != null) {
+			this.registrar.setContainerFactoryBeanName(this.defaultContainerFactoryBeanName);
+		}
+
+		// Set the custom handler method factory once resolved by the configurer
+		MessageHandlerMethodFactory handlerMethodFactory = this.registrar.getMessageHandlerMethodFactory();
+		if (handlerMethodFactory != null) {
+			this.messageHandlerMethodFactory.setMessageHandlerMethodFactory(handlerMethodFactory);
+		}
+		else {
+			addFormatters(this.messageHandlerMethodFactory.defaultFormattingConversionService);
+		}
+
+		// Actually register all listeners
+		this.registrar.afterPropertiesSet();
+	}
