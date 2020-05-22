@@ -11,8 +11,67 @@
     一键调用一个对象的所有set方法并且赋予默认值 在对象字段多的时候非常方便，在做项目时，每层都有各自的实体对象需要相互转换，但是考虑BeanUtil.copyProperties()等这些工具的弊端，有些地方就需要手动的赋值时，有这个插件就会很方便，创建完对象后在变量名上面按Alt+Enter就会出来 generate all setter选项。
 
 5、CamelCase
-    将不是驼峰格式的名称，快速转成驼峰格式，安装好后，选中要修改的名称，按快捷键shift+alt+u。
+    将不是驼峰格式的名称，快速转成驼峰格式，安装好后，选中要修改的名称，按快捷键shift+alt+u。MAC 为 shift+option+u
 
 6、CodeMaker
 
     代码模板插件
+
+7、RestfulToolkit
+
+    简介：搜索URL，准确的说是搜索SpringMVC项目里，Controller层的@RequestMapping里的URL，通过URL匹配到相应的Controller层方法。
+
+    快捷键：Ctrl + \ 或Ctrl + Alt + N MAC 为 option+command+n
+
+8、IDEA QAPlug
+
+    简介：帮助我们提前找到潜在的问题bug
+
+9、String Manipulation
+
+    功能：变量名使用驼峰形式、常量需要全部大写等等，编码解码等等。总的来说就是对字符串的处理
+
+    使用：选中需要处理的内容后，按快捷键Alt + M，即可弹出工具功能列表。后面的具体功能也可以使用相应的数字或字母，而不需要鼠标点击。
+
+10、Key promoter X
+
+    简介：Key Promoter X 是一个提示插件。在IDEA里使用鼠标操作时，会有这个操作的快捷键在界面的右下角进行告知。有个小缺点是有些没有快捷键的操作，会直接把操作的名字提示出来，实际上那样的提示是没有作用的，可以点击Don't show again来忽略。
+
+11、google-java-format 代码自动格式化
+
+    google-java-format插件可以帮助我们不通过对应的快捷键就可以实现特定方式下自动格式化代码。
+
+12、Alibaba Java Coding Guidelines
+
+    阿里巴巴代码规范检测。不符合代码规范的地方会有波浪线，鼠标移上去就会有相应的提示，有些问题甚至可以快速修复。
+
+
+
+ 安利一个十分实用的IDEA插件--RestfulToolkit
+ 官网链接：http://plugins.jetbrains.com/plugin/10292-restfultoolkit，英汉双语的帮助文档。
+ ai智能编码提示：aiXcode
+ 阿里代码规约检测 p3c  (github 地址：https://github.com/alibaba/p3c/blob/master/idea-plugin/README_cn.md)
+ 快捷键提示工具：Key promoter X
+ 代码注解插件：Lombok
+ 代码生成工具：CodeMaker
+ 单元测试测试生成工具：JUnitGenerator
+ Mybatis 工具：Free Mybatis plugin
+ Maven辅助神器：Maven Helper
+ JSON转领域对象工具：GsonFormat
+ 领域对象转JSON工具：POJO to JSON
+ 时序图生成工具：SequenceDiagram
+ 字符串工具：String Manipulation
+ 代码作色工具：Rainbow Brackets
+ RESTful 服务开发辅助工具集: RestfulToolkit
+ 日志工具：Grep Console
+ 生成对象set方法：GenerateAllSetter
+ Redis可视化：Iedis  收费
+ K8s工具：Kubernetes
+ 中英文翻译工具：Translation
+ Zookeeper 可视化：Zookeeper
+ 字节码查看器：Bytecode Viewer、jclasslib
+ 字节码编辑工具：Edit Bytecode
+ bug 预检查：FindBugs-IDEA
+ 微基准测试：JMH Plugin
+ 根据代码生成时序图：SequenceDiagram
+ 使用 Markdown 的方式绘制时序图：PlantUML
