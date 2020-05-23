@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.daiyanping.springcloud.mapper.UserRoleMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.daiyanping.springcloud.entity.UserRole">
+    <result column="id" property="id" />
+        <result column="user_id" property="userId" />
+        <result column="role_id" property="roleId" />
+    </resultMap>
+
+    <select id="queryPage" resultMap="BaseResultMap">
+        select
+            *
+        from
+            user_role
+        <where>
+            enable = 1
+            <if test="dto.userId != null">
+                user_id = #{dto.userId}
+            </if>
+            <if test="dto.roleId != null">
+                and role_id = #{dto.roleId}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryCount" resultType="java.lang.Integer">
+        select count(*) from user_role
+        <where>
+            <if test="dto.userId != null">
+                user_id = #{dto.userId}
+            </if>
+            <if test="dto.roleId != null">
+                and role_id = #{dto.roleId}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryPageForExport" resultType="java.util.HashMap">
+        select * from user_role
+        <where>
+            <if test="dto.userId != null">
+                user_id = #{dto.userId}
+            </if>
+            <if test="dto.roleId != null">
+                and role_id = #{dto.roleId}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryAll" resultMap="BaseResultMap">
+        select * from user_role
+        <where>
+            <if test="dto.userId != null">
+                user_id = #{dto.userId}
+            </if>
+            <if test="dto.roleId != null">
+                and role_id = #{dto.roleId}
+            </if>
+        </where>
+    </select>
+
+    <resultMap id="RoleBaseResultMap" type="com.daiyanping.springcloud.entity.Role">
+        <result column="id" property="id" />
+        <result column="name" property="name" />
+    </resultMap>
+
+    <select id="queryAllToRole" resultMap="RoleBaseResultMap">
+        select r.* from user_role ur inner join role r on r.id = ur.role_id
+        <where>
+            <if test="dto.userId != null">
+                ur.user_id = #{dto.userId}
+            </if>
+            <if test="dto.roleId != null">
+                and ur.role_id = #{dto.roleId}
+            </if>
+        </where>
+    </select>
+
+</mapper>
