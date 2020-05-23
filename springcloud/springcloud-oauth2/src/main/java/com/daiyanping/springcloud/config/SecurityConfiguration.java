@@ -19,7 +19,7 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     /**
-     * 管理的用户信息
+     * 管理的用户信息，密码模式下使用
      * @return
      */
     @Bean

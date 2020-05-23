@@ -6,7 +6,7 @@ appid appSecret grant_type=client
 
 appid  appSecret 由提供服务的服务方颁发，grant_type=client表示当前是客户端模式，可以参考微信的token获取
 
-默认提供这个接口用于获取token,post请求
+默认提供这个接口用于获取token,post请求，form表单形式提交
 {{URL}}/oauth/token
 
 表单参数如下，前面为key,后面为value

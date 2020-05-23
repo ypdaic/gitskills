@@ -33,6 +33,7 @@
         <module>springcloud-stream-consumer</module>
         <module>springcloud-sleuth</module>
         <module>springcloud-oauth2</module>
+        <module>springcloud-oauth2-db</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

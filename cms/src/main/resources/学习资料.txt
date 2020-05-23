@@ -57,3 +57,6 @@ https://github.com/AobingJava/JavaFamily
 中华石衫
 https://doocs.github.io/advanced-java/#/./docs/high-concurrency/why-mq
 https://github.com/doocs/advanced-java
+
+电商开源项目
+https://github.com/gz-yami/mall4m

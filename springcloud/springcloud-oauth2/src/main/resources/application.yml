@@ -12,7 +12,7 @@ spring:
   #  name: admin  # 认证用户名
   #  password: test1234  # 认证密码
  redis:
-  host: 192.168.111.128
+  host: 192.168.109.128
   port: 6379
   password: test1234
   lettuce:

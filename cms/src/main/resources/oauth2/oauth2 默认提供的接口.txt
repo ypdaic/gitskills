@@ -1,0 +1,23 @@
+TokenEndpoint
+
+    /oauth/token
+
+CheckTokenEndpoint
+
+    /oauth/check_token
+
+AuthorizationEndpoint
+
+    /oauth/authorize
+
+TokenKeyEndpoint
+
+    /oauth/token_key
+
+WhitelabelApprovalEndpoint
+
+    /oauth/confirm_access
+
+WhitelabelErrorEndpoint
+
+    /oauth/error

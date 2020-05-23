@@ -1,0 +1,21 @@
+通过密码模式获取token
+
+username password grant_type=password
+
+一般通过这三个参数去获取token
+
+username  password 由提供认证服务的服务方颁发，grant_type=password表示当前是密码模式，可以参考微信的token获取
+
+默认提供这个接口用于获取token,post请求，form表单形式提交
+{{URL}}/oauth/token
+
+表单参数如下，前面为key,后面为value
+grant_type password
+
+username  client_2 (相当于appid)
+
+password   123456 (相当于appsecret)
+
+scope all
+
+注意需要在请求头中加入base64的客户端id，密码信息

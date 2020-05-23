@@ -39,6 +39,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
+        // AuthorizationServerEndpointsConfigurer 默认会
         endpoints
                 .authenticationManager(authenticationManager)
                 // 密码模式有用，密码模式下就和用户绑定了
@@ -46,6 +47,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 // 定义token保存方式
                 .tokenStore(tokenStore()).
                 allowedTokenEndpointRequestMethods(HttpMethod.GET,HttpMethod.POST);
+
     }
 
     @Override
@@ -72,9 +74,11 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 .scopes("all","read", "write","aa")
                 .authorities("client_credentials")
                 .secret(finalSecret)
+                // 设置token有效期
                 .accessTokenValiditySeconds(1200)
                 .refreshTokenValiditySeconds(50000)
                 .and()
+                // 密码模式，密码模式下，需要在header中使用base64 将这里的clientId，password传递过来
                 .withClient("client_2")
                 .resourceIds("client_2")
                 .authorizedGrantTypes("password", "refresh_token")
@@ -84,4 +88,10 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 .accessTokenValiditySeconds(1200)
                 .refreshTokenValiditySeconds(50000);
     }
+
+    public static void main(String[] args) {
+        String finalSecret = "{bcrypt}" + new BCryptPasswordEncoder().encode("123456");
+        System.out.println(finalSecret);
+    }
+
 }

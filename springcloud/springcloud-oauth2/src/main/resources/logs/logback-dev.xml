@@ -166,6 +166,7 @@ debug:当此属性设置为true时，将打印出logback内部日志信息，实
 
     <!--com.daiyanping.springcloud是本项目的包，把这个包的打印日志级别调成 DEBUG级别可以看到sql执行-->
     <logger name="com.daiyanping.springcloud" level="DEBUG"/>
+    <logger name="io.lettuce" level="INFO"/>
 
     <!--指定最基础的日志输出级别-->
     <root level="debug">
