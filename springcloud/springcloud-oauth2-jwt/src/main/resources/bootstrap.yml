@@ -1,0 +1,14 @@
+# 将服务注册到eureka上
+eureka:
+  client:
+    serviceUrl:
+      # 单例
+      defaultZone: http://admin:test1234@eureka1:8087/eureka/
+
+      # 高可用
+      #defaultZone: http://admin:test1234@eureka1:8087/eureka,http://admin:test1234@eureka2:8090/eureka
+  instance:
+    instanceId: springcloud-oauth-jwt #配置实例名称
+    prefer-ip-address: true # 使用ip显示应用的链接，否则使用 如下显示：http://user-20191116qx:8088/springcloud-provider/actuator/info
+    lease-renewal-interval-in-seconds: 30 # 设置心跳的时间间隔（默认是30秒）
+    lease-expiration-duration-in-seconds: 90  # 如果现在超过了5秒的间隔，就清理该服务（默认是90秒）

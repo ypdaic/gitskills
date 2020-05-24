@@ -16,4 +16,5 @@ public class Oauth2DBApp {
     public static void main(String[] args) {
         SpringApplication.run(Oauth2DBApp.class, args);
     }
+
 }

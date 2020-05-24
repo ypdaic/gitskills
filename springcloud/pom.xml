@@ -34,6 +34,7 @@
         <module>springcloud-sleuth</module>
         <module>springcloud-oauth2</module>
         <module>springcloud-oauth2-db</module>
+        <module>springcloud-oauth2-jwt</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

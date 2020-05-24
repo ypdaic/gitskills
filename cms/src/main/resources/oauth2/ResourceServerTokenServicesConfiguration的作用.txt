@@ -1,0 +1,5 @@
+用于配置客户端向服务端发送token校验请求的方式，提供3中方式
+
+        UserInfoTokenServices  需要业务自己提供uri
+        RemoteTokenServices    使用默认提供的/oauth/check_toke 接口
+        DefaultTokenServices   jwt方式

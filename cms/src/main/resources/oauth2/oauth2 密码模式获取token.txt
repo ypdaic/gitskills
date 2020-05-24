@@ -12,10 +12,11 @@ username  password 由提供认证服务的服务方颁发，grant_type=password
 表单参数如下，前面为key,后面为value
 grant_type password
 
-username  client_2 (相当于appid)
+username  james
 
-password   123456 (相当于appsecret)
+password   123456
 
 scope all
 
+这里用户信息是我们自定义的
 注意需要在请求头中加入base64的客户端id，密码信息

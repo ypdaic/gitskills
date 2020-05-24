@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
@@ -13,7 +14,9 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
+import org.springframework.security.oauth2.provider.approval.JdbcApprovalStore;
 import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
+import org.springframework.security.oauth2.provider.code.JdbcAuthorizationCodeServices;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
@@ -50,6 +53,22 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     }
 
     /**
+     * 使用jdbc存储授权模式下的code
+     * @return
+     */
+    @Bean
+    public JdbcAuthorizationCodeServices jdbcAuthorizationCodeServices() {
+        return new JdbcAuthorizationCodeServices(dataSource);
+    }
+
+    /**
+     * 使用jdbc存储Approval，也就是存储用户同意授权的过期时间，及授权状态
+     */
+    public JdbcApprovalStore jdbcApprovalStore() {
+        return new JdbcApprovalStore(dataSource);
+    }
+
+    /**
      * jdbc 形式存储客户端信息，客户端信息可以是如下几种
      *
      *         1.授权码模式（authorization code）
@@ -82,7 +101,9 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
         // 4定义token属性信息
         endpoints.tokenStore(tokenStore)
                 .authenticationManager(authenticationManager)
-                .userDetailsService(userServiceDetail);
+                .userDetailsService(userServiceDetail)
+                // 运行GET，post的方式获取token
+                .allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST);
 
         // 配置tokenServices参数
         DefaultTokenServices tokenServices = new DefaultTokenServices();
@@ -97,7 +118,14 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
         tokenServices.setReuseRefreshToken(false);
         // 刷新过期时间
         tokenServices.setRefreshTokenValiditySeconds(60 * 10);
+        // 设置token服务实例类，不设置默认也会提供
         endpoints.tokenServices(tokenServices);
+        // 配置授权code的存储方式
+        endpoints.authorizationCodeServices(jdbcAuthorizationCodeServices());
+        // 配置token生成器，默认已经配置了5种，无需我们再进行配置
+        endpoints.tokenGranter(null);
+        // 配置Approval存储方式
+        endpoints.approvalStore(jdbcApprovalStore());
     }
 
     @Override

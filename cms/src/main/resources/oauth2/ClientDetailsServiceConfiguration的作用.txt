@@ -1,0 +1,3 @@
+由AuthorizationServerSecurityConfiguration导入，也就是由@EnableAuthorizationServer注解导入
+
+该类用于配置客户端信息存在的方式，提供内存，数据库两种方式

@@ -1,0 +1,1 @@
+当为refresh_token时，使用该类去刷新token

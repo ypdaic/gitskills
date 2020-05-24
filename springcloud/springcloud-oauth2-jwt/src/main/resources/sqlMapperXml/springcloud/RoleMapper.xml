@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.daiyanping.springcloud.mapper.RoleMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.daiyanping.springcloud.entity.Role">
+    <result column="id" property="id" />
+        <result column="name" property="name" />
+    </resultMap>
+
+    <select id="queryPage" resultMap="BaseResultMap">
+        select
+            *
+        from
+            role
+        <where>
+            enable = 1
+            <if test="dto.name != null">
+                name = #{dto.name}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryCount" resultType="java.lang.Integer">
+        select count(*) from role
+        <where>
+            <if test="dto.name != null">
+                name = #{dto.name}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryPageForExport" resultType="java.util.HashMap">
+        select * from role
+        <where>
+            <if test="dto.name != null">
+                name = #{dto.name}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryAll" resultMap="BaseResultMap">
+        select * from role
+        <where>
+            <if test="dto.name != null">
+                name = #{dto.name}
+            </if>
+        </where>
+    </select>
+
+</mapper>

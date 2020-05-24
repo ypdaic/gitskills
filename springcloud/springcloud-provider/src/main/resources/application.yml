@@ -28,9 +28,9 @@ security:
  oauth2:
    # 用于向oauth2 服务端验证token
    resource:
-     user-info-uri: http://127.0.0.1:10002/security/check
+     user-info-uri: http://springcloud-oauth2-db/security/check
      prefer-token-info: false #配置为true
-     token-info-uri: http://127.0.0.1:10002/oauth/check_token #该配置有值，会由RemoteTokenServices去获取token的具体信息，否则使用UserInfoTokenServices获取
+     token-info-uri: http://springcloud-oauth2-db/oauth/check_token #该配置有值，会由RemoteTokenServices去获取token的具体信息，否则使用UserInfoTokenServices获取
      id: micro-web
    # 用于token过期，token刷新
 #   client:
@@ -42,7 +42,7 @@ security:
    client:
      clientId: client_2
      client-secret: 123456
-     access-token-uri: http://127.0.0.1:10002/oauth/token
+     access-token-uri: http://springcloud-oauth2-db/oauth/token
      grant-type: password
      scope: server
 

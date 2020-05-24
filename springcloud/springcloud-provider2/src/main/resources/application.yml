@@ -49,3 +49,26 @@ info:
   build.artifactId: '@project.artifactId@'
   build.modelVersion: '@project.modelVersion@'
 
+security:
+  oauth2:
+    # 用于向oauth2 服务端验证token
+    resource:
+      user-info-uri: http://springcloud-oauth2-jwt/security/check
+      prefer-token-info: false #配置为true
+      token-info-uri: http://springcloud-oauth2-jwt/oauth/check_token #该配置有值，会由RemoteTokenServices去获取token的具体信息，否则使用UserInfoTokenServices获取
+      id: micro-web
+      jwt:
+        key-uri: http://springcloud-oauth2-jwt/oauth/token_key
+    # 用于token过期，token刷新
+    #   client:
+    #     clientId: micro-web
+    #     client-secret: 123456
+    #     access-token-uri: http://127.0.0.1:10001/oauth/token
+    #     grant-type: client_credentials
+    #     scope: all
+    client:
+      clientId: client_2
+      client-secret: 123456
+      access-token-uri: http://springcloud-oauth2-jwt/oauth/token
+      grant-type: password
+      scope: server

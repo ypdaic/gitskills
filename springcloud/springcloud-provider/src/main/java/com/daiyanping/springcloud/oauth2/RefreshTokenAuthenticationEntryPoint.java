@@ -18,6 +18,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 
+/**
+ * 解决token 过期，进行自动刷新
+ */
 public class RefreshTokenAuthenticationEntryPoint extends OAuth2AuthenticationEntryPoint {
 
     @Autowired
@@ -27,8 +30,6 @@ public class RefreshTokenAuthenticationEntryPoint extends OAuth2AuthenticationEn
 
     @Autowired
     RestTemplate restTemplate;
-
-    private static String oauth_server_url = "http://micro-security-db/oauth/token";
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
@@ -43,7 +44,7 @@ public class RefreshTokenAuthenticationEntryPoint extends OAuth2AuthenticationEn
                 formData.add("scope", String.join(",",clientCredentialsResourceDetails.getScope()));
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-                Map map = restTemplate.exchange(oauth_server_url, HttpMethod.POST,
+                Map map = restTemplate.exchange(clientCredentialsResourceDetails.getAccessTokenUri(), HttpMethod.POST,
                         new HttpEntity<MultiValueMap<String, String>>(formData, headers), Map.class).getBody();
                 //如果刷新异常
                 if (map.get("error") != null) {

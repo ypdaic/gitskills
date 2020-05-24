@@ -1,0 +1,43 @@
+1: http://localhost:10002/oauth/authorize?client_id=pc&response_type=code&redirect_uri=http://localhost:8088/login/callback
+
+向服务端发送获取授权码的请求，然后提示用户输入用户名密码，然后服务端获取参数重定向uri和服务端客户端参数保存的web_server_redirect_uri字段是否一致
+一致就生成code并将code重定向到/oauth/confirm_access这个链接，然后提示用户是否需要授权，如果不想提示用户授权，需要设置autoapprove为true
+授权后向认证服务端发送/oauth/authorize post的请求
+然后将请求redirect到http://localhost:8088/login/callback这个链接
+
+2：http://localhost:8088/login/callback
+
+    在这个回调地址中使用code向服务端发送/oauth/token的请求
+
+    请求示例：
+    http://localhost:10002/oauth/token?code=xxxx&grant_type=authorization_code&redirect_url=http://localhost:8088/login/callback
+
+    回调代码
+
+        @GetMapping("/callback")
+            public JSONObject callback(@RequestParam String code, String state , HttpSession session){
+
+                log.info("code is {}, state is {}",code,state);
+
+                //认证服务器验token地址 /oauth/check_token 是  spring .security.oauth2的验token端点
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);//不是json请求
+                //网关的appId，appSecret，需要在数据库oauth_client_details注册
+                headers.setBasicAuth("pc","123456");
+
+                MultiValueMap<String,String> params = new LinkedMultiValueMap<>();
+                params.add("code",code);//授权码
+                params.add("grant_type","authorization_code");//授权类型-授权码模式
+                //认证服务器会对比数据库客户端信息的的redirect_uri和这里的是不是一致，不一致就报错
+                params.add("redirect_uri","http://localhost:8088/login/callback");
+
+                HttpEntity<MultiValueMap<String,String>> entity = new HttpEntity<>(params,headers);
+                ResponseEntity<JSONObject> response = restTemplate.exchange(oauthServiceUrl, HttpMethod.POST, entity, JSONObject.class);
+
+                session.setAttribute("token",response.getBody());
+
+                return response.getBody();
+            }
+
+
+/oauth/authorize，/oauth/confirm_access  由AuthorizationEndpoint，WhitelabelApprovalEndpoint提供

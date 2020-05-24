@@ -1,0 +1,4 @@
+当我们开启@EnableAuthorizationServer注解时，会导入AuthorizationServerEndpointsConfiguration.class, AuthorizationServerSecurityConfiguration.class
+                                                                                                              这两个类，而AuthorizationServerEndpointsConfiguration用于EndpointFilter的导入
+
+                                                                                                              涉及AuthorizationEndpoint，TokenEndpoint，CheckTokenEndpoint，WhitelabelApprovalEndpoint，WhitelabelErrorEndpoint的导入
