@@ -1,0 +1,97 @@
+DiscoveryClient用于服务的注册，服务的发现，发送心跳给服务端
+
+    // 该属性提供给ribbon取获取服务
+    localRegionApps
+
+
+    /**
+       服务注册
+     * Register with the eureka service by making the appropriate REST call.
+     */
+    boolean register() throws Throwable {
+        logger.info(PREFIX + "{}: registering service...", appPathIdentifier);
+        EurekaHttpResponse<Void> httpResponse;
+        try {
+            httpResponse = eurekaTransport.registrationClient.register(instanceInfo);
+        } catch (Exception e) {
+            logger.warn(PREFIX + "{} - registration failed {}", appPathIdentifier, e.getMessage(), e);
+            throw e;
+        }
+        if (logger.isInfoEnabled()) {
+            logger.info(PREFIX + "{} - registration status: {}", appPathIdentifier, httpResponse.getStatusCode());
+        }
+        return httpResponse.getStatusCode() == Status.NO_CONTENT.getStatusCode();
+    }
+
+    // 用于心跳发送
+    boolean renew() {
+        EurekaHttpResponse<InstanceInfo> httpResponse;
+        try {
+            httpResponse = eurekaTransport.registrationClient.sendHeartBeat(instanceInfo.getAppName(), instanceInfo.getId(), instanceInfo, null);
+            logger.debug(PREFIX + "{} - Heartbeat status: {}", appPathIdentifier, httpResponse.getStatusCode());
+            if (httpResponse.getStatusCode() == Status.NOT_FOUND.getStatusCode()) {
+                REREGISTER_COUNTER.increment();
+                logger.info(PREFIX + "{} - Re-registering apps/{}", appPathIdentifier, instanceInfo.getAppName());
+                long timestamp = instanceInfo.setIsDirtyWithTime();
+                boolean success = register();
+                if (success) {
+                    instanceInfo.unsetIsDirty(timestamp);
+                }
+                return success;
+            }
+            return httpResponse.getStatusCode() == Status.OK.getStatusCode();
+        } catch (Throwable e) {
+            logger.error(PREFIX + "{} - was unable to send heartbeat!", appPathIdentifier, e);
+            return false;
+        }
+    }
+
+    // 用于服务的拉取
+    private boolean fetchRegistry(boolean forceFullRegistryFetch) {
+        Stopwatch tracer = FETCH_REGISTRY_TIMER.start();
+
+        try {
+            // If the delta is disabled or if it is the first time, get all
+            // applications
+            Applications applications = getApplications();
+
+            if (clientConfig.shouldDisableDelta()
+                    || (!Strings.isNullOrEmpty(clientConfig.getRegistryRefreshSingleVipAddress()))
+                    || forceFullRegistryFetch
+                    || (applications == null)
+                    || (applications.getRegisteredApplications().size() == 0)
+                    || (applications.getVersion() == -1)) //Client application does not have latest library supporting delta
+            {
+                logger.info("Disable delta property : {}", clientConfig.shouldDisableDelta());
+                logger.info("Single vip registry refresh property : {}", clientConfig.getRegistryRefreshSingleVipAddress());
+                logger.info("Force full registry fetch : {}", forceFullRegistryFetch);
+                logger.info("Application is null : {}", (applications == null));
+                logger.info("Registered Applications size is zero : {}",
+                        (applications.getRegisteredApplications().size() == 0));
+                logger.info("Application version is -1: {}", (applications.getVersion() == -1));
+                // 全量拉取
+                getAndStoreFullRegistry();
+            } else {
+                // 增量拉取
+                getAndUpdateDelta(applications);
+            }
+            applications.setAppsHashCode(applications.getReconcileHashCode());
+            logTotalInstances();
+        } catch (Throwable e) {
+            logger.error(PREFIX + "{} - was unable to refresh its cache! status = {}", appPathIdentifier, e.getMessage(), e);
+            return false;
+        } finally {
+            if (tracer != null) {
+                tracer.stop();
+            }
+        }
+
+        // Notify about cache refresh before updating the instance remote status
+        onCacheRefreshed();
+
+        // Update remote status based on refreshed data held in the cache
+        updateInstanceRemoteStatus();
+
+        // registry was fetched successfully, so return true
+        return true;
+    }

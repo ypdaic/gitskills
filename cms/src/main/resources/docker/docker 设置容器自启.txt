@@ -1,0 +1,15 @@
+
+//创建容器时没有设置开机启动，通过此命令修改
+sudo docker update --restart=always e39a959d7bff
+
+如果是创建容器 加上--restart=always参数即可，如：
+
+    docker run -p 3306:3306 --restart=always -e MYSQL_ROOT_PASSWORD=123456 -d mysql
+
+    --restart具体参数值详细信息
+
+    no - 容器退出时，不重启容器
+    on-failure - 只有在非0状态退出时才从新启动容器
+    always - 无论退出状态是如何，都重启容器
+    还可以在使用 on-failure 策略时，指定 Docker 将尝试重新启动容器的最大次数。
+    默认情况下，Docker 将尝试永远重新启动容器。

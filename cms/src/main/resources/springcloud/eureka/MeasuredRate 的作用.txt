@@ -1,0 +1,1 @@
+MeasuredRate 记录每分钟的续约次数

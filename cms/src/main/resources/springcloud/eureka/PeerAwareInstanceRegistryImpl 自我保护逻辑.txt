@@ -1,0 +1,16 @@
+
+    @Override
+    public void init(PeerEurekaNodes peerEurekaNodes) throws Exception {
+        this.numberOfReplicationsLastMin.start();
+        this.peerEurekaNodes = peerEurekaNodes;
+        initializedResponseCache();
+        // 开启定时任务更新续约阈值，比如有5个服务，默认要保证1分钟内有10 * 0.85次心跳，如果在开启自我保护后，即使超过90s也不进行服务的剔除
+        scheduleRenewalThresholdUpdateTask();
+        initRemoteRegionRegistry();
+
+        try {
+            Monitors.registerObject(this);
+        } catch (Throwable e) {
+            logger.warn("Cannot register the JMX monitor for the InstanceRegistry :", e);
+        }
+    }

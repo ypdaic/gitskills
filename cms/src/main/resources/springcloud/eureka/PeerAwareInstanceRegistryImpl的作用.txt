@@ -1,0 +1,28 @@
+PeerAwareInstanceRegistryImpl用于将服务注册信息同步到其他节点
+
+        // 在如下方法中进行同步
+        private void replicateToPeers(Action action, String appName, String id,
+                                  InstanceInfo info /* optional */,
+                                  InstanceStatus newStatus /* optional */, boolean isReplication) {
+        Stopwatch tracer = action.getTimer().start();
+        try {
+            if (isReplication) {
+                numberOfReplicationsLastMin.increment();
+            }
+            // If it is a replication already, do not replicate again as this will create a poison replication
+            if (peerEurekaNodes == Collections.EMPTY_LIST || isReplication) {
+                return;
+            }
+
+            for (final PeerEurekaNode node : peerEurekaNodes.getPeerEurekaNodes()) {
+                // If the url represents this host, do not replicate to yourself.
+                if (peerEurekaNodes.isThisMyUrl(node.getServiceUrl())) {
+                    continue;
+                }
+                // 在这里进行同步
+                replicateInstanceActionsToPeers(action, appName, id, info, newStatus, node);
+            }
+        } finally {
+            tracer.stop();
+        }
+    }
