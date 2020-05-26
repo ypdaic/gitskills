@@ -70,3 +70,8 @@ info:
   build.artifactId: '@project.artifactId@'
   build.modelVersion: '@project.modelVersion@'
 
+# 配置ribbon 饥饿加载
+ribbon:
+  eager-load:
+    enabled: true
+    clients: springcloud-provider

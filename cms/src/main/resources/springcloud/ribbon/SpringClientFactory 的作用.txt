@@ -1,2 +1,5 @@
 SpringClientFactory的作用就是为每个@RibbonClient注解创建一个子上下文，
 然后子上下文加载RibbonClientConfiguration.class配置和@RibbonClient中配置的配置类
+
+当使用eureka时，默认有EurekaRibbonClientConfiguration
+当使用zookeeper时，默认有ZookeeperRibbonClientConfiguration

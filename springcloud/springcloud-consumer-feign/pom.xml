@@ -84,6 +84,11 @@
             <groupId>com.daiyanping</groupId>
             <artifactId>springcloud-feign-service</artifactId>
         </dependency>
+<!--       feign Client接口 okttp的实现-->
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-okhttp</artifactId>
+        </dependency>
 
     </dependencies>
 

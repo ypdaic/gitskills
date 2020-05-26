@@ -1,0 +1,800 @@
+
+@HystrixCommand注解拦截点在HystrixCommandAspect的methodsAnnotatedWithHystrixCommand方法中如下：
+
+1：HystrixCommandAspect的methodsAnnotatedWithHystrixCommand方法
+
+    @Around("hystrixCommandAnnotationPointcut() || hystrixCollapserAnnotationPointcut()")
+    public Object methodsAnnotatedWithHystrixCommand(final ProceedingJoinPoint joinPoint) throws Throwable {
+        Method method = getMethodFromTarget(joinPoint);
+        Validate.notNull(method, "failed to get method from joinPoint: %s", joinPoint);
+        if (method.isAnnotationPresent(HystrixCommand.class) && method.isAnnotationPresent(HystrixCollapser.class)) {
+            throw new IllegalStateException("method cannot be annotated with HystrixCommand and HystrixCollapser " +
+                    "annotations at the same time");
+        }
+        MetaHolderFactory metaHolderFactory = META_HOLDER_FACTORY_MAP.get(HystrixPointcutType.of(method));
+        MetaHolder metaHolder = metaHolderFactory.create(joinPoint);
+        HystrixInvokable invokable = HystrixCommandFactory.getInstance().create(metaHolder);
+        ExecutionType executionType = metaHolder.isCollapserAnnotationPresent() ?
+                metaHolder.getCollapserExecutionType() : metaHolder.getExecutionType();
+
+        Object result;
+        try {
+            // 这里根据我方法的返回值，判断是否是OBSERVABLE类型的，判断依据就是如果方法放回的是Future就是ASYNCHRONOUS
+            // 如果方法返回Observable就是OBSERVABLE，其他的就是SYNCHRONOUS，一般我们就走SYNCHRONOUS
+            if (!metaHolder.isObservable()) {
+                result = CommandExecutor.execute(invokable, executionType, metaHolder);
+            } else {
+                result = executeObservable(invokable, executionType, metaHolder);
+            }
+        } catch (HystrixBadRequestException e) {
+            throw e.getCause();
+        } catch (HystrixRuntimeException e) {
+            throw hystrixRuntimeExceptionToThrowable(metaHolder, e);
+        }
+        return result;
+    }
+
+2： CommandExecutor的execute方法
+
+    /**
+     * Calls a method of {@link HystrixExecutable} in accordance with specified execution type.
+     *
+     * @param invokable  {@link HystrixInvokable}
+     * @param metaHolder {@link MetaHolder}
+     * @return the result of invocation of specific method.
+     * @throws RuntimeException
+     */
+    public static Object execute(HystrixInvokable invokable, ExecutionType executionType, MetaHolder metaHolder) throws RuntimeException {
+        Validate.notNull(invokable);
+        Validate.notNull(metaHolder);
+
+        switch (executionType) {
+            case SYNCHRONOUS: {
+                // 一般走这里
+                return castToExecutable(invokable, executionType).execute();
+            }
+            case ASYNCHRONOUS: {
+                HystrixExecutable executable = castToExecutable(invokable, executionType);
+                if (metaHolder.hasFallbackMethodCommand()
+                        && ExecutionType.ASYNCHRONOUS == metaHolder.getFallbackExecutionType()) {
+                    return new FutureDecorator(executable.queue());
+                }
+                return executable.queue();
+            }
+            case OBSERVABLE: {
+                HystrixObservable observable = castToObservable(invokable);
+                return ObservableExecutionMode.EAGER == metaHolder.getObservableExecutionMode() ? observable.observe() : observable.toObservable();
+            }
+            default:
+                throw new RuntimeException("unsupported execution type: " + executionType);
+        }
+    }
+
+3：HystrixCommand的execute方法
+
+    public R execute() {
+        try {
+            return queue().get();
+        } catch (Exception e) {
+            throw Exceptions.sneakyThrow(decomposeException(e));
+        }
+    }
+
+4： HystrixCommand的queue方法
+    public Future<R> queue() {
+        /*
+         * The Future returned by Observable.toBlocking().toFuture() does not implement the
+         * interruption of the execution thread when the "mayInterrupt" flag of Future.cancel(boolean) is set to true;
+         * thus, to comply with the contract of Future, we must wrap around it.
+         */
+        final Future<R> delegate = toObservable().toBlocking().toFuture();
+
+        final Future<R> f = new Future<R>() {
+
+            @Override
+            public boolean cancel(boolean mayInterruptIfRunning) {
+                if (delegate.isCancelled()) {
+                    return false;
+                }
+
+                if (HystrixCommand.this.getProperties().executionIsolationThreadInterruptOnFutureCancel().get()) {
+                    /*
+                     * The only valid transition here is false -> true. If there are two futures, say f1 and f2, created by this command
+                     * (which is super-weird, but has never been prohibited), and calls to f1.cancel(true) and to f2.cancel(false) are
+                     * issued by different threads, it's unclear about what value would be used by the time mayInterruptOnCancel is checked.
+                     * The most consistent way to deal with this scenario is to say that if *any* cancellation is invoked with interruption,
+                     * than that interruption request cannot be taken back.
+                     */
+                    interruptOnFutureCancel.compareAndSet(false, mayInterruptIfRunning);
+                }
+
+                final boolean res = delegate.cancel(interruptOnFutureCancel.get());
+
+                if (!isExecutionComplete() && interruptOnFutureCancel.get()) {
+                    final Thread t = executionThread.get();
+                    if (t != null && !t.equals(Thread.currentThread())) {
+                        t.interrupt();
+                    }
+                }
+
+                return res;
+            }
+
+            @Override
+            public boolean isCancelled() {
+                return delegate.isCancelled();
+            }
+
+            @Override
+            public boolean isDone() {
+                return delegate.isDone();
+            }
+
+            @Override
+            public R get() throws InterruptedException, ExecutionException {
+                return delegate.get();
+            }
+
+            @Override
+            public R get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+                return delegate.get(timeout, unit);
+            }
+
+        };
+
+        /* special handling of error states that throw immediately */
+        if (f.isDone()) {
+            try {
+                f.get();
+                return f;
+            } catch (Exception e) {
+                Throwable t = decomposeException(e);
+                if (t instanceof HystrixBadRequestException) {
+                    return f;
+                } else if (t instanceof HystrixRuntimeException) {
+                    HystrixRuntimeException hre = (HystrixRuntimeException) t;
+                    switch (hre.getFailureType()) {
+                    case COMMAND_EXCEPTION:
+                    case TIMEOUT:
+                        // we don't throw these types from queue() only from queue().get() as they are execution errors
+                        return f;
+                    default:
+                        // these are errors we throw from queue() as they as rejection type errors
+                        throw hre;
+                    }
+                } else {
+                    throw Exceptions.sneakyThrow(t);
+                }
+            }
+        }
+
+        return f;
+    }
+
+5： toObservable
+·
+    public Observable<R> toObservable() {
+            final AbstractCommand<R> _cmd = this;
+
+            //doOnCompleted handler already did all of the SUCCESS work
+            //doOnError handler already did all of the FAILURE/TIMEOUT/REJECTION/BAD_REQUEST work
+            定义多个匿名 内部类
+            final Action0 terminateCommandCleanup = new Action0() {
+
+                @Override
+                public void call() {
+                    if (_cmd.commandState.compareAndSet(CommandState.OBSERVABLE_CHAIN_CREATED, CommandState.TERMINAL)) {
+                        handleCommandEnd(false); //user code never ran
+                    } else if (_cmd.commandState.compareAndSet(CommandState.USER_CODE_EXECUTED, CommandState.TERMINAL)) {
+                        handleCommandEnd(true); //user code did run
+                    }
+                }
+            };
+
+            //mark the command as CANCELLED and store the latency (in addition to standard cleanup)
+            定义多个匿名 内部类
+            final Action0 unsubscribeCommandCleanup = new Action0() {
+                @Override
+                public void call() {
+                    if (_cmd.commandState.compareAndSet(CommandState.OBSERVABLE_CHAIN_CREATED, CommandState.UNSUBSCRIBED)) {
+                        if (!_cmd.executionResult.containsTerminalEvent()) {
+                            _cmd.eventNotifier.markEvent(HystrixEventType.CANCELLED, _cmd.commandKey);
+                            try {
+                                executionHook.onUnsubscribe(_cmd);
+                            } catch (Throwable hookEx) {
+                                logger.warn("Error calling HystrixCommandExecutionHook.onUnsubscribe", hookEx);
+                            }
+                            _cmd.executionResultAtTimeOfCancellation = _cmd.executionResult
+                                    .addEvent((int) (System.currentTimeMillis() - _cmd.commandStartTimestamp), HystrixEventType.CANCELLED);
+                        }
+                        handleCommandEnd(false); //user code never ran
+                    } else if (_cmd.commandState.compareAndSet(CommandState.USER_CODE_EXECUTED, CommandState.UNSUBSCRIBED)) {
+                        if (!_cmd.executionResult.containsTerminalEvent()) {
+                            _cmd.eventNotifier.markEvent(HystrixEventType.CANCELLED, _cmd.commandKey);
+                            try {
+                                executionHook.onUnsubscribe(_cmd);
+                            } catch (Throwable hookEx) {
+                                logger.warn("Error calling HystrixCommandExecutionHook.onUnsubscribe", hookEx);
+                            }
+                            _cmd.executionResultAtTimeOfCancellation = _cmd.executionResult
+                                    .addEvent((int) (System.currentTimeMillis() - _cmd.commandStartTimestamp), HystrixEventType.CANCELLED);
+                        }
+                        handleCommandEnd(true); //user code did run
+                    }
+                }
+            };
+
+            定义多个匿名 内部类
+            final Func0<Observable<R>> applyHystrixSemantics = new Func0<Observable<R>>() {
+                @Override
+                public Observable<R> call() {
+                    if (commandState.get().equals(CommandState.UNSUBSCRIBED)) {
+                        return Observable.never();
+                    }
+                    return applyHystrixSemantics(_cmd);
+                }
+            };
+
+            定义多个匿名 内部类
+            final Func1<R, R> wrapWithAllOnNextHooks = new Func1<R, R>() {
+                @Override
+                public R call(R r) {
+                    R afterFirstApplication = r;
+
+                    try {
+                        afterFirstApplication = executionHook.onComplete(_cmd, r);
+                    } catch (Throwable hookEx) {
+                        logger.warn("Error calling HystrixCommandExecutionHook.onComplete", hookEx);
+                    }
+
+                    try {
+                        return executionHook.onEmit(_cmd, afterFirstApplication);
+                    } catch (Throwable hookEx) {
+                        logger.warn("Error calling HystrixCommandExecutionHook.onEmit", hookEx);
+                        return afterFirstApplication;
+                    }
+                }
+            };
+
+            定义多个匿名 内部类
+            final Action0 fireOnCompletedHook = new Action0() {
+                @Override
+                public void call() {
+                    try {
+                        executionHook.onSuccess(_cmd);
+                    } catch (Throwable hookEx) {
+                        logger.warn("Error calling HystrixCommandExecutionHook.onSuccess", hookEx);
+                    }
+                }
+            };
+
+            defer方法会调用内部类中的call方法
+            return Observable.defer(new Func0<Observable<R>>() {
+                @Override
+                public Observable<R> call() {
+                     /* this is a stateful object so can only be used once */
+                    if (!commandState.compareAndSet(CommandState.NOT_STARTED, CommandState.OBSERVABLE_CHAIN_CREATED)) {
+                        IllegalStateException ex = new IllegalStateException("This instance can only be executed once. Please instantiate a new instance.");
+                        //TODO make a new error type for this
+                        throw new HystrixRuntimeException(FailureType.BAD_REQUEST_EXCEPTION, _cmd.getClass(), getLogMessagePrefix() + " command executed multiple times - this is not permitted.", ex, null);
+                    }
+
+                    commandStartTimestamp = System.currentTimeMillis();
+
+                    if (properties.requestLogEnabled().get()) {
+                        // log this command execution regardless of what happened
+                        if (currentRequestLog != null) {
+                            currentRequestLog.addExecutedCommand(_cmd);
+                        }
+                    }
+
+                    final boolean requestCacheEnabled = isRequestCachingEnabled();
+                    final String cacheKey = getCacheKey();
+
+                    /* try from cache first */
+                    if (requestCacheEnabled) {
+                        HystrixCommandResponseFromCache<R> fromCache = (HystrixCommandResponseFromCache<R>) requestCache.get(cacheKey);
+                        if (fromCache != null) {
+                            isResponseFromCache = true;
+                            return handleRequestCacheHitAndEmitValues(fromCache, _cmd);
+                        }
+                    }
+
+                    一样这里的defer方法会调用到applyHystrixSemantics的call方法，map会调用到wrapWithAllOnNextHooks的call方法
+                    Observable<R> hystrixObservable =
+                            Observable.defer(applyHystrixSemantics)
+                                    .map(wrapWithAllOnNextHooks);
+
+                    Observable<R> afterCache;
+
+                    // put in cache
+                    if (requestCacheEnabled && cacheKey != null) {
+                        // wrap it for caching
+                        HystrixCachedObservable<R> toCache = HystrixCachedObservable.from(hystrixObservable, _cmd);
+                        HystrixCommandResponseFromCache<R> fromCache = (HystrixCommandResponseFromCache<R>) requestCache.putIfAbsent(cacheKey, toCache);
+                        if (fromCache != null) {
+                            // another thread beat us so we'll use the cached value instead
+                            toCache.unsubscribe();
+                            isResponseFromCache = true;
+                            return handleRequestCacheHitAndEmitValues(fromCache, _cmd);
+                        } else {
+                            // we just created an ObservableCommand so we cast and return it
+                            afterCache = toCache.toObservable();
+                        }
+                    } else {
+                        afterCache = hystrixObservable;
+                    }
+
+                    return afterCache
+                            .doOnTerminate(terminateCommandCleanup)     // perform cleanup once (either on normal terminal state (this line), or unsubscribe (next line))
+                            .doOnUnsubscribe(unsubscribeCommandCleanup) // perform cleanup once
+                            .doOnCompleted(fireOnCompletedHook);
+                }
+            });
+        }
+
+ 7：applyHystrixSemantics开始熔断，或降级处理
+
+    private Observable<R> applyHystrixSemantics(final AbstractCommand<R> _cmd) {
+            // mark that we're starting execution on the ExecutionHook
+            // if this hook throws an exception, then a fast-fail occurs with no fallback.  No state is left inconsistent
+            executionHook.onStart(_cmd);
+
+            /* determine if we're allowed to execute */
+            if (circuitBreaker.allowRequest()) {
+                // 获取信号量，如果不是信号量模式，者始终可以执行
+                final TryableSemaphore executionSemaphore = getExecutionSemaphore();
+                final AtomicBoolean semaphoreHasBeenReleased = new AtomicBoolean(false);
+                final Action0 singleSemaphoreRelease = new Action0() {
+                    @Override
+                    public void call() {
+                        if (semaphoreHasBeenReleased.compareAndSet(false, true)) {
+                            executionSemaphore.release();
+                        }
+                    }
+                };
+
+                final Action1<Throwable> markExceptionThrown = new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable t) {
+                        eventNotifier.markEvent(HystrixEventType.EXCEPTION_THROWN, commandKey);
+                    }
+                };
+                // 获取信号量
+                if (executionSemaphore.tryAcquire()) {
+                    try {
+                        /* used to track userThreadExecutionTime */
+                        executionResult = executionResult.setInvocationStartTime(System.currentTimeMillis());
+                        return executeCommandAndObserve(_cmd)
+                                .doOnError(markExceptionThrown)
+                                .doOnTerminate(singleSemaphoreRelease)
+                                .doOnUnsubscribe(singleSemaphoreRelease);
+                    } catch (RuntimeException e) {
+                        return Observable.error(e);
+                    }
+                } else {
+                    // 信号 量获取不到，拒绝请求，进行降级
+                    return handleSemaphoreRejectionViaFallback();
+                }
+            } else {
+                // 熔断走降级
+                return handleShortCircuitViaFallback();
+            }
+        }
+
+8：circuitBreaker.allowRequest() 是否允许业务请求，也就是熔断的功能
+
+    @Override
+    public boolean allowRequest() {
+        // 表示是否强制开启了熔断，配置参数是circuitBreaker.forceOpen，表示强制开启熔断，拒绝所有请求，默认值是false
+        if (properties.circuitBreakerForceOpen().get()) {
+            // properties have asked us to force the circuit open so we will allow NO requests
+            return false;
+        }
+        // 表示如果强制关闭熔断，将不考虑统计值，而接受所有请求，默认值是false
+        if (properties.circuitBreakerForceClosed().get()) {
+            // we still want to allow isOpen() to perform it's calculations so we simulate normal behavior
+            isOpen();
+            // properties have asked us to ignore errors so we will ignore the results of isOpen and just allow all traffic through
+            return true;
+        }
+        // 业务一般走这里
+        return !isOpen() || allowSingleTest();
+    }
+
+9：isOpen() 根据统计值，判断是否开启熔断
+
+    @Override
+    public boolean isOpen() {
+
+
+        // 表示熔断已经开启了
+        if (circuitOpen.get()) {
+            // if we're open we immediately return true and don't bother attempting to 'close' ourself as that is left to allowSingleTest and a subsequent successful test to close
+            return true;
+        }
+
+        // 获取健康值
+        // we're closed, so let's see if errors have made us so we should trip the circuit open
+        HealthCounts health = metrics.getHealthCounts();
+
+        health.getTotalRequests() 获取总共的请求 数，circuitBreakerRequestVolumeThreshold为配置参数，表示开始熔断请求数阈值，默认20
+        // check if we are past the statisticalWindowVolumeThreshold
+        if (health.getTotalRequests() < properties.circuitBreakerRequestVolumeThreshold().get()) {
+            // we are not past the minimum volume threshold for the statisticalWindow so we'll return false immediately and not calculate anything
+            return false;
+        }
+
+        // 统计的错误百分比和配置的错误百分比比较，默认配置50%
+        if (health.getErrorPercentage() < properties.circuitBreakerErrorThresholdPercentage().get()) {
+            return false;
+        } else {
+            // our failure rate is too high, trip the circuit
+            // 设置熔断为开启
+            if (circuitOpen.compareAndSet(false, true)) {
+                // if the previousValue was false then we want to set the currentTime
+                // 记录开启时间
+                circuitOpenedOrLastTestedTime.set(System.currentTimeMillis());
+                return true;
+            } else {
+                // How could previousValue be true? If another thread was going through this code at the same time a race-condition could have
+                // caused another thread to set it to true already even though we were in the process of doing the same
+                // In this case, we know the circuit is open, so let the other thread set the currentTime and report back that the circuit is open
+                return true;
+            }
+        }
+    }
+
+10：allowSingleTest 允许一个测试请求
+
+    public boolean allowSingleTest() {
+        // 获取熔断开启时间
+        long timeCircuitOpenedOrWasLastTested = circuitOpenedOrLastTestedTime.get();
+        // 1) if the circuit is open
+        // 2) and it's been longer than 'sleepWindow' since we opened the circuit
+        // 当熔断是开启的，并且当前时间 大于 最后一次开启时间 + 窗口时间
+        if (circuitOpen.get() && System.currentTimeMillis() > timeCircuitOpenedOrWasLastTested + properties.circuitBreakerSleepWindowInMilliseconds().get()) {
+            // We push the 'circuitOpenedTime' ahead by 'sleepWindow' since we have allowed one request to try.
+            // If it succeeds the circuit will be closed, otherwise another singleTest will be allowed at the end of the 'sleepWindow'.
+            更新熔断开启时间，并放行请求，也就一个半开状态
+            if (circuitOpenedOrLastTestedTime.compareAndSet(timeCircuitOpenedOrWasLastTested, System.currentTimeMillis())) {
+                // if this returns true that means we set the time so we'll return true to allow the singleTest
+                // if it returned false it means another thread raced us and allowed the singleTest before we did
+                return true;
+            }
+        }
+        return false;
+    }
+
+11： executeCommandAndObserve 执行业务
+
+     private Observable<R> executeCommandAndObserve(final AbstractCommand<R> _cmd) {
+         final HystrixRequestContext currentRequestContext = HystrixRequestContext.getContextForCurrentThread();
+
+         final Action1<R> markEmits = new Action1<R>() {
+             @Override
+             public void call(R r) {
+                 if (shouldOutputOnNextEvents()) {
+                     executionResult = executionResult.addEvent(HystrixEventType.EMIT);
+                     eventNotifier.markEvent(HystrixEventType.EMIT, commandKey);
+                 }
+                 if (commandIsScalar()) {
+                     long latency = System.currentTimeMillis() - executionResult.getStartTimestamp();
+                     eventNotifier.markCommandExecution(getCommandKey(), properties.executionIsolationStrategy().get(), (int) latency, executionResult.getOrderedList());
+                     eventNotifier.markEvent(HystrixEventType.SUCCESS, commandKey);
+                     executionResult = executionResult.addEvent((int) latency, HystrixEventType.SUCCESS);
+                     circuitBreaker.markSuccess();
+                 }
+             }
+         };
+
+         final Action0 markOnCompleted = new Action0() {
+             @Override
+             public void call() {
+                 if (!commandIsScalar()) {
+                     long latency = System.currentTimeMillis() - executionResult.getStartTimestamp();
+                     eventNotifier.markCommandExecution(getCommandKey(), properties.executionIsolationStrategy().get(), (int) latency, executionResult.getOrderedList());
+                     eventNotifier.markEvent(HystrixEventType.SUCCESS, commandKey);
+                     executionResult = executionResult.addEvent((int) latency, HystrixEventType.SUCCESS);
+                     circuitBreaker.markSuccess();
+                 }
+             }
+         };
+
+         final Func1<Throwable, Observable<R>> handleFallback = new Func1<Throwable, Observable<R>>() {
+             @Override
+             public Observable<R> call(Throwable t) {
+                 Exception e = getExceptionFromThrowable(t);
+                 executionResult = executionResult.setExecutionException(e);
+                 if (e instanceof RejectedExecutionException) {
+                     return handleThreadPoolRejectionViaFallback(e);
+                 } else if (t instanceof HystrixTimeoutException) {
+                     return handleTimeoutViaFallback();
+                 } else if (t instanceof HystrixBadRequestException) {
+                     return handleBadRequestByEmittingError(e);
+                 } else {
+                     /*
+                      * Treat HystrixBadRequestException from ExecutionHook like a plain HystrixBadRequestException.
+                      */
+                     if (e instanceof HystrixBadRequestException) {
+                         eventNotifier.markEvent(HystrixEventType.BAD_REQUEST, commandKey);
+                         return Observable.error(e);
+                     }
+
+                     return handleFailureViaFallback(e);
+                 }
+             }
+         };
+
+         final Action1<Notification<? super R>> setRequestContext = new Action1<Notification<? super R>>() {
+             @Override
+             public void call(Notification<? super R> rNotification) {
+                 setRequestContextIfNeeded(currentRequestContext);
+             }
+         };
+
+         Observable<R> execution;
+         // 如果开启了执行超时时间
+         if (properties.executionTimeoutEnabled().get()) {
+             execution = executeCommandWithSpecifiedIsolation(_cmd)
+                     .lift(new HystrixObservableTimeoutOperator<R>(_cmd));
+         } else {
+             execution = executeCommandWithSpecifiedIsolation(_cmd);
+         }
+
+         return execution.doOnNext(markEmits)
+                 .doOnCompleted(markOnCompleted)
+                 .onErrorResumeNext(handleFallback)
+                 .doOnEach(setRequestContext);
+     }
+
+11：执行指定隔离方式的业务
+    private Observable<R> executeCommandWithSpecifiedIsolation(final AbstractCommand<R> _cmd) {
+            如果是线程池的隔离
+            if (properties.executionIsolationStrategy().get() == ExecutionIsolationStrategy.THREAD) {
+                // mark that we are executing in a thread (even if we end up being rejected we still were a THREAD execution and not SEMAPHORE)
+                return Observable.defer(new Func0<Observable<R>>() {
+                    @Override
+                    public Observable<R> call() {
+                        executionResult = executionResult.setExecutionOccurred();
+                        if (!commandState.compareAndSet(CommandState.OBSERVABLE_CHAIN_CREATED, CommandState.USER_CODE_EXECUTED)) {
+                            return Observable.error(new IllegalStateException("execution attempted while in state : " + commandState.get().name()));
+                        }
+
+                        metrics.markCommandStart(commandKey, threadPoolKey, ExecutionIsolationStrategy.THREAD);
+
+                        if (isCommandTimedOut.get() == TimedOutStatus.TIMED_OUT) {
+                            // the command timed out in the wrapping thread so we will return immediately
+                            // and not increment any of the counters below or other such logic
+                            return Observable.error(new RuntimeException("timed out before executing run()"));
+                        }
+                        if (threadState.compareAndSet(ThreadState.NOT_USING_THREAD, ThreadState.STARTED)) {
+                            //we have not been unsubscribed, so should proceed
+                            HystrixCounters.incrementGlobalConcurrentThreads();
+                            threadPool.markThreadExecution();
+                            // store the command that is being run
+                            endCurrentThreadExecutingCommand = Hystrix.startCurrentThreadExecutingCommand(getCommandKey());
+                            executionResult = executionResult.setExecutedInThread();
+                            /**
+                             * If any of these hooks throw an exception, then it appears as if the actual execution threw an error
+                             */
+                            try {
+                                executionHook.onThreadStart(_cmd);
+                                executionHook.onRunStart(_cmd);
+                                executionHook.onExecutionStart(_cmd);
+                                return getUserExecutionObservable(_cmd);
+                            } catch (Throwable ex) {
+                                return Observable.error(ex);
+                            }
+                        } else {
+                            //command has already been unsubscribed, so return immediately
+                            return Observable.error(new RuntimeException("unsubscribed before executing run()"));
+                        }
+                    }
+                }).doOnTerminate(new Action0() {
+                    @Override
+                    public void call() {
+                        if (threadState.compareAndSet(ThreadState.STARTED, ThreadState.TERMINAL)) {
+                            handleThreadEnd(_cmd);
+                        }
+                        if (threadState.compareAndSet(ThreadState.NOT_USING_THREAD, ThreadState.TERMINAL)) {
+                            //if it was never started and received terminal, then no need to clean up (I don't think this is possible)
+                        }
+                        //if it was unsubscribed, then other cleanup handled it
+                    }
+                }).doOnUnsubscribe(new Action0() {
+                    @Override
+                    public void call() {
+                        if (threadState.compareAndSet(ThreadState.STARTED, ThreadState.UNSUBSCRIBED)) {
+                            handleThreadEnd(_cmd);
+                        }
+                        if (threadState.compareAndSet(ThreadState.NOT_USING_THREAD, ThreadState.UNSUBSCRIBED)) {
+                            //if it was never started and was cancelled, then no need to clean up
+                        }
+                        //if it was terminal, then other cleanup handled it
+                    }
+                }).subscribeOn(threadPool.getScheduler(new Func0<Boolean>() {
+                    @Override
+                    public Boolean call() {
+                        return properties.executionIsolationThreadInterruptOnTimeout().get() && _cmd.isCommandTimedOut.get() == TimedOutStatus.TIMED_OUT;
+                    }
+                }));
+            } else {
+                return Observable.defer(new Func0<Observable<R>>() {
+                    @Override
+                    public Observable<R> call() {
+                        executionResult = executionResult.setExecutionOccurred();
+                        if (!commandState.compareAndSet(CommandState.OBSERVABLE_CHAIN_CREATED, CommandState.USER_CODE_EXECUTED)) {
+                            return Observable.error(new IllegalStateException("execution attempted while in state : " + commandState.get().name()));
+                        }
+
+                        metrics.markCommandStart(commandKey, threadPoolKey, ExecutionIsolationStrategy.SEMAPHORE);
+                        // semaphore isolated
+                        // store the command that is being run
+                        endCurrentThreadExecutingCommand = Hystrix.startCurrentThreadExecutingCommand(getCommandKey());
+                        try {
+                            executionHook.onRunStart(_cmd);
+                            executionHook.onExecutionStart(_cmd);
+                            return getUserExecutionObservable(_cmd);  //the getUserExecutionObservable method already wraps sync exceptions, so this shouldn't throw
+                        } catch (Throwable ex) {
+                            //If the above hooks throw, then use that as the result of the run method
+                            return Observable.error(ex);
+                        }
+                    }
+                });
+            }
+        }
+
+12：执行业务，run方法很重要，由子类
+@Override
+    final protected Observable<R> getExecutionObservable() {
+        return Observable.defer(new Func0<Observable<R>>() {
+            @Override
+            public Observable<R> call() {
+                try {
+                    return Observable.just(run());
+                } catch (Throwable ex) {
+                    return Observable.error(ex);
+                }
+            }
+        }).doOnSubscribe(new Action0() {
+            @Override
+            public void call() {
+                // Save thread on which we get subscribed so that we can interrupt it later if needed
+                executionThread.set(Thread.currentThread());
+            }
+        });
+    }
+
+
+13：熔断降级，隔离降级处理
+
+    private Observable<R> getFallbackOrThrowException(final AbstractCommand<R> _cmd, final HystrixEventType eventType, final FailureType failureType, final String message, final Exception originalException) {
+            final HystrixRequestContext requestContext = HystrixRequestContext.getContextForCurrentThread();
+            long latency = System.currentTimeMillis() - executionResult.getStartTimestamp();
+            // record the executionResult
+            // do this before executing fallback so it can be queried from within getFallback (see See https://github.com/Netflix/Hystrix/pull/144)
+            executionResult = executionResult.addEvent((int) latency, eventType);
+
+            if (shouldNotBeWrapped(originalException)){
+                /* executionHook for all errors */
+                Exception e = wrapWithOnErrorHook(failureType, originalException);
+                return Observable.error(e);
+            } else if (isUnrecoverable(originalException)) {
+                logger.error("Unrecoverable Error for HystrixCommand so will throw HystrixRuntimeException and not apply fallback. ", originalException);
+
+                /* executionHook for all errors */
+                Exception e = wrapWithOnErrorHook(failureType, originalException);
+                return Observable.error(new HystrixRuntimeException(failureType, this.getClass(), getLogMessagePrefix() + " " + message + " and encountered unrecoverable error.", e, null));
+            } else {
+                if (isRecoverableError(originalException)) {
+                    logger.warn("Recovered from java.lang.Error by serving Hystrix fallback", originalException);
+                }
+
+                if (properties.fallbackEnabled().get()) {
+                    /* fallback behavior is permitted so attempt */
+
+                    final Action1<Notification<? super R>> setRequestContext = new Action1<Notification<? super R>>() {
+                        @Override
+                        public void call(Notification<? super R> rNotification) {
+                            setRequestContextIfNeeded(requestContext);
+                        }
+                    };
+
+                    final Action1<R> markFallbackEmit = new Action1<R>() {
+                        @Override
+                        public void call(R r) {
+                            if (shouldOutputOnNextEvents()) {
+                                executionResult = executionResult.addEvent(HystrixEventType.FALLBACK_EMIT);
+                                eventNotifier.markEvent(HystrixEventType.FALLBACK_EMIT, commandKey);
+                            }
+                        }
+                    };
+
+                    final Action0 markFallbackCompleted = new Action0() {
+                        @Override
+                        public void call() {
+                            long latency = System.currentTimeMillis() - executionResult.getStartTimestamp();
+                            eventNotifier.markEvent(HystrixEventType.FALLBACK_SUCCESS, commandKey);
+                            executionResult = executionResult.addEvent((int) latency, HystrixEventType.FALLBACK_SUCCESS);
+                        }
+                    };
+
+                    final Func1<Throwable, Observable<R>> handleFallbackError = new Func1<Throwable, Observable<R>>() {
+                        @Override
+                        public Observable<R> call(Throwable t) {
+                            Exception e = originalException;
+                            Exception fe = getExceptionFromThrowable(t);
+
+                            if (fe instanceof UnsupportedOperationException) {
+                                long latency = System.currentTimeMillis() - executionResult.getStartTimestamp();
+                                logger.debug("No fallback for HystrixCommand. ", fe); // debug only since we're throwing the exception and someone higher will do something with it
+                                eventNotifier.markEvent(HystrixEventType.FALLBACK_MISSING, commandKey);
+                                executionResult = executionResult.addEvent((int) latency, HystrixEventType.FALLBACK_MISSING);
+
+                                /* executionHook for all errors */
+                                e = wrapWithOnErrorHook(failureType, e);
+
+                                return Observable.error(new HystrixRuntimeException(failureType, _cmd.getClass(), getLogMessagePrefix() + " " + message + " and no fallback available.", e, fe));
+                            } else {
+                                long latency = System.currentTimeMillis() - executionResult.getStartTimestamp();
+                                logger.debug("HystrixCommand execution " + failureType.name() + " and fallback failed.", fe);
+                                eventNotifier.markEvent(HystrixEventType.FALLBACK_FAILURE, commandKey);
+                                executionResult = executionResult.addEvent((int) latency, HystrixEventType.FALLBACK_FAILURE);
+
+                                /* executionHook for all errors */
+                                e = wrapWithOnErrorHook(failureType, e);
+
+                                return Observable.error(new HystrixRuntimeException(failureType, _cmd.getClass(), getLogMessagePrefix() + " " + message + " and fallback failed.", e, fe));
+                            }
+                        }
+                    };
+
+                    final TryableSemaphore fallbackSemaphore = getFallbackSemaphore();
+                    final AtomicBoolean semaphoreHasBeenReleased = new AtomicBoolean(false);
+                    final Action0 singleSemaphoreRelease = new Action0() {
+                        @Override
+                        public void call() {
+                            if (semaphoreHasBeenReleased.compareAndSet(false, true)) {
+                                fallbackSemaphore.release();
+                            }
+                        }
+                    };
+
+                    Observable<R> fallbackExecutionChain;
+
+                    // 降级一样有信号量的处理，默认10
+                    // acquire a permit
+                    if (fallbackSemaphore.tryAcquire()) {
+                        try {
+                            if (isFallbackUserDefined()) {
+                                executionHook.onFallbackStart(this);
+                                fallbackExecutionChain = getFallbackObservable();
+                            } else {
+                                //same logic as above without the hook invocation
+                                fallbackExecutionChain = getFallbackObservable();
+                            }
+                        } catch (Throwable ex) {
+                            //If hook or user-fallback throws, then use that as the result of the fallback lookup
+                            fallbackExecutionChain = Observable.error(ex);
+                        }
+
+                        return fallbackExecutionChain
+                                .doOnEach(setRequestContext)
+                                .lift(new FallbackHookApplication(_cmd))
+                                .lift(new DeprecatedOnFallbackHookApplication(_cmd))
+                                .doOnNext(markFallbackEmit)
+                                .doOnCompleted(markFallbackCompleted)
+                                .onErrorResumeNext(handleFallbackError)
+                                .doOnTerminate(singleSemaphoreRelease)
+                                .doOnUnsubscribe(singleSemaphoreRelease);
+                    } else {
+                       // 降级处理不了，就拒绝请求
+                       return handleFallbackRejectionByEmittingError();
+                    }
+                } else {
+                    // 降级没开启，一样拒绝请求
+                    return handleFallbackDisabledByEmittingError(originalException, failureType, message);
+                }
+            }
+        }

@@ -13,6 +13,13 @@ LoadBalancerFeignClient的 Response execute(Request request, Request.Options opt
 
 ApacheHttpClient，OkHttpClient这两个通过配置项feign.httpclient.enabled = true 或者feign.okhttp.enable=true开启，
 默认使用Default这个实现
+OkHttpClient需要引入如下依赖：
+
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-okhttp</artifactId>
+        </dependency>
+
 
 实际上LoadBalancerFeignClient包装了ApacheHttpClient，OkHttpClient，Client
 

@@ -1,0 +1,26 @@
+1：当我们使用eureka用作服务注册中心时，eureka客户端会提供如下一个配置类
+
+    EurekaRibbonClientConfiguration，代码：
+
+    @Configuration
+    @EnableConfigurationProperties
+    @ConditionalOnRibbonAndEurekaEnabled
+    @AutoConfigureAfter(RibbonAutoConfiguration.class)
+    // 为每个服务子容器提供一个EurekaRibbonClientConfiguration
+    @RibbonClients(defaultConfiguration = EurekaRibbonClientConfiguration.class)
+    public class RibbonEurekaAutoConfiguration {
+
+    }
+
+2: SpringClientFactory默认提供的RibbonClientConfiguration.class
+
+    代码：
+        public class SpringClientFactory extends NamedContextFactory<RibbonClientSpecification> {
+
+            //默认的命名空间为ribbon
+            static final String NAMESPACE = "ribbon";
+
+            public SpringClientFactory() {
+                super(RibbonClientConfiguration.class, NAMESPACE, "ribbon.client.name");
+            }
+        }
