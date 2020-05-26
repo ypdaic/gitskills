@@ -27,6 +27,7 @@ public class ConfigKafkaConsumer {
         //TODO 更多消费者配置（重要的）
         properties.put("auto.offset.reset","latest"); //消费者在读取一个没有偏移量的分区或者偏移量无效的情况下，如何处理
         properties.put("enable.auto.commit",true); // 表明消费者是否自动提交偏移 默认值true
+        properties.put("auto.commit.interval.ms", 5000); // 自动提交间隔，默认5s
         properties.put("max.poll.records",500); // 控制每次poll方法返回的的记录数量 默认值500
         //分区分配给消费者的策略。系统提供两种策略。默认为Range
         properties.put("partition.assignment.strategy",Collections.singletonList(RangeAssignor.class));
