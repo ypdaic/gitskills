@@ -769,6 +769,7 @@
                         try {
                             if (isFallbackUserDefined()) {
                                 executionHook.onFallbackStart(this);
+                                执行回调的地方
                                 fallbackExecutionChain = getFallbackObservable();
                             } else {
                                 //same logic as above without the hook invocation

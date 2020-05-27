@@ -1,0 +1,62 @@
+LoadBalancerFeignClient的作用就是通过服务名去选择个一个实例去调用
+
+    @Override
+	public Response execute(Request request, Request.Options options) throws IOException {
+		try {
+			URI asUri = URI.create(request.url());
+			String clientName = asUri.getHost();
+			URI uriWithoutHost = cleanUrl(request.url(), clientName);
+			FeignLoadBalancer.RibbonRequest ribbonRequest = new FeignLoadBalancer.RibbonRequest(
+					this.delegate, request, uriWithoutHost);
+
+			IClientConfig requestConfig = getClientConfig(options, clientName);
+			// 具体在lbClient(clientName)方法中去选择实例
+			return lbClient(clientName)
+			// executeWithLoadBalancer中先找服务，然后进行调用
+					.executeWithLoadBalancer(ribbonRequest, requestConfig).toResponse();
+		}
+		catch (ClientException e) {
+			IOException io = findIOException(e);
+			if (io != null) {
+				throw io;
+			}
+			throw new RuntimeException(e);
+		}
+	}
+
+	// lbClient方法主要从CachingSpringLoadBalancerFactory中获取一个FeignLoadBalancer，而FeignLoadBalancer则包含有ribbon的ILoadBalancer实现
+	private FeignLoadBalancer lbClient(String clientName) {
+        return this.lbClientFactory.create(clientName);
+    }
+
+    public T executeWithLoadBalancer(final S request, final IClientConfig requestConfig) throws ClientException {
+            // 这里构造command，而command.submit方法会去选择一个server
+            LoadBalancerCommand<T> command = buildLoadBalancerCommand(request, requestConfig);
+
+            try {
+                return command.submit(
+                    new ServerOperation<T>() {
+                        @Override
+                        public Observable<T> call(Server server) {
+                            URI finalUri = reconstructURIWithServer(server, request.getUri());
+                            S requestForServer = (S) request.replaceUri(finalUri);
+                            try {
+                                return Observable.just(AbstractLoadBalancerAwareClient.this.execute(requestForServer, requestConfig));
+                            }
+                            catch (Exception e) {
+                                return Observable.error(e);
+                            }
+                        }
+                    })
+                    .toBlocking()
+                    .single();
+            } catch (Exception e) {
+                Throwable t = e.getCause();
+                if (t instanceof ClientException) {
+                    throw (ClientException) t;
+                } else {
+                    throw new ClientException(e);
+                }
+            }
+
+        }

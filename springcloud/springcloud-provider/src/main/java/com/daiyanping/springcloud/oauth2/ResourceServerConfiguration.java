@@ -37,7 +37,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
         http.csrf().disable();
         // 配置order访问控制，必须认证后才可以访问，资源不在该配置中，则不受拦截
         http.authorizeRequests()
-                .antMatchers("/order/**","/user/**", "/product/**").authenticated();
+                .antMatchers("/order/**","/user/**").authenticated();
     }
 
     /*

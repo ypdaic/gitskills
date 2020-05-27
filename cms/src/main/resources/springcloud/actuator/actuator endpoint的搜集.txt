@@ -1,0 +1,3 @@
+WebMvcEndpointManagementContextConfiguration 该类负责收集所有带有@Endpoint注解的类
+
+然后往spring容器中注入WebMvcEndpointHandlerMapping，该类会处理所有以/actuator开头的请求

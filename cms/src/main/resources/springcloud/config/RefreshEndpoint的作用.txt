@@ -1,0 +1,81 @@
+当我们在配置中心客户端调用 http://localhost:8081/actuator/refresh接口是，会触发客户端的配置单点刷新
+
+        ContextRefresher进行配置刷新
+
+        public synchronized Set<String> refreshEnvironment() {
+            // 获取刷新前的配置
+    		Map<String, Object> before = extract(
+    				this.context.getEnvironment().getPropertySources());
+    	    // 获取最新的参数
+    		addConfigFilesToEnvironment();
+    		Set<String> keys = changes(before,
+    				extract(this.context.getEnvironment().getPropertySources())).keySet();
+    		this.context.publishEvent(new EnvironmentChangeEvent(this.context, keys));
+    		return keys;
+    	}
+
+    	/* For testing. */ ConfigurableApplicationContext addConfigFilesToEnvironment() {
+    		ConfigurableApplicationContext capture = null;
+    		try {
+    		    // 拷贝一份旧数据
+    			StandardEnvironment environment = copyEnvironment(
+    					this.context.getEnvironment());
+
+    		    // 创建一个SpringApplicationBuilder，然后重新创建一个子application使用旧的environment
+    			SpringApplicationBuilder builder = new SpringApplicationBuilder(Empty.class)
+    					.bannerMode(Mode.OFF).web(WebApplicationType.NONE)
+    					.environment(environment);
+    			// Just the listeners that affect the environment (e.g. excluding logging
+    			// listener because it has side effects)
+    			builder.application()
+    					.setListeners(Arrays.asList(new BootstrapApplicationListener(),
+    							new ConfigFileApplicationListener()));
+    		    // 准备一个新的applicationContext 进行创建，并对environment进行刷新
+    			capture = builder.run();
+    			if (environment.getPropertySources().contains(REFRESH_ARGS_PROPERTY_SOURCE)) {
+    				environment.getPropertySources().remove(REFRESH_ARGS_PROPERTY_SOURCE);
+    			}
+    			MutablePropertySources target = this.context.getEnvironment()
+    					.getPropertySources();
+    			String targetName = null;
+    			for (PropertySource<?> source : environment.getPropertySources()) {
+    				String name = source.getName();
+    				if (target.contains(name)) {
+    					targetName = name;
+    				}
+    				if (!this.standardSources.contains(name)) {
+    					if (target.contains(name)) {
+    						target.replace(name, source);
+    					}
+    					else {
+    						if (targetName != null) {
+    							target.addAfter(targetName, source);
+    						}
+    						else {
+    							// targetName was null so we are at the start of the list
+    							target.addFirst(source);
+    							targetName = name;
+    						}
+    					}
+    				}
+    			}
+    		}
+    		finally {
+    			ConfigurableApplicationContext closeable = capture;
+    			while (closeable != null) {
+    				try {
+    					closeable.close();
+    				}
+    				catch (Exception e) {
+    					// Ignore;
+    				}
+    				if (closeable.getParent() instanceof ConfigurableApplicationContext) {
+    					closeable = (ConfigurableApplicationContext) closeable.getParent();
+    				}
+    				else {
+    					break;
+    				}
+    			}
+    		}
+    		return capture;
+    	}

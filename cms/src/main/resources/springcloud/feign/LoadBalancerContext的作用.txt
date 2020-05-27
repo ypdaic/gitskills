@@ -1,0 +1,114 @@
+LoadBalancerContext 主要用于LoadBalancerFeignClient的服务选择，具体在getServerFromLoadBalancer方法中
+
+
+public Server getServerFromLoadBalancer(@Nullable URI original, @Nullable Object loadBalancerKey) throws ClientException {
+        String host = null;
+        int port = -1;
+        if (original != null) {
+            host = original.getHost();
+        }
+        if (original != null) {
+            Pair<String, Integer> schemeAndPort = deriveSchemeAndPortFromPartialUri(original);
+            port = schemeAndPort.second();
+        }
+
+        // Various Supported Cases
+        // The loadbalancer to use and the instances it has is based on how it was registered
+        // In each of these cases, the client might come in using Full Url or Partial URL
+        // 获取ILoadBalancer
+        ILoadBalancer lb = getLoadBalancer();
+        if (host == null) {
+            // Partial URI or no URI Case
+            // well we have to just get the right instances from lb - or we fall back
+            if (lb != null){
+                // 开始选择一个服务实例
+                Server svc = lb.chooseServer(loadBalancerKey);
+                if (svc == null){
+                    throw new ClientException(ClientException.ErrorType.GENERAL,
+                            "Load balancer does not have available server for client: "
+                                    + clientName);
+                }
+                host = svc.getHost();
+                if (host == null){
+                    throw new ClientException(ClientException.ErrorType.GENERAL,
+                            "Invalid Server for :" + svc);
+                }
+                logger.debug("{} using LB returned Server: {} for request {}", new Object[]{clientName, svc, original});
+                return svc;
+            } else {
+                // No Full URL - and we dont have a LoadBalancer registered to
+                // obtain a server
+                // if we have a vipAddress that came with the registration, we
+                // can use that else we
+                // bail out
+                if (vipAddresses != null && vipAddresses.contains(",")) {
+                    throw new ClientException(
+                            ClientException.ErrorType.GENERAL,
+                            "Method is invoked for client " + clientName + " with partial URI of ("
+                            + original
+                            + ") with no load balancer configured."
+                            + " Also, there are multiple vipAddresses and hence no vip address can be chosen"
+                            + " to complete this partial uri");
+                } else if (vipAddresses != null) {
+                    try {
+                        Pair<String,Integer> hostAndPort = deriveHostAndPortFromVipAddress(vipAddresses);
+                        host = hostAndPort.first();
+                        port = hostAndPort.second();
+                    } catch (URISyntaxException e) {
+                        throw new ClientException(
+                                ClientException.ErrorType.GENERAL,
+                                "Method is invoked for client " + clientName + " with partial URI of ("
+                                + original
+                                + ") with no load balancer configured. "
+                                + " Also, the configured/registered vipAddress is unparseable (to determine host and port)");
+                    }
+                } else {
+                    throw new ClientException(
+                            ClientException.ErrorType.GENERAL,
+                            this.clientName
+                            + " has no LoadBalancer registered and passed in a partial URL request (with no host:port)."
+                            + " Also has no vipAddress registered");
+                }
+            }
+        } else {
+            // Full URL Case
+            // This could either be a vipAddress or a hostAndPort or a real DNS
+            // if vipAddress or hostAndPort, we just have to consult the loadbalancer
+            // but if it does not return a server, we should just proceed anyways
+            // and assume its a DNS
+            // For restClients registered using a vipAddress AND executing a request
+            // by passing in the full URL (including host and port), we should only
+            // consult lb IFF the URL passed is registered as vipAddress in Discovery
+            boolean shouldInterpretAsVip = false;
+
+            if (lb != null) {
+                shouldInterpretAsVip = isVipRecognized(original.getAuthority());
+            }
+            if (shouldInterpretAsVip) {
+                Server svc = lb.chooseServer(loadBalancerKey);
+                if (svc != null){
+                    host = svc.getHost();
+                    if (host == null){
+                        throw new ClientException(ClientException.ErrorType.GENERAL,
+                                "Invalid Server for :" + svc);
+                    }
+                    logger.debug("using LB returned Server: {} for request: {}", svc, original);
+                    return svc;
+                } else {
+                    // just fall back as real DNS
+                    logger.debug("{}:{} assumed to be a valid VIP address or exists in the DNS", host, port);
+                }
+            } else {
+                // consult LB to obtain vipAddress backed instance given full URL
+                //Full URL execute request - where url!=vipAddress
+                logger.debug("Using full URL passed in by caller (not using load balancer): {}", original);
+            }
+        }
+        // end of creating final URL
+        if (host == null){
+            throw new ClientException(ClientException.ErrorType.GENERAL,"Request contains no HOST to talk to");
+        }
+        // just verify that at this point we have a full URL
+
+        return new Server(host, port);
+    }

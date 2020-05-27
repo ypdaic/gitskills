@@ -10,7 +10,8 @@ eureka:
   client:
     register-with-eureka: false
     service-url:
-      defaultZone: http://admin:test1234@eureka1:8087/eureka,http://admin:test1234@eureka2:8090/eureka
+      defaultZone: http://admin:test1234@eureka1:8087/eureka
+      #defaultZone: http://admin:test1234@eureka1:8087/eureka,http://admin:test1234@eureka2:8090/eureka
 feign:
   compression:
     request:

@@ -1,0 +1,54 @@
+RibbonRoutingFilter 集成了的ribbon和hystrix的功能
+
+
+    具体在RibbonRoutingFilter方法中进行hystrix的功能
+    protected ClientHttpResponse forward(RibbonCommandContext context) throws Exception {
+        Map<String, Object> info = this.helper.debug(context.getMethod(),
+                context.getUri(), context.getHeaders(), context.getParams(),
+                context.getRequestEntity());
+
+        RibbonCommand command = this.ribbonCommandFactory.create(context);
+        try {
+            // 执行hystrix
+            ClientHttpResponse response = command.execute();
+            this.helper.appendDebug(info, response.getRawStatusCode(),
+                    response.getHeaders());
+            return response;
+        }
+        catch (HystrixRuntimeException ex) {
+            return handleException(info, ex);
+        }
+
+    }
+
+    具体在AbstractRibbonCommand的run方法中进行服务的选择
+    @Override
+    protected ClientHttpResponse run() throws Exception {
+        final RequestContext context = RequestContext.getCurrentContext();
+
+        RQ request = createRequest();
+        RS response;
+
+        boolean retryableClient = this.client instanceof AbstractLoadBalancingClient
+                && ((AbstractLoadBalancingClient) this.client)
+                        .isClientRetryable((ContextAwareRequest) request);
+
+        if (retryableClient) {
+            response = this.client.execute(request, config);
+        }
+        else {
+            response = this.client.executeWithLoadBalancer(request, config);
+        }
+        context.set("ribbonResponse", response);
+
+        // Explicitly close the HttpResponse if the Hystrix command timed out to
+        // release the underlying HTTP connection held by the response.
+        //
+        if (this.isResponseTimedOut()) {
+            if (response != null) {
+                response.close();
+            }
+        }
+
+        return new RibbonHttpResponse(response);
+    }
