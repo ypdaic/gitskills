@@ -1,0 +1,3 @@
+在my.cnf 文件中加上
+
+    lower_case_table_names=1
