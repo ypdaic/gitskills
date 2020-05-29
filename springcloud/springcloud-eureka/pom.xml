@@ -34,5 +34,51 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>0.4.13</version>
+                <executions>
+                    <!--将build绑定到maven package生命周期-->
+                    <execution>
+                        <id>build-docker-image</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!--指定镜像名称-->
+                    <imageName>eureka:1.0</imageName>
+                    <!--指定docker 工作目录-->
+                    <dockerDirectory>${project.basedir}/src/main/docker</dockerDirectory>
+                    <!--<skipDockerBuild>false</skipDockerBuild>-->
+                    <!--<dockerHost>https://192.168.99.100:2376</dockerHost>-->
+                    <!--<dockerCertPath>C:\Users\Administrator\.docker\machine\machines\default</dockerCertPath>-->
+                    <resources>
+                        <resource>
+                            <targetPath>/</targetPath>
+                            <!--resources.resource.directory：用于指定需要复制的文件的根目录，-->
+                            <!--${project.build.directory}表示target目录。-->
+                            <directory>${project.build.directory}</directory>
+                            <!--resources.resource.include:用于指定需要复制的文件。-->
+                            <!--${project.build.finalName}.jar指的是maven编译打包后的jar包。-->
+                            <include>${project.build.finalName}.jar</include>
+                        </resource>
+                    </resources>
+
+                    <!-- 必须与maven配置文件settings.xml中配置的server.id一致，镜像名称就必须指定DockerHub的用户名了，私服就指定ip:port -->
+<!--                    <serverId>docker-hub</serverId>-->
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
