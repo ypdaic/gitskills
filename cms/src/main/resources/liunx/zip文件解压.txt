@@ -1,0 +1,7 @@
+1: 安装unzip
+
+    yum install unzip
+
+2: 执行命令
+
+    unzip

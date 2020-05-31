@@ -1,0 +1,28 @@
+下载
+Linux 上我们可以从 Github 上下载它的二进制包来使用，最新发行的版本地址：[https://github.com/docker/compose/releases]
+
+
+运行以下命令以下载 Docker Compose 的特定版本：
+$ sudo curl -L "https://github.com/docker/compose/releases/download/1.25.5/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+
+
+要安装其他版本的 Compose，请替换1.25.5
+
+授权
+
+
+$ sudo chmod +x /usr/local/bin/docker-compose
+
+创建软链
+创建软链,这样我们就可以在任意目录下使用docker-compose命令啦
+
+$ sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+
+验证
+
+
+$ docker-compose --version
+
+出现如下字样则说明你的docker-compose安装成功啦!
+
+$ docker-compose version 1.25.5, build xxxxx

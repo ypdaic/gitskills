@@ -1,0 +1,38 @@
+1:选择一个下载目录
+
+    cd /software
+
+2: 开始下载
+
+    weget https://github.com/git/git/archive/v2.26.2.zip
+
+3：解压
+
+    unzip git-2.26.2.zip
+
+4: 安装依赖
+
+     yum install curl-devel expat-devel gettext-devel openssl-devel zlib-devel gcc perl-ExtUtils-MakeMaker
+
+5: 安装git
+
+    cd git-2.26.2
+
+
+    make prefix=/usr/local/git all
+
+    make prefix=/usr/local/git install
+
+6: 配置环境变量
+
+
+    vi /etc/profile
+
+    export PATH=$PATH:/usr/local/git/bin
+
+    source /etc/profile
+
+7：查看get版本
+
+
+    git --version

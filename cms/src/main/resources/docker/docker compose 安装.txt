@@ -8,7 +8,7 @@ sudo yum install python-pip
 
 3.升级pip
 
-pip install –-upgrade pip
+pip install --upgrade pip
 
 4: 安装python-devel
 

@@ -1,0 +1,17 @@
+BeanPostProcessor 接口：
+   postProcessBeforeInitialization方法在bean的invokeInitMethods方法之前调用 ，完成Aware接口相关方法的调用，@PostConstruct注解方法的调用
+   postProcessAfterInitialization方法在bean的invokeInitMethods方法之后调用，完成bean的增强，也就是AOP的过程
+
+子接口InstantiationAwareBeanPostProcessor
+   postProcessProperties，postProcessPropertyValues方法在bean的populateBean方法中调用，完成属性自动注入
+   postProcessAfterInstantiation方法在属性注入之前，bean实例化之后调用，返回false,表示不进行属性自动注入
+
+子接口SmartInstantiationAwareBeanPostProcessor
+   determineCandidateConstructors方法在bean中寻找包含有@Autowired,@Value注解的构造器，存在就使用该构造器进行bean实例化
+   getEarlyBeanReference方法返回添加到三级缓存中的允许提前暴露bean的实例
+
+子接口MergedBeanDefinitionPostProcessor
+   postProcessMergedBeanDefinition方法完成带有@Autowired,@Value,@PostConstruct,@PreDestroy,@Resource属性或者方法的收集，用于后续的属性自动注入，或者方法调用
+
+子接口DestructionAwareBeanPostProcessor
+   postProcessBeforeDestruction方法在容器销毁时调用bean的相关销毁方法

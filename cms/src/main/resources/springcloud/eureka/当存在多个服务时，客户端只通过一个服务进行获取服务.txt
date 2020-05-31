@@ -1,0 +1,49 @@
+具体在这个类中RetryableEurekaHttpClient
+
+            @Override
+            protected <R> EurekaHttpResponse<R> execute(RequestExecutor<R> requestExecutor) {
+                List<EurekaEndpoint> candidateHosts = null;
+                int endpointIdx = 0;
+                for (int retry = 0; retry < numberOfRetries; retry++) {
+                    EurekaHttpClient currentHttpClient = delegate.get();
+                    EurekaEndpoint currentEndpoint = null;
+                    if (currentHttpClient == null) {
+                        if (candidateHosts == null) {
+                            candidateHosts = getHostCandidates();
+                            if (candidateHosts.isEmpty()) {
+                                throw new TransportException("There is no known eureka server; cluster server list is empty");
+                            }
+                        }
+                        if (endpointIdx >= candidateHosts.size()) {
+                            throw new TransportException("Cannot execute request on any known server");
+                        }
+
+                        // 从多个url中选择一个endpoint，创建client
+                        currentEndpoint = candidateHosts.get(endpointIdx++);
+                        currentHttpClient = clientFactory.newClient(currentEndpoint);
+                    }
+
+                    try {
+                        // 如果当连接的节点挂掉了，这里会重新选择一个服务端进行调用
+                        EurekaHttpResponse<R> response = requestExecutor.execute(currentHttpClient);
+                        if (serverStatusEvaluator.accept(response.getStatusCode(), requestExecutor.getRequestType())) {
+                            delegate.set(currentHttpClient);
+                            if (retry > 0) {
+                                logger.info("Request execution succeeded on retry #{}", retry);
+                            }
+                            return response;
+                        }
+                        logger.warn("Request execution failure with status code {}; retrying on another server if available", response.getStatusCode());
+                    } catch (Exception e) {
+                        logger.warn("Request execution failed with message: {}", e.getMessage());  // just log message as the underlying client should log the stacktrace
+                    }
+
+                    // Connection error or 5xx from the server that must be retried on another server
+                    delegate.compareAndSet(currentHttpClient, null);
+                    if (currentEndpoint != null) {
+                        quarantineSet.add(currentEndpoint);
+                    }
+                }
+                throw new TransportException("Retry limit reached; giving up on completing the request");
+            }
+

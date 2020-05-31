@@ -1,4 +1,4 @@
 docker run -d --name ce -v /opt/data -it centos:7 /bin/bash
 
-// 容器ce2,ce共享同一个挂载wenj
+// 容器ce2,ce共享同一个挂载文件
 docker run -d --name ce2 -it --volumes-from ce centos:7 /bin/bash

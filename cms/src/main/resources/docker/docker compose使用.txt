@@ -1,12 +1,12 @@
 准备 docker-compose.yaml文件，编写如下内容
 
 
-version: '2'
+version: '2' #表示使用第2代语法
 services:
   nginx:
    container_name: member-nginx #指定容器名称
    image: nginx:latest          #指定镜像
-   restart: always
+   restart: always    #开启自启
    ports:
    - 80:80
    privileged: true             #容器给nginx提供root权限

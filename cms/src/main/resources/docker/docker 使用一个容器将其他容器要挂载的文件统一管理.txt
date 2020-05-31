@@ -1,0 +1,10 @@
+docker run -d --name date -v /docker/nginx:/etc/nginx/conf.d -v /docker/mysql/conf:/etc/mysql hello-world
+
+我们使用hello-world这个容器将nginx，mysql的挂载目录统一管理起来，后面想要重新启动一个nginx或者mysql容器，直接使用--volumes-from 参数，如：
+
+docker run -d --name nginx2 --volumes-from nginx -p 8081:80 30
+
+
+--volumes-from nginx 指定要挂载的容器
+
+这个功能很好用

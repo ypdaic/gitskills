@@ -1,0 +1,4 @@
+mvn clean compile install -Denv=prod -Dmaven.test.skip=true
+
+构建指定模块
+mvn clean install -pl yyc-gateway,yyc-service-cms -am -Denv=test -Dmaven.test.skip=true
