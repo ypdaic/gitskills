@@ -1,0 +1,10 @@
+1: 拉取镜像
+
+    docker pull daocloud.io/library/redis:5.0
+
+2：启动容器
+
+
+    docker run -d --name redis-5.0 -p 6380:6379 -v /root/docker/redis_5.0/conf/redis.conf:/etc/redis/redis.conf -v /root/docker/redis_5.0/data:/data daocloud.io/library/redis:5.0 /etc/redis/redis.conf
+
+    注意：redis.conf 要事先创建

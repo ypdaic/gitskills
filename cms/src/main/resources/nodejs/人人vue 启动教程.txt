@@ -1,0 +1,33 @@
+前言：
+
+   将代码拉下来，不用做任何改动。
+
+   看了其他的教程，又是改sass版本，又是改node.js版本，又是要下python的，实在是误导学习的人
+
+
+
+（一）切换淘宝镜像
+
+　　npm install -g cnpm --registry=https://registry.npm.taobao.org
+
+（二）设置权限(管理员打开cmd)
+
+　　输入set-ExecutionPolicy RemoteSigned 选择A
+
+
+
+（三）安装依赖
+
+　　注意： npm 有些可能下载不下来
+
+　　用 　　cnpm install
+
+    cnpm install node-sass --save
+
+（四）启动
+
+　　npm run dev
+
+https://www.cnblogs.com/misscai/p/12809404.html
+
+https://www.cnblogs.com/mfbzr/p/12274950.html

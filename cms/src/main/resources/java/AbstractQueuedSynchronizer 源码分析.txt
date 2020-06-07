@@ -279,6 +279,20 @@
         }
     }
 
+    public final boolean hasQueuedPredecessors() {
+            // The correctness of this depends on head being initialized
+            // before tail and on head.next being accurate if the current
+            // thread is first in queue.
+            Node t = tail; // Read fields in reverse initialization order
+            Node h = head;
+            Node s;
+            // h == t表示队列还没有进行任何初始化，可以进行尝试加锁
+            // h != t 表示队列进行初始过了，h.next == null 说明已经有线程第一次初始化列队只是创建了一个空的head，还没指定tail，那么下个线程过来进行排队
+            // s.thread != Thread.currentThread() 表示已经有线程在排队了，需要立马进行排队
+            return h != t &&
+                ((s = h.next) == null || s.thread != Thread.currentThread());
+        }
+
 
 ConditionObject 相关代码分析
 

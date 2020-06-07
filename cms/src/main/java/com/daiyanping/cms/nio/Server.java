@@ -50,6 +50,7 @@ public class Server {
         public void run() {
             try {
                 while (true) {
+                    // 这里serverSocket交给操作系统管理了
                     int select = selector.select();
                     if (select == 0) continue;
                     Set<SelectionKey> selectionKeys = selector.selectedKeys();

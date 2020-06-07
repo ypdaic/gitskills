@@ -1,0 +1,23 @@
+tcpdump -nn -i eth0 port 80
+
+[root@centos7 network-scripts]# tcpdump -nn -i ens33 port 80
+tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
+listening on ens33, link-type EN10MB (Ethernet), capture size 262144 bytes
+// 客户端发送第一次握手
+07:04:43.227604 IP 192.168.109.128.53382 > 36.152.44.96.80: Flags [S], seq 1690170003, win 29200, options [mss 1460,sackOK,TS val 3944577 ecr 0,nop,wscale 7], le                                      ngth 0
+// 服务端响应，并且向客户端发送seq，第二次握手
+07:04:43.258396 IP 36.152.44.96.80 > 192.168.109.128.53382: Flags [S.], seq 1154176107, ack 1690170004, win 64240, options [mss 1460], length 0
+// 客户端响应，第三次握手
+07:04:43.258502 IP 192.168.109.128.53382 > 36.152.44.96.80: Flags [.], ack 1, win 29200, length 0
+07:04:43.259107 IP 192.168.109.128.53382 > 36.152.44.96.80: Flags [P.], seq 1:78, ack 1, win 29200, length 77: HTTP: GET / HTTP/1.1
+07:04:43.259484 IP 36.152.44.96.80 > 192.168.109.128.53382: Flags [.], ack 78, win 64240, length 0
+07:04:43.292494 IP 36.152.44.96.80 > 192.168.109.128.53382: Flags [P.], seq 1:2782, ack 78, win 64240, length 2781: HTTP: HTTP/1.1 200 OK
+07:04:43.292648 IP 192.168.109.128.53382 > 36.152.44.96.80: Flags [.], ack 2782, win 33580, length 0
+// 客户端第一次分手
+07:04:43.294060 IP 192.168.109.128.53382 > 36.152.44.96.80: Flags [F.], seq 78, ack 2782, win 33580, length 0
+// 服务端确认第二次分手
+07:04:43.295518 IP 36.152.44.96.80 > 192.168.109.128.53382: Flags [.], ack 79, win 64239, length 0
+// 服务端发起第3次分手
+07:04:43.324119 IP 36.152.44.96.80 > 192.168.109.128.53382: Flags [FP.], seq 2782, ack 79, win 64239, length 0
+// 客户端确认第4次分手
+07:04:43.324242 IP 192.168.109.128.53382 > 36.152.44.96.80: Flags [.], ack 2783, win 33580, length 0
