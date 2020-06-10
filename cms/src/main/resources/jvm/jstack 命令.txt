@@ -1,3 +1,7 @@
 jstack -l 41378 > core.log
 
+ Unable to open socket file: target process not responding or HotSpot VM not loaded 问题解决：
+
+ jstack 1706 > /tmp/hsperfdata_root/1706.tdump
+
 printf "%x\n" 769960
