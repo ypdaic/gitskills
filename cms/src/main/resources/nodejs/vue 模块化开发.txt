@@ -1,0 +1,7 @@
+全局安装webpack
+
+    npm install webpack -g
+
+全局安装vue脚手架
+
+    npm install -g @vue/cli-init
