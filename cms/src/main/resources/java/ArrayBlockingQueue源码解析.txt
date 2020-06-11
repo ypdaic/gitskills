@@ -7,7 +7,7 @@ ArrayBlockingQueue 是一个有界，阻塞的单向队列，先进先出原则�
 
 内部使用一个lock进行读写操作同步，性能上比不上LinkedBlockingQueue
 
-/** Main lock guarding all access */
+/** Main lock guarding all access */ 该lock 默认是非公平的，也可以自己指定
     final ReentrantLock lock;
 
 /** Condition for waiting takes */
