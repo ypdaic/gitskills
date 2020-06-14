@@ -1,0 +1,153 @@
+查看节点信息:
+    http://192.168.109.128:9200/_cat/nodes
+
+查看es 健康状态:
+    http://192.168.109.128:9200/_cat/health
+
+查看主节点:
+    http://192.168.109.128:9200/_cat/master
+
+查看索引:
+
+    http://192.168.109.128:9200/_cat/indices
+
+put请求：  保存一个数据，保存在哪个索引的哪个类型下，指定用哪个唯一标识
+           在customer索引下的external类型下保存1号数据为
+
+    http://192.168.109.128:9200/customer/external/1
+
+    数据：{"name": "John Doe" }
+
+post 请求：post 不指定id,会自动创建id
+
+     http://192.168.109.128:9200/customer/external
+
+     数据：{"name": "John Doe" }
+
+     http://192.168.109.128:9200/customer/external/1
+
+     数据：{"name": "John Doe" }
+
+get请求：查询已有数据
+
+    http://192.168.109.128:9200/customer/external/1
+
+    查询结果
+
+    {
+    	"_index": "customer", 在那个索引
+    	"_type": "external", 在那个类型
+    	"_id": "1", 记录id
+    	"_version": 2, 版本号
+    	"_seq_no": 1, 用于乐观锁，版本号
+    	"_primary_term": 1, 集群版本
+    	"found": true, 表示找到了数据
+    	"_source": { 真正内容
+    		"name": "John Doe"
+    	}
+    }
+
+put请求：乐观锁更新
+
+    使用if_seq_on if_primary_term 进行乐观锁操作
+    请求参数带上上面两个参数即可
+
+    http://192.168.109.128:9200/customer/external/1?if_seq_no=1&if_primary_term=1
+
+post _update 更新：post带_update 会对比原数据，如果没有更新则不会更新数据
+                   version _seq_no _primary_term 都不变
+
+    http://192.168.109.128:9200/customer/external/1/_update
+
+
+delete 请求：
+
+    http://192.168.109.128:9200/customer/external/1
+
+delete 请求：删除整个索引
+
+    http://192.168.109.128:9200/customer
+
+post 请求：批量操作
+
+    http://192.168.109.128:9200/customer/external/_bulk
+
+    请求数据：index 表示要操作的id,下面跟数据
+    {"index":{"_id":"1"}}
+    {"name":"test"}
+    {"index":{"_id":"2"}}
+    {"name":"test2"}
+
+post 请求：整个es做批量操作
+
+    http://192.168.109.128:9200/_bulk
+
+        {"delete": {"_index": "website", "_type": "blog", "id": "233"}}
+        {"create": {"_index": "website", "_type": "blog", "id": "233"}}
+        {"title": "My first blog post"}
+        {"index": {"_index": "website", "_type": "blog"}}
+        {"title": "My second blog post"}
+        {"update": {"_index": "website", "_type": "blog", "_id": 233}
+        {"doc": {"title": "My updated blog post"}}
+
+    请求结果：
+
+        #! Deprecation: [types removal] Specifying types in bulk requests is deprecated.
+        {
+          "took" : 124,
+          "errors" : false,
+          "items" : [
+            {
+              "create" : {
+                "_index" : "website",
+                "_type" : "blog",
+                "_id" : "233",
+                "_version" : 1,
+                "result" : "created",
+                "_shards" : {
+                  "total" : 2,
+                  "successful" : 1,
+                  "failed" : 0
+                },
+                "_seq_no" : 0,
+                "_primary_term" : 1,
+                "status" : 201
+              }
+            },
+            {
+              "index" : {
+                "_index" : "website",
+                "_type" : "blog",
+                "_id" : "Z8acpXIBCTIDApJ-LQX8",
+                "_version" : 1,
+                "result" : "created",
+                "_shards" : {
+                  "total" : 2,
+                  "successful" : 1,
+                  "failed" : 0
+                },
+                "_seq_no" : 1,
+                "_primary_term" : 1,
+                "status" : 201
+              }
+            },
+            {
+              "update" : {
+                "_index" : "website",
+                "_type" : "blog",
+                "_id" : "233",
+                "_version" : 2,
+                "result" : "updated",
+                "_shards" : {
+                  "total" : 2,
+                  "successful" : 1,
+                  "failed" : 0
+                },
+                "_seq_no" : 2,
+                "_primary_term" : 1,
+                "status" : 200
+              }
+            }
+          ]
+        }
+

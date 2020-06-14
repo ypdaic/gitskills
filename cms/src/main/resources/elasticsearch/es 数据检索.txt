@@ -1,0 +1,247 @@
+ es支持两种方式的检索
+
+    1：一个是通过使用 REST request URI 发送搜索参数 （uri + 检索参数）
+    2：另一个是通过使用 REST request body 来发送它们 （uri + 请求体）
+
+    GET bank/_search  检索bank下所有的信息，包括type和docs
+    GET bank/_search?q=*&sort=account_number:asc   查询全部数据并且按account_number进行升序
+
+    {
+      "took" : 23,
+      "timed_out" : false, 没哟超时
+      "_shards" : {
+        "total" : 1,
+        "successful" : 1,
+        "skipped" : 0,
+        "failed" : 0
+      },
+      "hits" : { 表示命中的记录
+        "total" : {
+          "value" : 1000, 检索的数量
+          "relation" : "eq" 检索的关系，这里是相当
+        },
+        "max_score" : null, 最大得分
+        "hits" : [  命中的记录，默认返回10条记录
+          {
+            "_index" : "bank",
+            "_type" : "account",
+            "_id" : "0",
+            "_score" : null,
+            "_source" : { 数据原信息
+              "account_number" : 0,
+              "balance" : 16623,
+              "firstname" : "Bradshaw",
+              "lastname" : "Mckenzie",
+              "age" : 29,
+              "gender" : "F",
+              "address" : "244 Columbus Place",
+              "employer" : "Euron",
+              "email" : "bradshawmckenzie@euron.com",
+              "city" : "Hobucken",
+              "state" : "CO"
+            },
+            "sort" : [
+              0
+            ]
+          },
+          {
+            "_index" : "bank",
+            "_type" : "account",
+            "_id" : "1",
+            "_score" : null,
+            "_source" : {
+              "account_number" : 1,
+              "balance" : 39225,
+              "firstname" : "Amber",
+              "lastname" : "Duke",
+              "age" : 32,
+              "gender" : "M",
+              "address" : "880 Holmes Lane",
+              "employer" : "Pyrami",
+              "email" : "amberduke@pyrami.com",
+              "city" : "Brogan",
+              "state" : "IL"
+            },
+            "sort" : [
+              1
+            ]
+          },
+          {
+            "_index" : "bank",
+            "_type" : "account",
+            "_id" : "2",
+            "_score" : null,
+            "_source" : {
+              "account_number" : 2,
+              "balance" : 28838,
+              "firstname" : "Roberta",
+              "lastname" : "Bender",
+              "age" : 22,
+              "gender" : "F",
+              "address" : "560 Kingsway Place",
+              "employer" : "Chillium",
+              "email" : "robertabender@chillium.com",
+              "city" : "Bennett",
+              "state" : "LA"
+            },
+            "sort" : [
+              2
+            ]
+          },
+          {
+            "_index" : "bank",
+            "_type" : "account",
+            "_id" : "3",
+            "_score" : null,
+            "_source" : {
+              "account_number" : 3,
+              "balance" : 44947,
+              "firstname" : "Levine",
+              "lastname" : "Burks",
+              "age" : 26,
+              "gender" : "F",
+              "address" : "328 Wilson Avenue",
+              "employer" : "Amtap",
+              "email" : "levineburks@amtap.com",
+              "city" : "Cochranville",
+              "state" : "HI"
+            },
+            "sort" : [
+              3
+            ]
+          },
+          {
+            "_index" : "bank",
+            "_type" : "account",
+            "_id" : "4",
+            "_score" : null,
+            "_source" : {
+              "account_number" : 4,
+              "balance" : 27658,
+              "firstname" : "Rodriquez",
+              "lastname" : "Flores",
+              "age" : 31,
+              "gender" : "F",
+              "address" : "986 Wyckoff Avenue",
+              "employer" : "Tourmania",
+              "email" : "rodriquezflores@tourmania.com",
+              "city" : "Eastvale",
+              "state" : "HI"
+            },
+            "sort" : [
+              4
+            ]
+          },
+          {
+            "_index" : "bank",
+            "_type" : "account",
+            "_id" : "5",
+            "_score" : null,
+            "_source" : {
+              "account_number" : 5,
+              "balance" : 29342,
+              "firstname" : "Leola",
+              "lastname" : "Stewart",
+              "age" : 30,
+              "gender" : "F",
+              "address" : "311 Elm Place",
+              "employer" : "Diginetic",
+              "email" : "leolastewart@diginetic.com",
+              "city" : "Fairview",
+              "state" : "NJ"
+            },
+            "sort" : [
+              5
+            ]
+          },
+          {
+            "_index" : "bank",
+            "_type" : "account",
+            "_id" : "6",
+            "_score" : null,
+            "_source" : {
+              "account_number" : 6,
+              "balance" : 5686,
+              "firstname" : "Hattie",
+              "lastname" : "Bond",
+              "age" : 36,
+              "gender" : "M",
+              "address" : "671 Bristol Street",
+              "employer" : "Netagy",
+              "email" : "hattiebond@netagy.com",
+              "city" : "Dante",
+              "state" : "TN"
+            },
+            "sort" : [
+              6
+            ]
+          },
+          {
+            "_index" : "bank",
+            "_type" : "account",
+            "_id" : "7",
+            "_score" : null,
+            "_source" : {
+              "account_number" : 7,
+              "balance" : 39121,
+              "firstname" : "Levy",
+              "lastname" : "Richard",
+              "age" : 22,
+              "gender" : "M",
+              "address" : "820 Logan Street",
+              "employer" : "Teraprene",
+              "email" : "levyrichard@teraprene.com",
+              "city" : "Shrewsbury",
+              "state" : "MO"
+            },
+            "sort" : [
+              7
+            ]
+          },
+          {
+            "_index" : "bank",
+            "_type" : "account",
+            "_id" : "8",
+            "_score" : null,
+            "_source" : {
+              "account_number" : 8,
+              "balance" : 48868,
+              "firstname" : "Jan",
+              "lastname" : "Burns",
+              "age" : 35,
+              "gender" : "M",
+              "address" : "699 Visitation Place",
+              "employer" : "Glasstep",
+              "email" : "janburns@glasstep.com",
+              "city" : "Wakulla",
+              "state" : "AZ"
+            },
+            "sort" : [
+              8
+            ]
+          },
+          {
+            "_index" : "bank",
+            "_type" : "account",
+            "_id" : "9",
+            "_score" : null,
+            "_source" : {
+              "account_number" : 9,
+              "balance" : 24776,
+              "firstname" : "Opal",
+              "lastname" : "Meadows",
+              "age" : 39,
+              "gender" : "M",
+              "address" : "963 Neptune Avenue",
+              "employer" : "Cedward",
+              "email" : "opalmeadows@cedward.com",
+              "city" : "Olney",
+              "state" : "OH"
+            },
+            "sort" : [
+              9
+            ]
+          }
+        ]
+      }
+    }

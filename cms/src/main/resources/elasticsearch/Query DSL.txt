@@ -1,0 +1,208 @@
+ GET bank/_search
+ {
+   "query": {
+     // 查询全部
+     "match_all": {}
+   },
+   "sort": [
+     {
+         "account_number": "desc"
+     },
+     {
+       "balance": "asc"
+     }
+
+
+   ]
+ }
+
+
+ GET bank/_search
+  {
+    "query": {
+      // 短语前缀匹配
+      "match_phrase_prefix": {
+        "firstname": "Dor"
+      }
+    },
+    "sort": [  // 指定排序规则
+      {
+          "account_number": "desc"
+      },
+      {
+           "balance": "asc"
+      }
+    ]
+    ,
+    "from": 0, //分页起始位置
+    "size": 1  //分页大小,
+    "_source": ["lastname"] //查询指定字段
+  }
+
+   // 全文检索，查询address包含有Kings的数据
+   GET bank/_search
+   {
+     "query": {
+       "match": {
+         "address": "Kings"
+       }
+     }
+
+
+   }
+
+   // 全文检索，查询address包含有mill或者lane的数据，并且根据得分从高到底排序
+    GET bank/_search
+    {
+      "query": {
+        "match": {
+          "address": "mill lane"
+        }
+      }
+    }
+
+     // match_phrase短语匹配，对mill lane不进行分词处理
+     GET bank/_search
+     {
+       "query": {
+         "match_phrase": {
+           "address": "mill lane"
+         }
+       }
+
+
+     }
+
+     // 多字段匹配，multi_match可以进行多字段匹配，query表示要查询的条件
+     // fields表示我们要查询的字段，
+      GET bank/_search
+      {
+        "query": {
+          "multi_match": {
+            "query": "mill",
+            "fields": ["address", "city"]
+          }
+        }
+
+
+      }
+
+      // 多字段匹配，multi_match可以进行多字段匹配，一样会进行分词处理
+       GET bank/_search
+       {
+         "query": {
+           "multi_match": {
+             "query": "mill movico",
+             "fields": ["address", "city"]
+           }
+         }
+
+
+       }
+
+        // bool 进行复合查询
+        GET bank/_search
+        {
+          "query": {
+            "bool": {
+              // 必须满足match的两个字段
+              "must": [
+                {
+                  "match": {
+                    "gender": "F"
+                  }
+
+                },
+                {"match": {
+                    "address": "Mill"
+                 }}
+              ]
+            }
+          }
+        }
+
+         // 查询gender必须包含F,address必须包含Mill，age 不是 38，lastname可能是Long也可能不是Long的数据
+         GET bank/_search
+         {
+           "query": {
+             "bool": {
+               "must": [
+                 {
+                   "match": {
+                     "gender": "F"
+                   }
+
+                 },
+                 {"match": {
+                     "address": "Mill"
+                  }}
+               ],
+               "must_not": [
+                 {
+                   "match": {
+                     "age": "38"
+                   }
+                 }
+               ],
+               "should": [
+                 {
+                   "match": {
+                     "lastname": "Long"
+                   }
+                 }
+               ]
+             }
+           }
+
+
+         }
+
+          // filter可以对结果进行过滤，但是不会计算得分
+          GET bank/_search
+          {
+            "query": {
+              "bool": {
+                "filter": {
+                  "range": {
+                      "age": {
+                        "gte": 10,
+                        "lte": 20
+                      }
+                    }
+                }
+              }
+            }
+          }
+
+          // term用于非文本字段的查询，比如年龄，金额这种精确的数据
+          GET bank/_search
+           {
+             "query": {
+               "term": {
+                 "age": "22"
+               }
+             }
+
+           }
+
+           // 字段名后带.keyword 表示精确匹配，表示查询address就是等于446 Halleck的数据
+            GET bank/_search
+            {
+              "query": {
+                "match": {
+                  "address.keyword": "446 Halleck"
+                }
+              }
+
+            }
+
+            // match_phrase进行短语匹配，表示查询包含446 Halleck的数据
+             GET bank/_search
+             {
+               "query": {
+                 "match_phrase": {
+                   "address": "446 Halleck"
+                 }
+               }
+
+             } 

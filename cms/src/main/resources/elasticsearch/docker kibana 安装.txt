@@ -1,0 +1,9 @@
+docker daocloud.io/library/kibana:7.4.2
+
+kibana 是一个可视化工具
+
+docker run --name kibana -e ELASTICSEARCH_HOSTS=http://192.168.109.128:9200 -p 5601:5601 \
+-d daocloud.io/library/kibana:7.4.2
+
+
+-e ELASTICSEAR CH_HOSTS=http://192.168.109.128:9200 一定要指定为虚拟机ip

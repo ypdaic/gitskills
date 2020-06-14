@@ -1,0 +1,35 @@
+
+// 使用标准分词器
+POST _analyze
+  {
+    "analyzer": "standard",
+    "text": "尚硅谷电商项目"
+  }
+
+  es提供的默认分词器对中文支持不是很好，需要我们而外安装中文ik分词器
+
+  https://github.com/medcl/elasticsearch-analysis-ik
+
+  ik分词器安装，安装时要和elasticsearch版本一致
+
+  ik分词器下载：https://gitee.com/qiiiiii7/elasticsearch-analysis-ik/repository/archive/v7.4.2
+
+  下载后，解压放到elasticsearch plugins目录，重启
+
+  应用：
+    POST _analyze
+    {
+      "analyzer": "ik_smart",
+      "text": "尚硅谷电商项目"
+    }
+
+
+      // 可以找出最大的分词组合
+      POST _analyze
+      {
+        "analyzer": "ik_max_word",
+        "text": "我是中国人"
+      }
+
+
+

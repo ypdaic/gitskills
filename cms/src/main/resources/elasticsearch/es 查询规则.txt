@@ -1,0 +1,36 @@
+查询非文本字段使用term
+
+   GET bank/_search
+   {
+     "query": {
+       "term": {
+         "age": "22"
+       }
+     }
+
+   }
+
+
+查询文本字段使用match
+
+    GET bank/_search
+     {
+       "query": {
+         "match": {
+           "address": "446 Halleck"
+         }
+       }
+
+     }
+
+查询精确文本字段使用.keyword
+
+    GET bank/_search
+    {
+      "query": {
+        "match": {
+          "address.keyword": "446 Halleck"
+        }
+      }
+
+    }
