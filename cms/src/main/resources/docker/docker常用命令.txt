@@ -1,5 +1,7 @@
 启动docker(liunx): service docker start
 
+查看docker容器使用资源情况：docker stats
+
 查看docker信息：docker info
 
 查看镜像：docker images
