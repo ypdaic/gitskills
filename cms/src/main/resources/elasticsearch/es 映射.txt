@@ -102,10 +102,11 @@ PUT /my_index
  }
 
  // 修改索引下的映射，只能添加新字段，index:false 表示不能被索引，也就不会被检索
+ // doc_values:false 表示不能被聚合
  PUT /my_index/_mapping
  {
 
      "properties": {
-     "name" : {"type": "integer", "index": false}
+     "name" : {"type": "integer", "index": false, "doc_values" : false}
      }
   }
