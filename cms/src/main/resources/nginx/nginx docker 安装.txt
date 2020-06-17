@@ -1,3 +1,9 @@
 docker run -d --name nginx -v /root/docker/nginx/conf.d:/etc/nginx/conf.d -v /root/docker/nginx/nginx.conf:/etc/nginx/nginx.conf -v /root/docker/nginx/logs/nginx:/var/log/nginx -v /root/docker/nginx/html:/usr/share/nginx/html -p 8080:80 30
 
 -v  用于挂载nginx容器数据目录，配置文件
+
+
+docker run -d --name nginx -v /Users/daiyanping/docker/nginx/conf.d:/etc/nginx/conf.d \
+-v /Users/daiyanping/docker/nginx/nginx.conf:/etc/nginx/nginx.conf \
+-v /Users/daiyanping/docker/nginx/logs:/var/log/nginx \
+-v /Users/daiyanping/docker/nginx/html:/usr/share/nginx/html -p 80:80 nginx:latest
