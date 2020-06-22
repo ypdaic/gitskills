@@ -1,0 +1,1 @@
+open-fengin 会根据你的接口参数类型和已有的messageConverter进行匹配，然后自动设置Content-Type，如果设置不成功，最后就从注解中获取也就是consumes 指定的
