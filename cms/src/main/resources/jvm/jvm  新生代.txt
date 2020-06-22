@@ -1,0 +1,3 @@
+新生代分为Eden、Survivor From、Survivor To，比例默认为8：1：1
+
+其使用的垃圾收集算法是复制清除算法，每次进行Minor GC时，清空Eden,Survivor From或者Survivor To,并将存活的对象放到Survivor From或者Survivor To

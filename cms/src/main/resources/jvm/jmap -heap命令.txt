@@ -11,8 +11,8 @@ jmap -heap pid
     Parallel GC with 4 thread(s)
 
     Heap Configuration:
-       MinHeapFreeRatio         = 0                         #GC后如果发现空闲堆内存占到整个预估堆内存的N%(百分比), 则放大堆内存的预估最大值
-       MaxHeapFreeRatio         = 100                       #GC后如果发现空闲堆内存占到整个预估堆内存的N%(百分比)，则收缩堆内存的预估最大值
+       MinHeapFreeRatio         = 0                         #用于设置堆空间的最小空闲比率。默认值是40，当堆空间的空闲内存比率小于40，JVM便会扩展堆空间。当-Xmx和-Xmx相等时，无效
+       MaxHeapFreeRatio         = 100                       #用于设置堆空间的最大空闲比率。默认值是70， 当堆空间的空闲内存比率大于70，JVM便会压缩堆空间。当-Xmx和-Xmx相等时，无效
        MaxHeapSize              = 2048917504 (1954.0MB)     #最大的堆内存
        NewSize                  = 42991616 (41.0MB)         #新生代最小值
        MaxNewSize               = 682622976 (651.0MB)       #新生代最大值
