@@ -1,6 +1,0 @@
--Xms: 堆的最小值
--Xmx：堆的最大值
--Xmn: 新生代的大小
--XX:NewSize: 新生代最小值
--XX:MaxNewSize 新生代最大值
--XX:PetenureSizeThreshold=1000000 单位为B，标明对象大小超过1M时，在老年代(tenured)分配内存空间。

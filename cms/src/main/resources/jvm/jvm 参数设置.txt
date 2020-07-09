@@ -1,0 +1,36 @@
+-Xms            设置堆的最小空间大小。
+
+-Xmx            设置堆的最大空间大小。
+
+-XX:NewSize     设置新生代最小空间大小。
+
+-XX:MaxNewSize  设置新生代最大空间大小。
+
+-XX:MetaspaceSize    设置永久代最小空间大小。
+
+-XX:MaxMetaspaceSize 设置永久代最大空间大小。
+
+-Xss            设置每个线程的堆栈大小。
+
+-XX:NewRatio    老年代对比新生代的空间大小, 比如2代表老年代空间是新生代的两倍大小
+
+-XX:SurvivorRatio Eden/Survivor的比值, 默认8:2
+
+-XX:PetenureSizeThreshold=1000000 单位为B，标明对象大小超过1M时，在老年代(tenured)分配内存空间。
+
+-XX:+PrintGCDetails 打印gc详细信息，在进行gc时才会打印
+
+-Xlog:gc*   打印gc详细信息，在进行gc时才会打印,jdk11下用这个参数
+
+-Xloggc:/Users/daiyanping/gc/gc.log
+
+-XX:+HeapDumpBeforeFullGC        full gc 前打出dump文件
+
+-XX:+HeapDumpAfterFullGC        full gc 后打出dump文件
+
+-XX:+HeapDumpOnOutOfMemoryError   内存溢出，打出dump文件
+
+-XX:+HeapDumpPath=/Users/daiyanping/dump/heapdump.bin   dump文件的保存路径
+
+
+-XX:+UseSerialGC   串行收集器
