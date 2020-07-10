@@ -1,0 +1,18 @@
+ 新生代内存统计
+
+ jstat -gcnewcapacity 14478
+
+  NGCMN      NGCMX       NGC           S0CMX     S0C     S1CMX     S1C       ECMX        EC           YGC   FGC   CGC
+  0.0        524288.0    337920.0      0.0       0.0     524288.0  22528.0   524288.0    315392.0     6     0     0
+
+  NGCMN：新生代最小容量
+  NGCMX：新生代最大容量
+  NGC：当前新生代容量
+  S0CMX：最大幸存1区大小
+  S0C：当前幸存1区大小
+  S1CMX：最大幸存2区大小
+  S1C：当前幸存2区大小
+  ECMX：最大伊甸园区大小
+  EC：当前伊甸园区大小
+  YGC：年轻代垃圾回收次数
+  FGC：老年代回收次数

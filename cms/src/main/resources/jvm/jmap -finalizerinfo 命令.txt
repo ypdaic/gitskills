@@ -1,0 +1,3 @@
+打印等待回收对象的信息
+
+jmap -finalizerinfo 28920

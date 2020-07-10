@@ -1,0 +1,11 @@
+
+ 垃圾收集统计概述（同-gcutil），附加最近两次垃圾回收事件的原因
+
+ jstat -gccause 28920
+
+  S0     S1      E      O      M       CCS        YGC     YGCT      FGC    FGCT    CGC    CGCT     GCT     LGCC                 GCC
+  0.00   100.00  40.69  31.56  96.93   91.66      7       1.218     0      0.000     0    0.000    1.218   G1 Evacuation Pause  No GC
+
+  LGCC：最近垃圾回收的原因
+
+  GCC：当前垃圾回收的原因
