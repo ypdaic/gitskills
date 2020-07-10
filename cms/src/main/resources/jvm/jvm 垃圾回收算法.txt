@@ -35,13 +35,15 @@
 
     CMS收集器： 老年代收集器
 
-              初始标记（CMS initial mark）
+              1、初始标记(CMS-initial-mark),从root对象开始标记存活的对象
 
-              并发标记（CMS concurrent mark）
+              2、并发标记(CMS-concurrent-mark)
 
-              重新标记（CMS remark）
+              3、重新标记(CMS-remark),暂停所有应用程序线程，重新标记并发标记阶段遗漏的对象（在并发标记阶段结束后对象状态的更新导致）
 
-              并发清除（CMS concurrent sweep）
+              4、并发清除(CMS-concurrent-sweep)
+
+              5、并发重设状态等待下次CMS的触发(CMS-concurrent-reset)。
 
               其中初始标记、重新标记这两个步骤仍然需要“Stop The World”。初始标记仅仅只是标记一下GC Roots能直接关联到的对象，速度很快，并发标记阶段就是进行GC Roots Tracing的过程，而重新标记阶段则是为了修正并发标记期间，因用户程序继续运作而导致标记产生变动的那一部分对象的标记记录，这个阶段的停顿时间一般会比初始标记阶段稍长一些，但远比并发标记的时间短。
               由于整个过程中耗时最长的并发标记和并发清除过程中，收集器线程都可以与用户线程一起工作，所以总体上来说，CMS收集器的内存回收过程是与用户线程一起并发地执行。老年代收集器（新生代使用ParNew）

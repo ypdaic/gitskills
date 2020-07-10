@@ -18,7 +18,7 @@
 
 -XX:PetenureSizeThreshold=1000000 单位为B，标明对象大小超过1M时，在老年代(tenured)分配内存空间。
 
--XX:+PrintGCDetails 打印gc详细信息，在进行gc时才会打印
+-XX:+PrintGCDetails 打印gc详细信息，在进行gc时才会打印，在程序结束之后才会打印堆的相关信息
 
 -Xlog:gc*   打印gc详细信息，在进行gc时才会打印,jdk11下用这个参数
 
@@ -30,7 +30,44 @@
 
 -XX:+HeapDumpOnOutOfMemoryError   内存溢出，打出dump文件
 
--XX:+HeapDumpPath=/Users/daiyanping/dump/heapdump.bin   dump文件的保存路径
+-XX:HeapDumpPath=/Users/daiyanping/dump/heapdump.bin   dump文件的保存路径
 
 
 -XX:+UseSerialGC   串行收集器
+
+-XX:+PrintGCTimeStamps 输出GC的时间戳（以基准时间的形式）,jdk 11已不支持
+
+-XX:+PrintGCDateStamps 输出GC的时间戳（以日期的形式，如 2017-09-04T21:53:59.234+0800）,jdk 11已不支持
+
+-XX:+PrintHeapAtGC 在进行GC的前后打印出堆的信息，jdk 11 已不支持
+
+-XX:MaxTenuringThreshold=15  经过15次minor gc 后进入年老代
+
+-XX:+UseConcMarkSweepGC  采用并发gc方式 jdk9 以后的版本可能被移除
+
+-XX:+CMSParallelRemarkEnabled 开启了降低标记停顿
+
+
+
+
+-XX:GCLogFileSize=10M gc日志文件大小
+
+-XX:NumberOfGCLogFiles=10 gc日志文件数量
+
+-XX:+UseGCLogFileRotation  使用gc日志文件轮换
+
+-XX:+PrintGCDateStamps
+
+-XX:+PrintGCTimeStamps
+
+-XX:+PrintGCDetails
+
+-XX:+DisableExplicitGC 禁止了 System.gc()
+
+-verbose:gc
+
+
+XX:+ScavengeBeforeFullGC 在fullgc时之前进行年轻代gc
+
+
+-XX:+CMSScavengeBeforeRemark   在cms remark标记阶段之前进行年轻代gc
