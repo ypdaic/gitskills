@@ -1,0 +1,23 @@
+直接执行如下两个命令：
+
+install plugin rpl_semi_sync_master soname 'semisync_master.so';
+install plugin rpl_semi_sync_slave soname 'semisync_slave.so';
+
+查看半同步开启状态：
+
+     show global status like "%sync%";
+
+     show global VARIABLES like "%sync%";
+
+开启半同步：
+
+    从库：
+    set global rpl_semi_sync_slave_enabled = 1 # 1:启用 0:禁止
+    stop slave io_thread;  关闭io线程
+    start slave io_thread; 开启io线程
+
+    主库：
+    set global rpl_semi_sync_master_enabled = 1 # 1:启用 0:禁止
+    set global rpl_semi_sync_master_timeout = 10000 #单位ms
+
+    主库半同步超时后，会切换为异步进行同步

@@ -1,0 +1,56 @@
+步骤：
+    主：
+
+        server-id=135
+        #开启复制
+        log-bin=mysql-bin
+        #设置id自增长步长
+        auto_increment_increment=2
+        #设置id自增长起始值,保证双master id不重复
+        auto_increment_offset=1
+        lower_case_table_names=1
+        #要同步的master数据库
+        #binlog-do-db=oms,pms,sms,ums,wms
+        #binlog-ignore-db=mysql //要忽略的数据库
+
+
+    从：
+
+        server-id=136
+        #开启复制
+        log-bin=mysql-bin
+        #设置id自增长步长
+        auto_increment_increment=2
+        #设置id自增长起始值,保证双master id不重复
+        auto_increment_offset=2
+        lower_case_table_names=1
+        #要同步的master数据库
+        #replicate-do-db=test
+        #binlog-ignore-db=mysql //要忽略的数据库
+
+
+master 创建复制用户
+
+    CREATE USER 'slave'@'%' IDENTIFIED BY '123456';
+
+    GRANT REPLICATION SLAVE,FILE,REPLICATION CLIENT ON *.* TO 'slave'@'%';
+
+获取master的binlog,pos
+
+    show master status;
+
+在slave中配置master信息
+
+    change master to master_host='192.168.109.128', master_user='slave', master_password='123456', master_port=3309, master_log_file='mysql-bin.000001', master_log_pos= 120, master_connect_retry=30;
+
+开启slave 复制
+
+    start slave;
+
+
+一般情况是对已经存在数据的master进行架构扩展，此时就配置的步骤
+
+    1：将master的数据库全部转储，然后在slave数据库上去执行，注意master上的所有数据库都必须执行，如果漏了某个库后，且slave已经配置成功，后面master对这个库进行事务操作，
+       会导致slave的 slave_sql_thread 线程异常停止掉。导致slave没法同步master的数据
+    2：然后执行上面的步骤
+

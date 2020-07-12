@@ -1,0 +1,6 @@
+
+双主加级联架构：
+
+master<————>master————>slave————>slave
+
+优点：解决master单点问题，又可以减轻读master的负责压力

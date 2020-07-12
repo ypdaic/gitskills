@@ -6,4 +6,20 @@ docker run -d --name mysql -p 3306:3306 -v /root/docker/mysql/conf/mysql:/etc/my
 ls
 
 
-docker run -d --name mysql-5.7 -p 3309:3306 -v /root/docker/mysql_5.7/conf:/etc/mysql -v /root/docker/mysql_5.7/log:/var/log/mysql -v /root/docker/mysql_5.7/data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 daocloud.io/library/mysql:5.7.4
+docker run -d --name mysql-5.7 -p 3309:3306 \
+-v /root/docker/mysql_5.7/conf:/etc/mysql \
+-v /root/docker/mysql_5.7/log:/var/log/mysql \
+-v /root/docker/mysql_5.7/data:/var/lib/mysql  \
+-e MYSQL_ROOT_PASSWORD=123456 daocloud.io/library/mysql:5.7.4
+
+docker run -d --name mysql-5.7-slave-1 -p 3310:3306 \
+-v /root/docker/mysql_5.7_slave_1/conf:/etc/mysql \
+-v /root/docker/mysql_5.7_slave_1/log:/var/log/mysql \
+-v /root/docker/mysql_5.7_slave_1/data:/var/lib/mysql  \
+-e MYSQL_ROOT_PASSWORD=123456 daocloud.io/library/mysql:5.7.4
+
+docker run -d --name mysql-5.7-slave-2 -p 3311:3306 \
+-v /root/docker/mysql_5.7_slave_2/conf:/etc/mysql \
+-v /root/docker/mysql_5.7_slave_2/log:/var/log/mysql \
+-v /root/docker/mysql_5.7_slave_2/data:/var/lib/mysql  \
+-e MYSQL_ROOT_PASSWORD=123456 daocloud.io/library/mysql:5.7.4

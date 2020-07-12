@@ -1,0 +1,26 @@
+master:
+    在data 目录下：
+
+    mysql-bin.000001
+    mysql-bin.000002
+    mysql-bin.000003
+
+    上面表示的是master上的bin-log日志文件，而当前正在同步那个日志文件在mysql-bin.index文件中
+
+slave:
+    在data目录下：
+
+    relay-log.info 用于记录当前正在使用哪个relay-bin 日志文件记录master同步过来的信息
+    relay-bin.000001
+    relay-bin.000002 用于记录master同步过来的数据
+
+    mysql-bin.000001
+    mysql-bin.000002
+    mysql-bin.000003  作用和master一样
+
+
+    我们可以从mysql-bin.000003，relay-bin.000002文件中可以看到具体使用的binlog存储格式
+
+    set  binlog_format='statement'
+    set  binlog_format='row'
+    set  binlog_format='mixed'

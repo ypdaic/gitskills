@@ -1,0 +1,14 @@
+同步步骤，默认是异步复制（不管是否同步成功）：
+
+1：当master提交事务后，写binlog文件完成
+2：master上的事件监听到binlog文件的变化，如果有变化则通知dump线程
+3：dump线程通知slave有事务需要同步
+4：slave的IO thread 从relay-log.info文件获取binlog文件和pos位置，并告诉master
+5: 把slave请求的日志文件和pos位置后面的日志内容同步给slave
+6：slave 写relay-bin
+7: slave 有一个SQL thread 线程根据 relay-bin 日志在slave执行sql语句
+8: relay log 写完后给master成功应答
+
+
+半同步复制：master进行事务提交时需要等待slave写数据成功（只是写到relay-bin）后，才进行事务提交，然后响应客户端
+           如果slave挂了，默认等待10s，就会变成异步复制

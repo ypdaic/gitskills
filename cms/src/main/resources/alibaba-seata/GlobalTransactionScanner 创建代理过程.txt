@@ -1,0 +1,3 @@
+扫描接口，类上是否有@GlobalTransactional，@GlobalLock 注解，有就创建代理，如果被处理对象已经是代理了，通过反射机制
+将DynamicAdvisedInterceptor 取出，也就是代理对象的CGLIB$CALLBACK_0属性，然后将DynamicAdvisedInterceptor的
+AdvisedSupport对象取出，最后往AdvisedSupport的第一位添加GlobalTransactionalInterceptor，如果是TCC则是TccActionInterceptor

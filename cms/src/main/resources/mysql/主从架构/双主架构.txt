@@ -1,0 +1,1 @@
+主主复制，一个master复制写，一个master复制读，然后用keeplive进行高可用，对客户端透明

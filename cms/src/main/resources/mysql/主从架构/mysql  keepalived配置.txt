@@ -1,0 +1,10 @@
+mysql -h 192.168.109.129 -uroot -p123456 -e "show status;" > /dev/null 2>&1
+if[$?==0]
+then
+    echo "$host mysql login successfully"
+    exit 0
+else
+    echo "mysql login faild"
+    killall keepalived
+    exit 2
+fi
