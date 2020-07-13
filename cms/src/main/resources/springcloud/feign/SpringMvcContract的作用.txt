@@ -1,0 +1,5 @@
+SpringMvcContract 用于在项目启动时，扫描接口的相关注解，如@RequestBody，@RequestParam等，已完成
+
+SynchronousMethodHandler的buildTemplateFromArgs参数的构建
+
+RequestTemplate template = buildTemplateFromArgs.create(argv);
