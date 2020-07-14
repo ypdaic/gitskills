@@ -1,0 +1,4 @@
+docker run --name zookeeper --restart always -d -p 2181:2181 \
+-v /root/docker/zookeeper/conf:/opt/zookeeper/conf \
+-v /root/docker/zookeeper/data:/tmp/zookeeper \
+daocloud.io/daocloud/zookeeper:latest
