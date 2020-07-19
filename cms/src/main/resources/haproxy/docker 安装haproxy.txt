@@ -1,0 +1,1 @@
+docker run -d -p 1080:1080 -p 13307:13307 -v /root/docker/haproxy/conf/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg --name=haproxy haproxy:latest

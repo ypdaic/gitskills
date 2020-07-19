@@ -1,0 +1,15 @@
+XA 也就是分布式事务，两阶段事务
+
+XA 事务步骤：
+
+XA start '123456';
+
+insert into oms_order (id,order_sn) VALUES (343434,'test')
+
+XA end '123456'
+
+#预提交
+xa PREPARE '123456'
+
+#事务提交
+xa commit '123456'

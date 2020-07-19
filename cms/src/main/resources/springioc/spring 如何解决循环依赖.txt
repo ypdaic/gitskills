@@ -9,14 +9,14 @@ spring解决循环依赖主要是使用3个缓存，分为一级缓存singletonO
 		// 如果bean还在创建，还没有创建完成，其实就是堆内存有了，属性还没有DI依赖注入
 		if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
 			synchronized (this.singletonObjects) {
-				// 从二级缓存中拿
+				// 从二级缓存中拿，如果能拿的到的化，这里已经是提前暴露的对象也就是AOP代理的对象
 				singletonObject = this.earlySingletonObjects.get(beanName);
 				// 如果还拿不到，并且允许bean提前暴露
 				if (singletonObject == null && allowEarlyReference) {
 					// 从三级缓存中拿到对象工厂
 					ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);
 					if (singletonFactory != null) {
-						// 从工厂中拿到对象
+						// 从工厂中拿到对象，这里就开始对对象进行AOP提前代理
 						singletonObject = singletonFactory.getObject();
 						// 升级到二级缓存
 						this.earlySingletonObjects.put(beanName, singletonObject);

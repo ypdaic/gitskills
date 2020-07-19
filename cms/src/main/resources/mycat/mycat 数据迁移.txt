@@ -1,0 +1,35 @@
+1:
+
+    新建用于扩容的newSchema.xml和newRule.xml文件，从老的文件cope而来，修改相关的配置，主要就是节点的配置，分表数量的配置，rule中节点的数量的配置
+    这两个文件是扩容以后的分片节点配置
+
+2：
+
+    修改dataMigrate.sh 文件
+    该文件类型是dos的，需要修改为unix类型
+    查看.sh 文件类型： :set ff
+    修改.sh 文件类型： :set ff=unix
+
+3:
+
+    修改dataMigrate.sh中的配置
+    基本上修改一个即可：
+    #mysql bin路径
+    RUN_CMD="$RUN_CMD -mysqlBin=/usr/bin"
+    这个是mysqldump文件的路径
+    找该文件： find / -name mysqldump
+
+4: 修改migrateTables.properties配置文件，指定需要迁移的逻辑库和表
+
+5：执行./bin/dataMigrate.sh
+
+6：最后替换newSchema.xml为schema.xml  newRule.xml为rule.xml
+
+注意事项：
+
+    jdk 不能用openjdk，需要自己安装，配置环境变量
+    之前的老的schema.xml rule.xml 老配置不能动
+    新增迁移后的节点新配置newSchema.xml newRule.xml
+    mycat bug migrateTables.properties 配置必须全大写或小写
+    迁移类DataMigrator
+    这个迁移只能迁移分库的情况，分表迁移不支持

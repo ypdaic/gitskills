@@ -1,0 +1,7 @@
+要想使用mycat的跨库join，必须保证 join字段的是一样的，并且join的字段要是分片字段，否则会报如下错误
+
+会报 In case of slice table,sql have same rules,but the relationship condition is different from rule field! 的错误
+
+/*!mycat:catlet=io.mycat.catlets.ShareJoin */ 已经不支持了
+
+mycat 不支持3表，3表以上的join支持

@@ -1,0 +1,39 @@
+global
+    log         127.0.0.1 local2
+    maxconn     4000
+    daemon
+
+defaults
+        log     global
+        log 127.0.0.1 local3
+        mode    http
+        option  tcplog
+        option  dontlognull
+        retries 10
+        option redispatch
+        maxconn         2000
+        timeout connect         10s
+        timeout client          1m
+        timeout server          1m
+        timeout http-keep-alive 10s
+        timeout check           10s
+
+listen  mycat
+        bind 0.0.0.0:13307
+        mode tcp
+        balance roundrobin
+        server mycat-1 192.168.109.129:8806 check inter 5s rise 2 fall 3 maxconn 300
+        server mycat-2 192.168.109.1:8806 check inter 5s rise 2 fall 3 maxconn 300
+
+listen stats
+        bind 0.0.0.0:1080
+        mode http
+        option httplog
+        maxconn 10
+        stats refresh 30s
+        stats uri /stats
+        stats realm XingCloud\ Haproxy
+        stats auth admin:admin #用这个账号登录，可以自己设置
+        stats auth Frank:Frank
+        stats hide-version
+        stats admin if TRUE
