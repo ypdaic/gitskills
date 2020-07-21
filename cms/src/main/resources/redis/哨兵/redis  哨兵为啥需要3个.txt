@@ -1,1 +1,7 @@
 当其中一个哨兵服务挂了，只有一个哨兵服务的话，没有哨兵去允许故障转移了，导致故障转移就是不执行。
+
+如果2台挂了一台，此时redis 主节点挂了，这一台sentinel 不会进行故障转移
+
+信息如下：
+2195:X 20 Jul 2020 16:37:11.372 # -failover-abort-not-elected master mymaster 127.0.0.1 6379
+2195:X 20 Jul 2020 16:37:11.464 # Next failover delay: I will not start a failover before Mon Jul 20 16:43:01 2020

@@ -1,3 +1,67 @@
 在失效主服务器属下的从服务器当中， 那些被标记为主观下线、已断线、或者最后一次回复 PING 命令的时间大于五秒钟的从服务器都会被 淘汰。
 在失效主服务器属下的从服务器当中， 那些与失效主服务器连接断开的时长超过 down-after 选项指定的时长十倍的从服务器都会被 淘汰。
 在 经历了以上两轮淘汰之后 剩下来的从服务器中， 我们选出 复制偏移量（replication offset）最大 的那个 从服务器 作为新的主服务器；如果复制偏移量不可用，或者从服务器的复制偏移量相同，那么 带有最小运行 ID 的那个从服务器成为新的主服务器。
+
+某个主挂了哨兵1的日志
+
+2193:X 20 Jul 2020 15:07:05.384 # Sentinel ID is 7154ceb044dbd42025e806178ba3d6401d1ded41 哨兵id
+2193:X 20 Jul 2020 15:07:05.384 # +monitor master mymaster 127.0.0.1 6379 quorum 1 哨兵监控的主节点
+2193:X 20 Jul 2020 15:07:35.423 # +sdown slave 127.0.0.1:6381 127.0.0.1 6381 @ mymaster 127.0.0.1 6379 主观下线 6381
+2193:X 20 Jul 2020 15:08:48.122 # +sdown master mymaster 127.0.0.1 6379  主观下线6379
+2193:X 20 Jul 2020 15:08:48.123 # +odown master mymaster 127.0.0.1 6379 #quorum 1/1  客观下线6379
+2193:X 20 Jul 2020 15:08:48.125 # +new-epoch 1
+2193:X 20 Jul 2020 15:08:48.125 # +try-failover master mymaster 127.0.0.1 6379 尝试故障转移
+2193:X 20 Jul 2020 15:08:48.126 # +vote-for-leader 7154ceb044dbd42025e806178ba3d6401d1ded41 1 哨兵自己投一票
+2193:X 20 Jul 2020 15:08:48.129 # a0372affe0a1b33bd5c180ca2551daa18667af91 voted for 7154ceb044dbd42025e806178ba3d6401d1ded41 1 哨兵2 给自己投一票
+2193:X 20 Jul 2020 15:08:48.130 # 1d8aad6ef8d2d786222b4cdd434091ad707aa0f5 voted for 7154ceb044dbd42025e806178ba3d6401d1ded41 1 哨兵3 给自己投一票
+2193:X 20 Jul 2020 15:08:48.194 # +elected-leader master mymaster 127.0.0.1 6379 当前的master 6379
+2193:X 20 Jul 2020 15:08:48.194 # +failover-state-select-slave master mymaster 127.0.0.1 6379 故障转移状态选择slave
+2193:X 20 Jul 2020 15:08:48.273 # +selected-slave slave 127.0.0.1:6380 127.0.0.1 6380 @ mymaster 127.0.0.1 6379 选择 6380进行故障转移
+2193:X 20 Jul 2020 15:08:48.273 * +failover-state-send-slaveof-noone slave 127.0.0.1:6380 127.0.0.1 6380 @ mymaster 127.0.0.1 6379  故障转移
+2193:X 20 Jul 2020 15:08:48.330 * +failover-state-wait-promotion slave 127.0.0.1:6380 127.0.0.1 6380 @ mymaster 127.0.0.1 6379 故障转移等待升级
+2193:X 20 Jul 2020 15:08:48.408 # +promoted-slave slave 127.0.0.1:6380 127.0.0.1 6380 @ mymaster 127.0.0.1 6379 提升6380为主
+2193:X 20 Jul 2020 15:08:48.409 # +failover-state-reconf-slaves master mymaster 127.0.0.1 6379 故障转移从新分配从属
+2193:X 20 Jul 2020 15:08:48.470 # +failover-end master mymaster 127.0.0.1 6379 故障转移结束
+2193:X 20 Jul 2020 15:08:48.470 # +switch-master mymaster 127.0.0.1 6379 127.0.0.1 6380 选择6380为主
+2193:X 20 Jul 2020 15:08:48.470 * +slave slave 127.0.0.1:6381 127.0.0.1 6381 @ mymaster 127.0.0.1 6380 将6379，6381的主设置为6380
+2193:X 20 Jul 2020 15:08:48.470 * +slave slave 127.0.0.1:6379 127.0.0.1 6379 @ mymaster 127.0.0.1 6380 将6379，6381的主设置为6380
+2193:X 20 Jul 2020 15:09:18.534 # +sdown slave 127.0.0.1:6381 127.0.0.1 6381 @ mymaster 127.0.0.1 6380 主管下线6379
+2193:X 20 Jul 2020 15:09:18.534 # +sdown slave 127.0.0.1:6379 127.0.0.1 6379 @ mymaster 127.0.0.1 6380 主管下线6380
+
+
+
+
+某个主挂了哨兵2的日志
+
+2195:X 20 Jul 2020 15:07:09.573 # Sentinel ID is a0372affe0a1b33bd5c180ca2551daa18667af91
+2195:X 20 Jul 2020 15:07:09.574 # +monitor master mymaster 127.0.0.1 6379 quorum 1
+2195:X 20 Jul 2020 15:07:39.588 # +sdown slave 127.0.0.1:6381 127.0.0.1 6381 @ mymaster 127.0.0.1 6379
+2195:X 20 Jul 2020 15:08:48.128 # +new-epoch 1
+2195:X 20 Jul 2020 15:08:48.129 # +vote-for-leader 7154ceb044dbd42025e806178ba3d6401d1ded41 1
+2195:X 20 Jul 2020 15:08:48.140 # +sdown master mymaster 127.0.0.1 6379
+2195:X 20 Jul 2020 15:08:48.140 # +odown master mymaster 127.0.0.1 6379 #quorum 1/1
+2195:X 20 Jul 2020 15:08:48.140 # Next failover delay: I will not start a failover before Mon Jul 20 15:14:48 2020
+2195:X 20 Jul 2020 15:08:48.471 # +config-update-from sentinel 7154ceb044dbd42025e806178ba3d6401d1ded41 127.0.0.1 26380 @ mymaster 127.0.0.1 6379  更新主配置
+2195:X 20 Jul 2020 15:08:48.471 # +switch-master mymaster 127.0.0.1 6379 127.0.0.1 6380 设置master 为6380
+2195:X 20 Jul 2020 15:08:48.471 * +slave slave 127.0.0.1:6381 127.0.0.1 6381 @ mymaster 127.0.0.1 6380
+2195:X 20 Jul 2020 15:08:48.471 * +slave slave 127.0.0.1:6379 127.0.0.1 6379 @ mymaster 127.0.0.1 6380
+2195:X 20 Jul 2020 15:09:18.526 # +sdown slave 127.0.0.1:6379 127.0.0.1 6379 @ mymaster 127.0.0.1 6380
+2195:X 20 Jul 2020 15:09:18.526 # +sdown slave 127.0.0.1:6381 127.0.0.1 6381 @ mymaster 127.0.0.1 6380
+
+
+某个主挂了哨兵3的日志
+
+2197:X 20 Jul 2020 15:07:14.583 # Sentinel ID is 1d8aad6ef8d2d786222b4cdd434091ad707aa0f5
+2197:X 20 Jul 2020 15:07:14.584 # +monitor master mymaster 127.0.0.1 6379 quorum 1
+2197:X 20 Jul 2020 15:07:44.598 # +sdown slave 127.0.0.1:6381 127.0.0.1 6381 @ mymaster 127.0.0.1 6379
+2197:X 20 Jul 2020 15:08:48.128 # +new-epoch 1
+2197:X 20 Jul 2020 15:08:48.129 # +vote-for-leader 7154ceb044dbd42025e806178ba3d6401d1ded41 1
+2197:X 20 Jul 2020 15:08:48.129 # +sdown master mymaster 127.0.0.1 6379
+2197:X 20 Jul 2020 15:08:48.129 # +odown master mymaster 127.0.0.1 6379 #quorum 1/1
+2197:X 20 Jul 2020 15:08:48.129 # Next failover delay: I will not start a failover before Mon Jul 20 15:14:49 2020
+2197:X 20 Jul 2020 15:08:48.471 # +config-update-from sentinel 7154ceb044dbd42025e806178ba3d6401d1ded41 127.0.0.1 26380 @ mymaster 127.0.0.1 6379
+2197:X 20 Jul 2020 15:08:48.471 # +switch-master mymaster 127.0.0.1 6379 127.0.0.1 6380
+2197:X 20 Jul 2020 15:08:48.471 * +slave slave 127.0.0.1:6381 127.0.0.1 6381 @ mymaster 127.0.0.1 6380
+2197:X 20 Jul 2020 15:08:48.472 * +slave slave 127.0.0.1:6379 127.0.0.1 6379 @ mymaster 127.0.0.1 6380
+2197:X 20 Jul 2020 15:09:18.516 # +sdown slave 127.0.0.1:6381 127.0.0.1 6381 @ mymaster 127.0.0.1 6380
+2197:X 20 Jul 2020 15:09:18.516 # +sdown slave 127.0.0.1:6379 127.0.0.1 6379 @ mymaster 127.0.0.1 6380
