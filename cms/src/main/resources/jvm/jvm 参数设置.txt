@@ -2,15 +2,19 @@
 
 -Xmx            设置堆的最大空间大小。
 
+-Xmn            设置新生代最小空间大小，效果和-XX:NewSize效果一样
+
+-XX:MaxHeapSize 设置堆的最大空间大小，和-Xmx效果一样。
+
 -XX:NewSize     设置新生代最小空间大小。
 
 -XX:MaxNewSize  设置新生代最大空间大小。
 
--XX:MetaspaceSize    设置永久代最小空间大小。
+-XX:MetaspaceSize    设置元空间最小空间大小，jdk1.8 以后大小就只受本机总内存的限制(如果不设置参数的话)
 
--XX:MaxMetaspaceSize 设置永久代最大空间大小。
+-XX:MaxMetaspaceSize 设置元空间最大空间大小，jdk1.8 以后大小就只受本机总内存的限制(如果不设置参数的话)
 
--Xss            设置每个线程的堆栈大小。
+-Xss            设置每个线程的堆栈大小，默认1m。
 
 -XX:NewRatio    老年代对比新生代的空间大小, 比如2代表老年代空间是新生代的两倍大小
 
@@ -50,15 +54,15 @@
 
 
 
--XX:GCLogFileSize=10M gc日志文件大小
+-XX:GCLogFileSize=10M      gc日志文件大小，jdk 11 不支持
 
--XX:NumberOfGCLogFiles=10 gc日志文件数量
+-XX:NumberOfGCLogFiles=10  gc日志文件数量，jdk 11 不支持
 
--XX:+UseGCLogFileRotation  使用gc日志文件轮换
+-XX:+UseGCLogFileRotation  使用gc日志文件轮换，jdk 11 不支持
 
--XX:+PrintGCDateStamps
+-XX:+PrintGCDateStamps     jdk 11 不支持，gc 日期打印
 
--XX:+PrintGCTimeStamps
+-XX:+PrintGCTimeStamps     jdk 11 不支持，gc 时间戳打印
 
 -XX:+PrintGCDetails
 
@@ -71,3 +75,9 @@ XX:+ScavengeBeforeFullGC 在fullgc时之前进行年轻代gc
 
 
 -XX:+CMSScavengeBeforeRemark   在cms remark标记阶段之前进行年轻代gc
+
+-XX：MaxDirectMemorySize 直接内存大小设置，默认请求jvm自动分配大小
+
+
+
+参数官方文档：https://docs.oracle.com/javase/8/docs/technotes/tools/unix/java.html
