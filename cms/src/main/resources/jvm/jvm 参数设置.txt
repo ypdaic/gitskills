@@ -78,6 +78,10 @@ XX:+ScavengeBeforeFullGC 在fullgc时之前进行年轻代gc
 
 -XX：MaxDirectMemorySize 直接内存大小设置，默认请求jvm自动分配大小
 
+-XX:-UseCompressedOops 禁用压缩指针的使用。默认情况下，此选项处于启用状态，并且当Java堆大小小于32 GB时，将使用压缩指针。启用此选项后，对象引用将表示为32位偏移量而不是64位指针，这通常在运行Java堆大小小于32 GB的应用程序时提高性能。此选项仅适用于64位JVM。
 
+                       当Java堆大小大于32GB时，也可以使用压缩指针。参见-XX:ObjectAlignmentInBytes选项。
+
+-XX：+ UseTLAB  允许在年轻代空间中使用线程本地分配块（TLAB）。默认情况下启用此选项。要禁用TLAB，请指定-XX:-UseTLAB。
 
 参数官方文档：https://docs.oracle.com/javase/8/docs/technotes/tools/unix/java.html
