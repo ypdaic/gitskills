@@ -84,4 +84,12 @@ XX:+ScavengeBeforeFullGC 在fullgc时之前进行年轻代gc
 
 -XX：+ UseTLAB  允许在年轻代空间中使用线程本地分配块（TLAB）。默认情况下启用此选项。要禁用TLAB，请指定-XX:-UseTLAB。
 
+-XX:PretenureSizeThreshold=4m  PretenureSizeThreshold 参数只对 Serial 和 ParNew 两款收集器有效，指定大于该设置值的对象直接在老年代分配
+
+-XX:MaxTenuringThreshold 进入到老年代的最大年龄    并发的垃圾回收器默认为 15),CMS 是 6 时
+
+-XX:MaxGCPauseMillis   设置最大GC暂停时间的目标（以毫秒为单位）。这是一个软目标，并且JVM将尽最大的努力来实现它。默认情况下，没有最大暂停时间值。
+
+-XX:+UseAdaptiveSizePolicy
+
 参数官方文档：https://docs.oracle.com/javase/8/docs/technotes/tools/unix/java.html

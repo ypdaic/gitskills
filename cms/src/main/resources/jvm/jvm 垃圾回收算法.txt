@@ -23,8 +23,8 @@
     Serial收集器：新生代、老年代使用串行回收；新生代复制算法、老年代标记-压缩；垃圾收集的过程中会Stop The World（服务暂停）
                  -XX:+UseSerialGC
 
-    ParNew收集器： ParNew收集器其实就是Serial收集器的多线程版本。新生代并行，老年代串行；新生代复制算法、老年代标记-压缩，
-                  -XX:+UseParNewGC ParNew收集器
+    ParNew收集器： ParNew收集器其实就是Serial收集器的多线程版本。新生代并行，老年代串行；新生代复制算法、老年代标记-压缩
+                  -XX:+UseParNewGC ParNew收集器，jdk 11 已经不支持
                   -XX:ParallelGCThreads 限制线程数量
 
     Parallel收集器：Parallel Scavenge收集器类似ParNew收集器，Parallel收集器更关注系统的吞吐量。可以通过参数来打开自适应调节策略，虚拟机会根据当前系统的运行情况收集性能监控信息，动态调整这些参数以提供最合适的停顿时间或最大的吞吐量；也可以通过参数控制GC的时间不大于多少毫秒或者比例；新生代复制算法、老年代标记-压缩
