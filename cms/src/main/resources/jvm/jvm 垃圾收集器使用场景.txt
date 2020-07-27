@@ -37,5 +37,5 @@ Parallel Scavenge	   Parallel Old	-XX:+UseParallelGC -XX:+UseParallelOldGC
 Parallel New	       Parallel Old	不支持
 Serial	               CMS	        -XX:-UseParNewGC -XX:+UseConcMarkSweepGC
 Parallel Scavenge	   CMS	        不支持
-Parallel New	CMS	                -XX:+UseParNewGC -XX:+UseConcMarkSweepGC
+Parallel New	       CMS	        -XX:+UseParNewGC -XX:+UseConcMarkSweepGC
 G1	                                -XX:+UseG1GC
