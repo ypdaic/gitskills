@@ -90,6 +90,6 @@ XX:+ScavengeBeforeFullGC 在fullgc时之前进行年轻代gc
 
 -XX:MaxGCPauseMillis   设置最大GC暂停时间的目标（以毫秒为单位）。这是一个软目标，并且JVM将尽最大的努力来实现它。默认情况下，没有最大暂停时间值。
 
--XX:+UseAdaptiveSizePolicy
+-XX:+UseAdaptiveSizePolicy  当这个参数被激活之后，就不需要人工指定新生代的大小(-Xmn)、Eden 与 Survivor 区的 比例(-XX:SurvivorRatio)、 晋升老年代对象大小(-XX:PretenureSizeThreshold)等细节参数了，虚拟机会根据当前系统的运行情况收集性能监控信息，动态调 整这些参数以提供最合适的停顿时间或者最大的吞吐量。
 
 参数官方文档：https://docs.oracle.com/javase/8/docs/technotes/tools/unix/java.html

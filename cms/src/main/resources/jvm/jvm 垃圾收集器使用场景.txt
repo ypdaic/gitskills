@@ -1,0 +1,41 @@
+收集器              收集对象和算法                      收集器类型                 说明                                             适用场景
+Serial             新生代，复制算法                    单线程                     简单高效;                                        适合内存不大的情况;
+ParNew             新生代，复制算法                    并行的多线程收集器           ParNew 垃圾收集器是 Serial 收集器的多线程版 本      搭配 CMS 垃圾回收器的首选
+Parallel Scavenge
+吞吐量优先收集器     新生代，复制算法                    并行的多线程收集 器
+                                                     类似 ParNew，更加关注吞 吐量，
+                                                     达到一个可控制的 吞吐量;                                                      本身是 Server 级别多 CPU 机 器上的默认 GC 方式，
+                                                                                                                                主要 适合后台运算不需要太多交 互的任务;
+Serial Old        老年代，标记整理算法                  单线程                     Client 模式下虚拟机使用
+Parallel Old      老年代，标记整理算法                  并行的多线程收集器           Parallel Scavenge 收集器的老年代版 本，
+                                                     为了配合 Parallel Scavenge 的面
+                                                     向吞吐量的特性而开发的对应组合;                                                在注重吞吐量以及 CPU 资 源敏感的场合采用
+
+CMS               老年代，标记清除算法                  并行与并发收集器             尽可能的缩短垃圾收集时用户线程 停止时间;缺点在于:
+                                                                                1.内存碎片
+                                                                                2.需要更多 cpu 资源 3.浮动垃圾问题，需要更大的堆空间
+                                                                                重视服务的响应速度、系统 停顿时间和用户体验的互 联网网站或者 B/S 系统。
+                                                                                互 联网后端目前 cms 是主流 的垃圾回收器;
+G1               跨新生代和老年代;                     标记 整理 + 化整为零          并行与并发收集器                                  JDK1.7 才正式引入，采用分区回收的 思维，基本不牺牲吞吐量的前提下完 成低停顿的内存回收;可预测的停顿 是其最大的优势;
+                                                                                                                                面向服务端应用的垃圾回 收器，目标为取代 CMS
+
+
+并行:垃圾收集的多线程的同时进行。
+并发:垃圾收集的多线程和应用的多线程同时进行。
+注:
+    吞吐量=运行用户代码时间/(运行用户代码时间+ 垃圾收集时间)
+    垃圾收集时间= 垃圾回收频率 * 单次垃圾回收时间
+
+
+Young	               Tenured	    JVM options
+Incremental	           Incremental	-Xincgc
+Serial	               Serial	    -XX:+UseSerialGC
+ParallelScavenge	   Serial	    -XX:+UseParallelGC -XX:-UseParallelOldGC
+Parallel New	       Serial	    不支持
+Serial	               Parallel Old	不支持
+Parallel Scavenge	   Parallel Old	-XX:+UseParallelGC -XX:+UseParallelOldGC
+Parallel New	       Parallel Old	不支持
+Serial	               CMS	        -XX:-UseParNewGC -XX:+UseConcMarkSweepGC
+Parallel Scavenge	   CMS	        不支持
+Parallel New	CMS	                -XX:+UseParNewGC -XX:+UseConcMarkSweepGC
+G1	                                -XX:+UseG1GC
