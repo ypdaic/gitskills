@@ -1817,3 +1817,67 @@ Heap
   region size 1024K, 18 young (18432K), 0 survivors (0K)
  Metaspace       used 78112K, capacity 81916K, committed 82176K, reserved 1120256K
   class space    used 10034K, capacity 10708K, committed 10752K, reserved 1048576K
+
+
+
+2020-07-10T15:54:59.178-0800: 12.473: [GC pause (G1 Evacuation Pause) (young), 0.0050419 secs]   G1 暂停回收（年轻）区域。 JVM启动后12.473秒开始暂停，暂停持续时间为0.0050419 秒（以挂钟时间计）
+   [Parallel Time: 3.5 ms, GC Workers: 4]   表示在3.5 ms（实时）中，以下活动是由4个线程并行执行的
+      [GC Worker Start (ms): Min: 12472.7, Avg: 12472.7, Max: 12472.7, Diff: 0.1]   gc线程开始活动的时间点，与暂停开始时的时间戳相匹配。 如果Min和Max相差很大，则可能表明使用了太多线程，或者机器上的其他进程正在从JVM内部的垃圾收集进程中窃取CPU时间
+      [Ext Root Scanning (ms): Min: 0.2, Avg: 0.5, Max: 0.8, Diff: 0.7, Sum: 1.8]   扫描外部（非堆）根目录（例如类加载器，JNI引用，JVM系统根目录等）所花费的时间。显示经过的时间，“ Sum”是CPU时间
+      [Update RS (ms): Min: 0.0, Avg: 0.2, Max: 0.3, Diff: 0.3, Sum: 0.9]
+         [Processed Buffers: Min: 0, Avg: 2.2, Max: 6, Diff: 6, Sum: 9]
+      [Scan RS (ms): Min: 0.4, Avg: 0.5, Max: 0.6, Diff: 0.2, Sum: 2.1]
+      [Code Root Scanning (ms): Min: 0.0, Avg: 0.1, Max: 0.3, Diff: 0.3, Sum: 0.4]   扫描源于实际代码的根所花的时间：本地var等。
+      [Object Copy (ms): Min: 2.1, Avg: 2.1, Max: 2.1, Diff: 0.0, Sum: 8.4]          将活动对象复制到收集区域之外需要花费多长时间。
+      [Termination (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.0]          辅助线程确保可以安全停止并且无需再进行其他工作然后真正终止所需的时间
+         [Termination Attempts: Min: 1, Avg: 3.0, Max: 5, Diff: 4, Sum: 12]          工作线程尝试终止的尝试次数。 如果工人发现实际上还有更多工作要做，并且为时过早，则尝试失败。
+      [GC Worker Other (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.0]      其他杂项小活动，在日志中不应单独列出。
+      [GC Worker Total (ms): Min: 3.4, Avg: 3.4, Max: 3.4, Diff: 0.1, Sum: 13.6]     辅助线程总共工作了多长时间
+      [GC Worker End (ms): Min: 12476.1, Avg: 12476.1, Max: 12476.1, Diff: 0.0]      工人完成工作的时间戳。 通常，它们应该大致相等，否则可能表明有太多线程挂在身边或邻居吵杂
+   [Code Root Fixup: 0.0 ms]   释放用于管理并行活动的数据结构。 应始终接近零。 这是按顺序完成的。
+   [Code Root Purge: 0.0 ms]   清理更多的数据结构也应该非常快，但不一定几乎为零。 这是按顺序完成的。
+   [Clear CT: 0.1 ms]
+   [Other: 1.4 ms]             其他杂项活动，其中许多也并行进行
+      [Choose CSet: 0.0 ms]
+      [Ref Proc: 1.2 ms]       处理非强引用的时间：清除它们或确定不需要清除。
+      [Ref Enq: 0.0 ms]        将剩余的非强引用加入适当的ReferenceQueue所花费的时间
+      [Redirty Cards: 0.1 ms]
+      [Humongous Register: 0.0 ms]
+      [Humongous Reclaim: 0.0 ms]
+      [Free CSet: 0.0 ms]      返回集合集中释放的区域以使它们可用于新分配所花费的时间。
+   [Eden: 43.0M(43.0M)->0.0B(43.0M) Survivors: 7168.0K->7168.0K Heap: 52.8M(100.0M)->10.8M(100.0M)] 暂停前后，Eden，Survivors，Heap的大小和总大小
+ [Times: user=0.01 sys=0.00, real=0.01 secs]
+
+
+ 2020-07-10T15:55:23.795-0800: 37.090: [GC pause (G1 Evacuation Pause) (young) (initial-mark) (to-space exhausted), 0.0447475 secs]   初始标记
+    [Parallel Time: 39.9 ms, GC Workers: 4]
+       [GC Worker Start (ms): Min: 37089.7, Avg: 37089.7, Max: 37089.7, Diff: 0.1]
+       [Ext Root Scanning (ms): Min: 1.5, Avg: 7.7, Max: 14.3, Diff: 12.8, Sum: 30.9]
+       [Update RS (ms): Min: 0.8, Avg: 1.0, Max: 1.6, Diff: 0.8, Sum: 4.1]
+          [Processed Buffers: Min: 5, Avg: 7.5, Max: 14, Diff: 9, Sum: 30]
+       [Scan RS (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.0]
+       [Code Root Scanning (ms): Min: 0.0, Avg: 0.0, Max: 0.1, Diff: 0.1, Sum: 0.1]
+       [Object Copy (ms): Min: 23.8, Avg: 30.9, Max: 37.3, Diff: 13.6, Sum: 123.8]
+       [Termination (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.0]
+          [Termination Attempts: Min: 1, Avg: 1.8, Max: 3, Diff: 2, Sum: 7]
+       [GC Worker Other (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.0]
+       [GC Worker Total (ms): Min: 39.7, Avg: 39.8, Max: 39.8, Diff: 0.1, Sum: 159.0]
+       [GC Worker End (ms): Min: 37129.5, Avg: 37129.5, Max: 37129.5, Diff: 0.0]
+    [Code Root Fixup: 0.0 ms]
+    [Code Root Purge: 0.0 ms]
+    [Clear CT: 0.0 ms]
+    [Other: 4.8 ms]
+       [Evacuation Failure: 4.1 ms]
+       [Choose CSet: 0.0 ms]
+       [Ref Proc: 0.5 ms]
+       [Ref Enq: 0.0 ms]
+       [Redirty Cards: 0.1 ms]
+       [Humongous Register: 0.0 ms]
+       [Humongous Reclaim: 0.0 ms]
+       [Free CSet: 0.0 ms]
+    [Eden: 5120.0K(44.0M)->0.0B(50.0M) Survivors: 6144.0K->0.0B Heap: 100.0M(100.0M)->100.0M(100.0M)]
+  [Times: user=0.07 sys=0.01, real=0.04 secs]
+  2020-07-10T15:55:44.267-0800: 57.562: [GC concurrent-root-region-scan-start]   这个阶段标记了所有可从所谓的根区域到达的活动对象，即那些不是空的并且可能最终不得不在标记周期的中间收集的活动对象。由于在同时标记的中间移动物料会引起麻烦，因此必须在下一个疏散暂停开始之前完成此阶段。如果必须更早启动，它将请求根区域扫描的早期中止，然后等待其完成。在当前实施中，根区域是幸存者区域：它们是肯定会在下一次撤离暂停中收集的年轻一代的位。
+  2020-07-10T15:55:44.267-0800: 57.563: [GC concurrent-root-region-scan-end, 0.0001237 secs]
+    2020-07-10T15:55:44.267-0800: 57.563: [GC concurrent-mark-start]  并发标记。这个阶段与CMS非常相似：它只是遍历对象图并在特殊的位图中标记访问的对象。为了确保满足快照一开始的语义，G1 GC要求应用程序线程对对象图进行的所有并发更新都应保留先前的已知标记信息。
+    2020-07-10T15:55:44.267-0800: 57.563: [Full GC (Allocation Failure)  99M->50M(100M), 0.1890562 secs]

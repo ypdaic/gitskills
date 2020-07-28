@@ -16,7 +16,7 @@
 
 -Xss            设置每个线程的堆栈大小，默认1m。
 
--XX:NewRatio    老年代对比新生代的空间大小, 比如2代表老年代空间是新生代的两倍大小
+-XX:NewRatio    设置新老一代大小之间的比率。默认情况下，此选项设置为2，表示堆分成3份，老年代占2份，新生代占1份
 
 -XX:SurvivorRatio Eden/Survivor的比值, 默认8:2
 
@@ -70,6 +70,8 @@
 
 -verbose:gc
 
+-XX：ParallelGCThreads = NNN进行配置 。ParallelGC的GC线程数，默认值等于计算机中的内核数。
+
 
 XX:+ScavengeBeforeFullGC 在fullgc时之前进行年轻代gc
 
@@ -86,7 +88,7 @@ XX:+ScavengeBeforeFullGC 在fullgc时之前进行年轻代gc
 
 -XX:PretenureSizeThreshold=4m  PretenureSizeThreshold 参数只对 Serial 和 ParNew 两款收集器有效，指定大于该设置值的对象直接在老年代分配
 
--XX:MaxTenuringThreshold 进入到老年代的最大年龄    并发的垃圾回收器默认为 15),CMS 是 6 时
+-XX:MaxTenuringThreshold 进入到老年代的最大年龄    设置用于自适应GC大小调整的最大使用期限阈值。最大值为15。并行（吞吐量）收集器的默认值为15，而CMS收集器的默认值为6。
 
 -XX:MaxGCPauseMillis   设置最大GC暂停时间的目标（以毫秒为单位）。这是一个软目标，并且JVM将尽最大的努力来实现它。默认情况下，没有最大暂停时间值。
 
