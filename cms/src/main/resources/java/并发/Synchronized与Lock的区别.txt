@@ -1,4 +1,5 @@
-Synchronized与Lock都是提供锁的功能，从表现上Synchronized提供的是隐式锁，而Lock提供的显示锁，Synchronized阻塞后没有任何手段将其唤醒
+Synchronized与Lock都是提供锁的功能，从表现上Synchronized提供的是隐式锁，而Lock提供的显示锁，
+Synchronized阻塞后没有任何手段将其唤醒
 而Lock接口提供了3种方式，在阻塞后，可以放弃锁的等待
 
 

@@ -94,4 +94,8 @@ XX:+ScavengeBeforeFullGC 在fullgc时之前进行年轻代gc
 
 -XX:+UseAdaptiveSizePolicy  当这个参数被激活之后，就不需要人工指定新生代的大小(-Xmn)、Eden 与 Survivor 区的 比例(-XX:SurvivorRatio)、 晋升老年代对象大小(-XX:PretenureSizeThreshold)等细节参数了，虚拟机会根据当前系统的运行情况收集性能监控信息，动态调 整这些参数以提供最合适的停顿时间或者最大的吞吐量。
 
+-XX:G1HeapRegionSize=4m G1收集Reion的大小设置,默认1m，取值范围为 1MB~32MB，且应为 2 的 N 次 幂，超过后就是32MB
+
+-XX:+UseG1GC 使用G1收集器
+
 参数官方文档：https://docs.oracle.com/javase/8/docs/technotes/tools/unix/java.html
