@@ -1,12 +1,53 @@
--Xmn -Xms -Xmx –Xss 年轻代 最小堆 最大堆 栈空间
--XX:+UseTLAB 使用 TLAB，默认打开
--XX:+PrintTLAB  打印 TLAB 的使用情况
--XX:TLABSize 设置 TLAB 大小
- -XX:+DisableExplicitGC
--XX:+PrintGC
--XX:+PrintGCDetails
--XX:+PrintHeapAtGC
--XX:+PrintGCTimeStamps
--XX:+PrintGCApplicationConcurrentTime 打印应用程序时间(低) -XX:+PrintGCApplicationStoppedTime 打印暂停时长(低) -XX:+PrintReferenceGC 记录回收了多少种不同引用类型的引用(重要性低) -verbose:class 类加载详细过程
--XX:+PrintVMOptions 可在程序运行时，打印虚拟机接受到的命令行显示参数
--XX:+PrintFlagsFinal -XX:+PrintFlagsInitial 打印所有的 JVM 参数、查看所有 JVM 参数启动的初始值(必须会用) -XX:MaxTenuringThreshold 升代年龄，最大值15,并行(吞吐量)收集器的默认值为15，而CMS收集器的默认值为6。
+GC 常用参数
+
+    -Xmn -Xms -Xmx –Xss                        年轻代 最小堆 最大堆 栈空间
+    -XX:+UseTLAB                               使用 TLAB，默认打开
+    -XX:+PrintTLAB                             打印 TLAB 的使用情况
+    -XX:TLABSize                               设置 TLAB 大小
+     -XX:+DisableExplicitGC                    启用用于禁用对调用处理的选项System.gc()
+    -XX:+PrintGC                               查看GC基本信息
+    -XX:+PrintGCDetails                        查询GC详细信息
+    -XX:+PrintHeapAtGC                         每次GC后，都打印堆栈信息
+    -XX:+PrintGCTimeStamps                     启用在每个GC上打印时间戳的功能
+    -XX:+PrintGCApplicationConcurrentTime      打印应用程序时间(低)
+    -XX:+PrintGCApplicationStoppedTime         打印暂停时长(低)
+    -XX:+PrintReferenceGC                      记录回收了多少种不同引用类型的引用(重要性低)
+    -verbose:class                             类加载详细过程
+    -XX:+PrintVMOptions                        可在程序运行时，打印虚拟机接受到的命令行显示参数
+    -XX:+PrintFlagsFinal -XX:+PrintFlagsInitial 打印所有的 JVM 参数、查看所有 JVM 参数启动的初始值(必须会用)
+    -XX:MaxTenuringThreshold                    升代年龄，最大值15,并行(吞吐量)收集器的默认值为15，而CMS收集器的默认值为6。
+
+Parallel 常用参数
+-XX:SurvivorRatio                          设置伊甸园空间大小与幸存者空间大小之间的比率。默认情况下，此选项设置为 8
+-XX:PreTenureSizeThreshold                 大对象到底多大，大于这个值的参数直接在老年代分配
+-XX:MaxTenuringThreshold                   升代年龄，最大值 15, 并行(吞吐量)收集器的默认值为 15，而 CMS 收集器的默认值为 6。
+-XX:+ParallelGCThreads                     并行收集器的线程数，同样适用于 CMS，一般设为和 CPU 核数相同
+-XX:+UseAdaptiveSizePolicy                 自动选择各区大小比例
+
+
+CMS 常用参数
+-XX:+UseConcMarkSweepGC                    启用 CMS 垃圾回收器
+-XX:+ParallelGCThreads                     并行收集器的线程数，同样适用于 CMS，一般设为和 CPU 核数相同
+-XX:CMSInitiatingOccupancyFraction         使用多少比例的老年代后开始 CMS 收集，默认是 68%(近似值)，如果频繁发生 SerialOld 卡顿，应该调小，(频繁 CMS 回收)
+-XX:+UseCMSCompactAtFullCollection         在 FGC 时进行压缩
+-XX:CMSFullGCsBeforeCompaction             多少次 FGC 之后进行压缩
+-XX:+CMSClassUnloadingEnabled              多少次 FGC 之后进行压缩 使用并发标记扫描(CMS)垃圾收集器时，启用类卸载。默认情况下启用此选项。
+-XX:CMSInitiatingPermOccupancyFraction     达到什么比例时进行 Perm 回收，JDK 8 中不推荐使用此选项，不能替代。
+-XX:GCTimeRatio                            设置 GC 时间占用程序运行时间的百分比(不推荐使用)
+-XX:MaxGCPauseMillis                       停顿时间，是一个建议时间，GC 会尝试用各种手段达到这个时间，比如减小年轻代
+
+
+
+G1 常用参数
+-XX:+UseG1GC                               启用G1 gc
+-XX:MaxGCPauseMillis                       设置最大 GC 暂停时间的目标(以毫秒为单位)。这是一个软目标，并且 JVM 将尽最大的努力(G1 会尝试调整 Young 区的块数来)来实现它。默认情况下，没有最大暂停时间值。
+-XX:GCPauseIntervalMillis                  GC的间隔时间
+-XX:+G1HeapRegionSize                      分区大小 1，2，4，8，16，32
+-XX:G1NewSizePercent                       新生代最小比例，默认5%
+-XX:G1MaxNewSizePercent                    新生代最大比例，默认60%
+-XX:GCTimeRatioGC                          时间建议比例，G1会根据这个值调整堆空间
+-XX:ConcGCThreads                          GC线程数
+-XX:InitiatingHeapOccupancyPercent         启动 G1 的堆空间占用比例，根据整个堆的占用而触发并发 GC 周期
+
+
+
