@@ -1,0 +1,8 @@
+1、首先到ruby官网（http://www.ruby-lang.org/en/downloads/）上下载最新源码包，例如2.5.1版本，解决后，执行linux下以源码安装习惯用的三招：configure/make/make install。
+
+2、接下来使用gem安装git_stats命令：
+
+gem install git_stats
+3、最后进入你要统计的git代码仓库根目录下，执行命令：
+
+git_stats generate -o stats --language zh_tw
