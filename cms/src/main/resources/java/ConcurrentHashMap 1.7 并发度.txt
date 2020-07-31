@@ -1,0 +1,9 @@
+1.7 默认的并发度为16，可以手动指定
+
+    /**
+     * Creates a new, empty map with a default initial capacity (16),
+     * load factor (0.75) and concurrencyLevel (16).
+     */
+    public ConcurrentHashMap17() {
+    	this(DEFAULT_INITIAL_CAPACITY, DEFAULT_LOAD_FACTOR, DEFAULT_CONCURRENCY_LEVEL);
+    }
