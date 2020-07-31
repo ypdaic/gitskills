@@ -1,0 +1,82 @@
+
+    // 根据方法上的注解，获取对应的Advice，
+    // AspectJMethodBeforeAdvice，AspectJAfterReturningAdvice 本身没有实现MethodInterceptor
+    // 需要通过AdvisorAdapter进行适配，获取对应的MethodInterceptor
+    @Override
+	@Nullable
+	public Advice getAdvice(Method candidateAdviceMethod, AspectJExpressionPointcut expressionPointcut,
+			MetadataAwareAspectInstanceFactory aspectInstanceFactory, int declarationOrder, String aspectName) {
+
+		Class<?> candidateAspectClass = aspectInstanceFactory.getAspectMetadata().getAspectClass();
+		validate(candidateAspectClass);
+
+		AspectJAnnotation<?> aspectJAnnotation =
+				AbstractAspectJAdvisorFactory.findAspectJAnnotationOnMethod(candidateAdviceMethod);
+		if (aspectJAnnotation == null) {
+			return null;
+		}
+
+		// If we get here, we know we have an AspectJ method.
+		// Check that it's an AspectJ-annotated class
+		if (!isAspect(candidateAspectClass)) {
+			throw new AopConfigException("Advice must be declared inside an aspect type: " +
+					"Offending method '" + candidateAdviceMethod + "' in class [" +
+					candidateAspectClass.getName() + "]");
+		}
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Found AspectJ method: " + candidateAdviceMethod);
+		}
+
+		AbstractAspectJAdvice springAdvice;
+
+		switch (aspectJAnnotation.getAnnotationType()) {
+			case AtPointcut:
+				if (logger.isDebugEnabled()) {
+					logger.debug("Processing pointcut '" + candidateAdviceMethod.getName() + "'");
+				}
+				return null;
+			case AtAround:
+				springAdvice = new AspectJAroundAdvice(
+						candidateAdviceMethod, expressionPointcut, aspectInstanceFactory);
+				break;
+			case AtBefore:
+				springAdvice = new AspectJMethodBeforeAdvice(
+						candidateAdviceMethod, expressionPointcut, aspectInstanceFactory);
+				break;
+			case AtAfter:
+				springAdvice = new AspectJAfterAdvice(
+						candidateAdviceMethod, expressionPointcut, aspectInstanceFactory);
+				break;
+			case AtAfterReturning:
+				springAdvice = new AspectJAfterReturningAdvice(
+						candidateAdviceMethod, expressionPointcut, aspectInstanceFactory);
+				AfterReturning afterReturningAnnotation = (AfterReturning) aspectJAnnotation.getAnnotation();
+				if (StringUtils.hasText(afterReturningAnnotation.returning())) {
+					springAdvice.setReturningName(afterReturningAnnotation.returning());
+				}
+				break;
+			case AtAfterThrowing:
+				springAdvice = new AspectJAfterThrowingAdvice(
+						candidateAdviceMethod, expressionPointcut, aspectInstanceFactory);
+				AfterThrowing afterThrowingAnnotation = (AfterThrowing) aspectJAnnotation.getAnnotation();
+				if (StringUtils.hasText(afterThrowingAnnotation.throwing())) {
+					springAdvice.setThrowingName(afterThrowingAnnotation.throwing());
+				}
+				break;
+			default:
+				throw new UnsupportedOperationException(
+						"Unsupported advice type on method: " + candidateAdviceMethod);
+		}
+
+		// Now to configure the advice...
+		springAdvice.setAspectName(aspectName);
+		springAdvice.setDeclarationOrder(declarationOrder);
+		String[] argNames = this.parameterNameDiscoverer.getParameterNames(candidateAdviceMethod);
+		if (argNames != null) {
+			springAdvice.setArgumentNamesFromStringArray(argNames);
+		}
+		springAdvice.calculateArgumentBindings();
+
+		return springAdvice;
+	}
