@@ -1,0 +1,3 @@
+jinfo -flag -XX:MetaspaceSize=512m 16140
+
+jinfo还能够修改一部分运行期间能够调整的虚拟机参数，很多运行参数是不能调整的，如果出现"cannot be changed"异常，说明不能调整。

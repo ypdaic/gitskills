@@ -1,8 +1,11 @@
 package com.daiyanping.cms.jvm;
 
+import java.util.concurrent.CountDownLatch;
+
 public class SyncTest {
 
     public static void main(String[] args) throws InterruptedException {
-        Thread.sleep(100000);
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+        countDownLatch.await();
     }
 }

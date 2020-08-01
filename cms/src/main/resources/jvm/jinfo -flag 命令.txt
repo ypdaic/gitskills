@@ -1,0 +1,21 @@
+查看jvm配置的参数
+jinfo -flags 20124
+
+结果：
+
+Attaching to process ID 18676, please wait...
+Debugger attached successfully.
+Server compiler detected.
+JVM version is 25.181-b13
+# 表示jvm默认的参数
+Non-default VM flags: -XX:CICompilerCount=4 -XX:ConcGCThreads=3 -XX:G1HeapRegionSize=1048576 -XX:InitialHeapSize=257949696 -XX:MarkStackSize=4194304 -XX:MaxHeapSize=4125097984 -XX:MaxNewSize=2474639360 -XX:MinHeapDeltaBytes=1048576 -XX:+UseCompressedClassPointers -
+XX:+UseCompressedOops -XX:+UseFastUnorderedTimeStamps -XX:+UseG1GC -XX:-UseLargePagesIndividualAllocation
+# 手动设置过的参数
+Command line:  -XX:+UseG1GC -javaagent:D:\Program Files\IDEA\lib\idea_rt.jar=61763:D:\Program Files\IDEA\bin -Dfile.encoding=UTF-8
+
+
+查看某个参数配置的情况
+
+jinfo -flag PrintTLAB 18268
+
+结果：-XX:-PrintTLAB

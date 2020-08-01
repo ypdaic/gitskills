@@ -1,6 +1,6 @@
--Xms            设置堆的最小空间大小。
+-Xms            设置堆的最小空间大小。等价-XX:InitialHeapSize=257949696  默认64/1 内存总大小
 
--Xmx            设置堆的最大空间大小。
+-Xmx            设置堆的最大空间大小。等价 -XX:MaxHeapSize=4125097984  默认4/1 内存总大小
 
 -Xmn            设置新生代最小空间大小，效果和-XX:NewSize效果一样
 
@@ -10,15 +10,15 @@
 
 -XX:MaxNewSize  设置新生代最大空间大小。
 
--XX:MetaspaceSize    设置元空间最小空间大小，jdk1.8 以后大小就只受本机总内存的限制(如果不设置参数的话)
+-XX:MetaspaceSize    设置元空间最小空间大小，jdk1.8 以后大小就只受本机总内存的限制(如果不设置参数的话)，默认21m
 
 -XX:MaxMetaspaceSize 设置元空间最大空间大小，jdk1.8 以后大小就只受本机总内存的限制(如果不设置参数的话)
 
--Xss            设置每个线程的堆栈大小，默认1m。
+-Xss            设置每个线程的堆栈大小，等价于-XX:ThreadStackSize=1m默认1m。
 
--XX:NewRatio    设置新老一代大小之间的比率。默认情况下，此选项设置为2，表示堆分成3份，老年代占2份，新生代占1份
+-XX:NewRatio    设置新老一代大小之间的比率。默认情况下，此选项设置为2，表示堆分成3份，老年代占2份，新生代占1份，一般不用调
 
--XX:SurvivorRatio Eden/Survivor的比值, 默认8:2
+-XX:SurvivorRatio Eden/Survivor的比值, 默认8:2，一般不用调
 
 -XX:PetenureSizeThreshold=1000000 单位为B，标明对象大小超过1M时，在老年代(tenured)分配内存空间。
 
@@ -45,7 +45,7 @@
 
 -XX:+PrintHeapAtGC 在进行GC的前后打印出堆的信息，jdk 11 已不支持
 
--XX:MaxTenuringThreshold=15  经过15次minor gc 后进入年老代
+-XX:MaxTenuringThreshold=15  经过15次minor gc 后进入年老代,CMS 默认6
 
 -XX:+UseConcMarkSweepGC  采用并发gc方式 jdk9 以后的版本可能被移除
 

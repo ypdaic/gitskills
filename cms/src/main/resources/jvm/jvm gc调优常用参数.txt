@@ -1,6 +1,6 @@
 GC 常用参数
 
-    -Xmn -Xms -Xmx –Xss                        年轻代 最小堆 最大堆 栈空间
+    -Xmn -Xms -Xmx –Xss                        年轻代 最小堆 最大堆 栈空间, -Xms -Xmx 最好设置成一致
     -XX:+UseTLAB                               使用 TLAB，默认打开
     -XX:+PrintTLAB                             打印 TLAB 的使用情况
     -XX:TLABSize                               设置 TLAB 大小

@@ -17,13 +17,13 @@ public class SoftReferenceTest {
      */
     public static void main(String[] args) {
         // 我们创建的User是放在堆中，OOM后就会被回收
-//        test1();
+        test1();
         // 我们创建的String对象也是放在堆中，OOM后就会被回收
 //        test2();
 
         // String sdfds = "sdfsf";这种形式是将字面量常量放在了字符串池中，GC不会被回收这块区域
 //        所以出现的结果就是即使OOM了还是能够获取到
-        test3();
+//        test3();
     }
 
     public static void test1() {
