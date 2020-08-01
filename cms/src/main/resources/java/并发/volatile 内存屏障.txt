@@ -1,0 +1,9 @@
+当对一个volatile变量进行写时，
+
+会在这个变量操作前面加上StoreStore屏障，禁止上面的写和volatile写进行重排序
+并且会在这个变量后面加上SoreLoad屏障，禁止上面的volatile写和下面 可能的volatile读写重排序
+
+当对一个volatile变量进行读时
+
+会在这个操作后加上LoadLoad屏障（禁止下面的普通读操作和上面的volatile读操作进行重排序）
+然后再加上一个LoadStore屏障（禁止下面的所有写操作和上面的volatile读重排序）
