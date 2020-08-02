@@ -1,0 +1,1 @@
+java -server jvm参数 -jar xxx.jar

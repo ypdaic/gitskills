@@ -1,0 +1,25 @@
+du --max-depth=1 -h
+
+查询每个 文件目录占用的空间
+[root@centos7 /]# du --max-depth=1 -h
+161M    ./boot
+0       ./dev
+du: cannot access ‘./proc/24304/task/24304/fd/4’: No such file or directory
+du: cannot access ‘./proc/24304/task/24304/fdinfo/4’: No such file or directory
+du: cannot access ‘./proc/24304/fd/3’: No such file or directory
+du: cannot access ‘./proc/24304/fdinfo/3’: No such file or directory
+0       ./proc
+10M     ./run
+0       ./sys
+36M     ./etc
+908M    ./root
+7.1G    ./var
+32K     ./tmp
+4.5G    ./usr
+12K     ./home
+0       ./media
+0       ./mnt
+0       ./opt
+0       ./srv
+1.1G    ./software
+14G

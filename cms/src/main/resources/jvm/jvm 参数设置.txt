@@ -98,4 +98,6 @@ XX:+ScavengeBeforeFullGC 在fullgc时之前进行年轻代gc
 
 -XX:+UseG1GC 使用G1收集器
 
+-XX:StringTableSize  设置字符串常量池的大小
+
 参数官方文档：https://docs.oracle.com/javase/8/docs/technotes/tools/unix/java.html

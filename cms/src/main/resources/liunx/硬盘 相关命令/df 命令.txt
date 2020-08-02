@@ -1,0 +1,17 @@
+df -h
+
+[root@centos7 /]# df -h
+Filesystem               Size  Used Avail Use% Mounted on
+devtmpfs                 899M     0  899M   0% /dev
+tmpfs                    910M     0  910M   0% /dev/shm
+tmpfs                    910M   10M  900M   2% /run
+tmpfs                    910M     0  910M   0% /sys/fs/cgroup
+/dev/mapper/centos-root   45G   12G   34G  27% /
+/dev/sda1               1014M  194M  821M  20% /boot
+overlay                   45G   12G   34G  27% /var/lib/docker/overlay2/b7832edceda030c0a9c3234d782c9c86b4b50301170eeb9f4868e86757ee3714/merged
+overlay                   45G   12G   34G  27% /var/lib/docker/overlay2/b5c8d6faf92e225ee52950b87eae9aa3ff23c889c870e4a7b5d729a16bbccab0/merged
+overlay                   45G   12G   34G  27% /var/lib/docker/overlay2/6c976117e9fa5ad23bfe988e46cba00a9a9a12f64278d604a4d70c3cf0c5daae/merged
+overlay                   45G   12G   34G  27% /var/lib/docker/overlay2/98ae4aa650f013a24730e9a63e2a08be3fbf06d933fe055e64d477d2fe583869/merged
+overlay                   45G   12G   34G  27% /var/lib/docker/overlay2/4f133a507edd4eaf5012ccc3284487d76e1e36af771390c348b923633397ff6c/merged
+tmpfs                    182M     0  182M   0% /run/user/0
+overlay                   45G   12G   34G  27% /var/lib/docker/overlay2/9ae38e0171d195719ad7481a152fc8079120fcc51075390f2012d880cc25c3db/merged

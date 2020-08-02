@@ -1,0 +1,2 @@
+location:地区
+language:语言

@@ -1,0 +1,2 @@
+[root@centos7 limits.d]# uptime
+ 00:01:00 up  5:31,  1 user,  load average: 0.00, 0.01, 0.05

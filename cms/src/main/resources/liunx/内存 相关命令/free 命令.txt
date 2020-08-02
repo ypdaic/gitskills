@@ -1,0 +1,25 @@
+[root@centos7 ~]# free
+              total        used        free      shared  buff/cache   available
+Mem:        1863040     1594160      119544        1748      149336      118440
+Swap:       4194300     1101312     3092988
+
+
+[root@centos7 ~]# free -g  按g单位显示
+              total        used        free      shared  buff/cache   available
+Mem:              1           1           0           0           0           0
+Swap:             3           1           2
+
+
+[root@centos7 ~]# free -m 按MB 单位显示
+              total        used        free      shared  buff/cache   available
+Mem:           1819        1558         106           1         153         110
+Swap:          4095        1074        3021
+
+
+
+经验值
+
+    应用程序可用内存/系统物理内存 > 70% 内存充足
+    应用程序可用内存/ 系统物理内存 < 20% 内存不足，需要加 内存条
+
+    20% < 应用程序可用内存/系统物理内存 < 70% 内存基本够用

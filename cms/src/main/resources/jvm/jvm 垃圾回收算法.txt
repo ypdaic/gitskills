@@ -88,7 +88,7 @@
 
 
 
-    组合1	Serial	Serial Old	使用-XX:+UseSerialGC选项开启，Serial和Serial Old都是单线程进行GC，特点就是GC时暂停所有应用线程。
+    组合1	Serial	Serial Old	使用-XX:+UseSerialGC选项开启，Serial和Serial Old都是单线程进行GC，特点就是GC时暂停所有应用线程。	-XX:+UseSerialOldGC 已经被优化掉了
 
     组合2	Serial	CMS+Serial Old	CMS（Concurrent Mark Sweep）是并发GC，实现GC线程和应用线程并发工作，不需要暂停所有应用线程。另外，当CMS进行GC失败时，会自动使用Serial Old策略进行GC。使用-XX:+UseConcMarkSweepGC，-XX:+UseSerialGC开启
 
