@@ -1,0 +1,14 @@
+1: java.lang.StackOverflowError 线程栈内存溢出，递归调用
+
+2: java.lang.OutOfMemoryError:Java heap space  堆内存溢出，对象分配不了了
+
+3: java.lang.OutOfMemoryError:GC overhead limit exceeded  gc 回收时间过长时会抛出该异常，过长的定义是98%的时间用来做gc并且回收了不到2%的堆内存
+                                                          连续多次回收都只回收不到2%的极端情况下才会抛出，假如不抛出GC overhead limit exceeded
+                                                          会发生什么情况，那就是gc清理的这么点内存很快会再次被填满，迫使GC 再次执行，这样就形成恶性
+                                                          循环CPU使用率一直是100%，而gc却没有任何成果
+
+4: java.lang.OutOfMemoryError:Direct buffer memory        直接内存，内存溢出
+
+5: java.lang.OutOfMemoryError:unable to create new native thread  不能创建更多的线程
+
+6: java.lang.OutOfMemoryError:Metaspace   元空间内存溢出

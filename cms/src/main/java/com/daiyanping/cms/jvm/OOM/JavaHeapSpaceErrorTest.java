@@ -1,9 +1,9 @@
-package com.daiyanping.cms.jvm;
+package com.daiyanping.cms.jvm.OOM;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class OOM {
+public class JavaHeapSpaceErrorTest {
 
     /**
      * 测试MinGC,FullGC
@@ -34,6 +34,8 @@ public class OOM {
      *  Metaspace       used 3547K, capacity 4496K, committed 4864K, reserved 1056768K
      *   class space    used 381K, capacity 388K, committed 512K, reserved 1048576K
      * @param args
+     * -Xms10m -Xmx10m
+     * 抛出java.lang.OutOfMemoryError: Java heap space
      */
     public static void main(String[] args) {
 //        GCRoot包含，方法区中类静态属性引用的对象

@@ -145,3 +145,8 @@
     jad demo.MathGame main   反编译某个方法
 
     jad --source-only demo.MathGame  --source-only 只显示源码
+
+
+8: thread -n 3  展示当前最忙的前N个线程并打印堆栈
+
+9: vmoption PrintGCDetails true  更新jvm运行参数

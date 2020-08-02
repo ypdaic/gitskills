@@ -21,7 +21,7 @@ Parallel 常用参数
 -XX:SurvivorRatio                          设置伊甸园空间大小与幸存者空间大小之间的比率。默认情况下，此选项设置为 8
 -XX:PreTenureSizeThreshold                 大对象到底多大，大于这个值的参数直接在老年代分配
 -XX:MaxTenuringThreshold                   升代年龄，最大值 15, 并行(吞吐量)收集器的默认值为 15，而 CMS 收集器的默认值为 6。
--XX:+ParallelGCThreads                     并行收集器的线程数，同样适用于 CMS，一般设为和 CPU 核数相同
+-XX:+ParallelGCThreads                     并行收集器的线程数，同样适用于 CMS，一般设为和 CPU 核数相同，cpu > 8 设置为5 ，cpu小于8 设置为实际的个数
 -XX:+UseAdaptiveSizePolicy                 自动选择各区大小比例
 
 
