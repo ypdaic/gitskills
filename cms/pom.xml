@@ -319,6 +319,12 @@
 			<artifactId>easyexcel</artifactId>
 			<version>2.1.6</version>
 		</dependency>
+		<!--ali sentinel-->
+		<dependency>
+			<groupId>com.alibaba.csp</groupId>
+			<artifactId>sentinel-core</artifactId>
+			<version>1.7.2</version>
+		</dependency>
 
 	</dependencies>
 
