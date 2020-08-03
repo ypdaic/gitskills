@@ -100,4 +100,8 @@ XX:+ScavengeBeforeFullGC 在fullgc时之前进行年轻代gc
 
 -XX:StringTableSize  设置字符串常量池的大小
 
+-XX:+PrintStringTableStatistics  打印字符串常量池的统计信息
+
+-XX:+UseStringDeduplication  开启字符串去重，去char[]数组的重，对G1有效
+
 参数官方文档：https://docs.oracle.com/javase/8/docs/technotes/tools/unix/java.html

@@ -14,7 +14,7 @@ package com.daiyanping.cms.javabase.string;
  * 1.7起 如果池中有，则并不会放入，返回已有对象的地址，如果 没有，则会把对象的引用地址复制一份，放入池中，并返回池中的
  * 引用地址
  */
-public class StringIntern {
+public class StringInternTest {
 
     /**
      *   0 new #2 <java/lang/String>
