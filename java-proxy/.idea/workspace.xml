@@ -2,10 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f23d9108-6baf-451b-ae4f-1418f8d22860" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/../cms/src/main/java/com/daiyanping/cms/springmvc/MyControllerAdvice.java" beforeDir="false" afterPath="$PROJECT_DIR$/../cms/src/main/java/com/daiyanping/cms/springmvc/MyControllerAdvice.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../cms/src/main/java/com/daiyanping/cms/zookeeper/ZkClientApi.java" beforeDir="false" afterPath="$PROJECT_DIR$/../cms/src/main/java/com/daiyanping/cms/zookeeper/ZkClientApi.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../cms/src/main/java/com/daiyanping/cms/zookeeper/ZkServerApi.java" beforeDir="false" afterPath="$PROJECT_DIR$/../cms/src/main/java/com/daiyanping/cms/zookeeper/ZkServerApi.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/SayServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/SayServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/test-classes/SayServiceTest$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/test-classes/SayServiceTest$2.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/test-classes/SayServiceTest.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/test-classes/SayServiceTest.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../springcloud/springcloud-config-bus/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../springcloud/springcloud-config-bus/src/main/resources/application.yml" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -30,12 +32,13 @@
               <caret line="23" selection-start-line="23" selection-end-line="23" />
             </state>
           </provider>
+          <provider editor-type-id="MavenHelperPluginDependencyAnalyzer" />
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/service/impl/ZhangShanServiceImpl.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="135">
+            <state relative-caret-position="105">
               <caret line="9" column="5" selection-start-line="9" selection-start-column="5" selection-end-line="9" selection-end-column="5" />
               <folding>
                 <element signature="e#147#148#0" expanded="true" />
@@ -58,7 +61,7 @@
         <entry file="file://$PROJECT_DIR$/src/test/java/SayServiceTest.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="348">
-              <caret line="89" column="5" lean-forward="true" selection-start-line="89" selection-start-column="5" selection-end-line="89" selection-end-column="5" />
+              <caret line="89" column="4" selection-start-line="89" selection-start-column="4" selection-end-line="89" selection-end-column="4" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -87,7 +90,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="jar:///Library/Java/JavaVirtualMachines/jdk1.8.0_191.jdk/Contents/Home/src.zip!/java/lang/reflect/Proxy.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="11">
+            <state relative-caret-position="9885">
               <caret line="702" column="25" selection-start-line="702" selection-start-column="25" selection-end-line="702" selection-end-column="25" />
             </state>
           </provider>
@@ -160,7 +163,7 @@
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="15" />
-    <option name="y" value="33" />
+    <option name="y" value="23" />
     <option name="width" value="2033" />
     <option name="height" value="1066" />
   </component>
@@ -196,6 +199,23 @@
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="main" type="462c0819:PsiDirectoryNode" />
               <item name="java" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="java-proxy" type="b2602c69:ProjectViewProjectNode" />
+              <item name="java-proxy" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="service" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="java-proxy" type="b2602c69:ProjectViewProjectNode" />
+              <item name="java-proxy" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="service" type="462c0819:PsiDirectoryNode" />
+              <item name="impl" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="java-proxy" type="b2602c69:ProjectViewProjectNode" />
@@ -343,6 +363,7 @@
       <updated>1552273234136</updated>
       <workItem from="1552273238083" duration="7174000" />
       <workItem from="1552290827499" duration="2934000" />
+      <workItem from="1589349826237" duration="16000" />
     </task>
     <servers />
   </component>
@@ -379,13 +400,12 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="10108000" />
+    <option name="totallyTimeSpent" value="10124000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="15" y="33" width="2033" height="1066" extended-state="0" />
-    <editor active="true" />
+    <frame x="15" y="23" width="2033" height="1066" extended-state="0" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.21998996" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.22199899" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="JRebel" order="3" side_tool="true" />
@@ -393,6 +413,7 @@
       <window_info id="Capture Tool" order="5" />
       <window_info id="UI Designer" order="6" />
       <window_info id="Favorites" order="7" side_tool="true" />
+      <window_info anchor="bottom" id="JRebel Console" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32921812" />
       <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.25256673" />
@@ -408,6 +429,8 @@
       <window_info anchor="bottom" id="Version Control" order="12" />
       <window_info anchor="bottom" id="Terminal" order="13" />
       <window_info anchor="bottom" id="JRebel Executor" order="14" />
+      <window_info anchor="right" id="Word Book" side_tool="true" />
+      <window_info anchor="right" id="ASM" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -437,10 +460,11 @@
           <caret line="23" selection-start-line="23" selection-end-line="23" />
         </state>
       </provider>
+      <provider editor-type-id="MavenHelperPluginDependencyAnalyzer" />
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/service/impl/ZhangShanServiceImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
+        <state relative-caret-position="105">
           <caret line="9" column="5" selection-start-line="9" selection-start-column="5" selection-end-line="9" selection-end-column="5" />
           <folding>
             <element signature="e#147#148#0" expanded="true" />
@@ -470,6 +494,13 @@
         </state>
       </provider>
     </entry>
+    <entry file="jar:///Library/Java/JavaVirtualMachines/jdk1.8.0_191.jdk/Contents/Home/src.zip!/java/lang/reflect/Proxy.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="9885">
+          <caret line="702" column="25" selection-start-line="702" selection-start-column="25" selection-end-line="702" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
     <entry file="jar:///Library/Java/JavaVirtualMachines/jdk1.8.0_191.jdk/Contents/Home/src.zip!/java/lang/reflect/WeakCache.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1410">
@@ -491,17 +522,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="jar:///Library/Java/JavaVirtualMachines/jdk1.8.0_191.jdk/Contents/Home/src.zip!/java/lang/reflect/Proxy.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="11">
-          <caret line="702" column="25" selection-start-line="702" selection-start-column="25" selection-end-line="702" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/test/java/SayServiceTest.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="348">
-          <caret line="89" column="5" lean-forward="true" selection-start-line="89" selection-start-column="5" selection-end-line="89" selection-end-column="5" />
+          <caret line="89" column="4" selection-start-line="89" selection-start-column="4" selection-end-line="89" selection-end-column="4" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
