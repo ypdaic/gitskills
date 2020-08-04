@@ -13,6 +13,10 @@ public class FinalizeTest {
 
     public static FinalizeTest f;
 
+    /**'
+     * 此方法只能调一次
+     * @throws Throwable
+     */
     @Override
     protected void finalize() throws Throwable {
         super.finalize();
@@ -29,20 +33,21 @@ public class FinalizeTest {
         f = new FinalizeTest();
         f = null;
         System.gc();
-//        Thread.sleep(1000);
+        // 因为Finalizer线程优先级很低，暂停2秒，已等待它
+        Thread.sleep(1000);
         if (Objects.nonNull(f)) {
             System.out.println("对象还存活");
         } else {
             System.out.println("对象被回收");
         }
-//        f = null;
-//        System.gc();
-////        Thread.sleep(1000);
-//        if (Objects.nonNull(f)) {
-//            System.out.println("对象还存活");
-//        } else {
-//            System.out.println("对象被回收");
-//        }
+        f = null;
+        System.gc();
+        Thread.sleep(1000);
+        if (Objects.nonNull(f)) {
+            System.out.println("对象还存活");
+        } else {
+            System.out.println("对象被回收");
+        }
 //
 //        f = null;
 //        System.gc();
