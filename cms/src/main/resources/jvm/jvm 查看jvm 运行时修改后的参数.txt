@@ -63,7 +63,7 @@ java -XX:+PrintFlagsFinal
      bool CITime                                    = false                               {product}
      bool CMSAbortSemantics                         = false                               {product}
     uintx CMSAbortablePrecleanMinWorkPerIteration   = 100                                 {product}
-     intx CMSAbortablePrecleanWaitMillis            = 100                                 {manageable}
+     intx CMSAbortablePrecleanWaitMillis            = 100                                 {manageable}  manageable才能去实时修改
     uintx CMSBitMapYieldQuantum                     = 10485760                            {product}
     uintx CMSBootstrapOccupancy                     = 50                                  {product}
      bool CMSClassUnloadingEnabled                  = true                                {product}

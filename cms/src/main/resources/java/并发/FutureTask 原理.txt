@@ -1,0 +1,1 @@
+FutureTask 是支持多个线程进行get的，内部使用WaitNode的单向链表表示等待的线程

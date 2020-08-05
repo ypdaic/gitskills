@@ -27,7 +27,7 @@ Parallel 常用参数
 
 CMS 常用参数
 -XX:+UseConcMarkSweepGC                    启用 CMS 垃圾回收器
--XX:+ParallelGCThreads                     并行收集器的线程数，同样适用于 CMS，一般设为和 CPU 核数相同
+-XX:+ParallelGCThreads                     并行收集器的线程数，同样适用于 CMS，一般设为和 CPU 核数相同，默认的是ParallerGCThreads + 3 / 4
 -XX:CMSInitiatingOccupancyFraction         使用多少比例的老年代后开始 CMS 收集，默认是 68%(近似值)，如果频繁发生 SerialOld 卡顿，应该调小，(频繁 CMS 回收)
 -XX:+UseCMSCompactAtFullCollection         在 FGC 时进行压缩
 -XX:CMSFullGCsBeforeCompaction             多少次 FGC 之后进行压缩
