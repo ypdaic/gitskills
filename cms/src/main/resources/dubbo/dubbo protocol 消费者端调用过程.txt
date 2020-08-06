@@ -1,0 +1,17 @@
+
+
+从上往下调用
+
+MockClusterInvoker (MockClusterWrapper 进行增强)
+    |
+FailoverClusterInvoker (根据cluster的配置来)
+    |
+InvokerWrapper (具体是InvokerDelegate这个实现)
+    |
+ListenerInvokerWrapper
+    |
+CallbackRegistrationInvoker (会封装filter)
+    |
+AsyncToSyncInvoker
+    |
+DubboInvoker (调用netty客户端发送请求)

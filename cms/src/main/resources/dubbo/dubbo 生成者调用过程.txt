@@ -1,0 +1,5 @@
+CallbackRegistrationInvoker  (封装对应的filter)
+            |
+DelegateProviderMetaDataInvoker
+            |
+JavassistProxyFactory.getInvoker 或者JdkProxyFactory.getInvoker

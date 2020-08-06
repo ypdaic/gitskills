@@ -1,0 +1,9 @@
+show-busy-java-threads 3 10  输出10次，每3秒输出
+
+show-busy-java-threads -p <指定的Java进程Id>
+
+show-busy-java-threads -c <要显示的线程栈数>
+
+show-busy-java-threads -S <存储jstack输出文件的目录>
+
+show-busy-java-threads -a <运行输出的记录到的文件>
