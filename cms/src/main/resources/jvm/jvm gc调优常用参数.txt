@@ -48,7 +48,7 @@ G1 常用参数
 -XX:G1MaxNewSizePercent                    新生代最大比例，默认60%
 -XX:GCTimeRatioGC                          时间建议比例，G1会根据这个值调整堆空间
 -XX:ConcGCThreads                          GC线程数
--XX:InitiatingHeapOccupancyPercent         启动 G1 的堆空间占用比例，根据整个堆的占用而触发并发 GC 周期
-
+-XX:InitiatingHeapOccupancyPercent=45      启动 G1 的堆空间占用比例，根据整个堆的占用而触发并发 GC 周期，默认45%
+-XX:G1ReservePercent=10                    使用g1收集器时，设置保留java堆大小，防止晋升失败。范围是0到50.默认设置是10%。下面的例子把这个值设置成20%。
 
 
