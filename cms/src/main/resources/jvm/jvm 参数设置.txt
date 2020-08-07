@@ -1,84 +1,100 @@
--Xms            设置堆的最小空间大小。等价-XX:InitialHeapSize=257949696  默认64/1 内存总大小
+堆相关参：
 
--Xmx            设置堆的最大空间大小。等价 -XX:MaxHeapSize=4125097984  默认4/1 内存总大小
+    -Xms            设置堆的最小空间大小。等价-XX:InitialHeapSize=257949696  默认64/1 内存总大小
 
--Xmn            设置新生代最小空间大小，效果和-XX:NewSize效果一样
+    -Xmx            设置堆的最大空间大小。等价 -XX:MaxHeapSize=4125097984  默认4/1 内存总大小
 
--XX:MaxHeapSize 设置堆的最大空间大小，和-Xmx效果一样。
+    -Xmn            设置新生代最小空间大小，效果和-XX:NewSize效果一样
 
--XX:NewSize     设置新生代最小空间大小。
+    -XX:MaxHeapSize 设置堆的最大空间大小，和-Xmx效果一样。
 
--XX:MaxNewSize  设置新生代最大空间大小。
+    -XX:NewSize     设置新生代最小空间大小。
 
--XX:MetaspaceSize    设置元空间最小空间大小，jdk1.8 以后大小就只受本机总内存的限制(如果不设置参数的话)，默认21m
+    -XX:MaxNewSize  设置新生代最大空间大小。
 
--XX:MaxMetaspaceSize 设置元空间最大空间大小，jdk1.8 以后大小就只受本机总内存的限制(如果不设置参数的话)
+    -XX:NewRatio    设置新老一代大小之间的比率。默认情况下，此选项设置为2，表示堆分成3份，老年代占2份，新生代占1份，一般不用调
 
--Xss            设置每个线程的堆栈大小，等价于-XX:ThreadStackSize=1m默认1m。
+    -XX:SurvivorRatio Eden/Survivor的比值, 默认8:2，一般不用调
 
--XX:NewRatio    设置新老一代大小之间的比率。默认情况下，此选项设置为2，表示堆分成3份，老年代占2份，新生代占1份，一般不用调
+    -XX:PetenureSizeThreshold=1000000 单位为B，标明对象大小超过1M时，在老年代(tenured)分配内存空间。
 
--XX:SurvivorRatio Eden/Survivor的比值, 默认8:2，一般不用调
+    -XX:MaxTenuringThreshold=15  经过15次minor gc 后进入年老代,CMS 默认6
 
--XX:PetenureSizeThreshold=1000000 单位为B，标明对象大小超过1M时，在老年代(tenured)分配内存空间。
+元空间相关参数：
 
--XX:+PrintGCDetails 打印gc详细信息，在进行gc时才会打印，在程序结束之后才会打印堆的相关信息
+    -XX:MetaspaceSize    设置元空间最小空间大小，jdk1.8 以后大小就只受本机总内存的限制(如果不设置参数的话)，默认21m
 
--Xlog:gc*   打印gc详细信息，在进行gc时才会打印,jdk11下用这个参数
+    -XX:MaxMetaspaceSize 设置元空间最大空间大小，jdk1.8 以后大小就只受本机总内存的限制(如果不设置参数的话)
 
--Xloggc:/Users/daiyanping/gc/gc.log
+线程栈相关参数：
 
--XX:+HeapDumpBeforeFullGC        full gc 前打出dump文件
-
--XX:+HeapDumpAfterFullGC        full gc 后打出dump文件
-
--XX:+HeapDumpOnOutOfMemoryError   内存溢出，打出dump文件
-
--XX:HeapDumpPath=/Users/daiyanping/dump/heapdump.bin   dump文件的保存路径
+    -Xss            设置每个线程的堆栈大小，等价于-XX:ThreadStackSize=1m默认1m。
 
 
--XX:+UseSerialGC   串行收集器
+gc日志相关参数:
 
--XX:+PrintGCTimeStamps 输出GC的时间戳（以基准时间的形式）,jdk 11已不支持
+   -Xlog:gc*   打印gc详细信息，在进行gc时才会打印,jdk11下用这个参数
 
--XX:+PrintGCDateStamps 输出GC的时间戳（以日期的形式，如 2017-09-04T21:53:59.234+0800）,jdk 11已不支持
+   -Xloggc:/Users/daiyanping/gc/gc.log
 
--XX:+PrintHeapAtGC 在进行GC的前后打印出堆的信息，jdk 11 已不支持
+   -XX:GCLogFileSize=10M      gc日志文件大小，jdk 11 不支持
 
--XX:MaxTenuringThreshold=15  经过15次minor gc 后进入年老代,CMS 默认6
+   -XX:NumberOfGCLogFiles=10  gc日志文件数量，jdk 11 不支持
 
--XX:+UseConcMarkSweepGC  采用并发gc方式 jdk9 以后的版本可能被移除
-
--XX:+CMSParallelRemarkEnabled 开启了降低标记停顿
+   -XX:+UseGCLogFileRotation  使用gc日志文件轮换，jdk 11 不支持
 
 
 
+dump内存相关参数:
 
--XX:GCLogFileSize=10M      gc日志文件大小，jdk 11 不支持
+    -XX:+HeapDumpBeforeFullGC        full gc 前打出dump文件
 
--XX:NumberOfGCLogFiles=10  gc日志文件数量，jdk 11 不支持
+    -XX:+HeapDumpAfterFullGC         full gc 后打出dump文件
 
--XX:+UseGCLogFileRotation  使用gc日志文件轮换，jdk 11 不支持
+    -XX:+HeapDumpOnOutOfMemoryError   内存溢出，打出dump文件
 
--XX:+PrintGCDateStamps     jdk 11 不支持，gc 日期打印
+    -XX:HeapDumpPath=/Users/daiyanping/dump/heapdump.bin   dump文件的保存路径
 
--XX:+PrintGCTimeStamps     jdk 11 不支持，gc 时间戳打印
+gc信息相关参数:
 
--XX:+PrintGCDetails
+    -verbose:gc
 
--XX:+DisableExplicitGC 禁止了 System.gc()
+    -XX:+PrintGCTimeStamps 输出GC的时间戳（以基准时间的形式）,jdk 11已不支持
 
--verbose:gc
+    -XX:+PrintGCDateStamps 输出GC的时间戳（以日期的形式，如 2017-09-04T21:53:59.234+0800）,jdk 11已不支持
 
--XX：ParallelGCThreads = NNN进行配置 。ParallelGC的GC线程数，默认值等于计算机中的内核数。
+    -XX:+PrintHeapAtGC 在进行GC的前后打印出堆的信息，jdk 11 已不支持
+
+    -XX:+PrintGCDetails 打印gc详细信息，在进行gc时才会打印，在程序结束之后才会打印堆的相关信息
+
+SerialGC相关参数:
+
+    -XX:+UseSerialGC   串行收集器
+
+CMS相关参数:
+
+    -XX:+UseConcMarkSweepGC  采用并发gc方式 jdk9 以后的版本可能被移除
+
+    -XX:+CMSParallelRemarkEnabled 开启了并发标记
+
+    -XX:+ScavengeBeforeFullGC 在fullgc时之前进行年轻代gc，默认开启
+
+    -XX:-CMSScavengeBeforeRemark  CMS remark之前进行一次young generation GC
+
+ParallelGC相关参数:
+
+    -XX：ParallelGCThreads = NNN进行配置 。ParallelGC的GC线程数，默认值等于计算机中的内核数。
+    -XX:PretenureSizeThreshold=4m 只对 Serial 和 ParNew 两款收集器有效，指定大于该设置值的对象直接在老年代分配
 
 
-XX:+ScavengeBeforeFullGC 在fullgc时之前进行年轻代gc
 
 
--XX:+CMSScavengeBeforeRemark   在cms remark标记阶段之前进行年轻代gc
 
--XX：MaxDirectMemorySize 直接内存大小设置，默认请求jvm自动分配大小
+直接内存相关:
+
+    -XX:MaxDirectMemorySize=90m 直接内存大小设置，默认请求jvm自动分配大小
+
+
 
 -XX:-UseCompressedOops 禁用压缩指针的使用。默认情况下，此选项处于启用状态，并且当Java堆大小小于32 GB时，将使用压缩指针。启用此选项后，对象引用将表示为32位偏移量而不是64位指针，这通常在运行Java堆大小小于32 GB的应用程序时提高性能。此选项仅适用于64位JVM。
 
@@ -86,9 +102,7 @@ XX:+ScavengeBeforeFullGC 在fullgc时之前进行年轻代gc
 
 -XX：+ UseTLAB  允许在年轻代空间中使用线程本地分配块（TLAB）。默认情况下启用此选项。要禁用TLAB，请指定-XX:-UseTLAB。
 
--XX:PretenureSizeThreshold=4m  PretenureSizeThreshold 参数只对 Serial 和 ParNew 两款收集器有效，指定大于该设置值的对象直接在老年代分配
-
--XX:MaxTenuringThreshold 进入到老年代的最大年龄    设置用于自适应GC大小调整的最大使用期限阈值。最大值为15。并行（吞吐量）收集器的默认值为15，而CMS收集器的默认值为6。
+-XX:+DisableExplicitGC 禁止了 System.gc()
 
 -XX:MaxGCPauseMillis   设置最大GC暂停时间的目标（以毫秒为单位）。这是一个软目标，并且JVM将尽最大的努力来实现它。默认情况下，没有最大暂停时间值。
 
@@ -103,5 +117,33 @@ XX:+ScavengeBeforeFullGC 在fullgc时之前进行年轻代gc
 -XX:+PrintStringTableStatistics  打印字符串常量池的统计信息
 
 -XX:+UseStringDeduplication  开启字符串去重，去char[]数组的重，对G1有效
+
+-XX:+CMSParallelRemarkEnabled 开启CMS 并发标记，默认开启
+
+-XX:+CMSScavengeBeforeRemark 如果remark还是过长的话，强制remark之前开始一次minor gc，减少remark的暂停时间
+
+-XX:SoftRefLRUPolicyMSPerMB=2500   软引用对象在堆上保持活动状态的时间（以毫秒为单位）那么SoftReference对象到底在GC的时候要不要回收是通过什么公式来判断的呢？
+
+                                    是如下的一个公式：
+
+                                    clock - timestamp <= freespace * SoftRefLRUPolicyMSPerMB。
+
+                                    这个公式的意思就是说，“clock - timestamp”代表了一个软引用对象他有多久没被访问过了，freespace代表JVM中的空闲内存空间，SoftRefLRUPolicyMSPerMB代表每一MB空闲内存空间可以允许SoftReference对象存活多久。
+
+-XX:+TraceClassLoading  打印类加载
+
+-XX:+TraceClassUnloading 打印类卸载
+
+-XX:+CMSClassUnloadingEnabled CMS开启类卸载，默认开启
+
+-XX:-OmitStackTraceInFastThrow 是否快速抛出异常，不打印详细堆栈信息，默认是开启，如果检测到在代码里某个位置连续多次抛出同一类型异常的话，C2会决定用Fast Throw方式来抛出异常
+                               JVM只对几个特定类型异常开启了Fast Throw优化，这些异常包括：
+
+                               NullPointerException
+                               ArithmeticException
+                               ArrayIndexOutOfBoundsException
+                               ArrayStoreException
+                               ClassCastException
+
 
 参数官方文档：https://docs.oracle.com/javase/8/docs/technotes/tools/unix/java.html

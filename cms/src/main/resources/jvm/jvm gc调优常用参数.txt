@@ -35,7 +35,8 @@ CMS 常用参数
 -XX:CMSInitiatingPermOccupancyFraction     达到什么比例时进行 Perm 回收，JDK 8 中不推荐使用此选项，不能替代。
 -XX:GCTimeRatio                            设置 GC 时间占用程序运行时间的百分比(不推荐使用)
 -XX:MaxGCPauseMillis                       停顿时间，是一个建议时间，GC 会尝试用各种手段达到这个时间，比如减小年轻代
-
+-XX:+CMSParallelRemarkEnabled              开启CMS 并发标记，默认开启
+-XX:+CMSScavengeBeforeRemark               如果remark还是过长的话，强制remark之前开始一次minor gc，减少remark的暂停时间
 
 
 G1 常用参数
