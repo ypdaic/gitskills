@@ -13,9 +13,9 @@ public class SyncProducer {
     public static void main(String[] args) throws Exception {
         DefaultMQProducer producer = new DefaultMQProducer("sync");
         producer.setRetryTimesWhenSendFailed(2);
-//        producer.setNamesrvAddr("192.168.140.129:9876");
+        producer.setNamesrvAddr("127.0.0.1:9876");
 //        集群配置
-        producer.setNamesrvAddr("192.168.140.129:9877;192.168.140.129:9876");
+//        producer.setNamesrvAddr("192.168.140.129:9877;192.168.140.129:9876");
 
         producer.start();
         for (int i = 0; i < 10; i++) {
@@ -24,7 +24,7 @@ public class SyncProducer {
                     ("Hello RocketMQ " + i).getBytes(RemotingHelper.DEFAULT_CHARSET)
             );
             // 每个消息的发送必须等上个消费发送成功
-            SendResult sendResult = producer.send(msg);
+            SendResult sendResult = producer.send(msg, 100000);
             // msgId 由rocket生成，queueId（一个主题，默认4个queue，相当于kafka的分区吧）
             System.out.printf("%s%n%n%n", sendResult.getSendStatus()+":(MsgId):"
                     +sendResult.getMsgId()+":(queueId):"

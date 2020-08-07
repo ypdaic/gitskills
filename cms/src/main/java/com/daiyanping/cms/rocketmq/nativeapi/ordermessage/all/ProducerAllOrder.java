@@ -12,14 +12,14 @@ import org.apache.rocketmq.remoting.common.RemotingHelper;
 public class ProducerAllOrder {
     public static void main(String[] args) throws Exception {
         DefaultMQProducer producer = new DefaultMQProducer("AllOrder");
-        producer.setNamesrvAddr("192.168.140.129:9876");
+        producer.setNamesrvAddr("127.0.0.1:9876");
         producer.start();
         for (int i = 0; i < 10; i++) {
             Message msg = new Message("AllOrder" ,
                     "TagA" ,"KEY" + i,
                     ("Hello RocketMQ " + i).getBytes(RemotingHelper.DEFAULT_CHARSET)
             );
-            SendResult sendResult = producer.send(msg);
+            SendResult sendResult = producer.send(msg, 100000);
             System.out.printf("%s%n", sendResult.getSendStatus()+":"+ new String(msg.getBody()));
         }
         producer.shutdown();

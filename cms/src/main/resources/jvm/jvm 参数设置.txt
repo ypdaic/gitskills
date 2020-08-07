@@ -147,6 +147,9 @@ ParallelGC相关参数:
 
 -XX:+AlwaysPreTouch 在调用main函数之前，使用所有可用的内存分页。这个选项可以用来测试长时间运行的系统，所有的内存都已被分配。默认这个选项是关闭的，也就是不会使用所有的内存分页。
 
+-XX:-UseBiasedLocking          禁用偏向锁
+
+
 参数官方文档：https://docs.oracle.com/javase/8/docs/technotes/tools/unix/java.html
 
 
