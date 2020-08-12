@@ -1,0 +1,3 @@
+swapoff -a 临时
+
+sed -ri 's/.*swap.*' /etc/fstab   永久

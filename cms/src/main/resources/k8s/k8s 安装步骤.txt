@@ -1,0 +1,58 @@
+准备工作：
+    1：关闭swap
+
+        swapoff -a 临时
+
+        sed -ri 's/.*swap.*' /etc/fstab   永久
+
+    2:  设置hostname
+        hostnamectl set-hostname k8s-node1
+        hostnamectl set-hostname k8s-node2
+        hostnamectl set-hostname k8s-node3
+
+    3:   修改hosts文件
+
+         vi /etc/hosts
+
+         192.168.109.129 k8s-node1
+         192.168.109.130 k8s-node2
+
+    3:  关闭防火墙
+
+        systemctl stop firewalld
+
+        systemctl disable firewalld
+
+    4: 添加流量指标统计
+
+        cat > /etc/sysctl.d/k8s.conf << EOF
+        net.bridge.bridge-nf-call-ip6tables = 1
+        net.bridge.bridge-nf-call-iptables = 1
+        EOF
+
+    5: 添加yum源
+
+        cat > /etc/yum.repos.d/kubernetes.repo << EOF
+        [kubernetes]
+        name=Kubernetes
+        baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64
+        enabled=1
+        gpgcheck=0
+        repo_gpgcheck=0
+        gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg
+        https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
+        EOF
+
+2: 开始安装
+
+    1：安装kubelet
+
+        yum install -y kubeadm-1.17.3 kubectl-1.17.3 kubelet-1.17.3
+
+    2: 启动kubelet
+
+        systemctl enable kubelet # 开机自启
+
+        systemctl start kubelet
+
+        systemctl status kubelet # 检查kubelet的启动状态
