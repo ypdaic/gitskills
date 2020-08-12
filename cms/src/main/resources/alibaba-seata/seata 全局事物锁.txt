@@ -1,0 +1,30 @@
+
+在本地事物提交前会项TM注册分支事物，注册的过程中，会往lock_table表插一条row_key为：resourceId+"^^^"+tableName+"^^^"+pk 的记录，如果记录存在就说明加锁失败
+那么该全局事物会整个回滚掉
+
+对应TM处理加锁DB方式的实例类是DataBaseLocker
+
+注意点，同一个条记录的锁是支持可重入的
+
+ConnectionProxy
+private void processGlobalTransactionCommit() throws SQLException {
+    try {
+        register();
+    } catch (TransactionException e) {
+        recognizeLockKeyConflictException(e);
+    }
+
+    try {
+        if (context.hasUndoLog()) {
+            UndoLogManager.flushUndoLogs(this);
+        }
+        targetConnection.commit();
+    } catch (Throwable ex) {
+        report(false);
+        if (ex instanceof SQLException) {
+            throw new SQLException(ex);
+        }
+    }
+    report(true);
+    context.reset();
+}

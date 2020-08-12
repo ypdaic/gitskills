@@ -1,0 +1,104 @@
+A服务在开启全局事物后，当执行增删改的操作时
+由GlobalTransactionalInterceptor进行AOP切面处理，然后会使用RM向TM发送开启全局事物的请求，并拿到xid（全局事物id）
+然后执行业务代码增删改的操作，此时执行业务代码会生成afterImage,beforeImage，此时A服务还没有进行提交
+
+如果业务代码中有调用B服务，如何是使用Feign调用的，这里会在请求头中加入当前的全局事物id
+B服务的接受到请求后通过mvc的拦截器从请求头中拿到全局事物id，由于A服务，B服务的DataSource都换成了seata的DataSourceProxy，所以
+B服务无需加全局事物注解也是可以的，因为DataSourceProxy可以从RootContext获取到全局事物id
+B服务在进行执行sql后，一样会生成afterImage,beforeImage，然后提交本地事物（及undo log），提交之前要向TM注册分支事物（会进行锁检查），然后提交本地事物并向TM上报结果
+此时回到A服务，如果A服务后续业务执行失败了直接向TM发送回滚请求，由于A服务有本地事物所以A服务就直接本地回滚了
+B服务收到TM的回滚请求后，就会根据undo log去异步回滚
+/**
+     * Execute object.
+     *
+     * @param business the business
+     * @return the object
+     * @throws TransactionalExecutor.ExecutionException the execution exception
+     */
+    public Object execute(TransactionalExecutor business) throws Throwable {
+        // 1. get or create a transaction
+        GlobalTransaction tx = GlobalTransactionContext.getCurrentOrCreate();
+
+        // 1.1 get transactionInfo
+        TransactionInfo txInfo = business.getTransactionInfo();
+        if (txInfo == null) {
+            throw new ShouldNeverHappenException("transactionInfo does not exist");
+        }
+        try {
+
+            // 2. begin transaction  开启全局事物，获取全局事物id
+            beginTransaction(txInfo, tx);
+
+            Object rs = null;
+            try {
+
+                // Do Your Business 执行业务
+                rs = business.execute();
+
+            } catch (Throwable ex) {
+                // 执行失败，直接向TM发送回滚请求
+                // 3.the needed business exception to rollback.
+                completeTransactionAfterThrowing(txInfo,tx,ex);
+                throw ex;
+            }
+
+            // 4. everything is fine, commit.
+            commitTransaction(tx);
+
+            return rs;
+        } finally {
+            //5. clear
+            triggerAfterCompletion();
+            cleanUp();
+        }
+    }
+
+
+
+    @Override
+    public void commit() throws SQLException {
+        if (context.inGlobalTransaction()) {
+            processGlobalTransactionCommit();
+        } else if (context.isGlobalLockRequire()) {
+            processLocalCommitWithGlobalLocks();
+        } else {
+            targetConnection.commit();
+        }
+    }
+
+    private void processLocalCommitWithGlobalLocks() throws SQLException {
+
+        checkLock(context.buildLockKeys());
+        try {
+            targetConnection.commit();
+        } catch (Throwable ex) {
+            throw new SQLException(ex);
+        }
+        context.reset();
+    }
+
+    private void processGlobalTransactionCommit() throws SQLException {
+        try {
+            // 注册分支事物
+            register();
+        } catch (TransactionException e) {
+            recognizeLockKeyConflictException(e);
+        }
+
+        try {
+            if (context.hasUndoLog()) {
+                UndoLogManager.flushUndoLogs(this);
+            }
+            // 本地事物提交
+            targetConnection.commit();
+        } catch (Throwable ex) {
+             // 上报结果
+            report(false);
+            if (ex instanceof SQLException) {
+                throw new SQLException(ex);
+            }
+        }
+        // 上报结果
+        report(true);
+        context.reset();
+    }
