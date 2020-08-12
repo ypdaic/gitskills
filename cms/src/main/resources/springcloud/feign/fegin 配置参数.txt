@@ -1,0 +1,20 @@
+feign:
+  client:
+    config:
+      default: #默认所有客户端都用这个配置，否则readTimeout使用的LoadBalancerFeignClient.DEFAULT_OPTIONS，如果这里不进行配置，则会使用ribbon的readTimeout，connectTimeout
+        readTimeout: 3600000
+        connectTimeout: 10000
+  compression:
+    request:
+      enabled: true
+      mime-types:
+        - text/xml
+        - application/xml
+        - application/json
+      min-request-size: 2048
+    response:
+      enabled: true
+  httpclient:
+    enabled: false
+  okhttp:
+    enabled: true
