@@ -1,0 +1,5 @@
+kubelctl get pods   #获取所有节点的pod
+
+kubelctl get ns     #获取名称空间
+
+ kubectl get pods --all-namespaces   #获取所有名称空间
