@@ -1,0 +1,116 @@
+private Runnable getTask() {
+        boolean timedOut = false; // Did the last poll() time out?
+
+        for (;;) {
+
+            int c = ctl.get();
+            // 获取线程池状态
+            int rs = runStateOf(c);
+
+            // 如果状态为SHUTDOWN，也就是执行了showdown方法，且队列为空就直接返回null
+            // 如果状态为STOP，也就是执行了showdownNow方法，不过队列是否为空都直接返回null
+            // Check if queue empty only if necessary.
+            if (rs >= SHUTDOWN && (rs >= STOP || workQueue.isEmpty())) {
+                decrementWorkerCount();
+                return null;
+            }
+            // 获取工作的线程数
+            int wc = workerCountOf(c);
+
+            // 如果运行核心线程超时，或者线程数大于核心线程数，则timed为true
+            // Are workers subject to culling?
+            boolean timed = allowCoreThreadTimeOut || wc > corePoolSize;
+            // 如果工作线程数大于最大队列数，或者timed为ture,且timeOut为true(说明已经超时过一次)
+            // 如果工作任务数大于1（对应allowCoreThreadTimeOut为true的情况），或者队列为空，则直接返回空，该线程会被销毁
+            if ((wc > maximumPoolSize || (timed && timedOut))
+                && (wc > 1 || workQueue.isEmpty())) {
+                if (compareAndDecrementWorkerCount(c))
+                    return null;
+                continue;
+            }
+
+            try {
+                // 如果timed为true，说明该线程在等待一段时间后没有获取到任何就要被销毁，否则就一直阻塞在这里获取任务
+                Runnable r = timed ?
+                    workQueue.poll(keepAliveTime, TimeUnit.NANOSECONDS) :
+                    workQueue.take();
+                if (r != null)
+                    return r;
+                timedOut = true;
+            } catch (InterruptedException retry) {
+                timedOut = false;
+            }
+        }
+    }
+
+
+
+    final void runWorker(Worker w) {
+            Thread wt = Thread.currentThread();
+            Runnable task = w.firstTask;
+            w.firstTask = null;
+            w.unlock(); // allow interrupts
+            boolean completedAbruptly = true;
+            try {
+                // 循环获取任务，如果获取的任务为空则销毁线程
+                while (task != null || (task = getTask()) != null) {
+                    w.lock();
+                    // If pool is stopping, ensure thread is interrupted;
+                    // if not, ensure thread is not interrupted.  This
+                    // requires a recheck in second case to deal with
+                    // shutdownNow race while clearing interrupt
+                    // 如果线程池是STOP状态，或者当前线程被中断过，同时线程池是STOP状态，同时当前线程的中断标志被清除了，则
+                    // 中断当前线程
+                    if ((runStateAtLeast(ctl.get(), STOP) ||
+                         (Thread.interrupted() &&
+                          runStateAtLeast(ctl.get(), STOP))) &&
+                        !wt.isInterrupted())
+                        wt.interrupt();
+                    try {
+                        beforeExecute(wt, task);
+                        Throwable thrown = null;
+                        try {
+                            task.run();
+                        } catch (RuntimeException x) {
+                            thrown = x; throw x;
+                        } catch (Error x) {
+                            thrown = x; throw x;
+                        } catch (Throwable x) {
+                            thrown = x; throw new Error(x);
+                        } finally {
+                            afterExecute(task, thrown);
+                        }
+                    } finally {
+                        task = null;
+                        w.completedTasks++;
+                        w.unlock();
+                    }
+                }
+                completedAbruptly = false;
+            } finally {
+                processWorkerExit(w, completedAbruptly);
+            }
+        }
+
+
+        public void setCorePoolSize(int corePoolSize) {
+                if (corePoolSize < 0)
+                    throw new IllegalArgumentException();
+                int delta = corePoolSize - this.corePoolSize;
+                this.corePoolSize = corePoolSize;
+                // 如果当前已有的线程数大于新的核心线程数，中断空闲的线程
+                if (workerCountOf(ctl.get()) > corePoolSize)
+                    interruptIdleWorkers();
+                // 如果新的核心线程数大于已有的线程数，则新增work
+                else if (delta > 0) {
+                    // We don't really know how many new threads are "needed".
+                    // As a heuristic, prestart enough new workers (up to new
+                    // core size) to handle the current number of tasks in
+                    // queue, but stop if queue becomes empty while doing so.
+                    int k = Math.min(delta, workQueue.size());
+                    while (k-- > 0 && addWorker(null, true)) {
+                        if (workQueue.isEmpty())
+                            break;
+                    }
+                }
+            }

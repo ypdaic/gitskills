@@ -423,6 +423,10 @@ Full/Major GC 详解:
      [Times: user=0.20 sys=0.00, real=1.07 secs]  – 同上
      这个阶段很大程度的影响着即将来临的Final Remark的停顿，有相当一部分重要的 configuration options 和 失败的模式；
 
+     CMS就采用了这样的方式，在Remark前增加了一个可中断的并发预清理（CMS-concurrent-abortable-preclean），该阶段主要工作仍然是并发标记对象是否存活，只是这个过程可被中断。此阶段在Eden区使用超过2M时启动，当然2M是默认的阈值，可以通过参数修改。如果此阶段执行时等到了Minor GC，那么上述灰色对象将被回收，Reamark阶段需要扫描的对象就少了。
+     除此之外CMS为了避免这个阶段没有等到Minor GC而陷入无限等待，提供了参数CMSMaxAbortablePrecleanTime ，默认为5s，含义是如果可中断的预清理执行超过5s，不管发没发生Minor GC，都会中止此阶段，进入Remark。 根据GC日志红色标记2处显示，可中断的并发预清理执行了5.35s，超过了设置的5s被中断，期间没有等到Minor GC ，所以Remark时新生代中仍然有很多对象。
+     对于这种情况，CMS提供CMSScavengeBeforeRemark参数，用来保证Remark前强制进行一次Minor GC。
+
 重新标记
 2020-07-10T15:44:56.808-0800: 93.538: [GC (CMS Final Remark) [YG occupancy: 16462 K (46080 K)]2020-07-10T15:44:56.808-0800: 93.538: [Rescan (parallel) , 0.0027125 secs]2020-07-10T15:44:56.811-0800: 93.541: [weak refs processing, 0.0011934 secs]2020-07-10T15:44:56.812-0800: 93.542: [class unloading, 0.0120949 secs]2020-07-10T15:44:56.824-0800: 93.554: [scrub symbol table, 0.0205627 secs]2020-07-10T15:44:56.845-0800: 93.575: [scrub string table, 0.0008590 secs][1 CMS-remark: 50173K(51200K)] 66635K(97280K), 0.0376836 secs] [Times: user=0.04 sys=0.00, real=0.04 secs]
 
