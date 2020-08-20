@@ -1,0 +1,1 @@
+ExchangeServer 用于统一底层通信框架获取channel的差异，对外暴露是ExchangeServer，而不是直接的底层通信框架的Server

@@ -93,7 +93,7 @@ public class Client {
 
                         if(selectionKey.isReadable()) {
                             SocketChannel channel = (SocketChannel) selectionKey.channel();
-                            ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
+                            ByteBuffer byteBuffer = ByteBuffer.allocate(10);
                             int read = channel.read(byteBuffer);
                             if (read > 0) {
                                 byteBuffer.flip();
@@ -103,7 +103,7 @@ public class Client {
                                 System.out.println("客户端收到服务器的消息：" + s);
                             }
                         }
-
+                        // 需要将事件给移除掉
                         iterator.remove();
                     }
                 }
