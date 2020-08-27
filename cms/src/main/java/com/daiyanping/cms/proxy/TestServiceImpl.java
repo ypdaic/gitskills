@@ -1,5 +1,7 @@
 package com.daiyanping.cms.proxy;
 
+import lombok.Data;
+
 /**
  * @ClassName TestServiceImpl
  * @Description TODO
@@ -7,7 +9,10 @@ package com.daiyanping.cms.proxy;
  * @Date 2019-10-12
  * @Version 0.1
  */
+@Data
 public class TestServiceImpl implements ITestService {
+
+    String s = "ss";
 
     private TestServiceImpl(String a) {
 

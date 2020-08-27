@@ -20,10 +20,10 @@ import java.lang.reflect.Proxy;
 public class Test {
 
     public static void main(String[] args) {
-        test2();
+//        test2();
 //        test3();
 //        test4();
-//        test5();
+        test5();
 
     }
 
@@ -195,7 +195,13 @@ public class Test {
         enhancer.setCallback(testServerImplCglibProxy);
         TestServiceImpl o = (TestServiceImpl) enhancer.create(new Class[]{String.class, String.class}, new Object[]{"a", "b"});
         o.say();
+        System.out.println(o.s);
+        MyTest myTest = new MyTest();
+        TestServiceImpl testService1 = myTest;
+        System.out.println(testService1.s);
+    }
 
+    public static class MyTest extends TestServiceImpl {
 
     }
 
