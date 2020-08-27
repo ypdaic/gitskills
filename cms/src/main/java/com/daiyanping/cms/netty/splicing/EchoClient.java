@@ -1,4 +1,4 @@
-package com.daiyanping.cms.netty.echo;
+package com.daiyanping.cms.netty.splicing;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -7,10 +7,8 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.DelimiterBasedFrameDecoder;
 import io.netty.handler.codec.LineBasedFrameDecoder;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.net.InetSocketAddress;
 
 /**
@@ -42,7 +40,14 @@ public class EchoClient {
         bootstrap.channel(NioSocketChannel.class);
         bootstrap.remoteAddress(new InetSocketAddress(this.host, this.port));
         EchoClientHandle echoClientHandle = new EchoClientHandle();
-        bootstrap.handler(echoClientHandle);
+        bootstrap.handler(new ChannelInitializer<Channel>() {
+            @Override
+            protected void initChannel(Channel ch) throws Exception {
+                // 换行符handel
+                ch.pipeline().addLast(new LineBasedFrameDecoder(1024));
+                ch.pipeline().addLast(echoClientHandle);
+            }
+        });
 
         /**
          * 连接到远程节点，直到连接完成
@@ -57,5 +62,7 @@ public class EchoClient {
     public static void main(String[] args) throws InterruptedException {
         new EchoClient(9999, "127.0.0.1"). start();
     }
+
+
 
 }

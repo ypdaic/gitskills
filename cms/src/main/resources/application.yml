@@ -42,7 +42,7 @@ spring:
 
   mail:
     username: 841943896@qq.com
-    password: jzvinxoifaxsbajf
+    password:
     host: smtp.qq.com
     port: 587
 
