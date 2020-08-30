@@ -52,7 +52,8 @@ public class ServerMsgPackEcho {
                     // 65535 表示最大的报文长度，
                     // 当前的长度域从哪里开始
                     // 长度域本身的大小
-                    // 跳过多少个字节才是报文数据
+                    // 从长度域跳过多少个字节才是报文数据
+                    // 后面的handle需要跳过的字节
                     new LengthFieldBasedFrameDecoder(65535,
                             0,2,0,
                             2));

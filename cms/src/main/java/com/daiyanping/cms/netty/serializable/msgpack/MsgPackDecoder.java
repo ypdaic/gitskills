@@ -20,6 +20,6 @@ public class MsgPackDecoder extends MessageToMessageDecoder<ByteBuf> {
         msg.getBytes(msg.readerIndex(),array,0,length);
         MessagePack messagePack = new MessagePack();
         out.add(messagePack.read(array,User.class));
-        ReferenceCountUtil.release(msg);
+//        ReferenceCountUtil.release(msg);
     }
 }
