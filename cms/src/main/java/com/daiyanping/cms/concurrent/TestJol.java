@@ -2,18 +2,20 @@ package com.daiyanping.cms.concurrent;
 
 import org.openjdk.jol.info.ClassLayout;
 
+import java.util.ArrayList;
+
 public class TestJol {
     static L l = new L();
 
 
     public static void main(String[] args) {
-        test8();
+        test12();
     }
 
     /**
      * 前8个字节表示markword, 后4个字节表示class point(就是指向类对应class对象的地址)
      * com.daiyanping.cms.concurrent.L object internals:
-     *  OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
+     *  OFFSET  SIZE   TYPE DESCRIPTION                               VALUE        101 无锁可偏向
      *       0     4        (object header)                           01 00 00 00 (00000101 00000000 00000000 00000000) (5)
      *       4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
      *       8     4        (object header)                           43 c1 00 f8 (01000011 11000001 00000000 11111000) (-134168253)
@@ -24,11 +26,40 @@ public class TestJol {
     private static void test1() {
         String s = ClassLayout.parseInstance(l).toPrintable();
         System.out.println(s);
+
+        new Thread(() -> {
+            ArrayList<Object> objects = new ArrayList<>();
+            for (int i = 0; i < 9999; i++) {
+                try {
+                    Thread.sleep(2);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                objects.add(new A());
+            }
+        }).start();
+
+        /**
+         * 验证对象分代年龄的变化
+         * -XX:BiasedLockingStartupDelay=0 -Xms200m -Xmx200m
+         */
+        while (true) {
+            try {
+                Thread.sleep(2);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            String g = ClassLayout.parseInstance(l).toPrintable();
+            System.out.println(g);
+        }
     }
 
     /**
+     * 0：偏向标识（0：不可偏向，1：可偏向）
+     * 01：表示偏向锁
      * cac736f
-     * com.daiyanping.cms.concurrent.L object internals:
+     * com.daiyanping.cms.concurrent.L object internals: 存储方式是小端存储也就是左边的低位右边的是高位
      *  OFFSET  SIZE   TYPE DESCRIPTION                               VALUE        第一位不使用     001表示无锁不可偏向（因为计算了hashcode）                24位 表示hashcode
      *       0     4        (object header)                           01 6f 73 ac (0           0000001                         01101111 01110011 10101100) (-1401721087)
      *                                                                             1位         7位hoshcode                     24位不使用
@@ -68,6 +99,31 @@ public class TestJol {
         // 无锁可偏向，但是没有偏向
         String s = ClassLayout.parseInstance(l).toPrintable();
         System.out.println(s);
+        synchronized (l) {
+            // 有锁  是一把偏向锁
+            String s2 = ClassLayout.parseInstance(l).toPrintable();
+            System.out.println(s2);
+        }
+    }
+
+    private static void test90() {
+        // 无锁可偏向，但是没有偏向
+        String s = ClassLayout.parseInstance(l).toPrintable();
+        System.out.println(s);
+        synchronized (l) {
+            // 有锁  是一把偏向锁
+            String s2 = ClassLayout.parseInstance(l).toPrintable();
+            System.out.println(s2);
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            // 有锁  是一把偏向锁
+            s2 = ClassLayout.parseInstance(l).toPrintable();
+            System.out.println(s2);
+        }
+
         synchronized (l) {
             // 有锁  是一把偏向锁
             String s2 = ClassLayout.parseInstance(l).toPrintable();
@@ -325,5 +381,87 @@ public class TestJol {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 某个线程释放偏向锁后，锁对象的锁标识还是偏向锁，并且任然指向之前加锁的线程，即使该线程已经退出了
+     */
+    private static void test10() {
+        Thread thread = new Thread(() -> {
+            synchronized (l) {
+                // 101 有锁可偏向
+                String s2 = ClassLayout.parseInstance(l).toPrintable();
+                System.out.println(s2);
+            }
+        });
+        thread.start();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        String s2 = ClassLayout.parseInstance(l).toPrintable();
+        System.out.println(s2);
+
+
+    }
+
+    /**
+     * 某个线程释放偏向锁后，锁对象的锁标识还是偏向锁，并且任然指向之前加锁的线程，即使该线程已经退出了
+     */
+    private static void test12() {
+        Thread thread = new Thread(() -> {
+            synchronized (l) {
+                System.out.println(Thread.currentThread().getId());
+                // 101 有锁可偏向
+                String s2 = ClassLayout.parseInstance(l).toPrintable();
+                System.out.println(s2);
+            }
+        });
+        thread.start();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        String s2 = ClassLayout.parseInstance(l).toPrintable();
+        System.out.println(s2);
+
+         new Thread(() -> {
+            synchronized (l) {
+                System.out.println(Thread.currentThread().getId());
+                // 101 有锁可偏向
+                String s3 = ClassLayout.parseInstance(l).toPrintable();
+                System.out.println(s3);
+            }
+        }).start();
+    }
+
+    /**
+     * 模拟偏向延时之后获取锁才是偏向锁
+     */
+    private static void test11() {
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        A a = new A();
+        synchronized (a) {
+            // 101 有锁可偏向
+            String s2 = ClassLayout.parseInstance(a).toPrintable();
+            System.out.println(s2);
+        }
+
+
+
+        synchronized (a) {
+            // 101 有锁可偏向
+            String s2 = ClassLayout.parseInstance(a).toPrintable();
+            System.out.println(s2);
+        }
+
     }
 }

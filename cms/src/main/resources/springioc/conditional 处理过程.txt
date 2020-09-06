@@ -1,0 +1,37 @@
+public boolean shouldSkip(@Nullable AnnotatedTypeMetadata metadata, @Nullable ConfigurationPhase phase) {
+		if (metadata == null || !metadata.isAnnotated(Conditional.class.getName())) {
+			return false;
+		}
+
+		if (phase == null) {
+			if (metadata instanceof AnnotationMetadata &&
+					ConfigurationClassUtils.isConfigurationCandidate((AnnotationMetadata) metadata)) {
+				return shouldSkip(metadata, ConfigurationPhase.PARSE_CONFIGURATION);
+			}
+			return shouldSkip(metadata, ConfigurationPhase.REGISTER_BEAN);
+		}
+        // 获取类上所有的condition
+		List<Condition> conditions = new ArrayList<>();
+		for (String[] conditionClasses : getConditionClasses(metadata)) {
+			for (String conditionClass : conditionClasses) {
+				Condition condition = getCondition(conditionClass, this.context.getClassLoader());
+				conditions.add(condition);
+			}
+		}
+
+		AnnotationAwareOrderComparator.sort(conditions);
+
+		for (Condition condition : conditions) {
+			ConfigurationPhase requiredPhase = null;
+			// 如果对应的condition是ConfigurationCondition（@Bean声明的类对应的phase都是REGISTER_BEAN），则获取当前的阶段
+			if (condition instanceof ConfigurationCondition) {
+				requiredPhase = ((ConfigurationCondition) condition).getConfigurationPhase();
+			}
+			// 如果requiredPhase为null（SpringBootConditional的子类该出判断都是null）,或者requiredPhase == phase，才能进行condition.matches，否则该condition不生效
+			if ((requiredPhase == null || requiredPhase == phase) && !condition.matches(this.context, metadata)) {
+				return true;
+			}
+		}
+
+		return false;
+	}

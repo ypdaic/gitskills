@@ -1,0 +1,19 @@
+当需要某一批实例而不是某一个实例时，@Activate注解可以
+按group，value条件值筛选实现类加载，以order值进行排序
+
+比如过滤器接口，某些实现是给消费者用的，有些是给生成者用的
+
+
+
+    /** 这个参数也是用于过滤的，需要在url上设置相同名称的参数时，该实现才会被加载
+     * Activate the current extension when the specified keys appear in the URL's parameters.
+     * <p>
+     * For example, given <code>@Activate("cache, validation")</code>, the current extension will be return only when
+     * there's either <code>cache</code> or <code>validation</code> key appeared in the URL's parameters.
+     * </p>
+     *
+     * @return URL parameter keys
+     * @see ExtensionLoader#getActivateExtension(URL, String)
+     * @see ExtensionLoader#getActivateExtension(URL, String, String)
+     */
+    String[] value() default {};

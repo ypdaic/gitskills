@@ -40,4 +40,10 @@ public class EchoServerHandle extends ChannelInboundHandlerAdapter {
         // 将数据刷到对端，而不用发送正在的数据
         ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
     }
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("通道已建立");
+        ctx.fireChannelActive();
+    }
 }
