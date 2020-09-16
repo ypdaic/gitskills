@@ -1,0 +1,10 @@
+for i in `seq 1 15`
+do
+    echo $i
+done
+
+#找到文件，批量打包
+for i in `find . -maxdepth 1 -name "*.sh"`
+do
+ echo $i;tar czf $i.tar.gz $i
+done

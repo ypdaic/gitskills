@@ -1,0 +1,7 @@
+# 中括号必须前后必须要有空格
+
+if [ ! -f /root/a.out ] ;then
+ echo "/root/a.out 文件不存在"
+else
+ echo "/root/a.out 文件存在"
+fi

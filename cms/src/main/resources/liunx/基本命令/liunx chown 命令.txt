@@ -1,0 +1,1 @@
+chown dai test.txt    #设置test.txt文件所属用户为dai

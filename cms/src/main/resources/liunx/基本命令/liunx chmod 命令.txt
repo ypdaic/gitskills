@@ -1,0 +1,7 @@
+chmod o+w  test.txt   #为其他用户添加写权限
+
+chmod u+x  test.txt   #为用户添加执行权限
+
+chmod u=rwx,g=rwx,o=rwx test.txt
+
+用数字表示 r(4),w(2),x(1)

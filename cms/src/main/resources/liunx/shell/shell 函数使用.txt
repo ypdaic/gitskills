@@ -1,0 +1,7 @@
+#!/bin/bash
+
+function t()
+{
+        echo "我是一个函数"
+}
+t

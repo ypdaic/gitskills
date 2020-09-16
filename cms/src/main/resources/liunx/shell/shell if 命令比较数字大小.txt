@@ -1,0 +1,6 @@
+NUM=100
+if (($NUM > 4)) ;then
+ echo "this num is > 4"
+else
+ echo "this num is < 4"
+fi

@@ -33,6 +33,7 @@ server {
             }
 
             # 设置代理
+            proxy_next_upstream http_502 http_504 error timeout invalid_header;   #如果响应是502,504啥的就切换到下一太服务器
             proxy_pass http://localhost:8086/springcloud-provider/;
             proxy_read_timeout 60s;
             # 设置请求的host，如果不设置则为代理的host,

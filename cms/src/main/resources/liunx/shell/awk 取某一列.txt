@@ -1,0 +1,4 @@
+ll | awk '{print $9}'                                  打印第9行
+ll | awk '{print $9}' |grep -v '^$'                    消除第一行空格
+ll | awk '{print $9}' |grep -v '^$' |head -1           取第一行
+ll | awk '{print $9}' |grep -v '^$' |tail -1           取最后一行

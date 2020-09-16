@@ -1,0 +1,18 @@
+
+/etc/sysconfig/network-scripts/ifcfg-eth0
+
+
+DEVICE=eth0   #物理设备名
+ONBOOT=yes    #重启网卡是否激活设备
+BOOTPROTO=static #[none|static|bootp|dhcp] (不使用协议|静态分配|BOOTP协议|DHCP 协议)
+TYPE=Ethernet #网卡类型
+IPADDR=192.168.149.128 #ip地址
+NETMASK=255.255.255.0  #子网掩码
+GATEWAY=192.168.149.1  #网关地址
+
+网卡配置完毕，重启网卡，命令：/etc/init.d/network restart 即可
+查看ip命令： ifconfig 查看当前服务器所有网卡的IP, 可以单独指定, ifconfig eth0 查看 eth0 的IP地址
+网卡配置完毕，如果来配置DNS，首先要知道DNS配置在哪个目录文件下 vi   /etc/resolv.conf
+文件，在该文件里面添加如下两条：
+nameserver 202.106.0.20
+nameserver 8.8.8.8

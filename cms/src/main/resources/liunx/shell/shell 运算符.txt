@@ -1,0 +1,31 @@
+定义 a=10,b=20
+
++ 加法 `expr $a + $b`
+- 减法 `expr $a - $b`
+* 乘法 `expr $a \* $b`
+/ 除法 `expr $a / $b`
+% 取余 `expr $b % $a`
+= 赋值  a=$b 将变量b赋值给a
+== 相等。用于比较两个数字，相同则返回true
+!= 不相等，用于比较两个数字，不相同则返回 true
+
+
+
+#!/bin/bash
+#by daiyanping
+#2020
+#This is my first shell
+#定义一个变量，等于前后没有空格，$A就是引用一个变量
+A=123
+echo "hello world $A"
+echo "$0"
+echo "$?"
+echo "第一个参数 $1"
+echo "所有参数 $*"
+echo "程序参数个数 $#"
+echo "当前用户id $UID"
+echo "当前所在目录 $PWD"
+echo "命令或程序执行完后的状态，一般返回0表示执行成功 $?"
+a=10
+b=20
+echo `expr $a - $b`

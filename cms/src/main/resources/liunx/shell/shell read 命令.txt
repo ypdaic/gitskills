@@ -1,0 +1,1 @@
+read -p "please insert command:" cmd    #交互

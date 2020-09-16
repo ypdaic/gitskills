@@ -1,0 +1,1 @@
+mkdir -p test/test    #创建多级目录

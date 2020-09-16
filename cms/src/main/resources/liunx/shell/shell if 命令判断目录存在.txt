@@ -1,0 +1,13 @@
+# 中括号必须前后必须要有空格
+
+if [ ! -d /root/code ] ;then
+ echo "/root/code 目录不存在"
+else
+ echo "/root/code 目录存在"
+fi
+
+if [ -d /root/code ] ;then
+ echo "/root/code 目录存在"
+else
+ echo "/root/code 目录不存在"
+fi

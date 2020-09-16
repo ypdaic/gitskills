@@ -1,0 +1,7 @@
+useradd test
+
+userdel test
+
+groupadd test  用户组新增
+
+groupdel test  用户组删除
