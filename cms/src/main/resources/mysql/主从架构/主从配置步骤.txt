@@ -28,12 +28,13 @@
         #replicate-do-db=test
         #binlog-ignore-db=mysql //要忽略的数据库
 
+    如果两个数据库是复制的，确保auto.config的uuid是不一样的
 
 master 创建复制用户
 
     CREATE USER 'slave'@'%' IDENTIFIED BY '123456';
-
-    GRANT REPLICATION SLAVE,FILE,REPLICATION CLIENT ON *.* TO 'slave'@'%';
+    alert  USER 'slave'@'%' IDENTIFIED with mysql_native_password BY '123456';
+    GRANT REPLICATION SLAVE,FILE,REPLICATION CLIENT ON *.* TO 'slave'@'%';   #注意，要使用权限的用户进行赋权，最好是使用本地客户端的root用户，也就是拥有grant权限
 
 获取master的binlog,pos
 

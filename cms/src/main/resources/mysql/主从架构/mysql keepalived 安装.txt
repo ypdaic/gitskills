@@ -1,0 +1,162 @@
+1: 去官方网站获取下载链接
+    https://www.keepalived.org/download.html
+
+2：选择一个版本
+    wget https://www.keepalived.org/software/keepalived-2.1.5.tar.gz
+
+3：安装
+    #依赖安装
+    yum -y install openssl openssl-devel libnl* libnfnetlink-devel
+
+    # 解压
+    tar -zxvf keepalived-2.1.5.tar.gz
+
+    # 进入目录
+    cd keepalived-2.1.5
+
+    # 创建安装目录
+    mkdir /usr/local/keepalived
+
+    # 配置安装目录
+    ./configure --prefix=/usr/local/keepalived/
+
+    #编译
+    make && make install
+
+
+    配置
+
+        # 创建/etc/keepalived目录
+        mkdir /etc/keepalived
+        # 拷贝文件到目录
+        cp /usr/local/keepalived/etc/keepalived/keepalived.conf /etc/keepalived/
+        cp /usr/local/keepalived/etc/sysconfig/keepalived /etc/sysconfig/
+        cp /usr/local/keepalived/sbin/keepalived /usr/sbin/
+        # 这个从keepalived源码目录复制，安装目录中没有
+        cp /usr/local/src/keepalived-2.0.4/keepalived/etc/init.d/keepalived /etc/rc.d/init.d/
+
+        # 开机启动
+        chkconfig keepalived on
+        service keepalived start   #启动服务
+        service keepalived stop    #停止服务
+        service keepalived restart #重启服务
+        service keepalived status  #状态
+
+
+    mysql keepalived.conf  master配置
+
+
+
+    ! Configuration File for keepalived
+
+    global_defs {
+       notification_email {
+         acassen@firewall.loc
+         failover@firewall.loc
+         sysadmin@firewall.loc
+       }
+       notification_email_from Alexandre.Cassen@firewall.loc
+       smtp_server 192.168.200.1
+       smtp_connect_timeout 30
+       router_id LVS_DEVEL
+       vrrp_skip_check_adv_addr
+       vrrp_strict
+       vrrp_garp_interval 0
+       vrrp_gna_interval 0
+    }
+
+    vrrp_instance VI_1 {
+        state MASTER
+        interface ens33
+        virtual_router_id 51
+        priority 100
+        advert_int 1
+        authentication {
+            auth_type PASS
+            auth_pass 1111
+        }
+        virtual_ipaddress {
+            192.168.109.131
+        }
+    }
+
+    virtual_server 192.168.200.131 3308 {
+        delay_loop 6
+        lb_algo rr
+        lb_kind NAT
+        persistence_timeout 50
+        protocol TCP
+
+        real_server 192.168.109.129 3308 {
+            weight 1
+            notify_down /data/sh/mysql.sh
+          	TCP_CHECK {
+          		connect_timeout 10
+          		nb_get_retry 3
+          		delay_before_retry 3
+          		connect_port 3308
+          	}
+         }
+    }
+
+
+     mysql keepalived.conf  slave配置
+
+    ! Configuration File for keepalived
+
+    global_defs {
+       notification_email {
+         acassen@firewall.loc
+         failover@firewall.loc
+         sysadmin@firewall.loc
+       }
+       notification_email_from Alexandre.Cassen@firewall.loc
+       smtp_server 192.168.200.1
+       smtp_connect_timeout 30
+       router_id LVS_DEVEL
+       vrrp_skip_check_adv_addr
+       vrrp_strict
+       vrrp_garp_interval 0
+       vrrp_gna_interval 0
+    }
+
+    vrrp_instance VI_1 {
+        state BACKUP
+        interface ens33
+        virtual_router_id 51
+        priority 90
+        advert_int 1
+        authentication {
+            auth_type PASS
+            auth_pass 1111
+        }
+        virtual_ipaddress {
+            192.168.109.131
+        }
+    }
+
+    virtual_server 192.168.200.131 3308 {
+        delay_loop 6
+        lb_algo rr
+        lb_kind NAT
+        persistence_timeout 50
+        protocol TCP
+
+        real_server 192.168.109.130 3308 {
+            weight 1
+            notify_down /data/sh/mysql.sh
+            TCP_CHECK {
+                    connect_timeout 10
+                    nb_get_retry 3
+                    delay_before_retry 3
+                    connect_port 3308
+            }
+
+       }
+    }
+
+    mysql.sh 内容
+
+    #!/bin/bash
+
+    pkill keepalived
