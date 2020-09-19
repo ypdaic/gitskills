@@ -160,3 +160,5 @@
     #!/bin/bash
 
     pkill keepalived
+
+    重要：去除mysql的bind_addr配置项
