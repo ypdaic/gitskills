@@ -1,0 +1,188 @@
+1： 创建 Nginx 的管理脚本
+    首先，在系统的/etc/init.d/目录下创建 nginx 文件：
+
+    vi /etc/init.d/nginx
+
+    #!/bin/sh
+    #
+    # nginx - this script starts and stops the nginx daemon
+    #
+    # chkconfig:   - 85 15
+    # description:  NGINX is an HTTP(S) server, HTTP(S) reverse \
+    #               proxy and IMAP/POP3 proxy server
+    # processname: nginx
+    # config:      /etc/nginx/nginx.conf
+    # config:      /etc/sysconfig/nginx
+    # pidfile:     /var/run/nginx.pid
+
+    # Source function library.
+    . /etc/rc.d/init.d/functions
+
+    # Source networking configuration.
+    . /etc/sysconfig/network
+
+    # Check that networking is up.
+    [ "$NETWORKING" = "no" ] && exit 0
+
+    #配置成自己的nginx执行文件路径
+    nginx="/usr/local/nginx/sbin/nginx"
+    prog=$(basename $nginx)
+    #配置成自己的nginx 配置文件路径
+    NGINX_CONF_FILE="/usr/local/nginx/conf/nginx.conf"
+
+    [ -f /etc/sysconfig/nginx ] && . /etc/sysconfig/nginx
+
+    lockfile=/var/lock/subsys/nginx
+
+    make_dirs() {
+       # make required directories
+       user=`$nginx -V 2>&1 | grep "configure arguments:.*--user=" | sed 's/[^*]*--user=\([^ ]*\).*/\1/g' -`
+       if [ -n "$user" ]; then
+          if [ -z "`grep $user /etc/passwd`" ]; then
+             useradd -M -s /bin/nologin $user
+          fi
+          options=`$nginx -V 2>&1 | grep 'configure arguments:'`
+          for opt in $options; do
+              if [ `echo $opt | grep '.*-temp-path'` ]; then
+                  value=`echo $opt | cut -d "=" -f 2`
+                  if [ ! -d "$value" ]; then
+                      # echo "creating" $value
+                      mkdir -p $value && chown -R $user $value
+                  fi
+              fi
+           done
+        fi
+    }
+
+    start() {
+        [ -x $nginx ] || exit 5
+        [ -f $NGINX_CONF_FILE ] || exit 6
+        make_dirs
+        echo -n $"Starting $prog: "
+        daemon $nginx -c $NGINX_CONF_FILE
+        retval=$?
+        echo
+        [ $retval -eq 0 ] && touch $lockfile
+        return $retval
+    }
+
+    stop() {
+        echo -n $"Stopping $prog: "
+        killproc $prog -QUIT
+        retval=$?
+        echo
+        [ $retval -eq 0 ] && rm -f $lockfile
+        return $retval
+    }
+
+    restart() {
+        configtest || return $?
+        stop
+        sleep 1
+        start
+    }
+
+    reload() {
+        configtest || return $?
+        echo -n $"Reloading $prog: "
+        killproc $prog -HUP
+        retval=$?
+        echo
+    }
+
+    force_reload() {
+        restart
+    }
+
+    configtest() {
+      $nginx -t -c $NGINX_CONF_FILE
+    }
+
+    rh_status() {
+        status $prog
+    }
+
+    rh_status_q() {
+        rh_status >/dev/null 2>&1
+    }
+
+    case "$1" in
+        start)
+            rh_status_q && exit 0
+            $1
+            ;;
+        stop)
+            rh_status_q || exit 0
+            $1
+            ;;
+        restart|configtest)
+            $1
+            ;;
+        reload)
+            rh_status_q || exit 7
+            $1
+            ;;
+        force-reload)
+            force_reload
+            ;;
+        status)
+            rh_status
+            ;;
+        condrestart|try-restart)
+            rh_status_q || exit 0
+                ;;
+        *)
+            echo $"Usage: $0 {start|stop|status|restart|condrestart|try-restart|reload|force-reload|configtest}"
+            exit 2
+    esac
+
+
+
+2： 配置权限
+
+    chmod a+x /etc/init.d/nginx
+
+3：nginx服务加入 chkconfig 管理列表
+
+    chkconfig --add /etc/init.d/nginx
+
+    chkconfig nginx on     #设置开机自启动
+    chkconfig nginx off    #停止开机自启动
+    service nginx start    #启动 Nginx 服务
+    service nginx stop     #停止 Nginx 服务
+    service nginx restart  #重启 Nginx 服务
+    service nginx status   #查看 Nginx 状态
+
+4：创建 Nginx 的管理脚本
+
+    vi /lib/systemd/system/nginx.service
+
+5：脚本内容
+
+    [Unit]
+    Description=The NGINX HTTP and reverse proxy server
+    After=syslog.target network-online.target remote-fs.target nss-lookup.target
+    Wants=network-online.target
+
+    [Service]
+    Type=forking
+    PIDFile=/run/nginx.pid #一定要和nginx.conf中的一致，否则启动会失败
+    ExecStartPre=/usr/local/nginx/sbin/nginx -t
+    ExecStart=/usr/local/nginx/sbin/nginx
+    ExecReload=/usr/local/nginx/sbin/nginx -s reload
+    ExecStop=/bin/kill -s QUIT $MAINPID
+    PrivateTmp=true
+
+    [Install]
+    WantedBy=multi-user.target
+
+6：设置权限
+
+    chmod a+x /lib/systemd/system/nginx.service
+
+7：   systemctl enable nginx.service          #设置开机自启动
+      systemctl disable nginx.service         #停止开机自启动
+      systemctl start nginx.service　         #启动 Nginx 服务
+      systemctl stop nginx.service　          #停止服务
+      systemctl status nginx.service          #查看服务当前状态
+      systemctl list-units --type=service     #查看所有已启动的服务

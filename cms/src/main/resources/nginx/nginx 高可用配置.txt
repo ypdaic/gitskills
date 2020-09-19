@@ -1,52 +1,6 @@
-1: 去官方网站获取下载链接
-    https://www.keepalived.org/download.html
+修改  /etc/keepalived/keepalived.conf 配置文件
 
-2：选择一个版本
-    wget https://www.keepalived.org/software/keepalived-2.1.5.tar.gz
-
-3：安装
-    #依赖安装
-    yum -y install openssl openssl-devel libnl* libnfnetlink-devel
-
-    # 解压
-    tar -zxvf keepalived-2.1.5.tar.gz
-
-    # 进入目录
-    cd keepalived-2.1.5
-
-    # 创建安装目录
-    mkdir /usr/local/keepalived
-
-    # 配置安装目录
-    ./configure --prefix=/usr/local/keepalived/
-
-    #编译
-    make && make install
-
-
-    配置
-
-        # 创建/etc/keepalived目录
-        mkdir /etc/keepalived
-        # 拷贝文件到目录
-        cp /usr/local/keepalived/etc/keepalived/keepalived.conf /etc/keepalived/
-        cp /usr/local/keepalived/etc/sysconfig/keepalived /etc/sysconfig/
-        cp /usr/local/keepalived/sbin/keepalived /usr/sbin/
-        # 这个从keepalived源码目录复制，安装目录中没有
-        cp /usr/local/src/keepalived-2.0.4/keepalived/etc/init.d/keepalived /etc/rc.d/init.d/
-
-        # 开机启动
-        chkconfig keepalived on
-        service keepalived start   #启动服务
-        service keepalived stop    #停止服务
-        service keepalived restart #重启服务
-        service keepalived status  #状态
-
-
-
-    修改  /etc/keepalived/keepalived.conf 配置文件
-
-    mysql keepalived.conf  master配置
+    nginx keepalived.conf  master配置
 
 
 
@@ -73,6 +27,7 @@
         interface ens33
         virtual_router_id 51
         priority 100
+        nopreempt #master重启后不抢占
         advert_int 1
         authentication {
             auth_type PASS
@@ -83,14 +38,14 @@
         }
     }
 
-    virtual_server 192.168.200.131 3308 {
+    virtual_server 192.168.200.131 80 {
         delay_loop 6
         lb_algo rr
         lb_kind NAT
         persistence_timeout 50
         protocol TCP
 
-        real_server 192.168.109.129 3308 {
+        real_server 192.168.109.129 80 {
             weight 1
             notify_down /data/sh/mysql.sh
           	TCP_CHECK {
@@ -103,7 +58,7 @@
     }
 
 
-     mysql keepalived.conf  slave配置
+     nginx keepalived.conf  slave配置
 
     ! Configuration File for keepalived
 
@@ -138,14 +93,14 @@
         }
     }
 
-    virtual_server 192.168.200.131 3308 {
+    virtual_server 192.168.200.131 80 {
         delay_loop 6
         lb_algo rr
         lb_kind NAT
         persistence_timeout 50
         protocol TCP
 
-        real_server 192.168.109.130 3308 {
+        real_server 192.168.109.130 80 {
             weight 1
             notify_down /data/sh/mysql.sh
             TCP_CHECK {
@@ -157,15 +112,3 @@
 
        }
     }
-
-    mysql.sh 内容
-
-    #!/bin/bash
-
-    pkill keepalived
-
-    重要：去除mysql的bind_addr配置项
-
-
-
-
