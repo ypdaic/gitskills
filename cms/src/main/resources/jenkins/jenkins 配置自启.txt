@@ -1,0 +1,78 @@
+1: 创建Jenkins启动，停止脚本
+
+    #!/bin/bash
+
+    ###主要目的用于开机启动服务,不然 启动jenkins.war包没有java -jar的权限
+
+    JAVA_HOME=/usr/local/java
+
+
+
+    pid=`ps -ef | grep jenkins.war | grep -v 'grep'| awk '{print $2}'| wc -l`
+
+    if [ "$1" = "start" ];then
+
+    	if [ $pid -gt 0 ];then
+
+    	echo 'jenkins is running...'
+
+    	else
+
+    	echo 'jenkins is starting...'
+
+    	### java启动服务 配置java安装根路径,和启动war包存的根路径
+
+    	nohup $JAVA_HOME/bin/java -jar /software/Jenkins --httpPort=9090 > /dev/null 2>&1 &
+
+    fi
+
+    elif [ "$1" = "stop" ];then
+
+    	exec ps -ef | grep jenkins | grep -v grep | awk '{print $2}'| xargs kill -9
+
+    	echo 'jenkins is stop..'
+
+    else
+
+    	echo "Please input like this:"./jenkins.sh start" or "./jenkins stop""
+
+    fi
+
+2：配置脚本权限
+
+    chmod +x /data/sh/jenkins/jenkins.sh
+
+3: 配置开机自启服务
+
+    vi /lib/systemd/system/jenkins.service 配置如下内容
+
+    [Unit]
+
+    Description=Jenkins
+
+    After=network.target
+
+
+    [Service]
+
+    Type=forking
+
+    ExecStart=/data/sh/jenkins.sh start
+
+    ExecReload=
+
+    ExecStop=/data/sh/jenkins.sh stop
+
+    PrivateTmp=true
+
+
+    [Install]
+
+    WantedBy=multi-user.target
+
+4： 重启systemctl
+    systemctl daemon-reload
+
+5：设置开机自启
+
+    systemctl enable jenkins.service
