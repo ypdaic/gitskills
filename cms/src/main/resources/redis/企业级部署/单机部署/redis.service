@@ -1,0 +1,23 @@
+[Unit]
+
+Description=redis-server
+
+After=network.target
+
+
+[Service]
+
+Type=forking
+
+ExecStart=/usr/local/bin/redis-server /usr/local/redis/redis.conf
+
+ExecReload=
+
+ExecStop=/usr/local/bin/redis-cli -h 192.168.109.129 -p 6379 -a test1234 shutdown
+
+PrivateTmp=true
+
+
+[Install]
+
+WantedBy=multi-user.target

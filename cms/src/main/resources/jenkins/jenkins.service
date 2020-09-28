@@ -1,0 +1,23 @@
+[Unit]
+
+Description=Jenkins
+
+After=network.target
+
+
+[Service]
+
+Type=forking
+
+ExecStart=/data/sh/jenkins.sh start
+
+ExecReload=
+
+ExecStop=/data/sh/jenkins.sh stop
+
+PrivateTmp=true
+
+
+[Install]
+
+WantedBy=multi-user.target

@@ -225,7 +225,7 @@ always-show-logo yes
 save 900 1
 # 5分钟至少更改了10个键
 save 300 10
-# 1分钟至少更改了 10000个键
+# 1分钟至少更改了 10000个键，可以根据实际情况该下
 save 60 10000
 
 # By default Redis will stop accepting writes if RDB snapshots are enabled

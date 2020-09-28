@@ -1,0 +1,16 @@
+daemonize	yes							让redis以daemon进程运行
+pidfile		/var/run/redis_6379.pid 	设置redis的pid文件位置
+port		6379						设置redis的监听端口号
+dir 		/var/redis/6379				设置持久化文件的存储位置
+logfile "/var/log/redis_6379.log"       设置日志文件位置
+bind 192.168.109.129                    设置绑定ip
+protected-mode no                       运行外部访问
+requirepass test1234                    设置访问密码
+appendonly yes                          开启aof
+
+
+从机需要增加的配置
+
+replicaof 192.168.109.129 6379          从节点要跟随的主节点，或者配置slaveof 127.0.0.1 6379
+masterauth test1234                     主认证密码
+replica-read-only yes                   从机只读配置
