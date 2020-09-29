@@ -1,0 +1,9 @@
+1、哨兵节点的增加和删除
+
+增加sentinal，会自动发现
+
+删除sentinal的步骤
+
+（1）停止sentinal进程
+（2）SENTINEL RESET *，在所有sentinal上执行，清理所有的master状态
+（3）SENTINEL MASTER mastername，在所有sentinal上执行，查看所有sentinal对数量是否达成了一致

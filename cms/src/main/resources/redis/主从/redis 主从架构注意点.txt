@@ -1,0 +1,3 @@
+在主，从上都要配置masterauth，否则从节点成为主后，由于主没有配置，导致主节点起来后成为slave，连接不上master
+
+masterauth test1234                     主认证密码
