@@ -1,0 +1,38 @@
+master重启后，会自动成为某一个master的slave节点
+
+启动日志：
+
+9232:C 01 Oct 2020 08:13:04.579 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+9232:C 01 Oct 2020 08:13:04.579 # Redis version=5.0.5, bits=64, commit=00000000, modified=0, pid=9232, just started
+9232:C 01 Oct 2020 08:13:04.579 # Configuration loaded
+9233:M 01 Oct 2020 08:13:04.580 * Increased maximum number of open files to 10032 (it was originally set to 1024).
+9233:M 01 Oct 2020 08:13:04.581 * Node configuration loaded, I'm 5115170f054ffafa8186db9a24d9f6adcdf2d92e
+9233:M 01 Oct 2020 08:13:04.581 * Running mode=cluster, port=7004.
+9233:M 01 Oct 2020 08:13:04.581 # WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.
+9233:M 01 Oct 2020 08:13:04.581 # Server initialized
+9233:M 01 Oct 2020 08:13:04.581 # WARNING overcommit_memory is set to 0! Background save may fail under low memory condition. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+9233:M 01 Oct 2020 08:13:04.581 # WARNING you have Transparent Huge Pages (THP) support enabled in your kernel. This will create latency and memory usage issues with Redis. To fix this issue run the command 'echo never > /sys/kernel/mm/transparent_hugepage/enabled' as root, and add it to your /etc/rc.local in order to retain the setting after a reboot. Redis must be restarted after THP is disabled.
+9233:M 01 Oct 2020 08:13:04.581 * Ready to accept connections
+9233:M 01 Oct 2020 08:13:04.582 # Configuration change detected. Reconfiguring myself as a replica of 69d9808f2bc97391e4babe8003ced43f0bdb4969
+9233:S 01 Oct 2020 08:13:04.582 * Before turning into a replica, using my master parameters to synthesize a cached master: I may be able to synchronize with the new master with just a partial transfer.
+9233:S 01 Oct 2020 08:13:04.582 # Cluster state changed: ok
+9233:S 01 Oct 2020 08:13:05.589 * Connecting to MASTER 192.168.109.130:7003  #开始连接master
+9233:S 01 Oct 2020 08:13:05.589 * MASTER <-> REPLICA sync started
+9233:S 01 Oct 2020 08:13:05.590 * Non blocking connect for SYNC fired the event.
+9233:S 01 Oct 2020 08:13:05.590 * Master replied to PING, replication can continue...
+9233:S 01 Oct 2020 08:13:05.591 * Trying a partial resynchronization (request 42c0253d2dc9271975a5205015ded2d1b67413d3:1).
+9233:S 01 Oct 2020 08:13:05.593 * Full resync from master: a4888fe58584d929756a0c27098ee5fd4b176e99:3220
+9233:S 01 Oct 2020 08:13:05.593 * Discarding previously cached master state.
+9233:S 01 Oct 2020 08:13:05.664 * MASTER <-> REPLICA sync: receiving 176 bytes from master
+9233:S 01 Oct 2020 08:13:05.664 * MASTER <-> REPLICA sync: Flushing old data
+9233:S 01 Oct 2020 08:13:05.664 * MASTER <-> REPLICA sync: Loading DB in memory
+9233:S 01 Oct 2020 08:13:05.664 * MASTER <-> REPLICA sync: Finished with success
+9233:S 01 Oct 2020 08:13:05.664 * Background append only file rewriting started by pid 9237
+9233:S 01 Oct 2020 08:13:05.702 * AOF rewrite child asks to stop sending diffs.
+9237:C 01 Oct 2020 08:13:05.703 * Parent agreed to stop sending diffs. Finalizing AOF...
+9237:C 01 Oct 2020 08:13:05.703 * Concatenating 0.00 MB of AOF diff received from parent.
+9237:C 01 Oct 2020 08:13:05.703 * SYNC append only file rewrite performed
+9237:C 01 Oct 2020 08:13:05.704 * AOF rewrite: 0 MB of memory used by copy-on-write
+9233:S 01 Oct 2020 08:13:05.791 * Background AOF rewrite terminated with success
+9233:S 01 Oct 2020 08:13:05.792 * Residual parent diff successfully flushed to the rewritten AOF (0.00 MB)
+9233:S 01 Oct 2020 08:13:05.792 * Background AOF rewrite finished successfully
