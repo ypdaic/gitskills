@@ -1,0 +1,33 @@
+vi /lib/systemd/system/nacos.service
+
+
+[Unit]
+
+Description=nacos
+
+After=network.target
+
+
+[Service]
+
+Type=forking
+
+ExecStart=/data/sh/nacos.sh start
+
+
+ExecStop=/data/sh/nacos.sh stop
+
+PrivateTmp=true
+
+
+[Install]
+
+WantedBy=multi-user.target
+
+
+4： 重启systemctl
+    systemctl daemon-reload
+
+5：设置开机自启
+
+    systemctl enable nacos.service

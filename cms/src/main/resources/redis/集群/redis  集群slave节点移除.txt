@@ -1,0 +1,2 @@
+redis-cli -a test1234 --cluster del-node 192.168.109.129:7004 921b4654ac3fc9896d924d77ce07460080bed3e8
+                                          连接的节点                       需要移除的节点id

@@ -1,0 +1,30 @@
+vi /lib/systemd/system/kafka.service
+
+[Unit]
+
+Description=kafka
+
+After=network.target
+
+
+[Service]
+
+Type=forking
+
+ExecStart=/data/sh/kafka.sh start
+
+ExecStop=/data/sh/kafka.sh stop
+
+PrivateTmp=true
+
+
+[Install]
+
+WantedBy=multi-user.target
+
+4： 重启systemctl
+    systemctl daemon-reload
+
+5：设置开机自启
+
+    systemctl enable kafka.service

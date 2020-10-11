@@ -31,7 +31,7 @@ vrrp_instance VI_1 {
     }
 }
 
-virtual_server 192.168.200.131 3308 {
+virtual_server 192.168.109.131 3308 {
     delay_loop 6
     lb_algo wrr
     lb_kind DR
@@ -51,7 +51,7 @@ virtual_server 192.168.200.131 3308 {
    }
 }
 
-virtual_server 192.168.200.131 80 {
+virtual_server 192.168.109.131 80 {
       delay_loop 6
       lb_algo wrr
       lb_kind NAT

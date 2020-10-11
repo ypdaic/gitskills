@@ -83,7 +83,7 @@
         }
     }
 
-    virtual_server 192.168.200.131 3308 {
+    virtual_server 192.168.109.131 3308 {
         delay_loop 6
         lb_algo rr
         lb_kind NAT
@@ -138,7 +138,7 @@
         }
     }
 
-    virtual_server 192.168.200.131 3308 {
+    virtual_server 192.168.109.131 3308 {
         delay_loop 6
         lb_algo rr
         lb_kind NAT
