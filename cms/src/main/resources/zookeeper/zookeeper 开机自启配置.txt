@@ -1,0 +1,37 @@
+vi /lib/systemd/system/zookeeper.service
+
+
+
+[Unit]
+
+Description=zookeeper
+
+After=network.target
+
+
+[Service]
+
+Type=forking
+
+ExecStart=/data/sh/zookeeper.sh start
+
+ExecRestart=/data/sh/zookeeper.sh restart
+
+ExecStatus=/data/sh/zookeeper.sh status
+
+ExecStop=/data/sh/zookeeper.sh stop
+
+PrivateTmp=true
+
+
+[Install]
+
+WantedBy=multi-user.target
+
+
+4： 重启systemctl
+    systemctl daemon-reload
+
+5：设置开机自启
+
+    systemctl enable redis-sentinel.service:
