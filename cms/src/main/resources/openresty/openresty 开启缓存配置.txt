@@ -1,0 +1,3 @@
+在http模块加载下面的配置项：
+
+lua_shared_dict my_cache 128m;

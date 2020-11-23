@@ -1,0 +1,40 @@
+local uri_args = ngx.req.get_uri_args()
+local productId = uri_args["productId"]
+local shopId = uri_args["shopId"]
+
+local cache_ngx = ngx.shared.my_cache
+
+local productCacheKey = "product_info_"..productId
+local shopCacheKey = "shop_info_"..shopId
+
+local productCache = cache_ngx:get(productCacheKey)
+local shopCache = cache_ngx:get(shopCacheKey)
+
+if productCache == "" or productCache == nil then
+        local http = require("resty.http")
+        local httpc = http.new()
+
+        local resp, err = httpc:request_uri("http://192.168.109.1:8081",{
+                method = "GET",
+                path = "/openresty/product?productId="..productId
+        })
+
+        productCache = resp.body
+        cache_ngx:set(productCacheKey, productCache, 10 * 60)
+        httpc:close();
+end
+
+if shopCache == "" or shopCache == nil then
+        local http = require("resty.http")
+        local httpc = http.new()
+
+        local resp, err = httpc:request_uri("http://192.168.109.1:8081",{
+                method = "GET",
+                path = "/openresty/shop?shopId="..shopId
+        })
+
+        shopCache = resp.body
+        cache_ngx:set(shopCacheKey, shopCache, 10 * 60)
+        httpc:close()
+end
+ngx.say(productCache, shopCache);

@@ -1,0 +1,42 @@
+docker pull openresty/openresty:centos
+
+镜像内部信息：
+
+    默认安装位置：
+    /usr/local/openresty/
+
+    Nginx 相关文件：
+    /usr/local/openresty/nginx/
+
+    默认服务指向文件夹：
+    /usr/local/openresty/nginx/html/
+
+    映射：
+    /bin/openresty -> /usr/local/openresty/nginx/sbin/nginx
+    /bin/opm -> /usr/local/openresty/bin/opm
+
+    默认配置文件位置（后续的配置会覆盖这里的内容，配置server部分）：
+    /etc/nginx/conf.d/default.conf
+
+
+
+    docker run -d --name openresty  \
+        -p 20000:80 \
+        -v /root/docker/openresty/conf.d:/etc/nginx/conf.d/ \
+        -v /root/docker/openresty/lualib/resty:/usr/local/openresty/lualib/resty \
+        openresty/openresty:centos
+
+
+    docker run -d --name openresty-application  \
+            -p 20001:80 \
+            -v /root/docker/openresty-application/conf.d:/etc/nginx/conf.d/ \
+            -v /root/docker/openresty-application/lualib/resty:/usr/local/openresty/lualib/resty \
+            -v /root/docker/openresty-application/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf \
+            openresty/openresty:centos
+
+    docker run -d --name openresty-application2  \
+                -p 20002:80 \
+                -v /root/docker/openresty-application2/conf.d:/etc/nginx/conf.d/ \
+                -v /root/docker/openresty-application2/lualib/resty:/usr/local/openresty/lualib/resty \
+                -v /root/docker/openresty-application2/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf \
+                openresty/openresty:centos

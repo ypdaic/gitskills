@@ -1,0 +1,5 @@
+https://github.com/ledgetech/lua-resty-http/blob/master/lib/resty/http_headers.lua
+
+https://github.com/ledgetech/lua-resty-http/blob/master/lib/resty/http_headers.lua
+
+下载到/usr/local/openresty/lualib/resty目录下

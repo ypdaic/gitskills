@@ -1,0 +1,25 @@
+local uri_args = ngx.req.get_uri_args();   #获取url的参数列表
+local productId = uri_args["productId"];   #获取productId参数
+ngx.log(ngx.ERR, "productId:", productId)  #打印日志
+local host = {"192.168.109.129:20001", "192.168.109.129:20002"};
+local hash = ngx.crc32_long(productId);
+ngx.log(ngx.ERR, "hash:", hash)
+local index  = (productId % 2) + 1;
+ngx.log(ngx.ERR, "index:", index)
+backend = "http://"..host[index]           # .. 字符串拼接
+
+local method = uri_args["method"]          # 获取method参数
+local requestBody = "/"..method.."?productId="..productId
+
+local http = require("resty.http")         # 进行http 转发
+local httpc = http.new()
+local resp, err = httpc:request_uri(backend,{
+        method = "GET",
+        path = requestBody
+})
+if not resp then
+  ngx.say("request error: ",err)
+  return
+end
+ngx.say(resp.body)
+httpc:close()

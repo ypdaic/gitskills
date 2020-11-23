@@ -1,0 +1,12 @@
+直接写在 location中
+location /lua {
+        default_type 'text/html';
+        content_by_lua 'ngx.say("hello world")';
+    }
+
+写在 .lua 文件中，content_by_lua_file 需配置为绝对路径，如果是docker需要配置为docker容器的内部路径
+location /luafile {
+    default_type 'text/html';
+    lua_code_cache off;
+    content_by_lua_file /etc/nginx/conf.d/lua/hello.lua;
+}
