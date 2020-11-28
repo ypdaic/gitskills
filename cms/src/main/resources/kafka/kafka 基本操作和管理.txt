@@ -10,6 +10,10 @@ kafka-topics.bat --zookeeper localhost:2181 --describe
 
 kafka-topics.bat --zookeeper localhost:2181 --create --topic my-topic --replication-factor 1 --partitions 8
 
+#zookeeper 集群创建topic
+
+kafka-topics.sh --zookeeper 192.168.109.129:2181,192.168.109.130:2181 --create --topic access_log --replication-factor 1 --partitions 1
+
 ##增加分区，注意：分区无法被删除，只能增加分区不能减少分区，，--zookeeper参数一定要和server.properties文件中的相同
 
 kafka-topics.bat --zookeeper localhost:2181 --alter --topic my-topic --partitions 16
@@ -23,6 +27,8 @@ kafka-console-producer.bat --broker-list localhost:9092 --topic my-topic
 
 ##创建消费者（控制台）
 kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic my-topic --from-beginning
+
+kafka-console-consumer.sh --bootstrap-server 192.168.109.129:9092,192.168.109.120:9092 --topic access_log --from-beginning
 
 ##列出消费者群组（仅 Linux）
 kafka-topics.sh --new-consumer --bootstrap-server localhost:9092 --list

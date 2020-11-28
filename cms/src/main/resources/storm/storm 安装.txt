@@ -1,0 +1,4 @@
+wget https://mirror.bit.edu.cn/apache/storm/apache-storm-2.2.0/apache-storm-2.2.0.tar.gz
+
+tar -zxvf apache-storm-2.2.0.tar.gz
+

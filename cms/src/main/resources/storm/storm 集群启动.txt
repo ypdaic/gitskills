@@ -1,0 +1,4 @@
+一个节点： storm nimbus >/dev/null 2>&1 &
+2个节点：  storm supervisor >/dev/null 2>&1 &
+1个节点：  storm ui >/dev/null 2>&1 &
+2个节点：  storm logviewer > /dev/null 2>&1 &

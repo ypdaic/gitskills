@@ -1,0 +1,4 @@
+
+netstat -tunlp |grep 端口号，用于查看指定的端口号的进程情况，如查看8000端口的情况:
+
+    netstat -tunlp |grep 8000
