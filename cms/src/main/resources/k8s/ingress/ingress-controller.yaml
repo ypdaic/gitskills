@@ -207,11 +207,12 @@ spec:
         prometheus.io/port: "10254"
         prometheus.io/scrape: "true"
     spec:
+      # 直接使用宿主机的端口
       hostNetwork: true
       serviceAccountName: nginx-ingress-serviceaccount
       containers:
         - name: nginx-ingress-controller
-          image: siriuszg/nginx-ingress-controller:0.20.0
+          image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.30.0
           args:
             - /nginx-ingress-controller
             - --configmap=$(POD_NAMESPACE)/nginx-configuration
@@ -272,7 +273,7 @@ spec:
   #type: NodePort
   ports:
   - name: http
-    port: 80
+    port: 8001
     targetPort: 80
     protocol: TCP
   - name: https

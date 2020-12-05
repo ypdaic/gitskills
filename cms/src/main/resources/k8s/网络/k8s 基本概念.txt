@@ -1,0 +1,14 @@
+
+         作用                                         实现
+
+节点网络  Master/Worker 节点之间网络互通                路由器，交换机，网卡
+
+Pod网络   Pod之间互通                                  虚拟网卡，虚拟网桥，路由器
+
+Service网络  屏蔽Pod变化+负载均衡                       kube-proxy，Netfilter，Api-Server，DNS
+
+NodePort  将Service暴露在节点网络上                     kube-proxy + Netfliter
+
+LoadBalancer  将Service暴露在公网上+ 负载均衡           公有云LB+NodePort
+
+Ingress    反向路由，安全，日志监控（类似反向代理 or 网关） Nginx/Envoy/Traefik/Faraday

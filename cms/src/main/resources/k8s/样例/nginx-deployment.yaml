@@ -1,0 +1,38 @@
+# 创建一个nginx的部署，并暴露服务
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: test-nginx #deolyment应用标签
+  name: test-nginx
+spec:
+  replicas: 1 #副本数
+  selector:
+    matchLabels: #指定pod选择器，也就是本次部署选择的是那个pod
+      app: test-nginx
+  template:
+    metadata:
+      labels: #给pod打label
+        app: test-nginx
+    spec:
+      containers:
+        - image: daocloud.io/library/nginx:1.16-perl
+          name: nginx
+          ports:
+          - name: nginx
+            containerPort: 80 #指定容器端口
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: test-nginx
+  name: test-nginx
+spec:
+  ports:
+    - port: 80  #访问service使用的端口
+      protocol: TCP
+      targetPort: 80  #pod容器的端口
+  selector:
+    app: test-nginx
+  type: NodePort

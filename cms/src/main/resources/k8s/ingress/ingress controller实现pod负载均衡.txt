@@ -1,0 +1,1 @@
+kind: DaemonSet 表示每个节点都会部署一个ingress服务，其实就是使用的nginx

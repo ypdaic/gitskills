@@ -1,0 +1,4 @@
+ClusterIP               默认，分配一个集群内部可以访问的虚拟IP
+NodePort               在每个Node上分配一个端口作为外部访问入口(每个节点端口都是一样的，通过kube-proxy 进行转发)
+LoadBalancer           工作在特定的Cloud Provider上，例如GoogleCloud，AWS，OpenStack
+ExternalName           表示把集群外部的服务引入到集群内部中来，即实现了集群内部pod和集群外部的服务进行通信

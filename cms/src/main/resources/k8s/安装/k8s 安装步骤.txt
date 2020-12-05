@@ -1,0 +1,229 @@
+准备工作：
+    1：关闭swap
+
+        swapoff -a 临时
+
+        sed -ri 's/.*swap.*' /etc/fstab   永久
+
+    2:  设置hostname
+        hostnamectl set-hostname k8s-node1
+        hostnamectl set-hostname k8s-node2
+        hostnamectl set-hostname k8s-node3
+
+    3: 设置 SELINUX配置
+
+        sed -ri 's/SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config
+
+        改完重启
+
+    3:   修改hosts文件
+
+         vi /etc/hosts
+
+         192.168.109.129 k8s-node1
+         192.168.109.130 k8s-node2
+
+    3:  关闭防火墙
+
+        systemctl stop firewalld
+
+        systemctl disable firewalld
+
+    4: 添加流量指标统计
+
+        cat > /etc/sysctl.d/k8s.conf << EOF
+        net.bridge.bridge-nf-call-ip6tables = 1
+        net.bridge.bridge-nf-call-iptables = 1
+        net.ipv4.ip_forward = 1
+        vm.swappiness = 0
+        EOF
+
+        modprobe br_netfilter
+
+        执行命令：sysctl --system或者sysctl -p /etc/sysctl.d/k8s.conf
+
+
+    5: 添加yum源
+
+        cat > /etc/yum.repos.d/kubernetes.repo << EOF
+        [kubernetes]
+        name=Kubernetes
+        baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64
+        enabled=1
+        gpgcheck=0
+        repo_gpgcheck=0
+        gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg
+        https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
+        EOF
+
+        yum clean all && yum makecache
+
+    6: 修改 ~/.bash_profile
+
+        source <(kubectl completion bash)
+        执行命令
+         source .bash_profile
+
+2: 开始安装
+
+    1：安装kubelet(所有节点都安装)
+
+        yum install -y kubeadm-1.17.3 kubectl-1.17.3 kubelet-1.17.3
+
+    2: 启动kubelet
+
+        systemctl enable kubelet # 开机自启
+
+        systemctl start kubelet
+
+        systemctl status kubelet # 检查kubelet的启动状态
+
+    3：master 节点执行下面脚本，下载相关镜像
+
+        #!/bin/bash
+
+        images=(
+        	kube-apiserver:v1.17.3
+            kube-proxy:v1.17.3
+        	kube-controller-manager:v1.17.3
+        	kube-scheduler:v1.17.3
+        	coredns:1.6.5
+        	etcd:3.4.3-0
+            pause:3.1
+        )
+
+        for imageName in ${images[@]} ; do
+            docker pull registry.cn-hangzhou.aliyuncs.com/google_containers/$imageName
+        #   docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/$imageName  k8s.gcr.io/$imageName
+        done
+
+    4：master节点 kubeadm 初始化(也可以使用配置文件进行初始化，kubeadm config print init-defaults > kubeadm.yaml 先弄出默认的配置文件)
+
+        kubeadm init \
+        --apiserver-advertise-address=192.168.109.129 \
+        --image-repository registry.cn-hangzhou.aliyuncs.com/google_containers \
+        --kubernetes-version v1.17.3 \
+        --service-cidr=10.244.0.0/16 \
+        --pod-network-cidr=10.96.0.0/12
+
+        配置文件方式：
+        kubeadm init --config kubeadm.yaml
+
+        可能会失败，解决方案：https://blog.csdn.net/qq_39346534/article/details/107629830
+        echo "1" > /proc/sys/net/ipv4/ip_forward
+        service network restart
+
+    5：执行4步中的输出信息（如果是重置后重新init，需要执行rm -rf $HOME/.kube命令）
+
+          mkdir -p $HOME/.kube
+          sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+          sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+    6：master 节点生成后，下面是其他节点需要加入的信息，由第4步生成，两个小时有效（可以另外生成，见k8s slave连接master的token生成.txt）
+
+            kubeadm join 192.168.109.129:6443 --token orr0zw.v17st0ae1gk5fei8 \
+                --discovery-token-ca-cert-hash sha256:21f475f0f8d990c135650a680377caf9b652674b7fccdd2694125a83660e9486
+
+    7: 下载 安装flannel插件
+
+        docker pull quay.io/coreos/flannel:v0.11.0-amd64
+
+    8: master 节点配置网络（在master上执行就行）
+
+        wget https://raw.githubusercontent.com/coreos/flannel/2140ac876ef134e0ed5af15c65e414cf26827915/Documentation/kube-flannel.yml (下载不下来
+        )
+
+        执行flannel安装
+        kubectl create -f kube-flannel.yml
+        kubectl apply -f kube-flannel.yml
+
+        这里需要修改配置该文件，该镜像名称
+
+        对应删除操作：
+        kubectl delete -f kube-flannel.yml
+
+    9：测试创建nginx服务
+
+         kubectl run  test-nginx --image=daocloud.io/library/nginx:1.16-perl
+
+         kubectl create deployment test-nginx --image=daocloud.io/library/nginx:1.16-perl
+
+         #暴露service，--port=80为pod的端口
+         kubectl expose deployment test-nginx --port=80 --type=NodePort
+
+    10: 查看pod是否创建成功，并访问pod ip测试是否可用
+
+         kubectl get po -o wide
+
+    11: 安装dashboard
+
+        docker pull kubernetesui/dashboard:v2.0.1
+        docker pull kubernetesui/metrics-scraper:v1.0.4
+
+        wget https://github.com/kubernetes/kubernetes/blob/master/cluster/addons/dashboard/dashboard.yaml (使用kubernetes-dashboard3.yaml 即可)
+
+        kubectl create -f recommended.yaml
+
+        kubectl delete -f kubernetes-dashboard.yaml
+
+        kubectl create -f kubernetes-dashboard.yaml
+
+        kubectl create -f kubernetes-dashboard2.yaml
+
+        kubectl delete -f kubernetes-dashboard2.yaml
+
+        kubectl create -f kubernetes-dashboard3.yaml
+
+        kubectl delete -f kubernetes-dashboard3.yaml
+
+        执行命令：kubectl get pods --all-namespaces
+        完成了上述操作却发现还是CrashLoopBackOff的错误
+        使用命令查看错误原因：kubectl --namespace=kube-system describe pod <pod_name> kubectl --namespace=kubernetes-dashboard describe pod <pod_name>
+        解决方案：
+            输入命令，为master节点添加label
+             kubectl label nodes k8s-node1 type=master
+
+            在kubernetes-dashboard.yaml中添加nodeSelecor定义：
+            nodeSelector:
+                    type: master
+
+        kubectl -n kube-system get svc
+
+        kubectl -n kubernetes-dashboard get svc
+
+     12：创建用户
+
+         创建kube-admin.yaml 文件
+
+         kubectl create -f kube-admin.yaml
+
+         kubectl delete -f kube-admin.yaml
+
+         获取token
+         [root@k8s-node1 ~]# kubectl -n kube-system get secret |grep admin
+         admin-token-5qrss                                kubernetes.io/service-account-token   3      9m15s
+
+         kubectl -n kube-system get secret |grep kubernetes-dashboard
+
+         kubectl -n kubernetes-dashboard get secret |grep admin
+
+         kubectl -n kubernetes-dashboard get secret |grep kubernetes-dashboard
+
+
+         用该命令拿到token，然后粘贴到
+         kubectl -n kube-system get secret admin-token-5qrss -o jsonpath={.data.token}|base64 -d
+
+         kubectl -n kube-system get secret kubernetes-dashboard-token-v6w7t -o jsonpath={.data.token}|base64 -d
+
+         kubectl -n kubernetes-dashboard get secret kubernetes-dashboard-token-bwtvw -o jsonpath={.data.token}|base64 -d
+
+         kubectl -n kubernetes-dashboard get secret admin-token-rp6jr -o jsonpath={.data.token}|base64 -d
+
+    13: 如果你的集群安装过程中遇到了其他问题，我们可以使用下面的命令来进行重置：
+
+        $ kubeadm reset
+        $ ifconfig cni0 down && ip link delete cni0
+        $ ifconfig flannel.1 down && ip link delete flannel.1
+        $ rm -rf /var/lib/cni/
+
+

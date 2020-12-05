@@ -1,0 +1,7 @@
+default 用户创建的pod默认在此命名空间
+kube-public 所有用户均可以访问，包括未认证用户
+kube-node-lease kubernetes集群节点租约状态 v1.13加入
+kube-system kubernetes集群在使用
+
+kubectl create namespace test  #创建命名空间
+kubectl delete namespace test  #删除命名空间

@@ -1,0 +1,15 @@
+镜像拉取策略
+
+```yaml
+spec:
+  containers:
+  - name: myblog
+    image: 172.21.32.6:5000/demo/myblog
+    imagePullPolicy: IfNotPresent
+```
+
+设置镜像的拉取策略，默认为IfNotPresent
+
+- Always，总是拉取镜像，即使本地有镜像也从仓库拉取
+- IfNotPresent ，本地有则使用本地镜像，本地没有则去仓库拉取
+- Never，只使用本地镜像，本地没有则报错

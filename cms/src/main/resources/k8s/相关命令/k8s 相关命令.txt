@@ -1,0 +1,67 @@
+kubectl get pods   #获取所有节点的pod
+
+kubectl get ns     #获取名称空间
+
+ kubectl get pods --all-namespaces   #获取所有名称空间
+
+ kubectl get node  #查看节点信息
+
+ kubeadm reset #重置
+
+ kubectl get po -n kube-system -o wide #查询某个namespace的pod详细信息
+
+ kubectl create namespace demo   #创建namespace, namespace是逻辑上的资源池
+
+ #根据文件删除
+ kubectl delete -f demo-pod.yaml
+
+ #根据pod_name删除
+ kubectl -n <namespace> delete pod <pod_name>
+
+ #进入Pod内的容器
+ kubectl -n <namespace> exec <pod_name> -c <container_name> -ti /bin/sh
+
+ #查看Pod内容器日志,显示标准或者错误输出日志
+ kubectl -n <namespace> logs -f <pod_name> -c <container_name>
+
+ ## 查看pod调度节点及pod_ip
+ kubectl -n demo get pods -o wide
+
+ ## 查看完整的yaml
+ kubectl -n demo get po myblog -o yaml
+
+ ## 查看pod的明细信息及事件
+ kubectl -n demo describe pod myblog
+
+ #查询节点 labels
+ kubectl get node --show-labels
+
+ #删除一个部署
+ kubectl delete deployment.apps/test-nginx
+
+ #删除service信息
+ kubectl delete service/test-nginx
+
+ #扩容
+ kubectl scale --replicas=3 deployment test-nginx
+
+ # 将pod.json中的配置应用到pod
+ kubectl apply -f ./pod.json
+
+ kubectl apply -f mypod.yaml
+
+ #测试一下，并以yaml输出
+ kubectl create deployment test-nginx --image=daocloud.io/library/nginx:1.16-perl --dry-run -o yaml
+
+ kubectl expose deployment test-nginx --port=80 --target-port=80 --type=NodePort --dry-run -o yaml
+
+ # 获取pod,service,deployment 信息
+ kubectl get all
+
+ # 根据kubectl get all输出的名称字段，删除pod,service,deployment
+ kubectl delete pod/test-nginx-redis
+ kubectl delete service/test-nginx
+ kubectl delete deployment.apps/test-nginx
+
+ # 查询ReplicaSet控制器相关的应用
+ kubectl get rs

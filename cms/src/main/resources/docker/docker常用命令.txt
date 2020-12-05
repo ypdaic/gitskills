@@ -28,6 +28,10 @@
 
 保存容器的修改：docker commit -m "保存修改" df mofify_nginx （保存容器的修改会生成新的镜像，df 表示容器id，后面跟的是新镜像的名称）
 
+导出镜像到文件：$ docker save -o nginx-alpine.tar nginx:alpine
+
+从文件中加载镜像：$ docker load -i nginx-alpine.tar
+
 创建dockerfile : dockerfile 语法
 命令     用途
 FROM     base image
@@ -69,6 +73,9 @@ docker volume inspect my-vol
 
 docker volume rm my-vol
 
+使用数据卷
+docker run --name nginx -d -v my-vol:/opt/my-vol nginx:alpine
+
 从容器内部连接mysql
 docker exec -it mysql1 mysql -uroot -p123456
 
@@ -81,8 +88,18 @@ docker history centos:7
     <missing>           12 months ago       /bin/sh -c #(nop)  LABEL org.label-schema.sc…   0B
     <missing>           12 months ago       /bin/sh -c #(nop) ADD file:6f877549795f4798a…   202MB
 
+资源限制
+-cpuset-cpus用于设置容器可以使用的 vCPU 核。-c,--cpu-shares用于设置多个容器竞争 CPU 时，各个容器相对能分配到的 CPU 时间比例。假设有三个正在运行的容器，这三个容器中的任务都是 CPU 密集型的。第一个容器的 cpu 共享权值是 1024，其它两个容器的 cpu 共享权值是 512。第一个容器将得到 50% 的 CPU 时间，而其它两个容器就只能各得到 25% 的 CPU 时间了。如果再添加第四个 cpu 共享值为 1024 的容器，每个容器得到的 CPU 时间将重新计算。第一个容器的CPU 时间变为 33%，其它容器分得的 CPU 时间分别为 16.5%、16.5%、33%。必须注意的是，这个比例只有在 CPU 密集型的任务执行时才有用。在四核的系统上，假设有四个单进程的容器，它们都能各自使用一个核的 100% CPU 时间，不管它们的 cpu 共享权值是多少。
+docker run --cpuset-cpus="0-3" --cpu-shares=512 --memory=500m nginx:alpine
 
+主机拷贝到容器
+docker cp /tmp/test.txt nginx:/tmp
 
+容器拷贝到主机
+docker cp nginx:/tmp/test.txt ./
 
+删除所有容器
+docker rm -f `docker ps -aq`
 
-
+若有时遇到容器启动失败的情况，可以先使用相同的镜像启动一个临时容器，先进入容器
+docker exec -ti --rm <image_id> bash

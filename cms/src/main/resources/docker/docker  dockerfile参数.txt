@@ -20,8 +20,9 @@ EXPOSE
 entrypoint：
     entrypoint的作用是，把整个container变成可执行的文件，且不能够通过替换CMD的方法来改变创建container的方式。但是可以通过参数传递的方法影响到container内部
     每个Dockerfile只能够包含一个entrypoint，多个entrypoint只有最后一个有效
-    当定义了entrypoint以后，CMD只能够作为参数进行传递
-ADD & COPY：
+    ENTRYPOINT与CMD非常类似，不同的是通过docker run执行的命令不会覆盖ENTRYPOINT，而docker run命令中指定的任何参数，都会被当做参数再次传递给ENTRYPOINT。
+    Dockerfile中只允许有一个ENTRYPOINT命令，多指定时会覆盖前面的设置，而只执行最后的ENTRYPOINT指令
+ADD(带解压功能) & COPY：
 　　把host上的文件或者目录复制到image中（能够进行自动解压压缩包）　 
 ENV：
 　　用来设置环境变量，后续的RUN可以使用它所创建的环境变量 

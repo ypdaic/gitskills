@@ -13,7 +13,7 @@ import java.util.Properties;
 public class KafkaConst {
 
     /*生产者和消费者共用配置常量*/
-    public static final String LOCAL_BROKER = "192.168.140.129:9092";
+    public static final String LOCAL_BROKER = "192.168.109.129:9092,192.168.109.130:9092";
     public static final String BROKER_LIST = "127.0.0.1:9093,127.0.0.1:9094,127.0.0.1:9095";
 
     /*======================生产者配置============================*/

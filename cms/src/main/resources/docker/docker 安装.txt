@@ -1,3 +1,36 @@
+## 配置网卡转发,看值是否为1
+$ sysctl -a |grep -w net.ipv4.ip_forward
+net.ipv4.ip_forward = 1
+
+## 若未配置，需要执行如下
+$ cat <<EOF >  /etc/sysctl.d/docker.conf
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+net.ipv4.ip_forward=1
+EOF
+$ sysctl -p /etc/sysctl.d/docker.conf
+
+
+## 下载阿里源repo文件
+$ curl -o /etc/yum.repos.d/Centos-7.repo http://mirrors.aliyun.com/repo/Centos-7.repo
+$ curl -o /etc/yum.repos.d/docker-ce.repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+
+$ yum clean all && yum makecache
+## yum安装
+$ yum install -y docker-ce
+## 查看源中可用版本
+$ yum list docker-ce --showduplicates | sort -r
+## 安装指定版本
+##yum install -y docker-ce-18.09.9
+
+## 设置开机自启
+systemctl enable docker
+systemctl daemon-reload
+
+## 启动docker
+systemctl start docker
+
+
 https://docs.docker.com/engine/install/centos/
 
 https://www.runoob.com/docker/centos-docker-install.html

@@ -1,0 +1,17 @@
+Cluster               超大计算机抽象，由节点组成
+Container             应用居住和运行在容器中
+Pod                   Kubernetes 基本调度单位（Pod中的容器共享Pod的网络）
+ReplicaSet            创建和管理Pod，支持无状态应用
+Service               应用Pods的访问点，屏蔽IP寻址和负载均衡
+Deployment            管理ReplicaSet，支持滚动等高级发布机制
+ConfigMap/Secrets     应用配置，secret敏感数据配置
+DaemonSet             保证每个节点有且仅有一个Pod，常见于监控
+StatefulSet           类似ReplicaSet，但支持有状态应用
+Job                   运行一次就结束的任务
+CronJob               周期性运行的任务
+Volume                可装载磁盘文件存储
+PersisenVolume/PersisenVolumeClaims  超级磁盘存储抽象和分配机制
+Label/Selector        资源打标签和定位机制
+Namespace             资源逻辑隔离机制
+Readiness Probe       就绪探针，流量接入Pod判断依据
+Liveness  Probe       存活探针，是否kill Pod的判断依据

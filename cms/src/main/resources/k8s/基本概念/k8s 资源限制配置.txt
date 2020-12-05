@@ -1,0 +1,39 @@
+containers:
+      - name: kube-flannel
+        image: quay.io/coreos/flannel:v0.11.0-arm64
+        command:
+        - /opt/bin/flanneld
+        args:
+        - --ip-masq
+        - --kube-subnet-mgr
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "50Mi"
+          limits:
+            cpu: "100m"
+            memory: "50Mi"
+
+
+
+requests：
+
+    - 容器使用的最小资源需求,作用于schedule阶段，作为容器调度时资源分配的判断依赖
+    - 只有当前节点上可分配的资源量 >= request 时才允许将容器调度到该节点
+    - request参数不限制容器的最大可使用资源
+    - requests.cpu被转成docker的--cpu-shares参数，与cgroup cpu.shares功能相同 (无论宿主机有多少个cpu或者内核，--cpu-shares选项都会按照比例分配cpu资源）
+    - requests.memory没有对应的docker参数，仅作为k8s调度依据
+
+
+limits：
+
+    - 容器能使用资源的最大值
+    - 设置为0表示对使用的资源不做限制, 可无限的使用
+    - 当pod 内存超过limit时，会被oom
+    - 当cpu超过limit时，不会被kill，但是会限制不超过limit值
+    - limits.cpu会被转换成docker的–cpu-quota参数。与cgroup cpu.cfs_quota_us功能相同
+    - limits.memory会被转换成docker的–memory参数。用来限制容器使用的最大内存
+
+
+
+    kubectl describe node k8s-node1

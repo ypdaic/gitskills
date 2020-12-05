@@ -87,6 +87,22 @@ subjects:
   namespace: kube-system
 
 ---
+
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: kubernetes-dashboard
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+  - kind: ServiceAccount
+    name: kubernetes-dashboard
+    namespace: kube-system
+---
+
 # ------------------- Dashboard Deployment ------------------- #
 
 kind: Deployment
@@ -107,9 +123,11 @@ spec:
       labels:
         k8s-app: kubernetes-dashboard
     spec:
+      nodeSelector:
+        type: master
       containers:
       - name: kubernetes-dashboard
-        image: k8s.gcr.io/kubernetes-dashboard-amd64:v1.10.1
+        image: registry.cn-hangzhou.aliyuncs.com/google_containers/kubernetes-dashboard-amd64:v1.10.0  #替换国内镜像
         ports:
         - containerPort: 8443
           protocol: TCP
@@ -160,3 +178,4 @@ spec:
       targetPort: 8443
   selector:
     k8s-app: kubernetes-dashboard
+  type: NodePort

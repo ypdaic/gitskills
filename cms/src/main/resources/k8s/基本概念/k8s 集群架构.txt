@@ -1,0 +1,13 @@
+Master Node
+
+    k8s集群控制节点，对集群进行调度管理，接受集群外
+    用户去集群操作请求；
+    Master Node由API Server、Scheduler、Cluster
+    State Store（ETCD数据库）和Controller Manger
+    Server所组成；
+
+Worker Node
+
+    集群工作节点，运行用户业务应用容器；
+    Worker Node包含kubelet、kube proxy和Container
+    Runtime；

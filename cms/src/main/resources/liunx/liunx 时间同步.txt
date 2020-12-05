@@ -1,0 +1,3 @@
+yum -y install ntpdate
+
+crontab -l 0 */1 * * * ntpdate time1.aliyun.com   #每小时同步一次

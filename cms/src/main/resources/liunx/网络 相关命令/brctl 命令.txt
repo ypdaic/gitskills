@@ -1,0 +1,1 @@
+安装：yum install -y bridge-utils
