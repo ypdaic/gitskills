@@ -1,0 +1,4 @@
+Nacos 1.0.1内置的connector是 mysql-connector-java-5.1.34 ，该connector无法连MySQL 8.0。还好Nacos提供了插件机制，可以支持MySQL 8.0+。方法如下：
+
+•在上面操作的基础上，下载支持MySQL 8.0的connector，例如：mysql-connector-java-8.0.16 。
+下载地址：点我下载[6]•在Nacos的 plugins 目录下创建 mysql 目录，并将下载的connector扔到该目录即可

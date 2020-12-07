@@ -1,0 +1,17 @@
+
+
+                       dubbo                     springcloud               k8s
+
+服务框架                Dubbo RPC                 Spring(Boot)Rest          框架无关
+
+发布和调度               NA                        NA                       Scheduler
+
+自动伸缩和自愈           NA                         NA                       Scheduler/AutoScaler
+
+进程隔离                 NA                        NA                        Docker/Pod
+
+环境管理                 NA                        NA                         Namespace/Auththorization
+
+资源配额                 NA                        NA                         CPU/Mem Limit,Namespace Quotas
+
+流量治理                ZK+Client                   NA                        ServiceMesh

@@ -10,6 +10,10 @@
 
     openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'
 
+4: 直接获取
+
+    kubeadm token create --print-join-command
+
 4.节点加入
 
     kubeadm join 192.168.109.129:6443 --token 78c4x5.9hvlvhirlp2h83pm --discovery-token-ca-cert-hash sha256:861bf70459cc663430156cdb1677fca24a02a37045246ac8dfa3d9154490c858

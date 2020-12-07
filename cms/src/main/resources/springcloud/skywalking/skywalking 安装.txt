@@ -1,0 +1,22 @@
+1：
+    下载：wget https://downloads.apache.org/skywalking/8.3.0/apache-skywalking-apm-8.3.0.tar.gz
+
+2： 解压
+
+    tar -zxvf apache-skywalking-apm-8.3.0.tar.gz
+
+3：
+
+    修改config/application.yml 文件修改存储模式为mysql
+
+    配置mysql 需要把mysql驱动包放到oap-libs 目录
+
+4：修改默认web 8080端口为8099
+
+   /software/apache-skywalking-apm-bin/webapp/webapp.yml
+
+5: 项目配置agent
+
+    -javaagent:D:\code\skywalking\agent\skywalking-agent.jar
+    -Dskywalking.agent.service_name=Mail
+    -Dskywalking.collector.backend_service=192.168.109.129:11800
