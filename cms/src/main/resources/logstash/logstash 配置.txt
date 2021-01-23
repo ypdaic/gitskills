@@ -1,0 +1,35 @@
+1: 创建采集目录
+
+     mkdir conf.d
+     vi config.conf
+
+     config.conf 文件内容如下：
+
+        input {
+            file {
+                # 采集文件目录
+                path => "/root/logs/*.log"
+                # 从文件的什么位置采集
+                start_position => beginning
+                # 表示文件从哪里来的，信息可以自定义
+                add_field => {"from" => "localfile"}
+            }
+
+        }
+        # 对文件进行过滤
+        filter {
+
+        }
+        # 输出
+        output {
+          # 向es输出
+          elasticsearch {
+                # es 主机
+                hosts => ["192.168.109.129:9200"]
+                # 放到es的那个索引下
+                index => "mylog"
+          }
+          stdout {
+
+          }
+        }

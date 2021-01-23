@@ -1,0 +1,9 @@
+1:
+
+    为每一个消息生成一个唯一的 ID，然后在使用这个消息的时候，先比对这个ID 是否已经存在，如果存在，则认为消息已经被使用过
+
+2:
+    // 乐观锁，我们在更新数据时给数据加了乐观锁，这样在消费第一条消息时，version 值为 1，
+           SQL 可以执行成功，并且同时把 version 值改为了 2；在执行第二条相同的消息时，由于
+           version 值不再是 1，所以这条 SQL 不能执行成功，也就保证了消息的幂等性。
+    update user set amount = amount + 20, version=version+1 where userId=1 and version = 1

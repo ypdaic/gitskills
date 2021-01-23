@@ -1,0 +1,28 @@
+docker pull mobz/elasticsearch-head:5
+
+docker run -d --name eshead -p 9100:9100 mobz/elasticsearch-head:5
+
+
+docker run -d --name eshead -p 9100:9100 -v /root/docker/es-head/_site:/usr/src/app/_site mobz/elasticsearch-head:5
+
+浏览器直接访问 http://192.168.109.129:9100/
+
+解决 406问题
+
+    进入head安装目录；docker exec -it 名称 bash
+
+    2、打开文件夹_site，cd _site/
+
+    3、编辑vendor.js  共有两处
+
+    　　　　　　①. 6886行   contentType: "application/x-www-form-urlencoded
+
+    　　　　　　　   　改成
+
+    　　　　　　　　 contentType: "application/json;charset=UTF-8"
+
+    　　　　　　②. 7574行 var inspectData = s.contentType === "application/x-www-form-urlencoded" &&
+
+    　　　　　　　　改成
+
+    　　　　　　      var inspectData = s.contentType === "application/json;charset=UTF-8" &&

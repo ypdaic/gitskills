@@ -31,4 +31,4 @@ WORKDIR：
 USER：
 　　运行RUN指令的用户 
 VOLUME：
-　　用来创建一个在image之外的mount point
+　　用来创建一个在image之外的mount point（和docker run -v 效果一样）

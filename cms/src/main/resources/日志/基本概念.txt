@@ -1,0 +1,13 @@
+⽇志接⼝
+
+    JCL：Apache基⾦会所属的项⽬，是⼀套Java⽇志接⼝，之前叫Jakarta Commons Logging，后更
+    名为Commons Logging，简称JCL
+    SLF4J：Simple Logging Facade for Java，缩写Slf4j，是⼀套简易Java⽇志⻔⾯，只提供相关接
+    ⼝，和其他⽇志⼯具之间需要桥接
+
+⽇志实现
+
+    JUL：JDK中的⽇志⼯具，也称为jdklog、jdk-logging，⾃Java1.4以来sun的官⽅提供。
+    Log4j：⾪属于Apache基⾦会的⼀套⽇志框架，现已不再维护
+    Log4j2：Log4j的升级版本，与Log4j变化很⼤，不兼容
+    Logback：⼀个具体的⽇志实现框架，和Slf4j是同⼀个作者，性能很好

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--60秒 扫描这个文件，以便动态实时生效-->
 <configuration scan="true" scanPeriod="60 seconds" debug="false">
     <contextName>yyc_css</contextName>
     <property name="log.path" value="logs/"/>

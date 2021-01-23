@@ -1,0 +1,6 @@
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --describe -group test-consumer-group
+
+TOPIC                PARTITION        CURRENT-OFFSET         LOG-END-OFSET             LAG         CONSUMER-ID     HOST       CLIENT-ID
+
+Hello-Kakka              0               5                            6                  1
+topic名称            分区名            消费者进度              生产者生产的消息总数       消息堆积数(第四列与第三列的差值)
