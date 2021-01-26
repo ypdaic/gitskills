@@ -14,11 +14,23 @@
                 # 表示文件从哪里来的，信息可以自定义
                 add_field => {"from" => "localfile"}
             }
+            kafka {
+                bootstrap_servers => ["192.168.109.129:9092"]
+                group_id => "logstash"
+                topics => ["demo"]
+                consumer_threads => 1
+                decorate_events => true
+                add_field => {"from" => "demo "}
+                codec => "json" #filedeat 过来的数据为json
+            }
 
         }
-        # 对文件进行过滤
+        # filedeat 对文件进行过滤
         filter {
-
+            # 合并filebeat 的host.name 属性
+            mutate {
+                rename => { "[host][name] => "host"}
+            }
         }
         # 输出
         output {

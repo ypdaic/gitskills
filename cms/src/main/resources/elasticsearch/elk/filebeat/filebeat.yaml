@@ -1,0 +1,23 @@
+#setup.ilm.enabled: false
+#setup.template.name: "filebeat-161"
+#setup.template.pattern: "filebeat-161-*"
+#setup.template.settings:
+#  index.number_of_shards: 5
+#  index.number_of_replicas: 0
+#  index.codec: best_compression
+
+filebeat.inputs:
+  - type: log        ##文本日志
+    paths:
+      - /var/log/filebeat/lemon.log     ##日志文件修改权限到666
+    fields:
+      from: filebeat
+output:
+#  elasticsearch:        #输出到elasticsearch，也可以输出到logstash
+#    hosts: ["192.168.232.160:9200"]   #elasticsearch地址,
+#    index: "filebeat-161-%{+yyyy.MM.dd}"
+  kafka:
+    enable: true
+    hosts: ["192.168.109.129:9200"]
+    topic: filebeat
+    compression: gzip

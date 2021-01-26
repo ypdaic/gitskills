@@ -1,0 +1,3 @@
+logstash 因为性能弱于filebeat，并不直接运用于采集起点，一般使用filebeat，采集文件是数据放到kafka，然后logstash 从kafka拿到数据推到es
+
+进入elk前，经验性角度，放置kafka,一方面最为队列和缓冲，另一方面提供了统一的入口渠道

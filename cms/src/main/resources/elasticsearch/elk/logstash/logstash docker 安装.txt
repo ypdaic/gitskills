@@ -1,0 +1,37 @@
+docker pull daocloud.io/library/logstash:7.8.1
+
+
+logstash.yml
+
+    path.config: /usr/share/logstash/conf.d/*.conf
+    path.logs: /var/log/logstash
+
+lemon.conf
+
+input {
+    file{
+        path => ["/var/log/logstash/lemon.log"]
+        start_position => "beginning"
+    }
+}
+
+filter {
+  split {
+    field => "message"
+        terminator => "|"
+  }
+}
+
+output {
+  elasticsearch {
+      hosts => ["192.168.232.160:9200"]
+      index => "logstash-161-%{+yyyy.MM.dd}"
+    }
+}
+
+
+docker run -p 5044:5044 --name my-logstash \
+-v /root/docker/logstash/logstash.yml:/usr/share/logstash/config/logstash.yml \
+-v /root/docker/logstash/conf.d/:/usr/share/logstash/conf.d/ \
+-v /root/docker/logstash/log:/var/log/logstash \
+-d daocloud.io/library/logstash:7.8.1
