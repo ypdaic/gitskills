@@ -1,0 +1,57 @@
+/metrics 端点
+
+    /metrics 端点用来返回当前应用的各类重要度量指标，比如：内存信息，线程信息，垃圾回收信息，tomat, 数据库连接池
+
+    访问端点：
+
+        http://localhost:8080/mintor/metrics
+
+        该端点不会看到具体的指标信息，只是一个展示指标列表，为了获取到某个指标的详细信息，我们可以请求具体的指标信息，如：
+        http://localhost:8080/mintor/metrics/jvm.memory.max
+
+
+/loggers 端点
+
+    /loggers 端点暴露了我们程序内部配置的所有logger的信息，我们访问/actuator/loggers可以看到
+    1：例如：查看某一个组件服务或者某一个应用的日志级别，并对其进行实时的变更
+    2：loggers endpoint 同时提供了在应用运行时改变日志级别的能力，比如你想要改变com.ypdaic.mymall.actuator 的logger
+       等级为DEBUG,可以发送一个POST请求
+
+        http://localhost:8080/mintor/loggers/com.ypdaic.mymall.actuator
+
+        {
+            "configuredLevel": "DEBUG"
+        }
+
+    3：动态修改日志级别的功能对于日常排查问题，是一个有利支持，同时可以传递null给configuredLevel来重置日志等级
+
+
+/info 端点
+
+    /info 端点可以用来展示你程序的信息
+
+        info endpoint 展示了应用的基本信息，他通过METE-INF/build-info.properties 来获取编译信息，通过
+        git.properties 来获取当前应用的GIT版本信息，同时它可以展示任何信息，只要应用环境property中含有infokey
+
+        就是一些程序的基础信息，并且你可以按照自己家的需求在配置文件application.yml中个性化配置（默认情况下，该端点只会返回一个空的JSON内容）
+
+
+/beans 端点
+
+    /beans 端点会返回Spring 容器中所有bean的别名，类型，是否单例，依赖等信息
+
+
+/heapdump 端点
+
+     http://localhost:8080/mintor/heapdump
+
+    该端点会生成一个jvm的堆文件
+
+/threaddump 端点
+
+
+/shutdown 端点
+
+    这个端点属于操作控制类端点，可以优雅关闭spring boot应用，要使用这个功能首先需要在配置文件中开启:
+    management.endpoint.shutdown.enabled=true
+
