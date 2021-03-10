@@ -1,0 +1,18 @@
+在grafana配置文件里最后加上以下三行
+[root@k8s-node2 grafana]# vi grafana.ini
+
+[dashboards.json]
+enabled = true
+path = /var/lib/grafana/dashboards/dashboards
+
+下面下载 json模板文件
+[root@k8s-node2 grafana]# mkdir dashboards
+[root@k8s-node2 grafana]# ls
+dashboards  grafana.ini
+[root@k8s-node2 grafana]# cd dashboards/
+[root@k8s-node2 dashboards]# git clone https://github.com/percona/grafana-dashboards.git
+
+cp -r grafana-dashboards/dashboards/ ./
+
+
+让后直接在grafana上导入对应的json 文件

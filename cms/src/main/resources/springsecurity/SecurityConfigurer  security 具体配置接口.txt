@@ -1,0 +1,24 @@
+/**
+	 * Initialize the {@link SecurityBuilder}. Here only shared state should be created
+	 * and modified, but not properties on the {@link SecurityBuilder} used for building
+	 * the object. This ensures that the {@link #configure(SecurityBuilder)} method uses
+	 * the correct shared objects when building.
+	 * AbstractConfiguredSecurityBuilder 的 doBuild 构建过程会调用
+	 * @param builder
+	 * @throws Exception
+	 */
+	void init(B builder) throws Exception;
+
+	/**
+	 * Configure the {@link SecurityBuilder} by setting the necessary properties on the
+	 * {@link SecurityBuilder}.
+	 * AbstractConfiguredSecurityBuilder 的 doBuild 构建过程会调用
+	 * @param builder
+	 * @throws Exception
+	 */
+	void configure(B builder) throws Exception;
+
+
+	其子实现WebSecurityConfigurerAdapter 是业务常用的自定义的入口，其init实现方法初始化了HttpSecurity 对象
+
+	子类AbstractHttpConfigurer则提供了各种Filter的配置类

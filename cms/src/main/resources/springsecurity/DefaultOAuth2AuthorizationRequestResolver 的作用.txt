@@ -1,0 +1,1 @@
+DefaultOAuth2AuthorizationRequestResolver 用来解析请求是否 oauth2 授权的url  默认url 是 /oauth2/authorization/{registrationId}

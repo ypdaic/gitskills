@@ -1,0 +1,1 @@
+提供了默认的 DEFAULT_REDIRECT_URL "{baseUrl}/{action}/oauth2/code/{registrationId}"

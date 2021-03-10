@@ -1,0 +1,14 @@
+yum -y install httpd
+
+#配置账号密码文件
+htpasswd -c .htpasswd admin
+
+server {
+    listen 0.0.0.0:9110;
+    location / {
+
+      auth_basic "Prometheus";
+      auth_basic_user_file "/software/node_exporter-1.1.2.linux-amd64/.htpasswd"; #注意htpasswd的路径
+      proxy_pass http://localhost:9100/;
+    }
+  }

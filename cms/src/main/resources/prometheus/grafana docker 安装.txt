@@ -1,0 +1,3 @@
+ docker pull grafana/grafana
+
+ docker run -d -p 3000:3000 --name=grafana -v /root/docker/grafana/grafana.ini:/etc/grafana/grafana.ini grafana/grafana

@@ -1,0 +1,11 @@
+docker pull prom/prometheus
+
+
+ docker run -d -p 9090:9090 --name prometheus -v /root/docker/prometheus:/data  prom/prometheus --config.file=/data/prometheus.yml
+
+
+ http://192.168.2.28:9090   访问即可
+
+
+ 配置热加载
+ curl -X post http://localhost:9090/-/reload 默认是关闭的，需要--web.enable.lifecycle 参数进行开启

@@ -1,0 +1,13 @@
+spring-security-oauth2  -> 被废弃，建议不使用，否则后期无法维护
+
+spring-security-oauth2-autoconfigure  -> 自动配置，没有用处
+spring-boot-starter-oauth2-client -> 最新
+spring-boot-starter-oauth2-resource-server  -> 最新
+spring-cloud-starter-oauth2 -> 引用 spring-security-oauth2，但尚未标注被废弃
+
+授权服务器
+    如果服务想做成授权服务器，暂时只能引用 spring-cloud-starter-oauth2 。因为这个包也是引用了 spring-security-oauth2 ，但尚未标注 @Deprecated ，然后仍旧使用 @EnableAuthorityServer 注解进行配置。等待 spring-authorization-server 成熟，需要切换过来。
+
+    现在如果要开发客户端，只需要引用 spring-boot-starter-oauth2-client ，也只需要在原来的 SpringSecurity 的配置类中，调用 .oauth2Client() 即可配置，不需要以前的 @EnableOAuth2Client 注解了。
+
+http://test?response_type=code&client_id=1&scope=openid%20profile%20email&state=ASFIjj9B2nxu5v-HFWqrd57Wr3t1LKnCibIoWTTnYvc%3D&redirect_uri=http://localhost:8087/login/oauth2/code/test

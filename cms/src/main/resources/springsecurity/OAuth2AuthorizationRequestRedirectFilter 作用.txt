@@ -1,0 +1,8 @@
+当检测到url 是 /oauth2/authorization/{registrationId} 就会将请求重定向到授权服务器进行授权，然后由授权服务器跳转回来
+
+如：http://localhost:8087/oauth2/authorization/test
+
+重定向到这个url
+
+http://test?response_type=code&client_id=1&scope=openid%20profile%20email&state=ASFIjj9B2nxu5v-HFWqrd57Wr3t1LKnCibIoWTTnYvc%3D&redirect_uri=http://localhost:8087/login/oauth2/code/test
+

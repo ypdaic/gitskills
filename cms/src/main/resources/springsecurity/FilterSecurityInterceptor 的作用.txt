@@ -1,0 +1,5 @@
+FilterSecurityInterceptor 由 AbstractInterceptUrlConfigurer进行配置，其主要的作用就是对每个url最后做拦截处理，查看是否有权限访问url，没有权限就会抛出401的异常
+
+其属性observeOncePerRequest用来控制是否对每个请求进行拦截，默认是true
+
+这个是拦截器上的处理，后面还有使用注解的处理，MethodSecurityInterceptor，开启EnableGlobalMethodSecurity注解后生效

@@ -1,0 +1,14 @@
+wget https://github.com/prometheus/mysqld_exporter/releases/download/v0.12.1/mysqld_exporter-0.12.1.linux-amd64.tar.gz
+
+tar -zxvf mysqld_exporter-0.12.1.linux-amd64.tar.gz
+
+vi .my.cnf
+
+设置如下配置
+[client]
+port=3308
+user=root
+password=test1234
+
+启动mysql_exprot
+ ./mysqld_exporter --config.my-cnf=./.my.cnf

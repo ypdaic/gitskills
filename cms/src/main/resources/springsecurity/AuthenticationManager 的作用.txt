@@ -1,0 +1,5 @@
+尝试对传递的Authentication对象进行身份认证 ，如果成功，则返回完全填充的Authentication对象（包括授予的权限）
+
+其实现类ProviderManager这是对外暴露实现类，其包含父子AuthenticationManager，其内部则是使用
+
+AuthenticationProvider进行身份认证

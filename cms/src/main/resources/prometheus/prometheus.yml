@@ -1,0 +1,45 @@
+# global配置一些全局信息，scrape_configs配置具体想要抓取的目标。
+#这段配置的含义是：启动一个叫做go-pro的任务，每隔五秒钟，访问192.168.2.28:8888/metrics获取数据。
+#
+#作者：hwholiday
+#链接：https://www.jianshu.com/p/738a1d910e5d
+#来源：简书
+#著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+
+
+global:
+  scrape_interval: 15s
+  external_labels:
+    monitor: 'codelab-monitor'
+
+scrape_configs:
+  - job_name: 'prometheus'
+    metrics_path: "/metrics"
+    static_configs:
+      - targets: ['localhost:9090']
+  - job_name: 'http-simulator'
+    metrics_path: "/prometheus"
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['192.168.1.5:8080']
+  - job_name: local
+    static_configs:
+      - targets: ['192.168.109.130:9110']
+    basic_auth:
+      username: admin
+      password: admin
+  - job_name: mysql
+    static_configs:
+      - targets: ['192.168.109.130:9104']
+  - job_name: spring-boot-demo
+      metrics_path: "/mintor/prometheus"
+      static_configs:
+        - targets: ['10.0.0.102:8080']
+    - job_name: docker
+      static_configs:
+        - targets: ['192.168.109.130:9091']
+      metric_relabel_configs: #可以根据labels 进行过滤
+        - source_labels: [__name__]
+          separator: ','
+          regex: '(container_tasks_state|container_memory_failures_total)' #regex1;regex2;regex3 多个表达式用; 号分割
+          action: drop #删除container_tasks_state，container_memory_failures_total

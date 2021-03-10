@@ -1,0 +1,19 @@
+#创建管理文件
+vi /etc/systemd/system/node_exporter.service
+
+#内容
+[Unit]
+Description=Prometheus node_exporter
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/node_exporter --web.listen-address=:9111
+
+
+[Install]
+WantedBy=multi-user.target
+
+
+systemctl daemon-reload
+systemctl enable node_exporter.service
+systemctl start  node_exporter.service

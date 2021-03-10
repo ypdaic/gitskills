@@ -1,0 +1,13 @@
+wget https://github.com/prometheus/node_exporter/releases/download/v1.1.2/node_exporter-1.1.2.linux-amd64.tar.gz
+
+tar -xzf node_exporter-1.1.2.linux-amd64.tar.gz
+cd node_exporter-1.1.2.linux-amd64/
+
+#更改路径
+mv node_exporter /usr/local/bin/
+
+#后台运行
+/usr/local/bin/node_exporter &
+
+#node_exporter启动的默认端口是9100，启动以后在浏览器打开ip:9100 即可查看监控数据
+#查看node_exporter更多参数，可以用./node_exporter -h命令
