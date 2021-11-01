@@ -1,0 +1,12 @@
+第一步：
+    修改 my.cnf 文件
+    read_only=1
+
+第二步：
+
+    创建普通用户
+    grant select,insert,update,delete on *.* to 'test'@'127.0.0.1' identified by '123456';
+
+第三步：
+
+    使用普通用户连接从库即可

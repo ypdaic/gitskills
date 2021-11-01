@@ -1,4 +1,4 @@
-启动docker(liunx): service docker start
+it启动docker(liunx): service docker start
 
 查看docker容器使用资源情况：docker stats
 
@@ -77,7 +77,7 @@ docker volume rm my-vol
 docker run --name nginx -d -v my-vol:/opt/my-vol nginx:alpine
 
 从容器内部连接mysql
-docker exec -it mysql1 mysql -uroot -p123456
+
 
 查看容器历史：
 docker history centos:7
