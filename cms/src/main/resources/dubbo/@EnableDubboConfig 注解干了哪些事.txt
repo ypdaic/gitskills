@@ -1,0 +1,24 @@
+主要通过Import DubboConfigConfigurationRegistrar 这个类向spring容器中注册了 Single或者，Multiple这两个类
+
+
+/**
+     * Single Dubbo {@link AbstractConfig Config} Bean Binding
+     */
+    @EnableDubboConfigBindings({
+            @EnableDubboConfigBinding(prefix = "dubbo.application", type = ApplicationConfig.class),
+            @EnableDubboConfigBinding(prefix = "dubbo.module", type = ModuleConfig.class),
+            @EnableDubboConfigBinding(prefix = "dubbo.registry", type = RegistryConfig.class),
+            @EnableDubboConfigBinding(prefix = "dubbo.protocol", type = ProtocolConfig.class),
+            @EnableDubboConfigBinding(prefix = "dubbo.monitor", type = MonitorConfig.class),
+            @EnableDubboConfigBinding(prefix = "dubbo.provider", type = ProviderConfig.class),
+            @EnableDubboConfigBinding(prefix = "dubbo.consumer", type = ConsumerConfig.class),
+            @EnableDubboConfigBinding(prefix = "dubbo.config-center", type = ConfigCenterBean.class),
+            @EnableDubboConfigBinding(prefix = "dubbo.metadata-report", type = MetadataReportConfig.class)
+    })
+    public static class Single {
+
+    }
+
+     @EnableDubboConfigBindings主要是通过DubboConfigBindingRegistrar这个类往Spring容器中注入我的ApplicationConfig，ModuleConfig，RegistryConfig
+     ProtocolConfig，MonitorConfig，ProviderConfig，ConsumerConfig，ConfigCenterBean，MetadataReportConfig类，并对其属性进行参数绑定
+

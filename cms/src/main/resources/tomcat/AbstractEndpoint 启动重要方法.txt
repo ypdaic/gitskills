@@ -1,0 +1,44 @@
+     public final void init() throws Exception {
+        if (bindOnInit) {
+            bindWithCleanup();
+            bindState = BindState.BOUND_ON_INIT;
+        }
+        if (this.domain != null) {
+            // Register endpoint (as ThreadPool - historical name)
+            oname = new ObjectName(domain + ":type=ThreadPool,name=\"" + getName() + "\"");
+            Registry.getRegistry(null, null).registerComponent(this, oname, null);
+
+            ObjectName socketPropertiesOname = new ObjectName(domain +
+                    ":type=ThreadPool,name=\"" + getName() + "\",subType=SocketProperties");
+            socketProperties.setObjectName(socketPropertiesOname);
+            Registry.getRegistry(null, null).registerComponent(socketProperties, socketPropertiesOname, null);
+
+            for (SSLHostConfig sslHostConfig : findSslHostConfigs()) {
+                registerJmx(sslHostConfig);
+            }
+        }
+    }
+
+
+    private void bindWithCleanup() throws Exception {
+        try {
+            // 开始初始化socket，默认使用NioEndpoint
+            bind();
+        } catch (Throwable t) {
+            // Ensure open sockets etc. are cleaned up if something goes
+            // wrong during bind
+            ExceptionUtils.handleThrowable(t);
+            unbind();
+            throw t;
+        }
+    }
+
+
+    public final void start() throws Exception {
+        if (bindState == BindState.UNBOUND) {
+            bindWithCleanup();
+            bindState = BindState.BOUND_ON_START;
+        }
+        // 开始启动
+        startInternal();
+    }

@@ -1,0 +1,1 @@
+show profile 可以显示一个sql 执行的各个阶段的耗时时长

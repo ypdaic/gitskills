@@ -1,0 +1,66 @@
+/**
+     * Start a new server instance.
+     */
+    public void load() {
+
+        if (loaded) {
+            return;
+        }
+        loaded = true;
+
+        long t1 = System.nanoTime();
+
+        initDirs();
+
+        // Before digester - it may be needed
+        initNaming();
+
+        // Set configuration source
+        ConfigFileLoader.setSource(new CatalinaBaseConfigurationSource(Bootstrap.getCatalinaBaseFile(), getConfigFile()));
+        File file = configFile();
+
+        // Create and execute our Digester 这个用于解析server.xml文件
+        Digester digester = createStartDigester();
+
+        try (ConfigurationSource.Resource resource = ConfigFileLoader.getSource().getServerXml()) {
+            InputStream inputStream = resource.getInputStream();
+            InputSource inputSource = new InputSource(resource.getURI().toURL().toString());
+            inputSource.setByteStream(inputStream);
+            digester.push(this);
+            digester.parse(inputSource);
+        } catch (Exception e) {
+            if  (file == null) {
+                log.warn(sm.getString("catalina.configFail", getConfigFile() + "] or [server-embed.xml"), e);
+            } else {
+                log.warn(sm.getString("catalina.configFail", file.getAbsolutePath()), e);
+                if (file.exists() && !file.canRead()) {
+                    log.warn(sm.getString("catalina.incorrectPermissions"));
+                }
+            }
+            return;
+        }
+
+        getServer().setCatalina(this);
+        getServer().setCatalinaHome(Bootstrap.getCatalinaHomeFile());
+        getServer().setCatalinaBase(Bootstrap.getCatalinaBaseFile());
+
+        // Stream redirection
+        initStreams();
+
+        // Start the new server
+        try {
+            // 开始调用StandardServer的init方法
+            getServer().init();
+        } catch (LifecycleException e) {
+            if (Boolean.getBoolean("org.apache.catalina.startup.EXIT_ON_INIT_FAILURE")) {
+                throw new java.lang.Error(e);
+            } else {
+                log.error(sm.getString("catalina.initError"), e);
+            }
+        }
+
+        long t2 = System.nanoTime();
+        if(log.isInfoEnabled()) {
+            log.info(sm.getString("catalina.init", Long.valueOf((t2 - t1) / 1000000)));
+        }
+    }

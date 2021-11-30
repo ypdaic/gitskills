@@ -11,7 +11,7 @@ public class EscapeAnalysisTest {
 
     /**
      * 逃逸分析，栈上分配
-     * 开启逃逸分析 -XX:+DoEscapeAnalysis ，默认开启
+     * 开启逃逸分析 -XX:+DoEscapeAnalysis ，默认开启-XX:+EliminateAllocations 标量替换， 默认开启
      * 关闭逃逸分析 -XX:-DoEscapeAnalysis
      * @param args
      * @throws InterruptedException
@@ -23,7 +23,7 @@ public class EscapeAnalysisTest {
 
         }
         System.out.println(System.currentTimeMillis() - start + "ms");
-        Thread.sleep(600000);
+//        Thread.sleep(600000);
     }
 
     /**

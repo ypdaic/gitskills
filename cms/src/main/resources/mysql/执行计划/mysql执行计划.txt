@@ -9,7 +9,7 @@ selete_type 字段类型:
      UNION RESULT:从UNION表获取结果的SELECT
 type 字段值类型：
      system：表中就一条记录
-     Const:通过索引一次就可以找到，只有主键和unique(唯一)索引才会出现
+     Const: 表示此时索引在第一层，只需访问一层便能得到数据。
      eq_ref:唯一性索引扫描，对于每个索引键，表中只有一条记录与之匹配。常见于主键或唯一索引扫描
      ref:非唯一索引扫描
      range:索引范围扫描

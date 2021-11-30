@@ -1,0 +1,31 @@
+global:
+  resolve_timeout: 5m
+  # 配置邮箱
+  smtp_smarthost: 'smtp.qq.com:587'
+  smtp_from : '841943896@qq.com'
+  smtp_auth_username: '841943896@qq.com'
+  smtp_auth_password: 'trxtwasscyljbfji'
+  smtp_require_tls: false
+
+route:
+  group_by: ['alertname']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 1h
+  #receiver: 'web.hook'
+  # 配置接收者
+  receiver: mail
+receivers:
+  - name: 'web.hook'
+    webhook_configs:
+      - url: 'http://127.0.0.1:5001/'
+  # 发送给谁
+  - name: mail
+    email_configs:
+      - to: '841943896@qq.com'
+inhibit_rules:
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['alertname', 'dev', 'instance']

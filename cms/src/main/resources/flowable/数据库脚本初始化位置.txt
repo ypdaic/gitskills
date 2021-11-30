@@ -1,0 +1,6 @@
+(flowable-engine-x.jar)的org/flowable/db/create包中也有一份(drop文件夹存放删除脚本)
+
+flowable.{db}.{create|drop}.{type}.sql 其中db为支持的数据库，
+而type为：
+engine: 引擎执行所需的表，必需。
+history: 存储历史与审计信息的表。当历史级别设置为none时不需要。请注意不使用这些表会导致部分使用历史数据的功能失效（如任务备注）。

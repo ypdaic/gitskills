@@ -15,7 +15,36 @@
                                              new SynchronousQueue<Runnable>());
            }
 
-work获取任务的流程就是如果当前Work小于核心线程数，使用队列的take方法取任务，否则使用队列的poll方法，并指定超时时间，该
-     * 超时时间就是我们的keepAliveTime参数，所以这个参数就是给超过核心线程数的work使用的，当该work 获取任务超时，则会退出执行
-     * 退出后，如果当前work数大于核心线程数则不做任何处理，否则重新创建一个work
+       由于核心线程数是0，提交进来的任务，会存放到队列，又由于使用的是SynchronousQueue队列，put方法没法存放该任务，只能新创建一个work去执行该任务
+       当这个任务执行完成后，该work会等待keepliveTime 时间，如果此时有新的任务进来，则该work会被唤醒拿到任务继续执行，然后又来了新任务，由于当前么有
+       work在等待任务，则会开启新的work去执行该任务
 
+
+       public static ExecutorService newSingleThreadExecutor() {
+               return new FinalizableDelegatedExecutorService
+                   (new ThreadPoolExecutor(1, 1,
+                                           0L, TimeUnit.MILLISECONDS,
+                                           new LinkedBlockingQueue<Runnable>()));
+           }
+
+       核心线程数，最大线程数都为1的线程池，队列大小为int的最大值
+
+       public static ExecutorService newFixedThreadPool(int nThreads) {
+               return new ThreadPoolExecutor(nThreads, nThreads,
+                                             0L, TimeUnit.MILLISECONDS,
+                                             new LinkedBlockingQueue<Runnable>());
+           }
+
+
+        核心线程数，最大线程数一样的线程池，队列大小为int最大值
+
+
+
+       public static ExecutorService newWorkStealingPool() {
+                return new ForkJoinPool
+                    (Runtime.getRuntime().availableProcessors(),
+                     ForkJoinPool.defaultForkJoinWorkerThreadFactory,
+                     null, true);
+            }
+
+       工作窃取线程池，线程数为cpu核心数大小

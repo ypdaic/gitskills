@@ -1,0 +1,86 @@
+/**
+     * Initialize the endpoint.
+     */
+    @Override
+    public void bind() throws Exception {
+        initServerSocket();
+
+        // Initialize thread count defaults for acceptor, poller
+        if (acceptorThreadCount == 0) {
+            // FIXME: Doesn't seem to work that well with multiple accept threads
+            acceptorThreadCount = 1;
+        }
+        if (pollerThreadCount <= 0) {
+            //minimum one poller thread
+            pollerThreadCount = 1;
+        }
+        setStopLatch(new CountDownLatch(pollerThreadCount));
+
+        // Initialize SSL if needed
+        initialiseSsl();
+
+        selectorPool.open();
+    }
+
+    // Separated out to make it easier for folks that extend NioEndpoint to
+    // implement custom [server]sockets
+    protected void initServerSocket() throws Exception {
+        if (!getUseInheritedChannel()) {
+
+            // 开启serverSocket
+            serverSock = ServerSocketChannel.open();
+            socketProperties.setProperties(serverSock.socket());
+            InetSocketAddress addr = new InetSocketAddress(getAddress(), getPortWithOffset());
+            // 监听端口，默认接收100个连接
+            serverSock.socket().bind(addr,getAcceptCount());
+        } else {
+            // Retrieve the channel provided by the OS
+            Channel ic = System.inheritedChannel();
+            if (ic instanceof ServerSocketChannel) {
+                serverSock = (ServerSocketChannel) ic;
+            }
+            if (serverSock == null) {
+                throw new IllegalArgumentException(sm.getString("endpoint.init.bind.inherited"));
+            }
+        }
+        serverSock.configureBlocking(true); //mimic APR behavior
+    }
+
+
+    /**
+         * Start the NIO endpoint, creating acceptor, poller threads.
+         */
+        @Override
+        public void startInternal() throws Exception {
+
+            if (!running) {
+                running = true;
+                paused = false;
+
+                processorCache = new SynchronizedStack<>(SynchronizedStack.DEFAULT_SIZE,
+                        socketProperties.getProcessorCache());
+                eventCache = new SynchronizedStack<>(SynchronizedStack.DEFAULT_SIZE,
+                                socketProperties.getEventCache());
+                nioChannels = new SynchronizedStack<>(SynchronizedStack.DEFAULT_SIZE,
+                        socketProperties.getBufferPool());
+
+                // Create worker collection
+                if ( getExecutor() == null ) {
+                    createExecutor();
+                }
+
+                initializeConnectionLatch();
+
+                // Start poller threads
+                pollers = new Poller[getPollerThreadCount()];
+                for (int i=0; i<pollers.length; i++) {
+                    pollers[i] = new Poller();
+                    Thread pollerThread = new Thread(pollers[i], getName() + "-ClientPoller-"+i);
+                    pollerThread.setPriority(threadPriority);
+                    pollerThread.setDaemon(true);
+                    pollerThread.start();
+                }
+                // 启动一个接收客户端连接的线程
+                startAcceptorThreads();
+            }
+        }

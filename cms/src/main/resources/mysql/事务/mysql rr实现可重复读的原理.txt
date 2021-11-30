@@ -1,0 +1,4 @@
+5.为什么rr能实现可重复读而rc不能,分两种情况
+(1)快照读的情况下,rr不能更新事务内的up_limit_id,
+而rc每次会把up_limit_id更新为快照读之前最新已提交事务的transaction id,则rc不能可重复读
+(2)当前读的情况下,rr是利用record lock+gap lock来实现的,而rc没有gap,所以rc不能可重复读

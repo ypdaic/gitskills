@@ -62,7 +62,7 @@ spec:
     - port: 3306
       protocol: TCP
       targetPort: 3306
-      nodeport: 30001 #手动指定nodeport
+      nodeport: 30001 #手动指定nodeport（只针对type 为NodePort形式）
   selector: #关联pod
     component: mysql
   type: NodePort

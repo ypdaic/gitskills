@@ -1,3 +1,4 @@
+
 偏向锁
 在 JDK1.8 中，其实默认是轻量级锁，但如果设定了 -XX:BiasedLockingStartupDelay = 0 ，那在对一个 Object 做 syncronized 的时候，会立即上一把偏向锁。
 当处于偏向锁状态时， markwork 会记录当前线程 ID 。

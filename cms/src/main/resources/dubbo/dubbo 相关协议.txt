@@ -1,0 +1,56 @@
+注册协议(以registry 开头)：
+
+    registry://127.0.0.1:2181/org.apache.dubbo.registry.RegistryService?application=dubbo-provider&dubbo=2.0.2&pid=11828&qos.enable=false&registry=zookeeper&release=2.7.1&timestamp=1628090466307
+
+    org.apache.dubbo.registry.RegistryService 代码写死的
+
+    AbstractInterfaceConfig.loadRegistries 方法
+    /**
+         *
+         * Load the registry and conversion it to {@link URL}, the priority order is: system property > dubbo registry config
+         *
+         * @param provider whether it is the provider side
+         * @return
+         */
+        protected List<URL> loadRegistries(boolean provider) {
+            // check && override if necessary
+            List<URL> registryList = new ArrayList<URL>();
+            if (CollectionUtils.isNotEmpty(registries)) {
+                for (RegistryConfig config : registries) {
+                    String address = config.getAddress();
+                    if (StringUtils.isEmpty(address)) {
+                        address = Constants.ANYHOST_VALUE;
+                    }
+                    if (!RegistryConfig.NO_AVAILABLE.equalsIgnoreCase(address)) {
+                        Map<String, String> map = new HashMap<String, String>();
+                        appendParameters(map, application);
+                        appendParameters(map, config);
+                        // 设置path
+                        map.put(Constants.PATH_KEY, RegistryService.class.getName());
+                        appendRuntimeParameters(map);
+                        if (!map.containsKey(Constants.PROTOCOL_KEY)) {
+                            map.put(Constants.PROTOCOL_KEY, Constants.DUBBO_PROTOCOL);
+                        }
+                        List<URL> urls = UrlUtils.parseURLs(address, map);
+
+                        for (URL url : urls) {
+                            url = URLBuilder.from(url)
+                                    .addParameter(Constants.REGISTRY_KEY, url.getProtocol())
+                                    .setProtocol(Constants.REGISTRY_PROTOCOL)
+                                    .build();
+                            if ((provider && url.getParameter(Constants.REGISTER_KEY, true))
+                                    || (!provider && url.getParameter(Constants.SUBSCRIBE_KEY, true))) {
+                                registryList.add(url);
+                            }
+                        }
+                    }
+                }
+            }
+            return registryList;
+        }
+
+
+
+dubbo协议的url：
+
+    dubbo://192.168.109.1:20880/com.ypdaic.mymall.dubbo.rpc.MockService?anyhost=true&application=dubbo-provider&bean.name=providers:dubbo:com.ypdaic.mymall.dubbo.rpc.MockService&bind.ip=192.168.109.1&bind.port=20880&default.deprecated=false&default.dynamic=false&default.register=true&deprecated=false&dubbo=2.0.2&dynamic=false&generic=false&interface=com.ypdaic.mymall.dubbo.rpc.MockService&methods=mock&pid=14460&qos.enable=false&register=true&release=2.7.1&side=provider&timestamp=1628092617526

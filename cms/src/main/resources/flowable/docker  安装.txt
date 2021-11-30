@@ -1,0 +1,12 @@
+docker pull flowable/all-in-one
+
+docker run -p8089:8080 flowable/all-in-one
+
+
+(用户名/密码: admin/test)
+地址：
+流程图管理： http://localhost:8080/flowable-modeler
+任务管理： http://localhost:8080/flowable-task
+用户管理： http://localhost:8080/flowable-admin
+认证管理： http://localhost:8080/flowable-idm
+接口地址：http://localhost:8080/flowable-rest

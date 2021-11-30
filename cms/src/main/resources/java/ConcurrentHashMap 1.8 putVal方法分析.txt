@@ -12,7 +12,7 @@
                 tab = initTable();
             // 如果对tab的长度取模后得到的索引位置的node为空
             else if ((f = tabAt(tab, i = (n - 1) & hash)) == null) {
-                // 使用cas保证只有一个线程创建node,并将node放到tab对应的索引下
+                // 使用cas保证只有一个线程创建node,并将node放到tab对应的索引下，没有进行node创建的线程则再次走循环走到最后的else环节
                 if (casTabAt(tab, i, null,
                              new Node<K,V>(hash, key, value, null)))
                     break;                   // no lock when adding to empty bin

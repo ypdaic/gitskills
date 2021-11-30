@@ -1,0 +1,48 @@
+    @Override
+    public void init() throws Exception {
+        if (getLog().isInfoEnabled()) {
+            getLog().info(sm.getString("abstractProtocolHandler.init", getName()));
+            logPortOffset();
+        }
+
+        if (oname == null) {
+            // Component not pre-registered so register it
+            oname = createObjectName();
+            if (oname != null) {
+                Registry.getRegistry(null, null).registerComponent(this, oname, null);
+            }
+        }
+
+        if (this.domain != null) {
+            rgOname = new ObjectName(domain + ":type=GlobalRequestProcessor,name=" + getName());
+            Registry.getRegistry(null, null).registerComponent(
+                    getHandler().getGlobal(), rgOname, null);
+        }
+
+        String endpointName = getName();
+        endpoint.setName(endpointName.substring(1, endpointName.length()-1));
+        endpoint.setDomain(domain);
+
+        // 调用endpoint的init方法，也就是AbstractEndpoint的init方法
+        endpoint.init();
+    }
+
+
+    @Override
+    public void start() throws Exception {
+        if (getLog().isInfoEnabled()) {
+            getLog().info(sm.getString("abstractProtocolHandler.start", getName()));
+            logPortOffset();
+        }
+        // 开始调用endpoint的start方法
+        endpoint.start();
+        monitorFuture = getUtilityExecutor().scheduleWithFixedDelay(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!isPaused()) {
+                            startAsyncTimeout();
+                        }
+                    }
+                }, 0, 60, TimeUnit.SECONDS);
+    }

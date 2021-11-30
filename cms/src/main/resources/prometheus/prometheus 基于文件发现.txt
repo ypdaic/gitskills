@@ -1,0 +1,5 @@
+[root@k8s-node2 prometheus]# mkdir targets/{nodes,docker} -pv
+mkdir: created directory ‘targets’
+mkdir: created directory ‘targets/nodes’
+mkdir: created directory ‘targets/docker’
+

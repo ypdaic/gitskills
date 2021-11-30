@@ -1,5 +1,7 @@
 package com.daiyanping.cms.AQS;
 
+import com.sun.corba.se.impl.encoding.CDROutputObject;
+
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
@@ -38,5 +40,7 @@ public class AtomicIntegerFieldUpdaterTest {
             }).start();
 
         }
+
+        Class<CDROutputObject> cdrOutputObjectClass = CDROutputObject.class;
     }
 }

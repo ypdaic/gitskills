@@ -1,0 +1,4 @@
+docker run --name alertmanager -d \
+-p 9093:9093 \
+-v /root/docker/altermanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml \
+prom/alertmanager:latest

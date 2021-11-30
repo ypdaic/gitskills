@@ -1,0 +1,25 @@
+1: alter table mytable engine = innodb;
+
+   该方案有一个问题就是需要执行很长的时间
+
+
+
+2：导出与导入
+
+   使用mysqldump 工具将数据导出到文件中，然后修改文件中create table 语句的存储引擎选项，同时修改表名，同时要将drop table 语句删除，避免原表被删除
+
+
+3：创建于查询
+
+   第三种转换的技术综合了第一种方法的高效和第二种方法的安全，不需要导出整个表的数据，而是先创建一个新的存储引擎的表
+   然后利用insert ...  select  语法来导数据
+
+   create table innodb_table like myisam_table;
+
+   alter table innodb_table engine=innodb;
+
+   insert into innodb_table select * from myisam_table;
+
+   数据量不大的话，这样工作的很好，如果数据量大，可以考虑分配处理，针对每一段数据执行事务提交操作。以避免大事务产生过多的undo
+
+   percona toolikt 提供了一个pt-online-schema-change 的工具，可以比较简单，方便地执行上述过程

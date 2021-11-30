@@ -11,7 +11,7 @@ if (classLoader != null) {
 }
 // 设置代理对象的父类，也就是被代理对象
 enhancer.setSuperclass(proxySuperClass);
-// 设置代理对象的接口，也就被代理对象的接口
+// 设置代理对象的接口，也就被代理对象的接口·
 enhancer.setInterfaces(AopProxyUtils.completeProxiedInterfaces(this.advised));
 // 设置代理类名称创建策略
 enhancer.setNamingPolicy(SpringNamingPolicy.INSTANCE);

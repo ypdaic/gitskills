@@ -8,11 +8,3 @@ mysql 隔离级别非4种
 
 
 SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED; 设置事物隔离级别
-
-
-mysql的可重复读通过间隙锁解决了幻读问题（xu）
-
-
-结论：mysql 的重复读解决了幻读的现象，但是需要 加上 select for update/lock in share mode 变成当前读避免幻读，普通读select存在幻读（是说第一次是
-
-普通select，其他事物更新了数据，如果一次读不是普使用select for update/lock in share mode就会读取别的事物提交的数据，如果第通读，则其他事物不能更新数据）

@@ -1,0 +1,5 @@
+commonLoader: Tomcat最基本的类加载器，加载路径中的class可以被Tomcat容器本身以及各个Webapp访问
+catalinaloader: Tomcat容器私有的类加载器，加载路径中的class对于Webapp不可见
+sharedLoader: 各个Webapp共享的类加载器，加载路径中的class对于所有Webapp可见，但是对于Tomcat容器不可见
+webappclassloader: 各个webapp私有的类加载器，加载路径中的class只对当前webapp可见，比如加载war包相关的类，每个war包应用都有自己的WebappclassLoader，
+实现相互隔离，比如不同的war包应用引入不同的spring版本，这样实现就能加载各自的spring版本
