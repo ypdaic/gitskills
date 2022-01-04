@@ -1,0 +1,154 @@
+term 查询就是对字段进行精确匹配,相当于sql的等值查询，kibana_sample_data_flights这个索引是kibana默认提供的测试数据，需要我们自己导入就行
+
+    例：
+        数字字段的精确匹配
+        get /kibana_sample_data_flights/_search
+        {
+
+          "query":{
+            "term": {
+              "dayOfWeek": {
+                "value": 3
+              }
+            }
+          }
+
+        }
+
+        结果：
+        {
+          "took" : 5,
+          "timed_out" : false,
+          "_shards" : {
+            "total" : 1,
+            "successful" : 1,
+            "skipped" : 0,
+            "failed" : 0
+          },
+          "hits" : {
+            "total" : {
+              "value" : 1914,
+              "relation" : "eq"
+            },
+            "max_score" : 1.0,
+            "hits" : [
+              {
+                "_index" : "kibana_sample_data_flights",
+                "_type" : "_doc",
+                "_id" : "7GeBJX4Bd0Gx-9ulPP3s",
+                "_score" : 1.0,
+                "_source" : {
+                  "FlightNum" : "JHZU97A",
+                  "DestCountry" : "GB",
+                  "OriginWeather" : "Clear",
+                  "OriginCityName" : "Green Bay",
+                  "AvgTicketPrice" : 869.6299626367002,
+                  "DistanceMiles" : 3867.972755621213,
+                  "FlightDelay" : false,
+                  "DestWeather" : "Hail",
+                  "Dest" : "London Gatwick Airport",
+                  "FlightDelayType" : "No Delay",
+                  "OriginCountry" : "US",
+                  "dayOfWeek" : 3,
+                  "DistanceKilometers" : 6224.898746422466,
+                  "timestamp" : "2021-12-30T",
+                  "DestLocation" : {
+                    "lat" : "51.14810181",
+                    "lon" : "-0.190277994"
+                  },
+                  "DestAirportID" : "LGW",
+                  "Carrier" : "ES-Air",
+                  "Cancelled" : false,
+                  "FlightTimeMin" : 389.0561716514041,
+                  "Origin" : "Austin Straubel International Airport",
+                  "OriginLocation" : {
+                    "lat" : "44.48509979",
+                    "lon" : "-88.12960052"
+                  },
+                  "DestRegion" : "GB-ENG",
+                  "OriginAirportID" : "GRB",
+                  "OriginRegion" : "US-WI",
+                  "DestCityName" : "London",
+                  "FlightTimeHour" : 6.484269527523401,
+                  "FlightDelayMin" : 0
+                }
+              }
+            ]
+          }
+        }
+
+    字符串的精确匹配
+    get /kibana_sample_data_flights/_search
+    {
+
+      "query":{
+        "term": {
+          "OriginCityName": {
+            "value": "Green Bay"
+          }
+        }
+      }
+
+    }
+
+    结果：
+    {
+      "took" : 1,
+      "timed_out" : false,
+      "_shards" : {
+        "total" : 1,
+        "successful" : 1,
+        "skipped" : 0,
+        "failed" : 0
+      },
+      "hits" : {
+        "total" : {
+          "value" : 27,
+          "relation" : "eq"
+        },
+        "max_score" : 6.1631236,
+        "hits" : [
+          {
+            "_index" : "kibana_sample_data_flights",
+            "_type" : "_doc",
+            "_id" : "7GeBJX4Bd0Gx-9ulPP3s",
+            "_score" : 6.1631236,
+            "_source" : {
+              "FlightNum" : "JHZU97A",
+              "DestCountry" : "GB",
+              "OriginWeather" : "Clear",
+              "OriginCityName" : "Green Bay",
+              "AvgTicketPrice" : 869.6299626367002,
+              "DistanceMiles" : 3867.972755621213,
+              "FlightDelay" : false,
+              "DestWeather" : "Hail",
+              "Dest" : "London Gatwick Airport",
+              "FlightDelayType" : "No Delay",
+              "OriginCountry" : "US",
+              "dayOfWeek" : 3,
+              "DistanceKilometers" : 6224.898746422466,
+              "timestamp" : "2021-12-30T",
+              "DestLocation" : {
+                "lat" : "51.14810181",
+                "lon" : "-0.190277994"
+              },
+              "DestAirportID" : "LGW",
+              "Carrier" : "ES-Air",
+              "Cancelled" : false,
+              "FlightTimeMin" : 389.0561716514041,
+              "Origin" : "Austin Straubel International Airport",
+              "OriginLocation" : {
+                "lat" : "44.48509979",
+                "lon" : "-88.12960052"
+              },
+              "DestRegion" : "GB-ENG",
+              "OriginAirportID" : "GRB",
+              "OriginRegion" : "US-WI",
+              "DestCityName" : "London",
+              "FlightTimeHour" : 6.484269527523401,
+              "FlightDelayMin" : 0
+            }
+          }
+        ]
+      }
+    }

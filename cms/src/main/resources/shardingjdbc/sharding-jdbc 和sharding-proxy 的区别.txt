@@ -1,0 +1,3 @@
+sharding-jdbc  支持跨数据库但不支持跨语言仅java，并且是去中心化的
+
+sharding-proxy  支持跨语言但是不支持跨数据库仅mysql，有中心和mycat类似

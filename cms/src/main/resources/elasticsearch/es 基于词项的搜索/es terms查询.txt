@@ -1,0 +1,90 @@
+terms 查询就是对字段进行精确匹配,但是有多个值,相当于sql的in查询，kibana_sample_data_flights这个索引是kibana默认提供的测试数据，需要我们自己导入就行
+
+
+例：
+get /kibana_sample_data_flights/_search
+{
+
+  "query":{
+    "terms": {
+      "OriginCityName": [ "Green Bay","Milan"]
+
+    }
+  }
+
+}
+
+结果：
+{
+  "took" : 2,
+  "timed_out" : false,
+  "_shards" : {
+    "total" : 1,
+    "successful" : 1,
+    "skipped" : 0,
+    "failed" : 0
+  },
+  "hits" : {
+    "total" : {
+      "value" : 266,
+      "relation" : "eq"
+    },
+    "max_score" : 1.0,
+    "hits" : [
+      {
+        "_index" : "kibana_sample_data_flights",
+        "_type" : "_doc",
+        "_id" : "IGeBJX4Bd0Gx-9ulOvqJ",
+        "_score" : 1.0,
+        "_source" : {
+          "FlightNum" : "M05KE88",
+          "DestCountry" : "IN",
+          "OriginWeather" : "Heavy Fog",
+          "OriginCityName" : "Milan",
+          "AvgTicketPrice" : 960.8697358054351,
+          "DistanceMiles" : 4377.166776556647,
+          "FlightDelay" : true,
+          "DestWeather" : "Cloudy",
+          "Dest" : "Rajiv Gandhi International Airport",
+          "FlightDelayType" : "NAS Delay",
+          "OriginCountry" : "IT",
+          "dayOfWeek" : 0,
+          "DistanceKilometers" : 7044.367088850781,
+          "timestamp" : "2021-12-27T12:09:35",
+          "DestLocation" : {
+            "lat" : "17.23131752",
+            "lon" : "78.42985535"
+          },
+          "DestAirportID" : "HYD",
+          "Carrier" : "Kibana Airlines",
+          "Cancelled" : true,
+          "FlightTimeMin" : 602.0305907375651,
+          "Origin" : "Milano Linate Airport",
+          "OriginLocation" : {
+            "lat" : "45.445099",
+            "lon" : "9.27674"
+          },
+          "DestRegion" : "SE-BD",
+          "OriginAirportID" : "MI11",
+          "OriginRegion" : "IT-25",
+          "DestCityName" : "Hyderabad",
+          "FlightTimeHour" : 10.033843178959419,
+          "FlightDelayMin" : 15
+        }
+      }
+    ]
+  }
+}
+
+
+terms 还可以跨索引查询，一个用户索引（用户索引包含文章id），一个文章索引
+      现在需要查询id为1的用户，发表的文章
+      "query"{
+            "terms":{
+                "_id": {
+                    "index": "user",
+                    "id":1, (user索引的id)
+                    "path": "articles" (用户索引的文章id字段)
+                }
+            }
+        }

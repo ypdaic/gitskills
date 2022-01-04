@@ -1,0 +1,15 @@
+前缀查询，像sql的like "C%"
+
+    // 查询到达国家名称以C开头的
+    get /kibana_sample_data_flights/_search
+    {
+
+      "query":{
+        "prefix": {
+           "DestCountry": "C"
+        }
+
+        }
+      }
+
+    }

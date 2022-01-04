@@ -1,3 +1,37 @@
+什么是ISR？
+先来看几个概念
+
+1、AR（Assigned Repllicas）一个partition的所有副本（就是replica，不区分leader或follower）
+
+2、ISR（In-Sync Replicas）能够和 leader 保持同步的 follower + leader本身 组成的集合。
+
+3、OSR（Out-Sync Relipcas）不能和 leader 保持同步的 follower 集合
+
+4、公式：AR = ISR + OSR
+
+以，看明白了吗？
+
+Kafka对外依然可以声称是完全同步，但是承诺是对AR中的所有replica完全同步了吗？
+
+    并没有。Kafka只保证对ISR集合中的所有副本保证完全同步。
+
+    至于，ISR到底有多少个follower，那不知道，别问，问就是完全同步，你再问就多了。
+
+    这就好比网购买一送一，结果邮来了一大一小两个产品。
+
+    你可能觉得有问题，其实是没问题的，商家说送的那个是一模一样的了吗？并没有。
+
+    ISR就是这个道理，Kafka是一定会保证leader接收到的消息完全同步给ISR中的所有副本。
+
+    而最坏的情况下，ISR中只剩leader自己。
+————————————————
+版权声明：本文为CSDN博主「搬砖党弟中弟」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/daima_caigou/article/details/109390705
+————————————————
+版权声明：本文为CSDN博主「搬砖党弟中弟」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/daima_caigou/article/details/109390705
+
+
 kafka 进行副本复制的时候，允许大部分的数据写入副本
       动态复制方案
 

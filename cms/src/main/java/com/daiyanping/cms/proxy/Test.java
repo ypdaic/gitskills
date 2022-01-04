@@ -21,8 +21,8 @@ public class Test {
 
     public static void main(String[] args) {
 //        test2();
-//        test3();
-        test4();
+        test3();
+//        test4();
 //        test5();
 
     }
@@ -169,13 +169,13 @@ public class Test {
         TestServiceImpl testService = new TestServiceImpl("s", "b");
         TestServerImplCglibProxy testServerImplCglibProxy = new TestServerImplCglibProxy(testService);
         Enhancer enhancer = new Enhancer();
-//        enhancer.setSuperclass(TestServiceImpl.class);
-        enhancer.setInterfaces(new Class<?>[] {ITestService.class});
+        enhancer.setSuperclass(TestServiceImpl.class);
+//        enhancer.setInterfaces(new Class<?>[] {ITestService.class});
         enhancer.setNamingPolicy(SpringNamingPolicy.INSTANCE);
         enhancer.setCallbackTypes(new Class[]{MethodInterceptor.class});
         enhancer.setCallback(testServerImplCglibProxy);
-//        TestServiceImpl o = (TestServiceImpl) enhancer.create();
-        ITestService o = (ITestService) enhancer.create();
+        TestServiceImpl o = (TestServiceImpl) enhancer.create();
+//        ITestService o = (ITestService) enhancer.create();
         o.say();
 
 

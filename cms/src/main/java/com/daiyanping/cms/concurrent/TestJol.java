@@ -9,7 +9,8 @@ public class TestJol {
 
 
     public static void main(String[] args) {
-        test12();
+//        test12();
+        test1();
     }
 
     /**
@@ -27,32 +28,32 @@ public class TestJol {
         String s = ClassLayout.parseInstance(l).toPrintable();
         System.out.println(s);
 
-        new Thread(() -> {
-            ArrayList<Object> objects = new ArrayList<>();
-            for (int i = 0; i < 9999; i++) {
-                try {
-                    Thread.sleep(2);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                objects.add(new A());
-            }
-        }).start();
-
-        /**
-         * 验证对象分代年龄的变化
-         * -XX:BiasedLockingStartupDelay=0 -Xms200m -Xmx200m
-         */
-        while (true) {
-            try {
-                Thread.sleep(2);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            String g = ClassLayout.parseInstance(l).toPrintable();
-            System.out.println(g);
-        }
+//        new Thread(() -> {
+//            ArrayList<Object> objects = new ArrayList<>();
+//            for (int i = 0; i < 9999; i++) {
+//                try {
+//                    Thread.sleep(2);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                objects.add(new A());
+//            }
+//        }).start();
+//
+//        /**
+//         * 验证对象分代年龄的变化
+//         * -XX:BiasedLockingStartupDelay=0 -Xms200m -Xmx200m
+//         */
+//        while (true) {
+//            try {
+//                Thread.sleep(2);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//            String g = ClassLayout.parseInstance(l).toPrintable();
+//            System.out.println(g);
+//        }
     }
 
     /**

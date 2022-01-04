@@ -1,0 +1,14 @@
+判断字段值是否为空
+
+get /kibana_sample_data_flights/_search
+{
+
+  "query":{
+    "exists": {
+       "field": "dayOfWeek"
+    }
+
+    }
+  }
+
+}

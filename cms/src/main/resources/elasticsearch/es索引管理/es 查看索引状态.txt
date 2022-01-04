@@ -1,0 +1,17 @@
+get /_cat/indices?v
+
+
+health status index                    uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+yellow open   website                  -ZSUJ82_TYiIMm2-fbbMaw   1   1          2            1      8.1kb          8.1kb
+yellow open   product                  2r25dkoNT76YqhCURPuzAw   1   1        272            0     18.8kb         18.8kb
+yellow open   bank                     nN4lF5jgR3GhsJLbkV9QAA   1   1       1000            0    414.3kb        414.3kb
+green  open   .kibana_task_manager_1   zSQ4MmtwTC2d6uTJxnPFRA   1   0          2            0     12.5kb         12.5kb
+yellow open   my_index                 xKd417abQqmCWPPybXNFFA   1   1          1            0      4.8kb          4.8kb
+green  open   .apm-agent-configuration WMMMQxBdRwyAGERJlxkXEA   1   0          0            0       283b           283b
+green  open   .kibana_1                3yo48og9RHiPpym6ymiaWw   1   0         14            3     63.2kb         63.2kb
+yellow open   users                    uwjpyeUST-iegPKVLBqRHA   1   1          1            0      3.7kb          3.7kb
+yellow open   customer                 ctTpvct6TBq0dYl2Gq4Few   1   1          2            0      3.5kb          3.5kb
+
+
+
+

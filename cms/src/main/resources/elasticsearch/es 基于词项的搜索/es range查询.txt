@@ -1,0 +1,81 @@
+range 查询就是对字段进行范围查询,相当于sql的范围查询，kibana_sample_data_flights这个索引是kibana默认提供的测试数据，需要我们自己导入就行
+
+// 查询航班的延误时间范围
+get /kibana_sample_data_flights/_search
+{
+
+  "query":{
+    "range": {
+      "FlightDelayMin": {
+        "gte": 100, 大于等于
+        "lte": 200  小于等于
+      }
+
+    }
+  }
+
+}
+
+除了gte,lte 还有gt 大于，lt 小于
+
+结果：
+{
+  "took" : 2,
+  "timed_out" : false,
+  "_shards" : {
+    "total" : 1,
+    "successful" : 1,
+    "skipped" : 0,
+    "failed" : 0
+  },
+  "hits" : {
+    "total" : {
+      "value" : 921,
+      "relation" : "eq"
+    },
+    "max_score" : 1.0,
+    "hits" : [
+      {
+        "_index" : "kibana_sample_data_flights",
+        "_type" : "_doc",
+        "_id" : "G2eBJX4Bd0Gx-9ulOvqJ",
+        "_score" : 1.0,
+        "_source" : {
+          "FlightNum" : "EAYQW69",
+          "DestCountry" : "IT",
+          "OriginWeather" : "Thunder & Lightning",
+          "OriginCityName" : "Naples",
+          "AvgTicketPrice" : 181.69421554118,
+          "DistanceMiles" : 345.31943877289535,
+          "FlightDelay" : true,
+          "DestWeather" : "Clear",
+          "Dest" : "Treviso-Sant'Angelo Airport",
+          "FlightDelayType" : "Weather Delay",
+          "OriginCountry" : "IT",
+          "dayOfWeek" : 0,
+          "DistanceKilometers" : 555.7377668725265,
+          "timestamp" : "2021-12-27T10:33:28",
+          "DestLocation" : {
+            "lat" : "45.648399",
+            "lon" : "12.1944"
+          },
+          "DestAirportID" : "TV01",
+          "Carrier" : "Kibana Airlines",
+          "Cancelled" : true,
+          "FlightTimeMin" : 222.74905899019436,
+          "Origin" : "Naples International Airport",
+          "OriginLocation" : {
+            "lat" : "40.886002",
+            "lon" : "14.2908"
+          },
+          "DestRegion" : "IT-34",
+          "OriginAirportID" : "NA01",
+          "OriginRegion" : "IT-72",
+          "DestCityName" : "Treviso",
+          "FlightTimeHour" : 3.712484316503239,
+          "FlightDelayMin" : 180
+        }
+      }
+    ]
+  }
+}

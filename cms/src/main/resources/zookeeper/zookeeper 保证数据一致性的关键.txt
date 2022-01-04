@@ -1,0 +1,2 @@
+当一个写请求过来后，必须经过leader，然后leader将数据写到log文件，并给follower发送投票命令，follower本身会把数据写到log文件中，然后follower
+通知leader,当leader收到超过半数节点的ack后，就给follower发送commit命令，follower的内存才会有数据

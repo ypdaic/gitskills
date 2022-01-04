@@ -3,7 +3,7 @@ https://www.cnblogs.com/crazylqy/p/7611069.html
 mysql  加锁规则：
 
 
-        原则1：加锁的基本单位是next-key lock。希望你还记得，next-key lock是前开后闭区间。
+        原则1：加锁的基本单位是next-key lock（也就是行锁+间隙锁）。希望你还记得，next-key lock是前开后闭区间。
         原则2：查找过程中访问到的对象才会加锁。
         优化1：索引上的等值查询，给唯一索引加锁的时候，next-key lock退化为行锁。
         优化2：索引上的等值查询，向右遍历时且最后一个值不满足等值条件的时候，next-key lock退化为间隙锁。

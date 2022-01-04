@@ -32,6 +32,8 @@ public class TestServiceImpl implements ITestService {
         System.out.println("aaa");
     }
 
+    private void say1() {};
+
 
     public synchronized void say2() {
         try {

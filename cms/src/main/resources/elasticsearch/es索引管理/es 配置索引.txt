@@ -1,0 +1,163 @@
+静态配置：
+
+    查看所有索引的配置信息：
+
+    {
+      "product" : {
+        "settings" : {
+          "index" : {
+            "creation_date" : "1592761546248",
+            "number_of_shards" : "1",
+            "number_of_replicas" : "1",
+            "uuid" : "2r25dkoNT76YqhCURPuzAw",
+            "version" : {
+              "created" : "7040299"
+            },
+            "provided_name" : "product"
+          }
+        }
+      },
+      ".kibana_1" : {
+        "settings" : {
+          "index" : {
+            "number_of_shards" : "1",
+            "auto_expand_replicas" : "0-1",
+            "provided_name" : ".kibana_1",
+            "creation_date" : "1591913306512",
+            "number_of_replicas" : "0",
+            "uuid" : "3yo48og9RHiPpym6ymiaWw",
+            "version" : {
+              "created" : "7040299"
+            }
+          }
+        }
+      },
+      "bank" : {
+        "settings" : {
+          "index" : {
+            "creation_date" : "1591916943704",
+            "number_of_shards" : "1",
+            "number_of_replicas" : "1",
+            "uuid" : "nN4lF5jgR3GhsJLbkV9QAA",
+            "version" : {
+              "created" : "7040299"
+            },
+            "provided_name" : "bank"
+          }
+        }
+      },
+      "my_index" : {
+        "settings" : {
+          "index" : {
+            "creation_date" : "1592003729776",
+            "number_of_shards" : "1",
+            "number_of_replicas" : "1",
+            "uuid" : "xKd417abQqmCWPPybXNFFA",
+            "version" : {
+              "created" : "7040299"
+            },
+            "provided_name" : "my_index"
+          }
+        }
+      },
+      ".apm-agent-configuration" : {
+        "settings" : {
+          "index" : {
+            "number_of_shards" : "1",
+            "auto_expand_replicas" : "0-1",
+            "provided_name" : ".apm-agent-configuration",
+            "creation_date" : "1591913305777",
+            "number_of_replicas" : "0",
+            "uuid" : "WMMMQxBdRwyAGERJlxkXEA",
+            "version" : {
+              "created" : "7040299"
+            }
+          }
+        }
+      },
+      "users" : {
+        "settings" : {
+          "index" : {
+            "creation_date" : "1592163755870",
+            "number_of_shards" : "1",
+            "number_of_replicas" : "1",
+            "uuid" : "uwjpyeUST-iegPKVLBqRHA",
+            "version" : {
+              "created" : "7040299"
+            },
+            "provided_name" : "users"
+          }
+        }
+      },
+      ".kibana_task_manager_1" : {
+        "settings" : {
+          "index" : {
+            "number_of_shards" : "1",
+            "auto_expand_replicas" : "0-1",
+            "provided_name" : ".kibana_task_manager_1",
+            "creation_date" : "1591913306454",
+            "number_of_replicas" : "0",
+            "uuid" : "zSQ4MmtwTC2d6uTJxnPFRA",
+            "version" : {
+              "created" : "7040299"
+            }
+          }
+        }
+      },
+      "customer" : {
+        "settings" : {
+          "index" : {
+            "creation_date" : "1591915278652",
+            "number_of_shards" : "1",
+            "number_of_replicas" : "1",
+            "uuid" : "ctTpvct6TBq0dYl2Gq4Few",
+            "version" : {
+              "created" : "7040299"
+            },
+            "provided_name" : "customer"
+          }
+        }
+      },
+      "website" : {
+        "settings" : {
+          "index" : {
+            "creation_date" : "1591916375469",
+            "number_of_shards" : "1",
+            "number_of_replicas" : "1",
+            "uuid" : "-ZSUJ82_TYiIMm2-fbbMaw",
+            "version" : {
+              "created" : "7040299"
+            },
+            "provided_name" : "website"
+          }
+        }
+      }
+    }
+
+    查看某个索引的配置
+
+     get /product/_settings
+
+     {
+       "product" : {
+         "settings" : {
+           "index" : {
+             "creation_date" : "1592761546248",
+             "number_of_shards" : "1",
+             "number_of_replicas" : "1",
+             "uuid" : "2r25dkoNT76YqhCURPuzAw",
+             "version" : {
+               "created" : "7040299"
+             },
+             "provided_name" : "product"
+           }
+         }
+       }
+     }
+
+     修改索引配置，设置刷新频率为2s
+
+     put /my_index/_settings
+     {
+       "refresh_interval":"2s"
+     }

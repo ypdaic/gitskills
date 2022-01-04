@@ -1,0 +1,1 @@
+post /customer/_open 打开索引

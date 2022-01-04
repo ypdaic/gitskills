@@ -1,0 +1,12 @@
+post /open-soft/_mapping
+{
+  "_meta":{
+    "class": "cn.enjoyedu.User",
+    "version":{
+      "min":"1.0",
+      "max":"1.3"
+    }
+  }
+}
+
+_ 下滑线开头的字段一般都是系统提供的元字段，我们也可以自己定义

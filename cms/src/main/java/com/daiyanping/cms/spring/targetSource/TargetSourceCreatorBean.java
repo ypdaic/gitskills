@@ -1,8 +1,10 @@
 package com.daiyanping.cms.spring.targetSource;
 
 import org.springframework.aop.aspectj.annotation.AnnotationAwareAspectJAutoProxyCreator;
+import org.springframework.aop.config.AopConfigUtils;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 
@@ -16,7 +18,7 @@ public class TargetSourceCreatorBean {
     /*
     * TODO beanDefinition中的factoryMethod属性实现的
     * */
-//    @Bean(AopConfigUtils.AUTO_PROXY_CREATOR_BEAN_NAME)
+    @Bean(AopConfigUtils.AUTO_PROXY_CREATOR_BEAN_NAME)
     public AnnotationAwareAspectJAutoProxyCreator annotationAwareAspectJAutoProxyCreator() {
         AnnotationAwareAspectJAutoProxyCreator creator = new AnnotationAwareAspectJAutoProxyCreator();
         // creator.setProxyTargetClass(true); 建议这里不要设置，还是取用注解的值来灵活控制最好了

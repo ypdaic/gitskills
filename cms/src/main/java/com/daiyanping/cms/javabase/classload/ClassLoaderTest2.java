@@ -1,5 +1,6 @@
 package com.daiyanping.cms.javabase.classload;
 
+import sun.applet.AppletClassLoader;
 import sun.misc.Launcher;
 
 import java.net.URL;

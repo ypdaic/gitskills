@@ -41,7 +41,8 @@ gc日志相关参数:
 
    -XX:NumberOfGCLogFiles=10  gc日志文件数量，jdk 11 不支持
 
-   -XX:+UseGCLogFileRotation  使用gc日志文件轮换，jdk 11 不支持
+   -XX:+UseGCLogFileRotation  使用g
+
 
 
 
