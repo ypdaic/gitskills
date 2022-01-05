@@ -1,0 +1,47 @@
+拉去镜像：
+
+
+    docker pull clickhouse/clickhouse-server:21.11.9.1
+
+创建临时容器：
+
+    docker run --rm -d --name=clickhouse-server \
+    --ulimit nofile=262144:262144 \
+    -p 8123:8123 -p 9009:9009 -p 9000:9000 \
+    clickhouse-server:21.11.9.1
+
+复制临时容器内配置文件到宿主机：
+
+    docker cp clickhouse-server:/etc/clickhouse-server/config.xml /Users/daiyanping/Docker/clickhose/config.xml
+    docker cp clickhouse-server:/etc/clickhouse-server/users.xml /Users/daiyanping/Docker/clickhose/users.xml
+
+    创建用户并设置密码（修改users.xml）：
+        为默认账户default设置明文密码
+
+            可以在yandex-->users-->default 节点下设置明文密码
+            如下：
+            <!-- 设置明文密码-->
+            <password>test1234</password>
+
+        如果需要使用 SHA256 加密，则添加password_sha256_hex节点
+        如下：
+            <password_sha256_hex>65e84be33532fb784c48129675f9eff3a682b27168c0ea744b2cf58ee02337c5</password_sha256_hex>
+            SHA256加密字符串生成规则如下：
+            PASSWORD=$(base64 < /dev/urandom | head -c8); echo "$PASSWORD"; echo -n "$PASSWORD" | sha256sum | tr -d '-'
+
+        如果需要使用 SHA1 加密，则添加password_double_sha1_hex节点
+        如下：
+            <password_double_sha1_hex>e395796d6546b1b65db9d665cd43f0e858dd4303</password_double_sha1_hex>
+            SHA1加密字符串生成规则如下：
+            PASSWORD=$(base64 < /dev/urandom | head -c8); echo "$PASSWORD"; echo -n "$PASSWORD" | sha1sum | tr -d '-' | xxd -r -p | sha1sum | tr -d '-'
+
+添加挂载：
+docker run -d --name=clickhouse-server \
+-p 8123:8123 -p 9009:9009 -p 9000:9000 \
+--ulimit nofile=262144:262144 \
+-v /Users/daiyanping/Docker/clickhose/data:/var/lib/clickhouse:rw \
+-v /Users/daiyanping/Docker/clickhose/config.xml:/etc/clickhouse-server/config.xml \
+-v /Users/daiyanping/Docker/clickhose/users.xml:/etc/clickhouse-server/users.xml \
+-v /Users/daiyanping/Docker/clickhose/log:/var/log/clickhouse-server:rw \
+clickhouse/clickhouse-server:21.11.9.1
+
