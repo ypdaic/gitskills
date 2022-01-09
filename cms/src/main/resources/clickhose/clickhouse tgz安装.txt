@@ -1,0 +1,34 @@
+https://clickhouse.com/docs/zh/getting-started/install/
+
+    1：先下载安装包
+
+        选择https://repo.clickhouse.com/tgz/stable/ 目录下稳定的包
+
+        下载如下4个包
+        wget https://repo.clickhouse.com/tgz/stable/clickhouse-server-21.9.7.2.tgz
+
+        wget https://repo.clickhouse.com/tgz/stable/clickhouse-common-static-dbg-21.9.7.2.tgz
+
+        wget https://repo.clickhouse.com/tgz/stable/clickhouse-common-static-21.9.7.2.tgz
+
+        wget https://repo.clickhouse.com/tgz/stable/clickhouse-client-21.9.7.2.tgz
+
+        依次按如下顺序解压并执行相关脚本
+
+        tar -xzvf clickhouse-common-static-21.9.7.2.tgz
+        sudo clickhouse-common-static-21.9.7.2/install/doinst.sh
+
+        tar -xzvf clickhouse-common-static-dbg-21.9.7.2.tgz
+        sudo clickhouse-common-static-dbg-21.9.7.2/install/doinst.sh
+
+        tar -xzvf clickhouse-server-21.9.7.2.tgz
+        sudo clickhouse-server-21.9.7.2/install/doinst.sh
+        sudo /etc/init.d/clickhouse-server start   #使用service的形式启动
+
+        有两种方式可以启动 ClickHouse，一种使用 service 方式启动，一种使用 systemctl 方式启动。如下使用 service 方式以守护进程方式启动：
+
+        sudo service clickhouse-server start
+        如果您没有 service 命令，可以运行 sudo etc/init.d/clickhouse-server start 命令。
+
+        tar -xzvf clickhouse-client-21.9.7.2.tgz
+        sudo clickhouse-client-21.9.7.2/install/doinst.sh

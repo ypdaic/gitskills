@@ -1,0 +1,43 @@
+日期类型
+时间类型分为DateTime、DateTime64和Date三类。需要注意的是ClickHouse目前没有时间戳类型，也就是说，时间类型最高的精度是秒，所以如果需要处理毫秒、微秒精度的时间，则只能借助UInt类型实现。
+
+    Date类型
+
+        用两个字节存储，表示从 1970-01-01 (无符号) 到当前的日期值。日期中没有存储时区信息。
+
+
+        CREATE TABLE t_date (x date) ENGINE=TinyLog;
+        INSERT INTO t_date VALUES('2020-10-01');
+        SELECT x,toTypeName(x) FROM t_date;
+        ┌──────────x─┬─toTypeName(x)─┐
+        │ 2020-10-01 │ Date          │
+    └────────────┴───────────────┘
+
+    DateTime类型
+
+    用四个字节（无符号的）存储 Unix 时间戳。允许存储与日期类型相同的范围内的值。最小值为 0000-00-00 00:00:00。时间戳类型值精确到秒（没有闰秒）。时区使用启动客户端或服务器时的系统时区。
+
+    CREATE TABLE t_datetime(`timestamp` DateTime) ENGINE = TinyLog;
+    INSERT INTO t_datetime Values('2020-10-01 00:00:00');
+    SELECT * FROM t_datetime;
+    -- 结果输出
+    ┌───────────timestamp─┐
+    │ 2020-10-01 00:00:00 │
+    └─────────────────────┘
+    -- 注意，DateTime类型是区分时区的
+    SELECT
+        toDateTime(timestamp, 'Asia/Shanghai') AS column,
+        toTypeName(column) AS x
+    FROM t_datetime;
+    -- 结果输出
+    ┌──────────────column─┬─x─────────────────────────┐
+    │ 2020-10-01 00:00:00 │ DateTime('Asia/Shanghai') │
+    └─────────────────────┴───────────────────────────┘
+    SELECT
+         toDateTime(timestamp, 'Europe/Moscow') AS column,
+         toTypeName(column) AS x
+    FROM t_datetime;
+    -- 结果输出
+    ┌──────────────column─┬─x─────────────────────────┐
+    │ 2020-09-30 19:00:00 │ DateTime('Europe/Moscow') │
+    └─────────────────────┴───────────────────────────┘

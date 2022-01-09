@@ -1,0 +1,21 @@
+Nullable
+
+Nullable类型表示某个基础数据类型可以是Null值。其具体用法如下所示：
+
+-- 建表
+CREATE TABLE t_null(x Int8, y Nullable(Int8)) ENGINE TinyLog
+-- 写入数据
+INSERT INTO t_null VALUES (1, NULL), (2, 3);
+SELECT x + y FROM t_null;
+-- 结果
+┌─plus(x, y)─┐
+│       ᴺᵁᴸᴸ │
+│          5 │
+└────────────┘
+
+注意：
+Nullable 类型字段不能包含在表索引中。
+
+除非在 ClickHouse 服务器配置中另有说明，否则 NULL 是任何 Nullable 类型的默认值。
+
+使用 Nullable 几乎总是对性能产生负面影响，在设计数据库时请记住这一点

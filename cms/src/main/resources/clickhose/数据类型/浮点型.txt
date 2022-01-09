@@ -1,0 +1,6 @@
+浮点型
+
+Float32 - float
+Float64 – double
+
+不要用浮点数存金钱
