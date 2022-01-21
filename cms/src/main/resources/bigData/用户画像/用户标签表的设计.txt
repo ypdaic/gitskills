@@ -1,0 +1,24 @@
+用户画像标签表： 存储到HBase表中
+
+    tbl_profile (表名称)
+
+标签分为两类：（列簇ColumnFamily）
+
+    用户标签：user
+    商品标签：item
+
+表的RowKey
+
+    用户ID: userId
+
+标签值：（列值）
+
+    标签字段：tagName
+    标签值：tagValue
+
+
+标签信息表:
+
+    tagId, tagName, tagDesc
+    384     男       用户的性别为男性
+    385     女       用户的性别为女性

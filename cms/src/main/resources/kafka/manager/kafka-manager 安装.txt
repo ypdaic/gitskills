@@ -1,1 +1,3 @@
 docker run -itd  --name=kafka-manager -p 9500:9000 -e ZK_HOSTS="192.168.109.129:2181,192.168.109.130:2181" sheepkiller/kafka-manager
+
+docker run -itd  --name=kafka-manager -p 9000:9000 -e ZK_HOSTS="127.0.0.1:2181" sheepkiller/kafka-manager

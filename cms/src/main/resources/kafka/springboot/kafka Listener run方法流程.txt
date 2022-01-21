@@ -1,0 +1,74 @@
+@Override
+		public void run() {
+	        // 设置打印消息日志时是否只是打印元数据，如topic,partition,offset
+			ListenerUtils.setLogOnlyMetadata(this.containerProperties.isOnlyLogRecordMetadata());
+			// 发布消费者启动事件
+			publishConsumerStartingEvent();
+			this.consumerThread = Thread.currentThread();
+			// 向consumerSeekAwareListener注册自己
+			setupSeeks();
+			// 当前线程上设置消费群组id
+			KafkaUtils.setConsumerGroupId(this.consumerGroupId);
+			this.count = 0;
+			this.last = System.currentTimeMillis();
+			// 当是指定分区时，是否需要根据指定分区的配置重新设置偏移量
+			initAssignedPartitions();
+			// 发送消费者启动完成事件
+			publishConsumerStartedEvent();
+			Throwable exitThrowable = null;
+			while (isRunning()) {
+				try {
+					pollAndInvoke();
+				}
+				catch (@SuppressWarnings(UNUSED) WakeupException e) {
+					// Ignore, we're stopping or applying immediate foreign acks
+				}
+				catch (NoOffsetForPartitionException nofpe) {
+					this.fatalError = true;
+					ListenerConsumer.this.logger.error(nofpe, "No offset and no reset policy");
+					exitThrowable = nofpe;
+					break;
+				}
+				catch (AuthorizationException ae) {
+					if (this.authorizationExceptionRetryInterval == null) {
+						ListenerConsumer.this.logger.error(ae, "Authorization Exception and no authorizationExceptionRetryInterval set");
+						this.fatalError = true;
+						exitThrowable = ae;
+						break;
+					}
+					else {
+						ListenerConsumer.this.logger.error(ae, "Authorization Exception, retrying in " + this.authorizationExceptionRetryInterval.toMillis() + " ms");
+						// We can't pause/resume here, as KafkaConsumer doesn't take pausing
+						// into account when committing, hence risk of being flooded with
+						// GroupAuthorizationExceptions.
+						// see: https://github.com/spring-projects/spring-kafka/pull/1337
+						sleepFor(this.authorizationExceptionRetryInterval);
+					}
+				}
+				catch (FencedInstanceIdException fie) {
+					this.fatalError = true;
+					ListenerConsumer.this.logger.error(fie, "'" + ConsumerConfig.GROUP_INSTANCE_ID_CONFIG
+							+ "' has been fenced");
+					exitThrowable = fie;
+					break;
+				}
+				catch (StopAfterFenceException e) {
+					this.logger.error(e, "Stopping container due to fencing");
+					stop(false);
+					exitThrowable = e;
+				}
+				catch (Error e) { // NOSONAR - rethrown
+					Runnable runnable = KafkaMessageListenerContainer.this.emergencyStop;
+					if (runnable != null) {
+						runnable.run();
+					}
+					this.logger.error(e, "Stopping container due to an Error");
+					wrapUp(e);
+					throw e;
+				}
+				catch (Exception e) {
+					handleConsumerException(e);
+				}
+			}
+			wrapUp(exitThrowable);
+		}

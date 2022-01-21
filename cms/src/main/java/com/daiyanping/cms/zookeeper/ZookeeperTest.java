@@ -12,10 +12,14 @@ import java.util.concurrent.CountDownLatch;
 public class ZookeeperTest {
 
 	//ZooKeeper服务地址
-	private static final String SERVER = "192.168.140.128:2181";
+	private static final String SERVER = "127.0.0.1:2181";
 
 	//会话超时时间
 	private static final int SESSION_TIMEOUT = 30000;
+
+	public static void main(String[] args) {
+		test1();
+	}
 
 	/**
 	 * 打印结果 都还没获取到会话id
@@ -24,7 +28,7 @@ public class ZookeeperTest {
 	 * 这种方式客户端的连接状态还是CONNECTING，CONNECTED的状态才表示连接成功
 	 */
 //	@Test
-	public void test1() {
+	public static void test1() {
 		ZooKeeper zooKeeper = null;
 		try {
 			zooKeeper = new ZooKeeper(SERVER, SESSION_TIMEOUT,null);
@@ -32,6 +36,11 @@ public class ZookeeperTest {
 			e.printStackTrace();
 		}
 		System.out.println(zooKeeper);
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		System.out.println(zooKeeper.getState());
 	}
 

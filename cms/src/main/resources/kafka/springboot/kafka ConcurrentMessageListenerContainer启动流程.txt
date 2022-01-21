@@ -1,0 +1,48 @@
+/*
+	 * Under lifecycle lock.
+	 */
+	@Override
+	protected void doStart() {
+		if (!isRunning()) {
+		    // 使用AdminClient 检查topic是否已经定义了,如果没有定义则抛异常
+			checkTopics();
+			ContainerProperties containerProperties = getContainerProperties();
+			TopicPartitionOffset[] topicPartitions = containerProperties.getTopicPartitions();
+			// 如果topic指定分区，则消费者数量不得大于配置的topicPartitions数量，相当于当前消费的分区已经确定了，然后每个消费者消费一个分区，你多的消费者是没有用的
+			if (topicPartitions != null && this.concurrency > topicPartitions.length) {
+				this.logger.warn(() -> "When specific partitions are provided, the concurrency must be less than or "
+						+ "equal to the number of partitions; reduced from " + this.concurrency + " to "
+						+ topicPartitions.length);
+				this.concurrency = topicPartitions.length;
+			}
+			setRunning(true);
+            // 消费者的数量，concurrency是几就创建几个KafkaMessageListenerContainer消费者，如果分区不多的话，多余的消费者可能就消费不到数据
+			for (int i = 0; i < this.concurrency; i++) {
+			    // 填充相关属性
+				KafkaMessageListenerContainer<K, V> container =
+						constructContainer(containerProperties, topicPartitions, i);
+				String beanName = getBeanName();
+				container.setBeanName((beanName != null ? beanName : "consumer") + "-" + i);
+				container.setApplicationContext(getApplicationContext());
+				if (getApplicationEventPublisher() != null) {
+					container.setApplicationEventPublisher(getApplicationEventPublisher());
+				}
+				container.setClientIdSuffix(this.concurrency > 1 || this.alwaysClientIdSuffix ? "-" + i : "");
+				container.setGenericErrorHandler(getGenericErrorHandler());
+				container.setAfterRollbackProcessor(getAfterRollbackProcessor());
+				container.setRecordInterceptor(getRecordInterceptor());
+				container.setInterceptBeforeTx(isInterceptBeforeTx());
+				container.setEmergencyStop(() -> {
+					stop(() -> {
+						// NOSONAR
+					});
+					publishContainerStoppedEvent();
+				});
+				if (isPaused()) {
+					container.pause();
+				}
+				container.start();
+				this.containers.add(container);
+			}
+		}
+	}

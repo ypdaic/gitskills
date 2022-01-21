@@ -7,6 +7,10 @@
 
     docker run -d --name redis-5.0 -p 6380:6379 -v /root/docker/redis_5.0/conf/redis.conf:/etc/redis/redis.conf -v /root/docker/redis_5.0/data:/data daocloud.io/library/redis:5.0 /etc/redis/redis.conf
 
-    注意：redis.conf 要事先创建
+    docker run -d --name redis-5 -p 6379:6379 -v /Users/daiyanping/Docker/redis/conf:/usr/local/etc/redis.conf -v /Users/daiyanping/Docker/redis/data:/data redis:5 /usr/local/etc/redis.conf --requirepass 123456
+
+ docker run -d --name redis-5 -p 6379:6379 redis:5 --requirepass 123456
+
+    注意：redis.conf 要事先创建，默认docker 安装没有指定redis.conf 需要我们自己提供
 
     docker run -d --name redis -p 6379:6379 -d redis:latest  --appendonly yes --requirepass 123456

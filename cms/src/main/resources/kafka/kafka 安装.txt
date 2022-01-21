@@ -6,5 +6,5 @@
    需要我们修改zookeeper.properties，或者直接修改server.properties的zookeeper.connect配置项
    修改成zookeeper集群即可
 4：启动kafka
-   先启动zookeeper：./bin/zookeeper-server-start.sh ../config/zookeeper.properties
-   再启动kafka: ./bin/kafka-server-start.sh ../config/server.properties
+   先启动zookeeper：nohup ./bin/zookeeper-server-start.sh ./config/zookeeper.properties > /dev/null 2>&1 &
+   再启动kafka: nohup ./bin/kafka-server-start.sh ./config/server.properties > /dev/null 2>&1 &

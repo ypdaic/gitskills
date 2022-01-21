@@ -1,0 +1,97 @@
+ListenerConsumer(GenericMessageListener<?> listener, ListenerType listenerType) {
+            // 获取KafkaListener注解properties字段设置的消费者配置项
+			Properties consumerProperties = propertiesFromProperties();
+			checkGroupInstance(consumerProperties, KafkaMessageListenerContainer.this.consumerFactory);
+			// 确认自动提交配置，如果KafkaListener注解properties字段设置没有设置，且KafkaProperties也没有设置，也就是yml文件
+			// 没有设置，则设置自动提交为false,否则取KafkaListener注解properties字段设置的，没有则取KafkaProperties设置的
+			this.autoCommit = determineAutoCommit(consumerProperties);
+			// 这里会创建消费者，会合并KafkaListener注解properties字段的配置和KafkaProperties的消费者配置项
+			this.consumer =
+					KafkaMessageListenerContainer.this.consumerFactory.createConsumer(
+							this.consumerGroupId,
+							this.containerProperties.getClientId(),
+							KafkaMessageListenerContainer.this.clientIdSuffix,
+							consumerProperties);
+            // 获取客户端id
+			this.clientId = determineClientId();
+			// 获取事务Template
+			this.transactionTemplate = determineTransactionTemplate();
+			this.genericListener = listener;
+			this.consumerSeekAwareListener = checkConsumerSeekAware(listener);
+			// 用于分区再均衡
+			this.commitCurrentOnAssignment = determineCommitCurrent(consumerProperties,
+					KafkaMessageListenerContainer.this.consumerFactory.getConfigurationProperties());
+			// 订阅topic,如果是指定分区的场景则不会设置分区再均衡器
+			subscribeOrAssignTopics(this.consumer);
+			GenericErrorHandler<?> errHandler = KafkaMessageListenerContainer.this.getGenericErrorHandler();
+			// 是否为批量监听器
+			if (listener instanceof BatchMessageListener) {
+				this.listener = null;
+				this.batchListener = (BatchMessageListener<K, V>) listener;
+				this.isBatchListener = true;
+				this.wantsFullRecords = this.batchListener.wantsPollResult();
+			}
+			// 是否是非批量监听器
+			else if (listener instanceof MessageListener) {
+				this.listener = (MessageListener<K, V>) listener;
+				this.batchListener = null;
+				this.isBatchListener = false;
+				this.wantsFullRecords = false;
+			}
+			else {
+				throw new IllegalArgumentException("Listener must be one of 'MessageListener', "
+						+ "'BatchMessageListener', or the variants that are consumer aware and/or "
+						+ "Acknowledging"
+						+ " not " + listener.getClass().getName());
+			}
+			this.listenerType = listenerType;
+			// 是否是需要注入Consumer的Listener,一般就是true
+			this.isConsumerAwareListener = listenerType.equals(ListenerType.ACKNOWLEDGING_CONSUMER_AWARE)
+					|| listenerType.equals(ListenerType.CONSUMER_AWARE);
+			if (this.isBatchListener) {
+				validateErrorHandler(true);
+				this.errorHandler = new LoggingErrorHandler();
+				this.batchErrorHandler = determineBatchErrorHandler(errHandler);
+			}
+			else {
+				validateErrorHandler(false);
+				this.errorHandler = determineErrorHandler(errHandler);
+				this.batchErrorHandler = new BatchLoggingErrorHandler();
+			}
+			Assert.state(!this.isBatchListener || !this.isRecordAck,
+					"Cannot use AckMode.RECORD with a batch listener");
+			if (this.containerProperties.getScheduler() != null) {
+				this.taskScheduler = this.containerProperties.getScheduler();
+				this.taskSchedulerExplicitlySet = true;
+			}
+			else {
+				ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
+				threadPoolTaskScheduler.initialize();
+				this.taskScheduler = threadPoolTaskScheduler;
+			}
+			// 启动一个监控任务
+			this.monitorTask = this.taskScheduler.scheduleAtFixedRate(this::checkConsumer,
+					Duration.ofSeconds(this.containerProperties.getMonitorInterval()));
+			if (this.containerProperties.isLogContainerConfig()) {
+				this.logger.info(this.toString());
+			}
+			Map<String, Object> props = KafkaMessageListenerContainer.this.consumerFactory.getConfigurationProperties();
+			this.checkNullKeyForExceptions = checkDeserializer(findDeserializerClass(props, consumerProperties, false));
+			this.checkNullValueForExceptions = checkDeserializer(findDeserializerClass(props, consumerProperties, true));
+			// 获取同步提交超时时间
+			this.syncCommitTimeout = determineSyncCommitTimeout();
+			if (this.containerProperties.getSyncCommitTimeout() == null) {
+				// update the property so we can use it directly from code elsewhere
+				this.containerProperties.setSyncCommitTimeout(this.syncCommitTimeout);
+				if (KafkaMessageListenerContainer.this.thisOrParentContainer != null) {
+					KafkaMessageListenerContainer.this.thisOrParentContainer
+							.getContainerProperties()
+							.setSyncCommitTimeout(this.syncCommitTimeout);
+				}
+			}
+			// 获取最大拉去间隔时间
+			this.maxPollInterval = obtainMaxPollInterval(consumerProperties);
+			this.micrometerHolder = obtainMicrometerHolder();
+			this.deliveryAttemptAware = setupDeliveryAttemptAware();
+			this.subBatchPerPartition = setupSubBatchPerPartition();
+		}

@@ -1,0 +1,74 @@
+protected void processListener(MethodKafkaListenerEndpoint<?, ?> endpoint, KafkaListener kafkaListener,
+			Object bean, Object adminTarget, String beanName) {
+
+        //定义kafkaListener 注解bean的引用，后面其他字段使用SpEL表达式时可以取该bean的属性和方法，spel表达式访问范围也只是该bean的范围内
+        //其他字段使用实例: topics = "#{__listener.topicList}"
+		String beanRef = kafkaListener.beanRef();
+		// listenerScope 用于spel表达式的作用范围
+		if (StringUtils.hasText(beanRef)) {
+			this.listenerScope.addListener(beanRef, bean);
+		}
+		endpoint.setBean(bean);
+		// 默认KafkaHandlerMethodFactoryAdapter，用于后面接收到消息后，反射执行监听的方法
+		endpoint.setMessageHandlerMethodFactory(this.messageHandlerMethodFactory);
+		// 必须设置，默认org.springframework.kafka.KafkaListenerEndpointContainer#0 递增,后面KafkaMessageListenerContainer 的beanName字段会用到
+		endpoint.setId(getEndpointId(kafkaListener));
+		// 消费群组,先去注解上指定的，如果没有则取id
+		endpoint.setGroupId(getEndpointGroupId(kafkaListener, endpoint.getId()));
+		// 指定消费的topic及分区，kafka支持订阅topic时指定分区使用subscribingConsumer.assign 方法
+		endpoint.setTopicPartitions(resolveTopicPartitions(kafkaListener));
+		// 指定消费的topic
+		endpoint.setTopics(resolveTopics(kafkaListener));
+		// 指定消费的topic正则
+		endpoint.setTopicPattern(resolvePattern(kafkaListener));
+		// kafka 消费者客户端的前缀
+		endpoint.setClientIdPrefix(resolveExpressionAsString(kafkaListener.clientIdPrefix(), "clientIdPrefix"));
+		// 将指定同一个group的MessageListenerContainer放到用一个list中，好像没看到其他用处
+		String group = kafkaListener.containerGroup();
+		if (StringUtils.hasText(group)) {
+			Object resolvedGroup = resolveExpression(group);
+			if (resolvedGroup instanceof String) {
+				endpoint.setGroup((String) resolvedGroup);
+			}
+		}
+		// 指定消费者数量
+		String concurrency = kafkaListener.concurrency();
+		if (StringUtils.hasText(concurrency)) {
+			endpoint.setConcurrency(resolveExpressionAsInteger(concurrency, "concurrency"));
+		}
+        // 指定是否自动启动
+		String autoStartup = kafkaListener.autoStartup();
+		if (StringUtils.hasText(autoStartup)) {
+			endpoint.setAutoStartup(resolveExpressionAsBoolean(autoStartup, "autoStartup"));
+		}
+		// 指定其他消费者参数
+		resolveKafkaProperties(endpoint, kafkaListener.properties());
+		// 回复是List时，是否拆分List一个一个回复
+		endpoint.setSplitIterables(kafkaListener.splitIterables());
+
+		KafkaListenerContainerFactory<?> factory = null;
+		// 指定 containerFactory，会自动配置一个ConcurrentKafkaListenerContainerFactory
+		String containerFactoryBeanName = resolve(kafkaListener.containerFactory());
+		if (StringUtils.hasText(containerFactoryBeanName)) {
+			Assert.state(this.beanFactory != null, "BeanFactory must be set to obtain container factory by bean name");
+			try {
+				factory = this.beanFactory.getBean(containerFactoryBeanName, KafkaListenerContainerFactory.class);
+			}
+			catch (NoSuchBeanDefinitionException ex) {
+				throw new BeanInitializationException("Could not register Kafka listener endpoint on [" + adminTarget
+						+ "] for bean " + beanName + ", no " + KafkaListenerContainerFactory.class.getSimpleName()
+						+ " with id '" + containerFactoryBeanName + "' was found in the application context", ex);
+			}
+		}
+        // 指定beanFactory
+		endpoint.setBeanFactory(this.beanFactory);
+		// 指定失败处理器，消费消息出现ListenerExecutionFailedException异常，并且errorHandler不为空时就会执行errorHandler的处理逻辑
+		String errorHandlerBeanName = resolveExpressionAsString(kafkaListener.errorHandler(), "errorHandler");
+		if (StringUtils.hasText(errorHandlerBeanName)) {
+			endpoint.setErrorHandler(this.beanFactory.getBean(errorHandlerBeanName, KafkaListenerErrorHandler.class));
+		}
+		this.registrar.registerEndpoint(endpoint, factory);
+		if (StringUtils.hasText(beanRef)) {
+			this.listenerScope.removeListener(beanRef);
+		}
+	}

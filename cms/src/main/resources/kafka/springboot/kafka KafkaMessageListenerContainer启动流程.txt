@@ -1,0 +1,44 @@
+@Override
+	protected void doStart() {
+		if (isRunning()) {
+			return;
+		}
+		// 只有一个消费者时需要检查topic是否已存在
+		if (this.clientIdSuffix == null) { // stand-alone container
+			checkTopics();
+		}
+		ContainerProperties containerProperties = getContainerProperties();
+		// 检查ack模式，KafkaProperties的consumer的enableAutoCommit为false时，会去检查
+		// KafkaProperties的consumer的ackMode是否为count,count_time,time
+		checkAckMode(containerProperties);
+        // 这里的messageListener就是前面的RecordMessagingMessageListenerAdapter或者BatchMessagingMessageListenerAdapter
+		Object messageListener = containerProperties.getMessageListener();
+		// 获取线程池
+		if (containerProperties.getConsumerTaskExecutor() == null) {
+			SimpleAsyncTaskExecutor consumerExecutor = new SimpleAsyncTaskExecutor(
+					(getBeanName() == null ? "" : getBeanName()) + "-C-");
+			containerProperties.setConsumerTaskExecutor(consumerExecutor);
+		}
+		GenericMessageListener<?> listener = (GenericMessageListener<?>) messageListener;
+		// 获取listener的类型，如果是DelegatingMessageListener类型的需要再次根据delegate再次获取其类型
+		ListenerType listenerType = determineListenerType(listener);
+		// 创建消费者
+		this.listenerConsumer = new ListenerConsumer(listener, listenerType);
+		setRunning(true);
+		this.startLatch = new CountDownLatch(1);
+		// 提交消费者任务
+		this.listenerConsumerFuture = containerProperties
+				.getConsumerTaskExecutor()
+				.submitListenable(this.listenerConsumer);
+		try {
+		    // 消费者启动超时时间
+			if (!this.startLatch.await(containerProperties.getConsumerStartTimout().toMillis(), TimeUnit.MILLISECONDS)) {
+				this.logger.error("Consumer thread failed to start - does the configured task executor "
+						+ "have enough threads to support all containers and concurrency?");
+				publishConsumerFailedToStart();
+			}
+		}
+		catch (@SuppressWarnings(UNUSED) InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
+	}

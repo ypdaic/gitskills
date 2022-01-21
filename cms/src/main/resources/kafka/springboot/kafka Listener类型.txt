@@ -1,0 +1,10 @@
+其实也就是3种接口类型：
+    非批量：
+    AcknowledgingMessageListener 可以获取Acknowledgment
+    ConsumerAwareMessageListener 可以获取Consumer
+    AcknowledgingConsumerAwareMessageListener 可以获取Acknowledgment，Consumer
+
+    批量和非批量一样：
+    BatchAcknowledgingMessageListener
+    BatchConsumerAwareMessageListener
+    BatchAcknowledgingConsumerAwareMessageListener

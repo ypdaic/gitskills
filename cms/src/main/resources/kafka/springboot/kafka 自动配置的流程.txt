@@ -1,0 +1,45 @@
+KafkaListenerAnnotationBeanPostProcessor.postProcessAfterInitialization（开始KafkaListener,KafkaHandler,注解的扫描）
+                                   |
+                                   |扫描就讲KafkaListener注解相关参数封装成为KafkaListenerEndpoint，将其放入到KafkaListenerEndpointRegistrar中
+                                   |
+                                   |
+KafkaListenerAnnotationBeanPostProcessor.afterSingletonsInstantiated（开始注册消费者信息）
+                                   |
+                                   |我们可以通过KafkaListenerConfigurer设置KafkaListenerEndpointRegistrar属性，其实也就是customMethodArgumentResolvers可以设置一下，其他不用
+                                   |
+                                   |
+KafkaListenerEndpointRegistrar.afterPropertiesSet(开始注册消费者信息)
+                                   |
+                                   |遍历KafkaListenerEndpoint,开始消费者的注册
+                                   |
+                                   |
+KafkaListenerEndpointRegistry.registerListenerContainer(开始注册消费者容器)
+                                   |
+                                   |通过KafkaListenerContainerFactory创建，使用自动配置的ConcurrentKafkaListenerContainerFactory（KafkaAnnotationDrivenConfiguration自动配置）
+                                   |ConcurrentKafkaListenerContainerFactoryConfigurer会配置ConcurrentKafkaListenerContainerFactory，ConsumerFactory（也是自动配置DefaultKafkaConsumerFactory，使用了KafkaProperties的consumer的配置项）
+                                   |主要使用了KafkaProperties的Listener的配置项
+                                   |
+AbstractKafkaListenerContainerFactory.createListenerContainer（containerFactory实例化container）
+                                   |
+                                   |通过ConcurrentMessageListenerContainer的构造器，根据topic的定义方式的不同，new出不同的ConcurrentMessageListenerContainer
+                                   |然后根据前面KafkaListenerEndpoint的id,设置为ConcurrentMessageListenerContainer的beanName
+                                   |然后通过configureEndpoint方法，给KafkaListenerEndpoint配置前面注解没法设置的属性，而是通过ConcurrentKafkaListenerContainerFactory
+                                   |的相关属性去配置
+                                   |       |
+                                           |
+                                           |
+                                           |
+        KafkaListenerEndpoint.setupListenerContainer(instance, this.messageConverter)(KafkaListenerEndpoint 配置container)
+                                           |
+                                           |主要是初始化MessagingMessageListenerAdapter，根据KafkaProperties的Listener的type配置，看是初始化RecordMessagingMessageListenerAdapter
+                                           |还是BatchMessagingMessageListenerAdapter，当方法上有SendTo注解时，在消费完后，返回值会发送到SendTo指定的Topic中
+                                           |如果有重试配置（retryTemplate）则使用RetryingMessageListenerAdapter装饰一下，如有有过滤配置（recordFilterStrategy），且KafkaProperties的Listener为BATCH时，且监听的方法参数不是ConsumerRecords是，则使用FilteringBatchMessageListenerAdapter
+                                           |装饰一下，否则使用FilteringMessageListenerAdapter装饰一下
+                                           |
+                                           |
+        AbstractKafkaListenerContainerFactory.initializeContainer(设置ConcurrentMessageListenerContainer其他相关的属性)
+                                           |
+                                           |afterRollbackProcessor,containerProperties,errorHandler,missingTopicsFatal,autoStartup,recordInterceptor
+                                           |phase,applicationContext,applicationEventPublisher
+                                           |
+        AbstractKafkaListenerContainerFactory.customizeContainer(根据ContainerCustomizer接口自定义ConcurrentMessageListenerContainer相关属性)

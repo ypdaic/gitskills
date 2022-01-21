@@ -10,6 +10,8 @@ kafka-topics.bat --zookeeper localhost:2181 --describe
 
 kafka-topics.bat --zookeeper localhost:2181 --create --topic my-topic --replication-factor 1 --partitions 8
 
+kafka-topics.sh --zookeeper localhost:2181 --create --topic my-topic --replication-factor 1 --partitions 1
+
 #zookeeper 集群创建topic
 
 kafka-topics.sh --zookeeper 192.168.109.129:2181,192.168.109.130:2181 --create --topic access_log --replication-factor 1 --partitions 1
