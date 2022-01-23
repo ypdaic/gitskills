@@ -1,0 +1,170 @@
+分析器:允许字符过滤器有0个或多个，分词器有且只有1个，分词过滤器有0个或多个
+
+分词发生的地方：
+
+    1：创建索引时（也就是存的数据包含text类型时就需要分词了）
+    2：文档搜索时
+
+    文档存入es时分析器的使用顺序：
+    1：字段有就用字段的
+    2：字段没有就用索引上设置的
+    3：上面两个都没有就用默认的 standard (标准)
+
+
+    // 配置索引的分析器，内置的简单的分析器
+    PUT test
+    {
+        "settings": {
+            "analysis": {
+                "analyzer": {
+                    "default": {
+                        "type": "simple"
+                    }
+                }
+            }
+        }
+    }
+
+    //  配置索引的分析器，内置的自己的分析器，有自己的分词规则
+    PUT test
+    {
+        "settings": {
+            "analysis": {
+                "analyzer": {
+                    "my_analyzer": {
+                        "type": "standard"
+                        "stopword":["the", "a"]
+                    }
+                }
+            }
+        }
+    }
+
+    // 给字段配置分析器，通过mappings 设置
+    PUT test
+    {
+        "mappings": {
+            "properties": {
+                "title": {
+                    "type": {
+                        "type": "text",
+                        "analyzer":"standard", #存的时候用的分析器
+                        "search_analyzer": "simple" #查询的时候用的分析器
+                    }
+                }
+            }
+        }
+    }
+
+    例：设置索引分析器，设置字段分析器
+    PUT /my_index_analyze
+    {
+      "settings": {
+        "analysis": {
+          "analyzer": {
+            "std_english": {
+              "type": "standard",
+              "stopwords": "_english_" #停止词，使用英文
+
+            }
+          }
+        }
+      },
+      "mappings": {
+        "properties": {
+          "my_text": {
+            "type": "text",
+            "analyzer": "standard",
+            "fields": {
+              "english": {
+                "type": "text",
+                "analyzer": "std_english"
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // 使用上面的索引定义的分析器对指定的字段类型进行具体的数据分析
+    POST /my_index_analyze/_analyze
+    {
+      "field": "my_text",
+      "text": "The old brow cow"
+    }
+
+    结果：
+    {
+      "tokens" : [
+        {
+          "token" : "the",
+          "start_offset" : 0,
+          "end_offset" : 3,
+          "type" : "<ALPHANUM>",
+          "position" : 0
+        },
+        {
+          "token" : "old",
+          "start_offset" : 4,
+          "end_offset" : 7,
+          "type" : "<ALPHANUM>",
+          "position" : 1
+        },
+        {
+          "token" : "brow",
+          "start_offset" : 8,
+          "end_offset" : 12,
+          "type" : "<ALPHANUM>",
+          "position" : 2
+        },
+        {
+          "token" : "cow",
+          "start_offset" : 13,
+          "end_offset" : 16,
+          "type" : "<ALPHANUM>",
+          "position" : 3
+        }
+      ]
+    }
+
+    // 指定不同的field
+     POST /my_index_analyze/_analyze
+     {
+       "field": "my_text.english",
+       "text": "the old brow cow"
+     }
+
+        结果：
+       {
+         "tokens" : [
+           {
+             "token" : "old",
+             "start_offset" : 4,
+             "end_offset" : 7,
+             "type" : "<ALPHANUM>",
+             "position" : 1
+           },
+           {
+             "token" : "brow",
+             "start_offset" : 8,
+             "end_offset" : 12,
+             "type" : "<ALPHANUM>",
+             "position" : 2
+           },
+           {
+             "token" : "cow",
+             "start_offset" : 13,
+             "end_offset" : 16,
+             "type" : "<ALPHANUM>",
+             "position" : 3
+           }
+         ]
+       }
+
+
+    搜索时，分析器使用的顺序
+    1：搜索请求 带的分析器
+    2：创建索引的时候 字段上的search_analyzer
+    3: 创建索引的时候 字段上的analyzer
+    4：创建索引的时候 索引上所配置的default_search
+    5: 系统默认的standard

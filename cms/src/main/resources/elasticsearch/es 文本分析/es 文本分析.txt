@@ -1,0 +1,15 @@
+文本分析包括下面3个部分
+
+1：字符过滤(char filter)
+
+    如：                                 分析后变成这样
+     I like ELK, it include Elas&kib&log --------------->  I like ELK, it include Elas and kib and log
+2：字符分词
+    分词 token 标准分词
+     如：
+    I like ELK, it include Elas and kib and log 分词为 I   like   ELK  it  include Elas   and   kib   and  log
+3：分词过滤
+
+    小写的分词过滤器 （token filter）
+    如：
+     I   like   ELK  it  include Elas   and   kib   and  log 过滤后  I like elk it inculde elas kib log

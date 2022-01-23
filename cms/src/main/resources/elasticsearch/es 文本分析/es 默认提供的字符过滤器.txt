@@ -1,0 +1,92 @@
+html文本过滤器：
+
+    POST _analyze
+    {
+      "tokenizer": "keyword",
+      "char_filter": ["html_strip"], #html文本字符过滤器
+      "text": "<p>I&apos;m so <b>happy</b>!</p>"
+    }
+
+    结果：
+
+    {
+      "tokens" : [
+        {
+          "token" : """
+
+    I'm so happy!
+
+    """,
+          "start_offset" : 0,
+          "end_offset" : 32,
+          "type" : "word",
+          "position" : 0
+        }
+      ]
+    }
+
+
+映射字符过滤器：
+
+    PUT pattern_test4
+    {
+      "settings": {
+        "analysis": {
+          "analyzer": {
+            "my_analyzer": {
+              "tokenizer": "keyword",
+              "char_filter": ["my_char_filter"] #指定自定义的映射字符过滤器
+            }
+          },
+          "char_filter": {
+            "my_char_filter": {
+              "type": "mapping",
+              "mappings":["James=>666", "13号=>888"]
+            }
+          }
+        }
+      }
+    }
+
+    // 分析看看
+    POST pattern_test4/_analyze
+    {
+      "analyzer": "my_analyzer",
+      "text": "James爱13号，但是13号结婚了"
+    }
+
+    结果：
+    {
+      "tokens" : [
+        {
+          "token" : "666爱888，但是888结婚了",
+          "start_offset" : 0,
+          "end_offset" : 18,
+          "type" : "word",
+          "position" : 0
+        }
+      ]
+    }
+
+模式替换过滤器也就是正则：
+
+PUT pattern_test4
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "my_analyzer": {
+          "tokenizer": "keyword",
+          "char_filter": ["my_char_filter"]
+        }
+      },
+      "char_filter": {
+        "my_char_filter": {
+          "type": "pattern_replace", #模式替换字符过滤器
+          "pattern":"...",
+          "replacement":"..."
+        }
+      }
+    }
+  }
+}

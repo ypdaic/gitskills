@@ -1,0 +1,1 @@
+regexp 查询就是对字段进行正则表达式匹配, kibana_sample_data_flights这个索引是kibana默认提供的测试数据，需要我们自己导入就行

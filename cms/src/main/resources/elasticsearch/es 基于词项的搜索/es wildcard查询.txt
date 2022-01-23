@@ -1,0 +1,131 @@
+wildcard 查询就是对字段进行通配符匹配, kibana_sample_data_flights这个索引是kibana默认提供的测试数据，需要我们自己导入就行
+
+* 匹配任何多个字符
+? 匹配任何单个字符
+
+bacon barn ban baboon bam
+
+ba*n 可以匹配 bacon barn ban baboon
+ba?n 可以匹配 barn
+
+f*f?x 可以匹配firefox
+
+注意：通配符能够往后靠就往后靠，缩小查询范围
+例：
+
+get /kibana_sample_data_flights/_search
+{
+
+  "query":{
+    "wildcard": {
+       "Dest": "*Ma*"
+    }
+
+    }
+  }
+
+}
+
+结果：
+
+    {
+      "took" : 6,
+      "timed_out" : false,
+      "_shards" : {
+        "total" : 1,
+        "successful" : 1,
+        "skipped" : 0,
+        "failed" : 0
+      },
+      "hits" : {
+        "total" : {
+          "value" : 1185,
+          "relation" : "eq"
+        },
+        "max_score" : 1.0,
+        "hits" : [
+          {
+            "_index" : "kibana_sample_data_flights",
+            "_type" : "_doc",
+            "_id" : "GWeBJX4Bd0Gx-9ulOvqJ",
+            "_score" : 1.0,
+            "_source" : {
+              "FlightNum" : "X98CCZO",
+              "DestCountry" : "IT",
+              "OriginWeather" : "Clear",
+              "OriginCityName" : "Cape Town",
+              "AvgTicketPrice" : 882.9826615595518,
+              "DistanceMiles" : 5482.606664853586,
+              "FlightDelay" : false,
+              "DestWeather" : "Sunny",
+              "Dest" : "Venice Marco Polo Airport",
+              "FlightDelayType" : "No Delay",
+              "OriginCountry" : "ZA",
+              "dayOfWeek" : 0,
+              "DistanceKilometers" : 8823.40014044213,
+              "timestamp" : "2021-12-27T18:27:00",
+              "DestLocation" : {
+                "lat" : "45.505299",
+                "lon" : "12.3519"
+              },
+              "DestAirportID" : "VE05",
+              "Carrier" : "Logstash Airways",
+              "Cancelled" : false,
+              "FlightTimeMin" : 464.3894810759016,
+              "Origin" : "Cape Town International Airport",
+              "OriginLocation" : {
+                "lat" : "-33.96480179",
+                "lon" : "18.60169983"
+              },
+              "DestRegion" : "IT-34",
+              "OriginAirportID" : "CPT",
+              "OriginRegion" : "SE-BD",
+              "DestCityName" : "Venice",
+              "FlightTimeHour" : 7.73982468459836,
+              "FlightDelayMin" : 0
+            }
+          },
+          {
+            "_index" : "kibana_sample_data_flights",
+            "_type" : "_doc",
+            "_id" : "SGeBJX4Bd0Gx-9ulOvqK",
+            "_score" : 1.0,
+            "_source" : {
+              "FlightNum" : "SUXIZJA",
+              "DestCountry" : "GB",
+              "OriginWeather" : "Hail",
+              "OriginCityName" : "Osaka",
+              "AvgTicketPrice" : 531.5562550465518,
+              "DistanceMiles" : 5873.817368388099,
+              "FlightDelay" : false,
+              "DestWeather" : "Sunny",
+              "Dest" : "Manchester Airport",
+              "FlightDelayType" : "No Delay",
+              "OriginCountry" : "JP",
+              "dayOfWeek" : 0,
+              "DistanceKilometers" : 9452.992738911176,
+              "timestamp" : "2021-12-27T14:00:01",
+              "DestLocation" : {
+                "lat" : "53.35369873",
+                "lon" : "-2.274950027"
+              },
+              "DestAirportID" : "MAN",
+              "Carrier" : "ES-Air",
+              "Cancelled" : true,
+              "FlightTimeMin" : 556.0583964065398,
+              "Origin" : "Kansai International Airport",
+              "OriginLocation" : {
+                "lat" : "34.4272995",
+                "lon" : "135.2440033"
+              },
+              "DestRegion" : "GB-ENG",
+              "OriginAirportID" : "KIX",
+              "OriginRegion" : "SE-BD",
+              "DestCityName" : "Manchester",
+              "FlightTimeHour" : 9.267639940108998,
+              "FlightDelayMin" : 0
+            }
+          }
+        ]
+      }
+    }

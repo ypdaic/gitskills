@@ -1,0 +1,26 @@
+通俗来说就是特定的常用词，没啥意义的词，就会被过滤掉
+
+比如下面这些都是英文的停用词
+I the is this what not then was with
+
+
+标准分析器standard默认不给配置停用词，需要我们手动指定
+
+例：stopwords 用了指定停用词
+
+PUT /my_index_analyze
+    {
+      "settings": {
+        "analysis": {
+          "analyzer": {
+            "std_english": {
+              "type": "standard",
+              "stopwords": "_english_" #停止词，使用英文
+
+            }
+          }
+        }
+      }
+    }
+
+

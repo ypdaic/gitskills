@@ -1,0 +1,22 @@
+es 每个字段是可以设置成多个数据类型的，不像mysql那要一个字段只能是一个数据类型，这样的好处是，如果我们某个字段我们即想通过精确匹配，又想通过全文匹配，那么
+我们可以给这个字段设置为text和keyword这两种类型
+
+例：
+
+// 使用fields 定义多字段类型
+PUT /my_index_analyze
+{
+  "mappings": {
+    "properties": {
+      "my_text": {
+        "type" : "text", #text类型(全文索引)
+          "fields" : {
+            "keyword" : {
+              "type" : "keyword",  #keyword类型(精确匹配)
+              "ignore_above" : 256
+            }
+          }
+      }
+    }
+  }
+}

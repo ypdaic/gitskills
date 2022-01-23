@@ -1,0 +1,90 @@
+PUT pattern_custom
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "my_analyzer": {   #自定义分析器
+          "char_filter": ["html_strip","&_to_and"], #使用html字符过滤器和映射字符过滤器
+          "tokenizer": "standard", #使用标准分词器
+          "filter":["lowercase", "my_stopwords"], #使用小写分词过滤器和停用词分词过滤器
+          "type": "custom"
+        }
+      },
+      "char_filter": {
+        "&_to_and": {
+          "type": "mapping",
+          "mappings": ["&=>and"]
+        }
+      },
+      "filter": {
+        "my_stopwords": {
+          "stopwords": ["King","james"],
+          "type":"stop"
+        }
+      }
+    }
+  }
+}
+
+
+使用：
+POST pattern_custom/_analyze
+{
+  "analyzer": "my_analyzer",
+  "text": "<br>I & Lison & King & James are handsome</br>"
+}
+
+结果：就是都为小写，&转为and, king 和 James 被过滤掉
+{
+  "tokens" : [
+    {
+      "token" : "i",
+      "start_offset" : 4,
+      "end_offset" : 5,
+      "type" : "<ALPHANUM>",
+      "position" : 0
+    },
+    {
+      "token" : "and",
+      "start_offset" : 6,
+      "end_offset" : 7,
+      "type" : "<ALPHANUM>",
+      "position" : 1
+    },
+    {
+      "token" : "lison",
+      "start_offset" : 8,
+      "end_offset" : 13,
+      "type" : "<ALPHANUM>",
+      "position" : 2
+    },
+    {
+      "token" : "and",
+      "start_offset" : 14,
+      "end_offset" : 15,
+      "type" : "<ALPHANUM>",
+      "position" : 3
+    },
+    {
+      "token" : "and",
+      "start_offset" : 21,
+      "end_offset" : 22,
+      "type" : "<ALPHANUM>",
+      "position" : 5
+    },
+    {
+      "token" : "are",
+      "start_offset" : 29,
+      "end_offset" : 32,
+      "type" : "<ALPHANUM>",
+      "position" : 7
+    },
+    {
+      "token" : "handsome",
+      "start_offset" : 33,
+      "end_offset" : 41,
+      "type" : "<ALPHANUM>",
+      "position" : 8
+    }
+  ]
+}

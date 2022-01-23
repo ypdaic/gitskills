@@ -1,0 +1,50 @@
+_analyze接口
+
+get /<index_name>/_analyze
+
+
+
+// 配置索引的分析器，内置的简单的分析器
+PUT test
+{
+    "settings": {
+        "analysis": {
+            "analyzer": {
+                "default": {
+                    "type": "simple"
+                }
+            }
+        }
+    }
+}
+
+//  配置索引的分析器，内置的自己的分析器，有自己的分词规则
+PUT test
+{
+    "settings": {
+        "analysis": {
+            "analyzer": {
+                "my_analyzer": {
+                    "type": "standard"
+                    "stopword":["the", "a"]
+                }
+            }
+        }
+    }
+}
+
+// 给字段配置分析器，通过mappings 设置
+PUT test
+{
+    "mappings": {
+        "properties": {
+            "title": {
+                "type": {
+                    "type": "text",
+                    "analyzer":"standard", #存的时候用的分析器
+                    "search_analyzer": "simple" #查询的时候用的分析器
+                }
+            }
+        }
+    }
+}
