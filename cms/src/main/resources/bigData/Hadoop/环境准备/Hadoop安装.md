@@ -14,7 +14,8 @@
         
 5) 配置环境变量
 
-        vi /etc/profile, 文件后面追加如下部分
+        按照 profile 文件提示的样子去添加，在/etc/profile.d/目录中，添加脚本 export 环境变量
+        vi /etc/profile.d/my_env.sh
         
         export HADOOP_HOME=/software/hadoop-3.1.3
         export PATH=$PATH:$HADOOP_HOME/bin
