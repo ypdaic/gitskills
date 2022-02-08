@@ -6,7 +6,7 @@ import org.apache.hadoop.fs.*;
 import java.net.URI;
 import java.util.Arrays;
 
-public class JavaClient {
+public class HdfsClient {
 
     /**
      *
