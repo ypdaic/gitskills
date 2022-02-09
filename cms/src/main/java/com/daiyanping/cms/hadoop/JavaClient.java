@@ -15,12 +15,12 @@ public class JavaClient {
      */
 
     public static void main(String[] args) throws Exception {
-//        mkdir ();
+        mkdir ();
 //        upload();
 //        delete();
 //        rename();
 //        getFileInfo();
-        testListStatus();
+//        testListStatus();
     }
 
     public static void mkdir () throws Exception {
