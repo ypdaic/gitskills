@@ -26,12 +26,31 @@
     hbase(main):008:0> scan 'student'
     hbase(main):009:0> scan 'student',{STARTROW => '1001', STOPROW  => '1001'}
     hbase(main):010:0> scan 'student',{STARTROW => '1001'}
+    // 查询1001~1002的数据
+    hbase:015:0> scan 'student',{STARTROW => '1001', STOPROW  => '1002!'}
     5．查看表结构
     hbase(main):011:0> describe 'student'
     6．更新指定字段的数据
+    hbase:017:0> put 'student','1002','info:name','test'
     7. 修改表（添加一个列族）
     hbase:006:0> alter 'student','msg'
     8. 删除列族
     hbase:008:0> alter 'student', 'delete' => 'msg'
     9. 删除表
     hbase:009:0> drop 'student'
+    10. 删除行（如果某行更新过，则只是删除最新的版本，也有删除所有版本的api）
+    hbase:024:0> delete 'student','1001','info:sex'
+    11. 删除所有行
+    hbase:028:0> deleteall 'student','1001'
+    11. 删除某行的所有版本
+    hbase:028:0> deleteall 'student','1001','info:sex'
+    hbase:019:0> scan 'student',{RAW => TRUE,VERSIONS => 10} 
+    (hbase):19: warning: constant ::TRUE is deprecated
+    ROW                                        COLUMN+CELL                                                                                                              
+    1001                                      column=info:sex, timestamp=2022-03-10T03:24:21.716, type=DeleteColumn                                                    
+    1001                                      column=info:sex, timestamp=2022-03-10T03:23:38.477, value=test                                                           
+    1001                                      column=info:sex, timestamp=2022-03-10T03:23:33.004, value=male    
+    12. 清空表(很危险)
+    hbase:029:0> truncate 'student'
+    13. {RAW => TRUE,VERSIONS => 10} 可以展示已经被删除，更新的数据(多个版本)
+    hbase:007:0> scan 'student',{RAW => TRUE,VERSIONS => 10} 
