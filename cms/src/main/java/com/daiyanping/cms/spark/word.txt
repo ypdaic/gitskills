@@ -1,0 +1,8 @@
+hello scala
+hello scala
+hello spark
+hello spark
+hello spark
+hello hadoop
+hello hive
+hello hbase

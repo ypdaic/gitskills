@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 
 import java.util
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig
-import redis.clients.jedis.util.Pool
 import redis.clients.jedis.{Jedis, JedisPool, Response}
+import redis.clients.util.Pool
 
 object RedisUtil {
 //  private[this] var jedisPool: Pool[Jedis] = new JedisPool(new GenericObjectPoolConfig, "home.minquiers.com", 26502, 1000, "123456", 0, false)

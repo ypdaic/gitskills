@@ -117,14 +117,15 @@ object FunctionApp {
   sayHello3("ddd")
 
   // 将原来参数分开定义
-  def sum(a:Int)(b:Int) = a + b
-  println(sum(2)(3))
+//  def sum(a:Int)(b:Int) = a + b
+//  println(sum(2)(3))
 
   // map 函数，逐个去操作集合中的每个元素
   val l = List(1,2,3,4,5,6,7)
   l.map((x:Int)=> x+1)
 
   l.map(x => x * 2)
+  l.map(x => (x,1))
   l.map(_ * 2)
 
   l.map(_ * 2).foreach(println)
