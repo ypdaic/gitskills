@@ -18,13 +18,18 @@
 开启一个连接，连接比自己小的，如果大于自己的myid,这使用SendWorker往回发送本机的投票信息，使用RecvWorker接受其他节点投票信息
 
 比如有myid为0，1，2的服务器，
-myid:0先投一票给自己，然后接受myid:1的消息，投一票给myid:1，比较大小后，发现myid:1 大，再次发送投票通知，更新myid:0的投票为myid:1，此时myid:1已满足leader选举算法
 
-myid:1先投一票给自己，然后接受myid:0的返回消息，投一票给myid:0，再次接受myid:0的消息，更新myid:0的投票为myid:1，此时myid:1已满足leader选举算法，
+第一轮：
+myid:0先投一票给自己，然后接受myid:1的消息，投一票给myid:1，比较大小后，发现myid:1 大，更新myid:0的推举leader为myid:1，再次向其他节点发送投票通知，并存储myid:1 的投票信息，开始pk,由于myid:1 只有一票还不能选举成功
 
-myid:2继续上面的过程。
+myid:1先投一票给自己，然后接受myid:0的投票，发现myid:0 小则不用向其他节点发送投票通知，并存储myid:0 的投票信息，开始pk 由于myid:1 只有一票还不能选举成功
 
-完成选举后，leader会在Leader.lead() 方法中死循环ping follower 如果发现某个follower ping不通，就会重新出发选举，follow一样，如果发现leader 不能通信，也会出发重新选举
+第二轮：
+myid:0 接收到自己发送的myid:1 的投票信息，此时本地的票选已为myid:1 不用再次向其他节点发送投票通常，并存储myid:1 的投票信息，开始pk,由于myid:1 有2票 超过半数选举成功，myid:0 为follower
+myid:1 接收到myid:0 发送的myid:1 的投票信息 ，此时本地的票选已为myid:1 不用再次向其他节点发送投票通常，并存储myid:1 的投票信息，开始pk,由于myid:1 有2票 超过半数选举成功，myid:1 为leader
+
+
+完成选举后，leader会在Leader.lead() 方法中死循环发送ping消息 ，follow一样，如果发现从Leader获取ping消息失败，就会触发重新选举
 
 
 
